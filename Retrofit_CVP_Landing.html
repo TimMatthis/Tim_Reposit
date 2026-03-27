@@ -1,0 +1,4211 @@
+<!--
+  templateType: "page"
+  label: "Reposit - No Bill Retrofit Campaign"
+  isAvailableForNewContent: true
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reposit Power — No Bill Retrofit</title>
+  {{ standard_header_includes }}
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --green:        #19c37d;
+      --green-glow:   rgba(25, 195, 125, 0.28);
+      --blue:         #2a6b94;
+      --ink:          #0f172a;
+      --muted:        #374151;
+      --line:         #d7e3f4;
+      --glass:        rgba(255, 255, 255, 0.15);
+      --glass-border: rgba(255, 255, 255, 0.26);
+      --card-bg:      rgba(255, 255, 255, 0.97);
+      --shadow:       0 10px 32px rgba(10, 20, 40, 0.2);
+      --shadow-lg:    0 16px 48px rgba(10, 20, 40, 0.3);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    html { overflow: hidden; }
+
+    body {
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.55;
+      color: var(--ink);
+      background:
+        url(https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/noise.png),
+        radial-gradient(circle at top left, rgba(246,141,38,1) 5%, rgba(203,128,70,1) 20%, rgba(42,107,148,1) 60%, rgba(19,26,43,1) 100%);
+      background-blend-mode: multiply;
+      padding: 0;
+      overflow: hidden;
+      height: 100dvh;
+    }
+
+    /* ─── PAGER SCROLL CONTAINER ─────────────── */
+    .page {
+      height: 100dvh;
+      overflow-y: scroll;
+      scroll-snap-type: y mandatory;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1180px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+
+    /* ─── SECTION BASE — full-screen pager ─── */
+    .section {
+      scroll-snap-align: start;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 48px 20px 60px;
+      position: relative;
+      box-sizing: border-box;
+    }
+
+    /* ─── SECTION PROGRESS DOTS ─────────────── */
+    .section-dots {
+      position: fixed;
+      right: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .section-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.28);
+      border: 1.5px solid rgba(255,255,255,0.4);
+      cursor: pointer;
+      padding: 0;
+      transition: transform 0.25s, background 0.25s, height 0.25s;
+      display: block;
+    }
+
+    .section-dot:hover { background: rgba(255,255,255,0.6); transform: scale(1.3); }
+
+    .section-dot.is-active {
+      background: #fff;
+      transform: scale(1.25);
+      border-color: #fff;
+      height: 22px;
+      border-radius: 4px;
+    }
+
+    .section-dot-label {
+      position: absolute;
+      right: calc(100% + 10px);
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: rgba(255,255,255,0.85);
+      background: rgba(0,0,0,0.45);
+      border-radius: 6px;
+      padding: 3px 8px;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .section-dot:hover .section-dot-label { opacity: 1; }
+
+    /* ─── SCROLL HINT ────────────────────────── */
+    .scroll-hint {
+      position: absolute;
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      color: rgba(255,255,255,0.45);
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      text-align: center;
+      transition: color 0.2s;
+      white-space: nowrap;
+    }
+
+    .scroll-hint:hover { color: rgba(255,255,255,0.8); }
+
+    .scroll-hint-arrow {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      animation: hintBounce 2.2s ease-in-out infinite;
+    }
+
+    @keyframes hintBounce {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(5px); }
+    }
+
+    /* ─── TYPOGRAPHY ─────────────────────────── */
+    h1 {
+      font-size: clamp(2.1rem, 3.6vw, 3.2rem);
+      line-height: 1.08;
+      font-weight: 900;
+      color: #fff;
+      text-wrap: balance;
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      font-size: clamp(1.5rem, 2.6vw, 2.1rem);
+      line-height: 1.18;
+      font-weight: 800;
+      color: #fff;
+      text-wrap: balance;
+      margin-bottom: 10px;
+    }
+
+    h3 {
+      font-size: 1.06rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      color: #a8d8f5;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.75rem;
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
+
+    .lead {
+      color: rgba(255,255,255,0.9);
+      font-size: 1.05rem;
+      max-width: 820px;
+      margin-bottom: 20px;
+    }
+
+    .card-body {
+      color: var(--muted);
+      font-size: 0.94rem;
+      line-height: 1.5;
+    }
+
+    /* ─── GLASS PANEL ────────────────────────── */
+    .glass {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: 18px;
+      backdrop-filter: blur(14px);
+      padding: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    /* ─── WHITE CARD ─────────────────────────── */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    /* ─── BUTTONS ────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 11px 20px;
+      border-radius: 11px;
+      font-size: 0.95rem;
+      font-weight: 800;
+      border: 1px solid transparent;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #2de49d 0%, #15b876 100%);
+      color: #042d14;
+      box-shadow: 0 8px 22px var(--green-glow);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 10px 28px rgba(25, 195, 125, 0.42);
+    }
+
+    .btn-ghost {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.32);
+      color: #fff;
+    }
+
+    /* ─── PILL TAGS ──────────────────────────── */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .tag {
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.26);
+      background: rgba(255,255,255,0.09);
+      color: rgba(255,255,255,0.92);
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 5px 11px;
+    }
+
+    /* ─── HERO ───────────────────────────────── */
+    .hero { padding-top: 48px; padding-bottom: 52px; }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .hero-main { padding: 32px 36px; }
+
+    .hero-main .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 20px 0 14px;
+    }
+
+    .hero-note {
+      color: rgba(255,255,255,0.72);
+      font-size: 0.86rem;
+    }
+
+    /* ─── OUTCOME TILES ──────────────────────── */
+    .outcome-stack {
+      display: grid;
+      gap: 12px;
+    }
+
+    .outcome-tile {
+      border-radius: 14px;
+      padding: 16px 18px;
+      background: var(--card-bg);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .outcome-tile-label {
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: var(--blue);
+      margin-bottom: 3px;
+    }
+
+    .outcome-tile-value {
+      font-size: 1.45rem;
+      font-weight: 900;
+      color: var(--ink);
+      line-height: 1.1;
+      margin-bottom: 3px;
+    }
+
+    .outcome-tile-sub {
+      font-size: 0.86rem;
+      color: var(--muted);
+    }
+
+    /* ─── COMPARISON ─────────────────────────── */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .compare-card { padding: 22px; }
+
+    .compare-card ul {
+      list-style: none;
+      display: grid;
+      gap: 9px;
+      margin-top: 10px;
+    }
+
+    .compare-card li {
+      font-size: 0.94rem;
+      color: var(--muted);
+      padding-left: 20px;
+      position: relative;
+    }
+
+    .compare-card li::before {
+      content: "✕";
+      position: absolute;
+      left: 0;
+      color: #f87171;
+      font-weight: 900;
+      font-size: 0.8rem;
+      top: 2px;
+    }
+
+    .compare-card.is-winner {
+      border: 2px solid var(--green);
+      box-shadow: 0 0 0 4px rgba(25,195,125,0.14), var(--shadow);
+    }
+
+    .compare-card.is-winner li::before {
+      content: "✓";
+      color: var(--green);
+      font-size: 0.88rem;
+    }
+
+    .compare-card.is-winner li { color: var(--muted); }
+
+    .winner-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--green) 0%, #10a862 100%);
+      color: #042d14;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-bottom: 8px;
+    }
+
+    /* ─── 4-STEP JOURNEY ─────────────────────── */
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 18px;
+      position: relative;
+    }
+
+    .step-card { padding: 18px; position: relative; }
+
+    .step-num {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #e6f3ff;
+      border: 1px solid #bcd8f0;
+      color: #134b78;
+      font-weight: 900;
+      font-size: 0.95rem;
+      margin-bottom: 10px;
+    }
+
+    /* ─── REASSURANCE STRIP ──────────────────── */
+    .reassure-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .reassure-chip {
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.09);
+      padding: 12px 14px;
+      color: rgba(255,255,255,0.9);
+      font-size: 0.86rem;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .reassure-chip strong {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 2px;
+      color: #fff;
+    }
+
+    /* ─── CTA ────────────────────────────────── */
+    .cta-grid {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 22px;
+      align-items: center;
+      margin-top: 18px;
+    }
+
+    .cta-btn-stack {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .confirm-list {
+      list-style: none;
+      display: grid;
+      gap: 8px;
+      min-width: 240px;
+    }
+
+    .confirm-list li {
+      color: rgba(255,255,255,0.9);
+      font-size: 0.9rem;
+      padding-left: 20px;
+      position: relative;
+    }
+
+    .confirm-list li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: #6ef5be;
+      font-weight: 900;
+    }
+
+    /* ─── PROCESSING STATE ───────────────────── */
+    .processing-panel {
+      border-color: rgba(71,245,173,0.4);
+      box-shadow: 0 0 0 2px rgba(71,245,173,0.16), var(--shadow);
+      text-align: center;
+      padding: 40px 28px;
+    }
+
+    .processing-icon {
+      font-size: 2.4rem;
+      margin-bottom: 12px;
+    }
+
+    /* ─── ECONOMICS CHART ───────────────────── */
+    .econ-grid {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 18px;
+      align-items: start;
+      margin-top: 18px;
+    }
+
+    .chart-wrap {
+      background: rgba(255,255,255,0.97);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 22px 18px 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .chart-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 14px;
+    }
+
+    .bar-chart {
+      position: relative;
+      height: 180px;
+      display: flex;
+      align-items: flex-end;
+      gap: 5px;
+    }
+
+    .reposit-line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      border-top: 2.5px dashed var(--green);
+      bottom: calc(48% - 1px);
+      z-index: 3;
+    }
+
+    .reposit-line-label {
+      position: absolute;
+      right: 0;
+      top: -18px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: var(--green);
+      white-space: nowrap;
+      background: rgba(255,255,255,0.95);
+      padding: 1px 5px;
+      border-radius: 4px;
+    }
+
+    .bar-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      height: 100%;
+    }
+
+    .bar {
+      width: 100%;
+      border-radius: 5px 5px 0 0;
+      position: relative;
+      min-height: 6px;
+      transition: opacity 0.2s;
+    }
+
+    .bar.is-normal { background: linear-gradient(180deg, #5b9ec9 0%, #2a6b94 100%); }
+    .bar.is-winter { background: linear-gradient(180deg, #f97316 0%, #dc4a00 100%); }
+
+    .bar-label {
+      font-size: 0.65rem;
+      color: #6b7280;
+      font-weight: 600;
+      margin-top: 4px;
+      text-align: center;
+    }
+
+    .bar-val {
+      position: absolute;
+      top: -16px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.6rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .bar.is-winter .bar-val { color: #c2410c; }
+    .bar.is-normal .bar-val { color: var(--blue); }
+
+    .chart-legend {
+      display: flex;
+      gap: 14px;
+      margin-top: 10px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #6b7280;
+    }
+
+    .legend-dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      margin-right: 4px;
+      vertical-align: middle;
+    }
+
+    .econ-summary {
+      display: grid;
+      gap: 12px;
+    }
+
+    .econ-tile {
+      border-radius: 13px;
+      padding: 16px;
+    }
+
+    .econ-tile.tile-current {
+      background: #fff5f0;
+      border: 1px solid #fdc9aa;
+    }
+
+    .econ-tile.tile-reposit {
+      background: #f0fdf6;
+      border: 2px solid var(--green);
+      box-shadow: 0 0 0 3px rgba(25,195,125,0.12);
+    }
+
+    .econ-tile.tile-saving {
+      background: var(--ink);
+      border: 1px solid #1e2d45;
+    }
+
+    .econ-tile-label {
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      margin-bottom: 3px;
+    }
+
+    .tile-current .econ-tile-label  { color: #c2410c; }
+    .tile-reposit .econ-tile-label  { color: #0a7a4a; }
+    .tile-saving  .econ-tile-label  { color: #6ef5be; }
+
+    .econ-tile-value {
+      font-size: 1.75rem;
+      font-weight: 900;
+      line-height: 1.05;
+      margin-bottom: 2px;
+    }
+
+    .tile-current .econ-tile-value  { color: var(--ink); }
+    .tile-reposit .econ-tile-value  { color: #0e6b40; }
+    .tile-saving  .econ-tile-value  { color: #fff; }
+
+    .econ-tile-sub {
+      font-size: 0.82rem;
+    }
+
+    .tile-current .econ-tile-sub  { color: #92400e; }
+    .tile-reposit .econ-tile-sub  { color: #166534; }
+    .tile-saving  .econ-tile-sub  { color: rgba(255,255,255,0.7); }
+
+    .econ-disclaimer {
+      font-size: 0.74rem;
+      color: rgba(255,255,255,0.55);
+      margin-top: 10px;
+    }
+
+    /* ─── HIDDEN ─────────────────────────────── */
+    .hidden { display: none; }
+
+    /* ─── PACKAGE FIT / CALCULATOR BRIDGE ────── */
+    .calc-bridge-grid {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 18px;
+      align-items: start;
+      margin-top: 18px;
+    }
+
+    .calc-bridge-main .card-body { margin-bottom: 14px; }
+
+    .calc-levers {
+      list-style: none;
+      display: grid;
+      gap: 8px;
+      margin: 14px 0 18px;
+    }
+
+    .calc-levers li {
+      font-size: 0.9rem;
+      color: var(--muted);
+      padding-left: 22px;
+      position: relative;
+    }
+
+    .calc-levers li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.45em;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 0 3px rgba(25, 195, 125, 0.2);
+    }
+
+    .calc-bridge-aside {
+      border-radius: 14px;
+      padding: 20px;
+      background: linear-gradient(160deg, rgba(25, 195, 125, 0.12) 0%, rgba(42, 107, 148, 0.1) 100%);
+      border: 2px solid rgba(25, 195, 125, 0.35);
+      box-shadow: var(--shadow);
+    }
+
+    .calc-bridge-aside h3 {
+      color: var(--ink);
+      font-size: 1rem;
+      margin-bottom: 8px;
+    }
+
+    .calc-bridge-aside p {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-bottom: 14px;
+      line-height: 1.45;
+    }
+
+    .calc-bridge-seq {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--blue);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 10px;
+    }
+
+    .calc-bridge-steps {
+      list-style: none;
+      display: grid;
+      gap: 10px;
+      counter-reset: cs;
+    }
+
+    .calc-bridge-steps li {
+      counter-increment: cs;
+      font-size: 0.84rem;
+      color: var(--muted);
+      padding-left: 28px;
+      position: relative;
+      line-height: 1.4;
+    }
+
+    .calc-bridge-steps li::before {
+      content: counter(cs);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #e6f3ff;
+      border: 1px solid #bcd8f0;
+      color: #134b78;
+      font-weight: 900;
+      font-size: 0.72rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-ghost--on-light {
+      color: var(--ink);
+      border-color: rgba(15, 23, 42, 0.2);
+      background: rgba(255, 255, 255, 0.92);
+    }
+
+    .btn-ghost--on-light:hover {
+      background: rgba(255, 255, 255, 1);
+      border-color: rgba(15, 23, 42, 0.35);
+    }
+
+    .text-link-blue {
+      color: var(--blue);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .text-link-blue:hover {
+      text-decoration: underline;
+    }
+
+    .cta-inline-link {
+      color: rgba(255, 255, 255, 0.95);
+      text-decoration: underline;
+    }
+
+    .cta-inline-link:hover {
+      color: #fff;
+    }
+
+    .calc-bridge-main .btn-row {
+      margin-top: 0;
+    }
+
+    /* ─── OFFER SIMULATOR (consent → profile → API) ─ */
+    .sim-wrap {
+      margin-top: 22px;
+      padding: 22px 20px;
+      background: var(--card-bg);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .sim-demo-eyebrow {
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--blue);
+      margin-bottom: 6px;
+    }
+
+    .sim-h3 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--ink);
+      margin-bottom: 8px;
+    }
+
+    .sim-wrap > .card-body,
+    .sim-intro {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+
+    .sim-api-field {
+      margin-bottom: 16px;
+    }
+
+    .sim-api-field label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .sim-api-field input {
+      width: 100%;
+      max-width: 420px;
+      padding: 9px 11px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      font-size: 0.9rem;
+    }
+
+    .sim-progress {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin: 18px 0 8px;
+    }
+
+    .sim-progress-step {
+      text-align: center;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #64748b;
+      padding: 10px 8px;
+      border-radius: 11px;
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+    }
+
+    .sim-progress-step.is-active {
+      background: #e6f3ff;
+      color: #134b78;
+      border-color: #bcd8f0;
+    }
+
+    .sim-progress-step.is-done {
+      background: #ecfdf5;
+      color: #166534;
+      border-color: #bbf7d0;
+    }
+
+    .sim-progress-num {
+      display: block;
+      font-size: 1.05rem;
+      font-weight: 900;
+      margin-bottom: 2px;
+    }
+
+    .sim-panel {
+      display: none;
+      margin-top: 18px;
+      padding-top: 4px;
+    }
+
+    .sim-panel.is-active {
+      display: block;
+    }
+
+    .sim-field {
+      margin-bottom: 14px;
+    }
+
+    .sim-field label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 5px;
+    }
+
+    .sim-field input {
+      width: 100%;
+      max-width: 360px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      font-size: 1rem;
+    }
+
+    .sim-code-hint {
+      font-size: 0.86rem;
+      color: #166534;
+      background: #ecfdf5;
+      border: 1px solid #bbf7d0;
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin: 12px 0;
+      max-width: 420px;
+    }
+
+    .sim-fee-readout {
+      font-size: 0.9rem;
+      color: var(--ink);
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 14px;
+      max-width: 480px;
+      line-height: 1.45;
+    }
+
+    .sim-fee-readout strong {
+      color: #0e6b40;
+      font-weight: 800;
+    }
+
+    .sim-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .sim-loading {
+      text-align: center;
+      padding: 28px 16px;
+      color: var(--muted);
+    }
+
+    .sim-loading-icon {
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+
+    .sim-error {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+      padding: 12px 14px;
+      border-radius: 10px;
+      margin-bottom: 14px;
+      font-size: 0.88rem;
+      max-width: 560px;
+    }
+
+    .sim-divider {
+      margin: 26px 0 18px;
+      border: 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .processing-lead {
+      margin: 0 auto;
+      text-align: center;
+      max-width: 580px;
+    }
+
+    .processing-tip {
+      margin-top: 14px;
+      text-align: center;
+    }
+
+    .glass .sim-production-title {
+      color: #fff;
+      margin-bottom: 10px;
+      font-size: 1.15rem;
+      font-weight: 800;
+    }
+
+    .glass .sim-production-lead-tight {
+      margin-bottom: 16px;
+    }
+
+    /* ─── OFFER SIZING & PACKAGE CHOICE (customer UX) ─ */
+    .sim-sizing-banner {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 16px 20px;
+      margin-bottom: 16px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #e8f4fc 0%, #f0fdf6 100%);
+      border: 1px solid #bcd8f0;
+      box-shadow: 0 4px 16px rgba(42, 107, 148, 0.08);
+    }
+
+    .sim-sizing-label {
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: #64748b;
+      margin-bottom: 4px;
+    }
+
+    .sim-sizing-value {
+      font-size: 1.65rem;
+      font-weight: 900;
+      color: var(--ink);
+      line-height: 1.1;
+    }
+
+    .sim-sizing-value span {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #64748b;
+    }
+
+    .sim-sizing-meta {
+      text-align: right;
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .sim-sizing-meta strong {
+      color: var(--ink);
+    }
+
+    .sim-sizing-sub {
+      font-size: 0.8rem;
+      color: #64748b;
+      margin-top: 4px;
+    }
+
+    .sim-fair-sub {
+      font-size: 0.85em;
+      color: #64748b;
+    }
+
+    .sim-offers-lead {
+      font-size: 0.92rem;
+      color: var(--muted);
+      margin-bottom: 16px;
+      line-height: 1.5;
+      max-width: 720px;
+    }
+
+    .sim-constraint-summary {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-bottom: 12px;
+      padding: 10px 14px;
+      background: #f8fafc;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+    }
+
+    .sim-constraint-summary strong {
+      color: var(--ink);
+    }
+
+    .sim-offers-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 16px;
+      align-items: stretch;
+    }
+
+    .sim-pkg-card {
+      position: relative;
+      background: #fff;
+      border-radius: 16px;
+      padding: 22px 18px 18px;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .sim-pkg-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .sim-pkg-card--recommended {
+      border: 2px solid var(--green);
+      box-shadow: 0 0 0 4px rgba(25, 195, 125, 0.14), var(--shadow-lg);
+      transform: scale(1.02);
+      z-index: 1;
+    }
+
+    .sim-pkg-ribbon {
+      position: absolute;
+      top: -11px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, #2de49d 0%, #15b876 100%);
+      color: #042d14;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(25, 195, 125, 0.35);
+    }
+
+    .sim-pkg-badge {
+      display: inline-block;
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 14px;
+    }
+
+    .sim-pkg-badge--best {
+      background: linear-gradient(135deg, #f68d26 0%, #2a6b94 100%);
+      color: #fff;
+    }
+
+    .sim-pkg-badge--alt {
+      background: #e5e7eb;
+      color: #374151;
+    }
+
+    .sim-pkg-install {
+      font-size: 2.1rem;
+      font-weight: 900;
+      color: var(--ink);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .sim-pkg-install-label {
+      font-size: 0.82rem;
+      color: var(--muted);
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
+
+    .sim-pkg-monthly {
+      background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 14px;
+    }
+
+    .sim-pkg-card--recommended .sim-pkg-monthly {
+      background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+    }
+
+    .sim-pkg-monthly-amt {
+      font-size: 1.55rem;
+      font-weight: 800;
+      color: #0e6b40;
+      line-height: 1.1;
+    }
+
+    .sim-pkg-monthly-lbl {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #166534;
+      margin-top: 2px;
+    }
+
+    .sim-pkg-attrs {
+      list-style: none;
+      text-align: left;
+      margin-bottom: 12px;
+      flex: 1;
+    }
+
+    .sim-pkg-attrs li {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 0.84rem;
+      color: var(--muted);
+    }
+
+    .sim-pkg-attrs li strong {
+      color: var(--ink);
+      font-weight: 700;
+      text-align: right;
+    }
+
+    .sim-pkg-fit {
+      font-size: 0.75rem;
+      color: #64748b;
+      margin-bottom: 10px;
+    }
+
+    .sim-pkg-saving {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+      text-align: left;
+    }
+
+    .sim-pkg-card--recommended .sim-pkg-saving {
+      border-width: 2px;
+      border-color: var(--green);
+    }
+
+    .sim-pkg-saving-lbl {
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #15803d;
+      margin-bottom: 2px;
+    }
+
+    .sim-pkg-saving-val {
+      font-size: 1.35rem;
+      font-weight: 900;
+      color: #16a34a;
+    }
+
+    .sim-pkg-saving-val--muted {
+      font-size: 1rem;
+      color: #64748b;
+      font-weight: 700;
+    }
+
+    .sim-pkg-saving-suffix {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #15803d;
+    }
+
+    .sim-pkg-saving-note {
+      font-size: 0.68rem;
+      color: #6b7280;
+      margin-top: 4px;
+      line-height: 1.35;
+    }
+
+    .sim-pkg-select {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: none;
+      font-weight: 800;
+      font-size: 0.88rem;
+      cursor: pointer;
+      background: #f1f5f9;
+      color: #334155;
+      transition: all 0.2s ease;
+    }
+
+    .sim-pkg-select:hover {
+      background: linear-gradient(135deg, #2de49d 0%, #15b876 100%);
+      color: #042d14;
+    }
+
+    .sim-pkg-card--recommended .sim-pkg-select {
+      background: linear-gradient(135deg, #2de49d 0%, #15b876 100%);
+      color: #042d14;
+    }
+
+    .sim-pkg-card--selected {
+      outline: 3px solid #2a6b94;
+      outline-offset: 2px;
+    }
+
+    .sim-loading-facts {
+      min-height: 3.2em;
+      margin-top: 12px;
+    }
+
+    .sim-loading-fact {
+      font-size: 0.92rem;
+      color: var(--muted);
+      font-style: italic;
+      animation: simFadeFact 0.45s ease;
+    }
+
+    @keyframes simFadeFact {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .sim-choice-confirm {
+      margin-top: 22px;
+      padding: 20px 20px 22px;
+      border-radius: 14px;
+      background: #f8fafc;
+      border: 2px solid #2a6b94;
+      max-width: 640px;
+    }
+
+    .sim-choice-confirm.hidden {
+      display: none;
+    }
+
+    .energy-modal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(15, 23, 42, 0.58);
+      z-index: 2000;
+    }
+
+    .energy-modal.is-open {
+      display: flex;
+    }
+
+    .energy-modal-card {
+      width: min(560px, 100%);
+      background: #fff;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow-lg);
+      padding: 22px 20px;
+    }
+
+    .energy-modal-title {
+      margin-bottom: 8px;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    .energy-modal-copy {
+      font-size: 0.92rem;
+      color: var(--muted);
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .energy-modal-row {
+      margin-bottom: 12px;
+    }
+
+    .energy-modal-row label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .energy-modal-row input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 0.95rem;
+    }
+
+    /* Bill upload drop zone */
+    .bill-upload-zone {
+      border: 2px dashed #cbd5e1;
+      border-radius: 12px;
+      padding: 22px 16px;
+      text-align: center;
+      background: #f8fafc;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      margin-bottom: 16px;
+      position: relative;
+    }
+
+    .bill-upload-zone:hover,
+    .bill-upload-zone.is-drag-over {
+      border-color: var(--blue);
+      background: #eff6ff;
+    }
+
+    .bill-upload-zone.is-selected {
+      border-color: var(--green);
+      background: #f0fdf4;
+    }
+
+    .bill-upload-zone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+
+    .bill-upload-icon { font-size: 2rem; margin-bottom: 8px; }
+
+    .bill-upload-label {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+
+    .bill-upload-sub {
+      font-size: 0.78rem;
+      color: #94a3b8;
+    }
+
+    .bill-upload-filename {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #16a34a;
+      margin-top: 6px;
+    }
+
+    /* Bill guide — shows where to find the number */
+    .bill-guide {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 16px;
+      font-size: 0.82rem;
+      color: #92400e;
+      line-height: 1.55;
+    }
+
+    .bill-guide strong { color: #78350f; }
+
+    .bill-guide-items {
+      list-style: none;
+      margin-top: 6px;
+      display: grid;
+      gap: 4px;
+    }
+
+    .bill-guide-items li {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+    }
+
+    .bill-guide-items li::before {
+      content: "→";
+      font-weight: 700;
+      color: #d97706;
+      flex-shrink: 0;
+    }
+
+    /* OR divider */
+    .modal-or-divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 14px 0;
+      color: #9ca3af;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .modal-or-divider::before,
+    .modal-or-divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: #e5e7eb;
+    }
+
+    .energy-modal-error {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+      border-radius: 10px;
+      font-size: 0.84rem;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+    }
+
+    .sim-choice-confirm h4 {
+      margin-bottom: 10px;
+    }
+
+    .sim-choice-summary {
+      font-size: 0.92rem;
+      color: var(--muted);
+      line-height: 1.55;
+      margin-bottom: 14px;
+    }
+
+    .sim-choice-summary strong {
+      color: var(--ink);
+    }
+
+    .sim-choice-list {
+      list-style: none;
+      margin: 12px 0 16px;
+      padding: 12px 14px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      font-size: 0.86rem;
+    }
+
+    .sim-choice-list li {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 6px 0;
+      border-bottom: 1px solid #f1f5f9;
+      color: var(--muted);
+    }
+
+    .sim-choice-list li:last-child {
+      border-bottom: 0;
+    }
+
+    .sim-choice-list strong {
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    .sim-choice-footnote {
+      margin-top: 12px;
+      margin-bottom: 0;
+    }
+
+    .sim-sizing-banner.hidden {
+      display: none;
+    }
+
+    /* ─── ILLUSTRATED STEPS ─────────────────── */
+    .journey-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      margin-top: 28px;
+      position: relative;
+    }
+
+    .journey-step {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* connector line between steps */
+    .journey-step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 96px;
+      right: -1px;
+      width: 2px;
+      height: 40px;
+      background: linear-gradient(180deg, #bcd8f0 0%, #e2e8f0 100%);
+      z-index: 2;
+    }
+
+    @media (min-width: 769px) {
+      .journey-step:not(:last-child)::after {
+        top: 96px;
+        right: 0;
+        width: 100%;
+        height: 2px;
+        left: 50%;
+        background: linear-gradient(90deg, #bcd8f0 0%, #e2e8f0 100%);
+      }
+    }
+
+    .journey-card {
+      background: var(--card-bg);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s, box-shadow 0.2s;
+      margin: 0 6px;
+    }
+
+    .journey-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .journey-card--install {
+      border: 2px solid var(--green);
+      box-shadow: 0 0 0 3px rgba(25,195,125,0.1), var(--shadow);
+    }
+
+    .journey-illus {
+      width: 100%;
+      height: 160px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(160deg, #f0f7ff 0%, #e8f4f0 100%);
+      border-bottom: 1px solid var(--line);
+      padding: 16px;
+    }
+
+    .journey-card--install .journey-illus {
+      background: linear-gradient(160deg, #f0fdf6 0%, #e8f4ec 100%);
+    }
+
+    .journey-illus svg {
+      width: 100%;
+      height: 100%;
+      max-width: 200px;
+    }
+
+    .journey-body {
+      padding: 16px 18px 20px;
+      flex: 1;
+    }
+
+    .journey-step-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--blue);
+      margin-bottom: 8px;
+    }
+
+    .journey-step-tag .step-badge {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #e6f3ff;
+      border: 1px solid #bcd8f0;
+      color: #134b78;
+      font-weight: 900;
+      font-size: 0.72rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .journey-card--install .journey-step-tag {
+      color: #0a7a4a;
+    }
+
+    .journey-card--install .step-badge {
+      background: #ecfdf5;
+      border-color: #bbf7d0;
+      color: #166534;
+    }
+
+    .journey-h3 {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--ink);
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }
+
+    .journey-p {
+      font-size: 0.86rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .journey-time {
+      margin-top: 10px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #64748b;
+      background: #f1f5f9;
+      border-radius: 6px;
+      padding: 4px 8px;
+      display: inline-block;
+    }
+
+    .journey-card--install .journey-time {
+      background: #ecfdf5;
+      color: #166534;
+    }
+
+    .controller-callout {
+      margin-top: 20px;
+      padding: 18px 22px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #f0fdf6 0%, #e8f4f0 100%);
+      border: 2px solid var(--green);
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .controller-callout-icon {
+      font-size: 2rem;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+
+    .controller-callout h4 {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #0a7a4a;
+      margin-bottom: 4px;
+    }
+
+    .controller-callout p {
+      font-size: 0.86rem;
+      color: #166534;
+      line-height: 1.5;
+    }
+
+    /* ─── WIZARD OVERLAY ────────────────────── */
+    .wizard-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      display: flex;
+      flex-direction: column;
+      background:
+        url(https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/noise.png),
+        radial-gradient(circle at top left, rgba(246,141,38,1) 5%, rgba(203,128,70,1) 20%, rgba(42,107,148,1) 60%, rgba(19,26,43,1) 100%);
+      background-blend-mode: multiply;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(30px);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+      overflow-y: auto;
+    }
+
+    .wizard-overlay.is-open {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    .wizard-header {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .wizard-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #fff;
+      font-weight: 900;
+      font-size: 1.1rem;
+      letter-spacing: -0.01em;
+    }
+
+    .wizard-logo-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #F68D26 0%, #2a6b94 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+
+    .wizard-close {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 8px;
+      color: rgba(255,255,255,0.85);
+      padding: 7px 14px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .wizard-close:hover {
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+    }
+
+    .wizard-progress-bar {
+      flex-shrink: 0;
+      padding: 12px 24px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      max-width: 640px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .wizard-prog-step {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .wizard-prog-bar {
+      width: 100%;
+      height: 4px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .wizard-prog-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--green);
+      border-radius: 4px;
+      transition: width 0.4s ease;
+    }
+
+    .wizard-prog-step.is-done .wizard-prog-fill { width: 100%; }
+    .wizard-prog-step.is-active .wizard-prog-fill { width: 50%; }
+
+    .wizard-prog-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: rgba(255,255,255,0.5);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      transition: color 0.3s;
+    }
+
+    .wizard-prog-step.is-active .wizard-prog-label { color: rgba(255,255,255,0.9); }
+    .wizard-prog-step.is-done .wizard-prog-label   { color: var(--green); }
+
+    .wizard-body {
+      flex: 1;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 24px 16px 40px;
+    }
+
+    /* Individual wizard steps */
+    .wiz-step {
+      display: none;
+      width: 100%;
+      animation: wizFadeIn 0.3s ease forwards;
+    }
+
+    .wiz-step.is-active { display: block; }
+
+    /* Wide step (offers grid) */
+    .wiz-step--wide { max-width: 980px; }
+    .wiz-step--narrow { max-width: 520px; }
+
+    @keyframes wizFadeIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .wiz-card {
+      background: rgba(255,255,255,0.97);
+      border-radius: 20px;
+      padding: 36px 40px;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.3);
+    }
+
+    .wiz-card--loading {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.16);
+      text-align: center;
+      padding: 60px 40px;
+    }
+
+    .wiz-eyebrow {
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--blue);
+      margin-bottom: 6px;
+    }
+
+    .wiz-title {
+      font-size: clamp(1.4rem, 2.4vw, 1.8rem);
+      font-weight: 900;
+      color: var(--ink);
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+
+    .wiz-card--loading .wiz-title {
+      color: #fff;
+      font-size: 1.5rem;
+    }
+
+    .wiz-body-text {
+      font-size: 0.92rem;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 22px;
+    }
+
+    .wiz-field {
+      margin-bottom: 16px;
+    }
+
+    .wiz-field label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 5px;
+    }
+
+    .wiz-field input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid var(--line);
+      border-radius: 12px;
+      font-size: 1rem;
+      background: #f9fafb;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .wiz-field input:focus {
+      outline: none;
+      border-color: var(--blue);
+      background: #fff;
+      box-shadow: 0 0 0 4px rgba(42,107,148,0.1);
+    }
+
+    .wiz-field input.wiz-code-input {
+      text-align: center;
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: 0.5rem;
+    }
+
+    .wiz-hint {
+      background: #ecfdf5;
+      border: 1px solid #bbf7d0;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 0.85rem;
+      color: #166534;
+      margin-bottom: 16px;
+    }
+
+    .wiz-hint.is-error {
+      background: #fef2f2;
+      border-color: #fecaca;
+      color: #991b1b;
+    }
+
+    .wiz-btn-row {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .wiz-btn-primary {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #F68D26 0%, #2a6b94 100%);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: filter 0.2s, transform 0.2s;
+    }
+
+    .wiz-btn-primary:hover:not(:disabled) {
+      filter: brightness(1.07);
+      transform: translateY(-2px);
+    }
+
+    .wiz-btn-primary:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .wiz-btn-secondary {
+      background: transparent;
+      border: none;
+      color: #6b7280;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: underline;
+      padding: 4px;
+      text-align: center;
+    }
+
+    .wiz-reassure {
+      margin-top: 16px;
+      font-size: 0.78rem;
+      color: #9ca3af;
+      text-align: center;
+    }
+
+    /* Loading step */
+    .wiz-loading-icon {
+      font-size: 3rem;
+      margin-bottom: 16px;
+      animation: wiz-pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes wiz-pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.6; transform: scale(0.92); }
+    }
+
+    .wiz-progress-track {
+      width: 100%;
+      max-width: 340px;
+      height: 6px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 6px;
+      margin: 16px auto 0;
+      overflow: hidden;
+    }
+
+    .wiz-progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--green);
+      border-radius: 6px;
+      transition: width 0.15s linear;
+    }
+
+    .wiz-loading-fact {
+      font-size: 0.92rem;
+      color: rgba(255,255,255,0.75);
+      font-style: italic;
+      margin-top: 16px;
+      min-height: 2.4em;
+      animation: wizFadeIn 0.4s ease;
+    }
+
+    /* Offers step */
+    .wiz-offers-banner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 12px;
+      padding: 14px 20px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .wiz-offers-banner-label {
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: rgba(255,255,255,0.65);
+      margin-bottom: 2px;
+    }
+
+    .wiz-offers-banner-val {
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: #fff;
+      line-height: 1;
+    }
+
+    .wiz-offers-banner-sub {
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.7);
+    }
+
+    .wiz-offers-intro {
+      font-size: 0.88rem;
+      color: rgba(255,255,255,0.8);
+      margin-bottom: 16px;
+      line-height: 1.55;
+    }
+
+    .wiz-offers-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .wiz-pkg-card {
+      position: relative;
+      background: rgba(255,255,255,0.97);
+      border-radius: 16px;
+      padding: 22px 18px 18px;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+    }
+
+    .wiz-pkg-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+
+    .wiz-pkg-card--recommended {
+      border: 2px solid var(--green);
+      box-shadow: 0 0 0 4px rgba(25,195,125,0.15), var(--shadow-lg);
+      transform: scale(1.02);
+      z-index: 1;
+    }
+
+    .wiz-pkg-card--selected {
+      outline: 3px solid var(--blue);
+      outline-offset: 2px;
+    }
+
+    .wiz-pkg-ribbon {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, #2de49d 0%, #15b876 100%);
+      color: #042d14;
+      padding: 4px 14px;
+      border-radius: 999px;
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(25,195,125,0.35);
+    }
+
+    .wiz-pkg-badge {
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+      display: inline-block;
+    }
+
+    .wiz-pkg-badge--best { background: linear-gradient(135deg, #f68d26 0%, #2a6b94 100%); color: #fff; }
+    .wiz-pkg-badge--alt  { background: #e5e7eb; color: #374151; }
+
+    .wiz-pkg-install {
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--ink);
+      line-height: 1;
+      margin-bottom: 2px;
+    }
+
+    .wiz-pkg-install-label {
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .wiz-pkg-monthly {
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    }
+
+    .wiz-pkg-card--recommended .wiz-pkg-monthly {
+      background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+    }
+
+    .wiz-pkg-monthly-amt {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #0e6b40;
+      line-height: 1.1;
+    }
+
+    .wiz-pkg-monthly-lbl {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #166534;
+    }
+
+    .wiz-pkg-attrs {
+      list-style: none;
+      text-align: left;
+      margin-bottom: 10px;
+      flex: 1;
+    }
+
+    .wiz-pkg-attrs li {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 8px 0;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    .wiz-pkg-attrs li strong { color: var(--ink); font-weight: 700; }
+
+    .wiz-pkg-saving {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 8px;
+      padding: 8px 10px;
+      margin-bottom: 10px;
+      text-align: left;
+    }
+
+    .wiz-pkg-card--recommended .wiz-pkg-saving { border-color: var(--green); border-width: 2px; }
+
+    .wiz-pkg-saving-lbl { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #15803d; margin-bottom: 2px; }
+    .wiz-pkg-saving-val { font-size: 1.25rem; font-weight: 900; color: #16a34a; }
+    .wiz-pkg-saving-note { font-size: 0.65rem; color: #6b7280; margin-top: 2px; }
+
+    .wiz-pkg-select {
+      width: 100%;
+      padding: 11px;
+      border-radius: 10px;
+      border: none;
+      font-weight: 800;
+      font-size: 0.84rem;
+      cursor: pointer;
+      background: #f1f5f9;
+      color: #334155;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .wiz-pkg-select:hover,
+    .wiz-pkg-card--recommended .wiz-pkg-select {
+      background: linear-gradient(135deg, #2de49d 0%, #15b876 100%);
+      color: #042d14;
+    }
+
+    .wiz-error-banner {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 0.88rem;
+      margin-bottom: 16px;
+    }
+
+    .wiz-constraint-note {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.65);
+      margin-bottom: 12px;
+      padding: 8px 12px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 8px;
+    }
+
+    /* Confirm step */
+    /* ─── CONFIRM PANEL — conversion-optimised ───────── */
+    .wiz-confirm-card {
+      background: rgba(255,255,255,0.97);
+      border-radius: 20px;
+      padding: 36px 40px 32px;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.3);
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    /* Before/after savings hero */
+    /* Savings hero — estimate-first, certainty-focused */
+    .wiz-savings-hero {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+      border-radius: 16px;
+      padding: 26px 28px 22px;
+      margin-bottom: 22px;
+      text-align: center;
+    }
+
+    .wiz-savings-est-label {
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 8px;
+    }
+
+    .wiz-savings-est-amt {
+      font-size: clamp(2.6rem, 5vw, 3.6rem);
+      font-weight: 900;
+      color: var(--green);
+      line-height: 1;
+      letter-spacing: -0.03em;
+      margin-bottom: 6px;
+    }
+
+    .wiz-savings-est-sub {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 4px;
+    }
+
+    .wiz-savings-est-qualifier {
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.35);
+      font-style: italic;
+      margin-bottom: 16px;
+    }
+
+    /* Certainty bar inside savings hero */
+    .wiz-certainty-bar {
+      background: rgba(25,195,125,0.14);
+      border: 1px solid rgba(25,195,125,0.3);
+      border-radius: 10px;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .wiz-certainty-icon {
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .wiz-certainty-text {
+      font-size: 0.88rem;
+      font-weight: 800;
+      color: #86efac;
+      text-align: left;
+    }
+
+    .wiz-certainty-text span {
+      font-size: 1rem;
+      color: var(--green);
+    }
+
+    .wiz-certainty-sub {
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.45);
+      font-weight: 500;
+      width: 100%;
+      text-align: center;
+      margin-top: 4px;
+    }
+
+    /* Plan recap pill */
+    .wiz-plan-recap {
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 14px 18px;
+      margin-bottom: 18px;
+    }
+
+    .wiz-plan-recap-label {
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--blue);
+      margin-bottom: 10px;
+    }
+
+    .wiz-plan-recap-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 16px;
+    }
+
+    .wiz-plan-recap-item {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .wiz-plan-recap-item-label {
+      font-size: 0.7rem;
+      color: #94a3b8;
+      font-weight: 600;
+    }
+
+    .wiz-plan-recap-item-val {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    /* Urgency strip */
+    .wiz-urgency-strip {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin-bottom: 20px;
+      font-size: 0.85rem;
+      color: #92400e;
+      font-weight: 600;
+    }
+
+    .wiz-urgency-icon { font-size: 1rem; flex-shrink: 0; }
+
+    .wiz-urgency-strip strong { color: #78350f; }
+
+    /* Primary CTA block */
+    .wiz-confirm-cta-block {
+      margin-bottom: 16px;
+    }
+
+    .wiz-confirm-cta-block .wiz-btn-primary {
+      font-size: 1.1rem;
+      padding: 18px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #2de49d 0%, #15b876 100%);
+      color: #042d14;
+      box-shadow: 0 10px 30px rgba(25,195,125,0.45);
+      letter-spacing: -0.01em;
+    }
+
+    .wiz-confirm-cta-block .wiz-btn-primary:hover:not(:disabled) {
+      box-shadow: 0 14px 40px rgba(25,195,125,0.55);
+    }
+
+    .wiz-confirm-cta-sub {
+      text-align: center;
+      font-size: 0.8rem;
+      color: #64748b;
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+
+    /* Trust strip */
+    .wiz-trust-strip {
+      list-style: none;
+      display: grid;
+      gap: 8px;
+      margin-bottom: 18px;
+      padding: 16px 18px;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 12px;
+    }
+
+    .wiz-trust-strip li {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      font-size: 0.85rem;
+      color: #166534;
+      line-height: 1.4;
+    }
+
+    .wiz-trust-icon {
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--green);
+      color: #fff;
+      font-size: 0.62rem;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+    }
+
+    .wiz-trust-strip strong { color: #14532d; }
+
+    /* Social proof bar */
+    .wiz-social-proof {
+      text-align: center;
+      font-size: 0.82rem;
+      color: #6b7280;
+      margin-bottom: 16px;
+      padding: 10px;
+      border-top: 1px solid #f1f5f9;
+    }
+
+    .wiz-social-proof strong { color: var(--ink); }
+
+    /* Escape link */
+    .wiz-confirm-escape {
+      text-align: center;
+    }
+
+    .wiz-confirm-escape button {
+      background: none;
+      border: none;
+      font-size: 0.82rem;
+      color: #9ca3af;
+      cursor: pointer;
+      text-decoration: underline;
+      padding: 4px;
+    }
+
+    .wiz-confirm-escape button:hover { color: #6b7280; }
+
+    /* Next steps (collapsed under CTA) */
+    .wiz-next-steps-toggle {
+      font-size: 0.82rem;
+      color: #94a3b8;
+      text-align: center;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 4px;
+      margin: 0 auto 10px;
+      display: block;
+      text-decoration: underline;
+    }
+
+    .wiz-next-steps {
+      list-style: none;
+      margin: 0 0 16px;
+      display: none;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .wiz-next-steps.is-open {
+      display: grid;
+    }
+
+    .wiz-next-steps li {
+      display: flex;
+      gap: 12px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      align-items: flex-start;
+    }
+
+    .wiz-next-step-num {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #F68D26 0%, #2a6b94 100%);
+      color: #fff;
+      font-size: 0.68rem;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .wiz-chosen-summary { display: none; }
+    .wiz-chosen-list { display: none; }
+
+    /* CTA section (replaces the embedded assessment block on the landing page) */
+    .landing-cta-block {
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px 0 8px;
+    }
+
+    .landing-cta-block .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px 40px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #2de49d 0%, #15b876 100%);
+      color: #042d14;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 10px 30px rgba(25,195,125,0.4);
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .landing-cta-block .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 36px rgba(25,195,125,0.5);
+    }
+
+    .landing-cta-notes {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 18px;
+      margin-top: 14px;
+    }
+
+    .landing-cta-note {
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.75);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* ─── RESPONSIVE ─────────────────────────── */
+    @media (max-width: 1024px) {
+      .hero-grid  { grid-template-columns: 1fr; }
+      .steps-grid { grid-template-columns: repeat(2, 1fr); }
+      .compare-grid { grid-template-columns: 1fr; }
+      .econ-grid  { grid-template-columns: 1fr; }
+      .calc-bridge-grid { grid-template-columns: 1fr; }
+      .journey-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .journey-step::after { display: none !important; }
+    }
+
+    @media (max-width: 720px) {
+      /* Revert to normal scroll on mobile — snapping feels jarring */
+      html, body { overflow: auto; height: auto; }
+      .page {
+        height: auto;
+        overflow-y: auto;
+        scroll-snap-type: none;
+      }
+      .section {
+        scroll-snap-align: unset;
+        min-height: auto;
+        padding: 48px 16px 40px;
+      }
+      .section-dots { display: none; }
+      .scroll-hint { display: none; }
+      .hero-main { padding: 22px; }
+      .glass { padding: 20px; }
+      .steps-grid { grid-template-columns: 1fr; }
+      .reassure-row { grid-template-columns: 1fr; }
+      .cta-grid { grid-template-columns: 1fr; }
+      .btn { width: 100%; }
+      .sim-offers-grid { grid-template-columns: 1fr; }
+      .journey-grid { grid-template-columns: 1fr; }
+      .controller-callout { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+
+    <!-- ── HERO ──────────────────────────────────────── -->
+    <section class="hero section" id="the-problem" data-section="0">
+      <div class="container">
+        <div class="hero-grid">
+
+          <article class="glass hero-main">
+            <p class="eyebrow">Reposit No Bill Retrofit</p>
+            <h1>You Already Have a Battery.<br>You Should Not Still Have a Bill.</h1>
+            <p class="lead">
+              Most battery owners are still paying variable electricity bills, including daily supply charges.
+              Reposit adds smart trading to your existing system and replaces all of that with one simple,
+              fixed monthly fee — set lower than what you pay today.
+            </p>
+            <div class="btn-row">
+              <button class="btn btn-primary" onclick="openWizard()">Get My Free Assessment</button>
+            </div>
+            <p class="hero-note">
+              Takes 60 seconds to connect your battery data. Your personalised offer arrives by email in about 15 minutes. No commitment until you choose a plan.
+            </p>
+            <div class="tags">
+              <span class="tag">$0 Electricity Bill</span>
+              <span class="tag">One Fixed Monthly Fee</span>
+              <span class="tag">Your Existing Battery Stays</span>
+              <span class="tag">We Handle the Setup</span>
+            </div>
+          </article>
+
+          <aside class="outcome-stack" aria-label="Key outcomes">
+            <div class="outcome-tile">
+              <p class="outcome-tile-label">Your Electricity Bill</p>
+              <p class="outcome-tile-value">$0</p>
+              <p class="outcome-tile-sub">Including daily supply charges. Every month.</p>
+            </div>
+            <div class="outcome-tile">
+              <p class="outcome-tile-label">What You Pay Instead</p>
+              <p class="outcome-tile-value">One Fixed Fee</p>
+              <p class="outcome-tile-sub">Less than your current average electricity spend.</p>
+            </div>
+            <div class="outcome-tile">
+              <p class="outcome-tile-label">Time to Your Offer</p>
+              <p class="outcome-tile-value">~15 Minutes</p>
+              <p class="outcome-tile-sub">From consent to offer in your inbox.</p>
+            </div>
+          </aside>
+
+        </div>
+      </div>
+      <div class="scroll-hint" onclick="scrollToSection(1)" aria-hidden="true">
+        <span>See what changes</span>
+        <span class="scroll-hint-arrow">↓</span>
+      </div>
+    </section>
+
+    <!-- ── WHAT YOU GET ──────────────────────────────── -->
+    <section class="section" id="what-you-get" data-section="1">
+      <div class="container">
+        <div class="glass">
+          <h2>What actually changes when you retrofit with Reposit</h2>
+          <p class="lead">
+            Right now your battery stores solar and discharges at home — but it does not trade. That means you are
+            still paying retail rates, supply charges, and absorbing winter price spikes. Reposit changes that.
+          </p>
+
+          <div class="compare-grid">
+            <article class="card compare-card">
+              <h3>Without Reposit</h3>
+              <ul>
+                <li>Variable electricity rates every quarter</li>
+                <li>Daily supply charges you can not avoid</li>
+                <li>Higher bills when solar is low in winter</li>
+                <li>No certainty on what you'll pay next month</li>
+              </ul>
+            </article>
+
+            <article class="card compare-card is-winner">
+              <span class="winner-badge">With Reposit</span>
+              <h3>A single, predictable monthly cost</h3>
+              <ul>
+                <li>$0 electricity retailer bill — including supply charges</li>
+                <li>One fixed monthly fee, lower than your current spend</li>
+                <li>Value maintained through winter and cloudy periods</li>
+                <li>You know exactly what you pay, every month</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </div>
+      <div class="scroll-hint" onclick="scrollToSection(2)" aria-hidden="true">
+        <span>See the numbers</span>
+        <span class="scroll-hint-arrow">↓</span>
+      </div>
+    </section>
+
+    <!-- ── THE NUMBERS ──────────────────────────────── -->
+    <section class="section" id="the-numbers" data-section="2">
+      <div class="container">
+        <div class="glass">
+          <h2>What the numbers actually look like</h2>
+          <p class="lead">
+            These are indicative figures based on a typical household with a battery system. Your personalised
+            offer will be based on your actual usage profile.
+          </p>
+
+          <div class="econ-grid">
+
+            <!-- Bar chart -->
+            <div class="chart-wrap">
+              <p class="chart-title">Indicative Monthly Electricity Bills — Current vs Reposit</p>
+              <div class="bar-chart">
+                <!-- Reposit flat-fee dashed line at ~$149, shown at 48% from bottom (149/310 = 48%) -->
+                <div class="reposit-line">
+                  <span class="reposit-line-label">Reposit $149/mo</span>
+                </div>
+                <!-- Bars: height % = (value / 310) * 100 -->
+                <div class="bar-col">
+                  <div class="bar is-normal" style="height:35%"><span class="bar-val">$109</span></div>
+                  <span class="bar-label">Jan</span>
+                </div>
+                <div class="bar-col">
+                  <div class="bar is-normal" style="height:39%"><span class="bar-val">$120</span></div>
+                  <span class="bar-label">Feb</span>
+                </div>
+                <div class="bar-col">
+                  <div class="bar is-normal" style="height:42%"><span class="bar-val">$131</span></div>
+                  <span class="bar-label">Mar</span>
+                </div>
+                <div class="bar-col">
+                  <div class="bar is-normal" style="height:50%"><span class="bar-val">$155</span></div>
+                  <span class="bar-label">Apr</span>
+                </div>
+                <div class="bar-col">
+                  <div class="bar is-normal" style="height:61%"><span class="bar-val">$190</span></div>
+                  <span class="bar-label">May</span>
+                </div>
+                <div class="bar-col">
+                  <div class="bar is-winter" style="height:90%"><span class="bar-val">$280</span></div>
+                  <span class="bar-label">Jun</span>
+                </div>
+                <div class="bar-col">
+                  <div class="bar is-winter" style="height:100%"><span class="bar-val">$310</span></div>
+                  <span class="bar-label">Jul</span>
+                </div>
+                <div class="bar-col">
+                  <div class="bar is-winter" style="height:92%"><span class="bar-val">$285</span></div>
+                  <span class="bar-label">Aug</span>
+                </div>
+                <div class="bar-col">
+                  <div class="bar is-normal" style="height:55%"><span class="bar-val">$170</span></div>
+                  <span class="bar-label">Sep</span>
+                </div>
+                <div class="bar-col">
+                  <div class="bar is-normal" style="height:47%"><span class="bar-val">$145</span></div>
+                  <span class="bar-label">Oct</span>
+                </div>
+                <div class="bar-col">
+                  <div class="bar is-normal" style="height:40%"><span class="bar-val">$125</span></div>
+                  <span class="bar-label">Nov</span>
+                </div>
+                <div class="bar-col">
+                  <div class="bar is-normal" style="height:37%"><span class="bar-val">$114</span></div>
+                  <span class="bar-label">Dec</span>
+                </div>
+              </div>
+              <div class="chart-legend">
+                <span><span class="legend-dot" style="background:#2a6b94;"></span>Typical bill</span>
+                <span><span class="legend-dot" style="background:#f97316;"></span>Winter peak</span>
+                <span><span class="legend-dot" style="background:none; border:2px dashed #19c37d; border-radius:0;"></span>Reposit fee</span>
+              </div>
+            </div>
+
+            <!-- Summary tiles -->
+            <div class="econ-summary">
+              <div class="econ-tile tile-current">
+                <p class="econ-tile-label">Current Annual Cost</p>
+                <p class="econ-tile-value">~$2,134</p>
+                <p class="econ-tile-sub">Variable bills ranging from $109 to $310. Winter months up to 3× higher than summer.</p>
+              </div>
+              <div class="econ-tile tile-reposit">
+                <p class="econ-tile-label">With Reposit</p>
+                <p class="econ-tile-value">~$1,788</p>
+                <p class="econ-tile-sub">$149 flat every month. No spikes. No surprises. Supply charges included.</p>
+              </div>
+              <div class="econ-tile tile-saving">
+                <p class="econ-tile-label">Indicative Annual Saving</p>
+                <p class="econ-tile-value">~$346</p>
+                <p class="econ-tile-sub">Plus the certainty of knowing exactly what you pay every single month.</p>
+              </div>
+            </div>
+
+          </div>
+          <p class="econ-disclaimer">* Indicative figures only. Based on a typical household with an existing battery system in south-east Australia. Your personalised offer is calculated from your actual usage data and may differ.</p>
+        </div>
+      </div>
+      <div class="scroll-hint" onclick="scrollToSection(3)" aria-hidden="true">
+        <span>How it works</span>
+        <span class="scroll-hint-arrow">↓</span>
+      </div>
+    </section>
+
+    <!-- ── HOW IT WORKS ──────────────────────────────── -->
+    <section class="section" id="how-it-works" data-section="3">
+      <div class="container">
+        <div class="glass">
+          <p class="eyebrow">Simple from start to finish</p>
+          <h2>Four steps. Most of it is automatic.</h2>
+          <p class="lead">
+            The only thing you do is share your usage data and choose your plan. We handle the analysis, the offer, the installation and the paperwork.
+          </p>
+
+          <div class="journey-grid">
+
+            <!-- STEP 1 -->
+            <div class="journey-step">
+              <article class="journey-card">
+                <div class="journey-illus">
+                  <!-- Battery house + email connection SVG -->
+                  <svg viewBox="0 0 220 150" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <!-- House body -->
+                    <rect x="30" y="72" width="80" height="62" rx="3" fill="#e6f3ff" stroke="#2a6b94" stroke-width="1.5"/>
+                    <!-- Roof -->
+                    <path d="M22 75 L70 38 L118 75Z" fill="#2a6b94" opacity="0.18" stroke="#2a6b94" stroke-width="1.5" stroke-linejoin="round"/>
+                    <!-- Solar panels on roof -->
+                    <rect x="46" y="50" width="18" height="10" rx="1" fill="#2a6b94" opacity="0.55"/>
+                    <rect x="68" y="50" width="18" height="10" rx="1" fill="#2a6b94" opacity="0.55"/>
+                    <!-- Battery unit in house -->
+                    <rect x="52" y="98" width="36" height="24" rx="3" fill="#2a6b94"/>
+                    <rect x="66" y="94" width="8" height="5" rx="1" fill="#2a6b94"/>
+                    <!-- Battery level bars -->
+                    <rect x="55" y="101" width="7" height="15" rx="1" fill="#19c37d"/>
+                    <rect x="65" y="101" width="7" height="15" rx="1" fill="#19c37d" opacity="0.6"/>
+                    <rect x="75" y="101" width="7" height="15" rx="1" fill="#e2e8f0"/>
+                    <!-- Connection dashed line -->
+                    <path d="M118 110 Q148 110 148 88" stroke="#F68D26" stroke-width="2" stroke-dasharray="5 4" stroke-linecap="round"/>
+                    <!-- Phone -->
+                    <rect x="138" y="60" width="30" height="52" rx="5" fill="white" stroke="#2a6b94" stroke-width="1.5"/>
+                    <rect x="143" y="68" width="20" height="32" rx="2" fill="#f0f7ff"/>
+                    <circle cx="153" cy="107" r="2.5" fill="#bcd8f0"/>
+                    <!-- Email on screen -->
+                    <rect x="144" y="70" width="18" height="13" rx="2" fill="white" stroke="#F68D26" stroke-width="1"/>
+                    <path d="M144 70 L153 78 L162 70" stroke="#F68D26" stroke-width="1" stroke-linecap="round"/>
+                    <!-- Lock shield -->
+                    <path d="M153 87 L148 84 L148 91 Q148 95 153 97 Q158 95 158 91 L158 84 Z" fill="#ecfdf5" stroke="#19c37d" stroke-width="1.2"/>
+                    <path d="M151 91 L153 93 L156 89" stroke="#19c37d" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <div class="journey-body">
+                  <p class="journey-step-tag"><span class="step-badge">1</span>Connect</p>
+                  <h3 class="journey-h3">Share your battery data</h3>
+                  <p class="journey-p">Enter the email you use for your battery app (Solax, Sigenergy). We send a one-time code — enter it to grant secure, read-only access. We never control your system.</p>
+                  <span class="journey-time">⏱ About 60 seconds</span>
+                </div>
+              </article>
+            </div>
+
+            <!-- STEP 2 -->
+            <div class="journey-step">
+              <article class="journey-card">
+                <div class="journey-illus">
+                  <!-- Analysis / data graph SVG -->
+                  <svg viewBox="0 0 220 150" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <!-- Background card -->
+                    <rect x="20" y="20" width="140" height="110" rx="8" fill="white" stroke="#e2e8f0" stroke-width="1.5"/>
+                    <!-- Graph baseline -->
+                    <line x1="36" y1="108" x2="148" y2="108" stroke="#e2e8f0" stroke-width="1.5"/>
+                    <!-- Usage bars (monthly bills) -->
+                    <rect x="40" y="78" width="12" height="30" rx="2" fill="#bcd8f0"/>
+                    <rect x="56" y="68" width="12" height="40" rx="2" fill="#bcd8f0"/>
+                    <rect x="72" y="58" width="12" height="50" rx="2" fill="#5b9ec9"/>
+                    <rect x="88" y="44" width="12" height="64" rx="2" fill="#f97316" opacity="0.7"/>
+                    <rect x="104" y="38" width="12" height="70" rx="2" fill="#f97316" opacity="0.9"/>
+                    <rect x="120" y="55" width="12" height="53" rx="2" fill="#5b9ec9"/>
+                    <rect x="136" y="72" width="12" height="36" rx="2" fill="#bcd8f0"/>
+                    <!-- Flat Reposit line -->
+                    <line x1="36" y1="73" x2="152" y2="73" stroke="#19c37d" stroke-width="2" stroke-dasharray="6 4"/>
+                    <!-- Reposit label -->
+                    <rect x="156" y="67" width="46" height="14" rx="3" fill="#ecfdf5" stroke="#19c37d" stroke-width="1"/>
+                    <text x="179" y="77" text-anchor="middle" font-family="Inter,sans-serif" font-size="7" font-weight="700" fill="#0a7a4a">Your fee</text>
+                    <!-- Magnifying glass -->
+                    <circle cx="172" cy="116" r="18" fill="#f0f7ff" stroke="#2a6b94" stroke-width="1.5"/>
+                    <circle cx="172" cy="116" r="10" fill="white" stroke="#2a6b94" stroke-width="1.5"/>
+                    <line x1="179" y1="123" x2="187" y2="131" stroke="#2a6b94" stroke-width="2.5" stroke-linecap="round"/>
+                    <!-- Spark inside lens -->
+                    <path d="M170 112 L168 117 L172 116 L169 122" stroke="#F68D26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <div class="journey-body">
+                  <p class="journey-step-tag"><span class="step-badge">2</span>Analyse</p>
+                  <h3 class="journey-h3">We read your real energy usage</h3>
+                  <p class="journey-p">Our engine analyses 12 months of your actual solar, battery and grid data — peak hours, winter spikes, daily patterns. This is what makes your offer specific to your home, not a generic quote.</p>
+                  <span class="journey-time">⚙️ Automatic — nothing to do</span>
+                </div>
+              </article>
+            </div>
+
+            <!-- STEP 3 -->
+            <div class="journey-step">
+              <article class="journey-card">
+                <div class="journey-illus">
+                  <!-- Three offer cards SVG -->
+                  <svg viewBox="0 0 220 150" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <!-- Left card -->
+                    <rect x="12" y="40" width="52" height="84" rx="6" fill="white" stroke="#e2e8f0" stroke-width="1.5"/>
+                    <rect x="18" y="50" width="40" height="6" rx="2" fill="#e2e8f0"/>
+                    <rect x="18" y="60" width="30" height="4" rx="2" fill="#f1f5f9"/>
+                    <rect x="18" y="68" width="35" height="4" rx="2" fill="#f1f5f9"/>
+                    <!-- Middle card — recommended (larger) -->
+                    <rect x="78" y="24" width="62" height="102" rx="8" fill="white" stroke="#19c37d" stroke-width="2.5"/>
+                    <rect x="78" y="24" width="62" height="102" rx="8" fill="rgba(25,195,125,0.04)"/>
+                    <!-- Recommended ribbon -->
+                    <rect x="88" y="16" width="42" height="14" rx="7" fill="#19c37d"/>
+                    <text x="109" y="26" text-anchor="middle" font-family="Inter,sans-serif" font-size="6.5" font-weight="800" fill="white">BEST MATCH</text>
+                    <!-- Price on middle card -->
+                    <text x="109" y="54" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" font-weight="900" fill="#0f172a">$149</text>
+                    <text x="109" y="65" text-anchor="middle" font-family="Inter,sans-serif" font-size="7" font-weight="600" fill="#64748b">/month</text>
+                    <rect x="84" y="72" width="50" height="20" rx="4" fill="#ecfdf5"/>
+                    <text x="109" y="83" text-anchor="middle" font-family="Inter,sans-serif" font-size="7" font-weight="700" fill="#0a7a4a">Save ~$346/yr</text>
+                    <text x="109" y="92" text-anchor="middle" font-family="Inter,sans-serif" font-size="6" fill="#166534">vs your current bill</text>
+                    <rect x="84" y="98" width="50" height="18" rx="5" fill="#19c37d"/>
+                    <text x="109" y="111" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" font-weight="800" fill="#042d14">Choose this</text>
+                    <!-- Right card -->
+                    <rect x="154" y="40" width="52" height="84" rx="6" fill="white" stroke="#e2e8f0" stroke-width="1.5"/>
+                    <rect x="160" y="50" width="40" height="6" rx="2" fill="#e2e8f0"/>
+                    <rect x="160" y="60" width="30" height="4" rx="2" fill="#f1f5f9"/>
+                    <rect x="160" y="68" width="35" height="4" rx="2" fill="#f1f5f9"/>
+                    <!-- Envelope in top right -->
+                    <circle cx="193" cy="28" r="14" fill="#fff3e0"/>
+                    <rect x="183" y="22" width="20" height="14" rx="2" fill="#F68D26" opacity="0.15" stroke="#F68D26" stroke-width="1.2"/>
+                    <path d="M183 22 L193 30 L203 22" stroke="#F68D26" stroke-width="1.2" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <div class="journey-body">
+                  <p class="journey-step-tag"><span class="step-badge">3</span>Choose</p>
+                  <h3 class="journey-h3">Your personalised offer arrives by email</h3>
+                  <p class="journey-p">Three tailored options land in your inbox in about 15 minutes. Each shows your fixed monthly fee, any upfront cost, and your estimated annual saving. You pick the one that suits you best.</p>
+                  <span class="journey-time">📧 ~15 minutes after consent</span>
+                </div>
+              </article>
+            </div>
+
+            <!-- STEP 4 -->
+            <div class="journey-step">
+              <article class="journey-card journey-card--install">
+                <div class="journey-illus">
+                  <!-- Controller installation SVG -->
+                  <svg viewBox="0 0 220 150" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <!-- Battery cabinet -->
+                    <rect x="28" y="30" width="80" height="100" rx="5" fill="#1e293b"/>
+                    <rect x="34" y="38" width="68" height="60" rx="3" fill="#0f172a"/>
+                    <!-- Battery level indicator -->
+                    <rect x="40" y="44" width="56" height="6" rx="2" fill="#1e3a2a"/>
+                    <rect x="40" y="44" width="42" height="6" rx="2" fill="#19c37d"/>
+                    <!-- Status lights -->
+                    <circle cx="46" cy="62" r="4" fill="#19c37d"/>
+                    <circle cx="58" cy="62" r="4" fill="#19c37d" opacity="0.5"/>
+                    <circle cx="70" cy="62" r="4" fill="#F68D26" opacity="0.7"/>
+                    <!-- Brand label -->
+                    <rect x="40" y="72" width="56" height="16" rx="2" fill="#1e293b"/>
+                    <rect x="44" y="76" width="28" height="4" rx="1" fill="#334155"/>
+                    <rect x="44" y="83" width="20" height="3" rx="1" fill="#475569"/>
+                    <!-- Reposit Controller box -->
+                    <rect x="116" y="55" width="66" height="42" rx="6" fill="white" stroke="#19c37d" stroke-width="2"/>
+                    <rect x="116" y="55" width="66" height="42" rx="6" fill="rgba(25,195,125,0.06)"/>
+                    <!-- Controller lights -->
+                    <circle cx="128" cy="71" r="4" fill="#19c37d"/>
+                    <circle cx="140" cy="71" r="4" fill="#19c37d" opacity="0.5"/>
+                    <!-- Controller label -->
+                    <text x="149" y="68" font-family="Inter,sans-serif" font-size="6.5" font-weight="800" fill="#0a7a4a">Reposit</text>
+                    <text x="149" y="77" font-family="Inter,sans-serif" font-size="6" fill="#166534">Controller</text>
+                    <!-- Connection cable -->
+                    <path d="M108 76 L116 76" stroke="#19c37d" stroke-width="3" stroke-linecap="round"/>
+                    <!-- Connection node -->
+                    <circle cx="108" cy="76" r="4" fill="white" stroke="#19c37d" stroke-width="2"/>
+                    <!-- Wireless trading arc -->
+                    <path d="M165 46 Q174 38 183 46" stroke="#F68D26" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+                    <path d="M161 41 Q174 30 187 41" stroke="#F68D26" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.6"/>
+                    <path d="M157 36 Q174 22 191 36" stroke="#F68D26" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.3"/>
+                    <circle cx="174" cy="49" r="3" fill="#F68D26"/>
+                    <!-- Green tick -->
+                    <circle cx="176" cy="120" r="18" fill="#ecfdf5" stroke="#19c37d" stroke-width="2"/>
+                    <path d="M167 120 L173 126 L185 113" stroke="#19c37d" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <div class="journey-body">
+                  <p class="journey-step-tag" style="color:#0a7a4a"><span class="step-badge">4</span>Go live</p>
+                  <h3 class="journey-h3">We install the Reposit Controller</h3>
+                  <p class="journey-p">Our certified installer fits a small smart controller directly onto your existing battery system. This is the piece that connects your battery to the energy market — enabling the smart trading that eliminates your electricity bill.</p>
+                  <span class="journey-time">🔧 Booked after you choose your plan (~2 hrs)</span>
+                </div>
+              </article>
+            </div>
+
+          </div>
+
+          <!-- Controller callout box -->
+          <div class="controller-callout">
+            <div class="controller-callout-icon">🔌</div>
+            <div>
+              <h4>What is the Reposit Controller?</h4>
+              <p>It's a small hardware device — about the size of a Wi-Fi router — that our team installs directly onto your existing battery cabinet. It connects your battery to the wholesale energy market, allowing Reposit to trade on your behalf 24/7. Your existing battery, inverter and solar setup stay exactly as they are. The controller just makes them smarter.</p>
+            </div>
+          </div>
+
+          <div class="reassure-row">
+            <div class="reassure-chip">
+              <strong>Read-only data access</strong>
+              We only ever read your energy data — never change settings
+            </div>
+            <div class="reassure-chip">
+              <strong>Left the page?</strong>
+              Your offer is still emailed to you automatically
+            </div>
+            <div class="reassure-chip">
+              <strong>Nothing to replace</strong>
+              Your existing battery, panels and inverter stay in place
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="scroll-hint" onclick="scrollToSection(4)" aria-hidden="true">
+        <span>Get my offer</span>
+        <span class="scroll-hint-arrow">↓</span>
+      </div>
+    </section>
+
+    <!-- ── GET STARTED — clean CTA block only ────────── -->
+    <section class="section" id="get-started" data-section="4">
+      <div class="container">
+        <div class="glass">
+          <div class="landing-cta-block">
+            <p class="eyebrow">Free assessment — no commitment</p>
+            <h2>See your personalised offer in 15 minutes.</h2>
+            <p class="lead" style="margin-bottom:28px;">
+              Connect your battery data, we do the analysis, your offer arrives by email. Pick a plan and we handle setup and paperwork.
+            </p>
+            <button class="btn-primary" onclick="openWizard()">Get My Free Assessment →</button>
+            <div class="landing-cta-notes">
+              <span class="landing-cta-note">✓ Free — no commitment until you choose</span>
+              <span class="landing-cta-note">✓ Offer arrives in ~15 minutes</span>
+              <span class="landing-cta-note">✓ We handle installation &amp; paperwork</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Section progress dots -->
+  <nav class="section-dots" id="sectionDots" aria-label="Page sections">
+    <button class="section-dot is-active" data-target="0" aria-label="Why Reposit">
+      <span class="section-dot-label">Why Reposit</span>
+    </button>
+    <button class="section-dot" data-target="1" aria-label="What changes">
+      <span class="section-dot-label">What changes</span>
+    </button>
+    <button class="section-dot" data-target="2" aria-label="The numbers">
+      <span class="section-dot-label">The numbers</span>
+    </button>
+    <button class="section-dot" data-target="3" aria-label="How it works">
+      <span class="section-dot-label">How it works</span>
+    </button>
+    <button class="section-dot" data-target="4" aria-label="Get my offer">
+      <span class="section-dot-label">Get my offer</span>
+    </button>
+  </nav>
+
+  <!-- ════════════════════════════════════════════════
+       FULL-SCREEN ASSESSMENT WIZARD
+       Opens on top of the landing page when CTA clicked
+       ════════════════════════════════════════════════ -->
+  <div id="wizardOverlay" class="wizard-overlay" role="dialog" aria-modal="true" aria-label="Free assessment">
+
+    <!-- Wizard header -->
+    <header class="wizard-header">
+      <div class="wizard-logo">
+        <div class="wizard-logo-mark">⚡</div>
+        Reposit No Bill
+      </div>
+      <button class="wizard-close" onclick="closeWizard()">← Back to overview</button>
+    </header>
+
+    <!-- Step progress bars -->
+    <div class="wizard-progress-bar" role="list" aria-label="Assessment steps">
+      <div class="wizard-prog-step is-active" id="wizProg1" role="listitem">
+        <div class="wizard-prog-bar"><div class="wizard-prog-fill" id="wizProgFill1"></div></div>
+        <span class="wizard-prog-label">Connect</span>
+      </div>
+      <div class="wizard-prog-step" id="wizProg2" role="listitem">
+        <div class="wizard-prog-bar"><div class="wizard-prog-fill" id="wizProgFill2"></div></div>
+        <span class="wizard-prog-label">Verify</span>
+      </div>
+      <div class="wizard-prog-step" id="wizProg3" role="listitem">
+        <div class="wizard-prog-bar"><div class="wizard-prog-fill" id="wizProgFill3"></div></div>
+        <span class="wizard-prog-label">Your offers</span>
+      </div>
+      <div class="wizard-prog-step" id="wizProg4" role="listitem">
+        <div class="wizard-prog-bar"><div class="wizard-prog-fill" id="wizProgFill4"></div></div>
+        <span class="wizard-prog-label">Confirm</span>
+      </div>
+    </div>
+
+    <div class="wizard-body">
+
+      <!-- ── STEP 1: Email ─────────────────────────── -->
+      <div class="wiz-step wiz-step--narrow is-active" id="wizStep1">
+        <div class="wiz-card">
+          <p class="wiz-eyebrow">Step 1 of 4 — Connect your battery</p>
+          <h2 class="wiz-title">Enter your battery app email</h2>
+          <p class="wiz-body-text">Use the email you log in with on the Solax or Sigenergy app. We'll send a one-time code — entering it grants us secure, read-only access to your usage data.</p>
+          <div id="wizEmailError" class="wiz-hint is-error" style="display:none;"></div>
+          <div class="wiz-field">
+            <label for="wizEmail">Battery app email</label>
+            <input type="email" id="wizEmail" placeholder="you@example.com" autocomplete="email">
+          </div>
+          <div class="wiz-btn-row">
+            <button class="wiz-btn-primary" id="wizSendCodeBtn">Send my verification code</button>
+          </div>
+          <p class="wiz-reassure">🔒 Read-only access. We never control or adjust your battery.</p>
+        </div>
+      </div>
+
+      <!-- ── STEP 2: Verify code ───────────────────── -->
+      <div class="wiz-step wiz-step--narrow" id="wizStep2">
+        <div class="wiz-card">
+          <p class="wiz-eyebrow">Step 2 of 4 — Confirm consent</p>
+          <h2 class="wiz-title">Enter your verification code</h2>
+          <p class="wiz-body-text" id="wizCodeSentNote">We've sent a 6-digit code to your email. Enter it below to confirm your consent and unlock your personalised offer.</p>
+          <div id="wizCodeError" class="wiz-hint is-error" style="display:none;"></div>
+          <div id="wizCodeSuccess" class="wiz-hint" style="display:none;">Code verified. Reading your energy usage…</div>
+          <div class="wiz-field">
+            <label for="wizCode">6-digit code</label>
+            <input type="text" id="wizCode" class="wiz-code-input" inputmode="numeric" maxlength="6" placeholder="· · · · · ·" autocomplete="one-time-code">
+          </div>
+          <div class="wiz-btn-row">
+            <button class="wiz-btn-primary" id="wizVerifyBtn">Confirm &amp; get my offer</button>
+            <button class="wiz-btn-secondary" id="wizResendBtn">Resend code or change email</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── STEP 3: Loading ───────────────────────── -->
+      <div class="wiz-step wiz-step--narrow" id="wizStep3">
+        <div class="wiz-card wiz-card--loading">
+          <div class="wiz-loading-icon" aria-hidden="true">⚡</div>
+          <h2 class="wiz-title">Building your personalised offers…</h2>
+          <div class="wiz-progress-track">
+            <div class="wiz-progress-fill" id="wizProgressFill"></div>
+          </div>
+          <p class="wiz-loading-fact" id="wizLoadingFact" aria-live="polite"></p>
+        </div>
+      </div>
+
+      <!-- ── STEP 4: Offers ────────────────────────── -->
+      <div class="wiz-step wiz-step--wide" id="wizStep4">
+        <div style="width:100%;">
+          <div id="wizOffersBanner" class="wiz-offers-banner" style="display:none;"></div>
+          <p class="wiz-offers-intro" id="wizOffersIntro"></p>
+          <div id="wizOffersErrorBanner" class="wiz-error-banner" style="display:none;"></div>
+          <p class="wiz-constraint-note" id="wizConstraintNote" style="display:none;"></p>
+          <div class="wiz-offers-grid" id="wizOffersGrid"></div>
+
+          <!-- Confirm panel — shown after a card is selected -->
+          <div id="wizConfirmPanel" style="display:none; margin-top:24px;">
+            <div class="wiz-confirm-card">
+
+              <!-- Eyebrow -->
+              <p class="wiz-eyebrow" style="margin-bottom:4px;">Your personalised plan is ready</p>
+
+              <!-- Savings estimate hero -->
+              <div class="wiz-savings-hero" id="wizSavingsHero">
+                <div class="wiz-savings-est-label">Estimated annual saving</div>
+                <div class="wiz-savings-est-amt" id="wizSavingsAmt">—</div>
+                <div class="wiz-savings-est-sub">per year, based on your usage profile</div>
+                <div class="wiz-savings-est-qualifier">Best estimate — your actual saving depends on usage and market conditions</div>
+                <div class="wiz-certainty-bar">
+                  <span class="wiz-certainty-icon">🔒</span>
+                  <span class="wiz-certainty-text">One fixed fee of <span id="wizCertaintyFee">—</span>/mo — no electricity bill, ever</span>
+                  <span class="wiz-certainty-sub">Your fee is set below your current average spend. It never changes with the market.</span>
+                </div>
+              </div>
+
+              <!-- Plan recap -->
+              <div class="wiz-plan-recap" id="wizPlanRecap">
+                <div class="wiz-plan-recap-label">Your selected plan</div>
+                <div class="wiz-plan-recap-grid" id="wizPlanRecapGrid"></div>
+              </div>
+
+              <!-- Urgency -->
+              <div class="wiz-urgency-strip">
+                <span class="wiz-urgency-icon">⏱</span>
+                <span>This offer is personalised to your home profile and <strong>held for 24 hours</strong>. After that we'd need to reassess.</span>
+              </div>
+
+              <!-- Trust signals -->
+              <ul class="wiz-trust-strip">
+                <li>
+                  <span class="wiz-trust-icon">✓</span>
+                  <span><strong>No payment today.</strong> We contact you within one business day to confirm details and book your installation.</span>
+                </li>
+                <li>
+                  <span class="wiz-trust-icon">✓</span>
+                  <span><strong>30-day satisfaction guarantee.</strong> Cancel before installation at no cost — no questions asked.</span>
+                </li>
+                <li>
+                  <span class="wiz-trust-icon">✓</span>
+                  <span><strong>Nothing changes on your existing setup.</strong> Your battery, inverter and solar panels stay exactly as they are.</span>
+                </li>
+              </ul>
+
+              <!-- Primary CTA -->
+              <div class="wiz-confirm-cta-block">
+                <button class="wiz-btn-primary" id="wizCompleteBtn" style="width:100%;">
+                  Lock in $0 electricity →
+                </button>
+                <p class="wiz-confirm-cta-sub">No payment today &nbsp;·&nbsp; We call you within 1 business day &nbsp;·&nbsp; Cancel anytime before install</p>
+              </div>
+
+              <!-- Social proof -->
+              <div class="wiz-social-proof">
+                Joining <strong>2,000+ households</strong> who've already switched to No Bill electricity across Australia.
+              </div>
+
+              <!-- What happens next (collapsed) -->
+              <button class="wiz-next-steps-toggle" id="wizNextToggle" onclick="this.nextElementSibling.classList.toggle('is-open'); this.textContent = this.nextElementSibling.classList.contains('is-open') ? '▲ Hide what happens next' : '▼ What happens after I confirm?';">▼ What happens after I confirm?</button>
+              <ul class="wiz-next-steps" id="wizNextSteps">
+                <li><span class="wiz-next-step-num">1</span><span>We email you a full plan summary and contract within minutes.</span></li>
+                <li><span class="wiz-next-step-num">2</span><span>Our team calls you within one business day to book your installation slot.</span></li>
+                <li><span class="wiz-next-step-num">3</span><span>A certified installer fits the Reposit Controller onto your battery cabinet (~2 hours).</span></li>
+                <li><span class="wiz-next-step-num">4</span><span>You go live — Reposit starts trading your battery, and your bill goes to $0.</span></li>
+              </ul>
+
+              <!-- Escape -->
+              <div class="wiz-confirm-escape">
+                <button id="wizChangeBtn">Not right — let me choose a different plan</button>
+              </div>
+
+            </div>
+          </div>
+
+          <div style="text-align:center; margin-top:20px;" id="wizRestartRow">
+            <button class="wiz-btn-secondary" id="wizRestartBtn" style="color:rgba(255,255,255,0.6);">Start assessment again</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── STEP 5: Done ──────────────────────────── -->
+      <div class="wiz-step wiz-step--narrow" id="wizStep5">
+        <div class="wiz-card" style="text-align:center;">
+          <div style="font-size:3.5rem; margin-bottom:12px;">🎉</div>
+          <p class="wiz-eyebrow" style="justify-content:center; display:flex;">You're confirmed</p>
+          <h2 class="wiz-title" style="margin-bottom:6px;">Welcome to Reposit No Bill.</h2>
+          <p class="wiz-body-text" style="margin-bottom:20px;">
+            Your electricity bill is about to become $0. Check your inbox — your plan summary is on its way. We'll call you within one business day to book your installation.
+          </p>
+          <ul class="wiz-trust-strip" style="text-align:left; margin-bottom:20px;">
+            <li>
+              <span class="wiz-trust-icon">✓</span>
+              <span><strong>Check your inbox</strong> — plan summary and contract sent now.</span>
+            </li>
+            <li>
+              <span class="wiz-trust-icon">✓</span>
+              <span><strong>We call you</strong> within one business day to book installation.</span>
+            </li>
+            <li>
+              <span class="wiz-trust-icon">✓</span>
+              <span><strong>30-day guarantee</strong> — cancel before installation, no cost.</span>
+            </li>
+          </ul>
+          <div class="wiz-btn-row" style="max-width:320px; margin:0 auto;">
+            <button class="wiz-btn-primary" onclick="closeWizard()">Back to overview</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /wizard-body -->
+
+  </div><!-- /wizard-overlay -->
+
+  <!-- Manual energy input modal (inside wizard) -->
+  <div id="manualEnergyModal" class="energy-modal" role="dialog" aria-modal="true" aria-labelledby="manualEnergyTitle">
+    <div class="energy-modal-card">
+
+      <h4 id="manualEnergyTitle" class="energy-modal-title">We need your electricity bill</h4>
+      <p class="energy-modal-copy">We couldn't access your usage history automatically. Upload a recent electricity bill — we'll pull out the number we need to size your offer.</p>
+
+      <div id="manualEnergyError" class="energy-modal-error hidden" role="alert"></div>
+
+      <!-- Primary: bill upload -->
+      <div class="bill-upload-zone" id="billUploadZone">
+        <input type="file" id="billUploadInput" accept=".pdf,.jpg,.jpeg,.png" aria-label="Upload electricity bill">
+        <div class="bill-upload-icon">📄</div>
+        <div class="bill-upload-label">Drop your bill here or click to upload</div>
+        <div class="bill-upload-sub">PDF, JPG or PNG · Any recent electricity bill</div>
+        <div class="bill-upload-filename" id="billUploadFilename" style="display:none;"></div>
+      </div>
+
+      <!-- Where to find the number -->
+      <div class="bill-guide">
+        <strong>Where to find it on your bill:</strong>
+        <ul class="bill-guide-items">
+          <li>Look for <strong>"Total amount due"</strong> or <strong>"Total charges"</strong></li>
+          <li>Use a bill from the same quarter last year if possible</li>
+          <li>Your quarterly bill ÷ 3 gives a typical monthly figure</li>
+        </ul>
+      </div>
+
+      <div class="modal-or-divider">or enter it manually</div>
+
+      <!-- Fallback: manual entry -->
+      <div class="energy-modal-row">
+        <label for="manualAvgMonthly">Your average monthly electricity bill ($)</label>
+        <input type="number" id="manualAvgMonthly" min="0" step="1" placeholder="e.g. 178">
+      </div>
+      <div class="energy-modal-row">
+        <label for="manualDailyKwh">Typical daily energy use in kWh <span style="font-weight:400;color:#9ca3af;">— optional</span></label>
+        <input type="number" id="manualDailyKwh" min="0" step="0.1" placeholder="e.g. 8.2">
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:14px;">
+        <button type="button" class="wiz-btn-primary" id="manualEnergySaveBtn" style="flex:1;">Continue</button>
+        <button type="button" class="wiz-btn-secondary" id="manualEnergyCancelBtn">Cancel</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Hidden API config — for internal/dev use only -->
+  <input type="url" id="simApiBase" value="http://127.0.0.1:3847" autocomplete="off" style="display:none">
+
+  <script>
+    /* ── Section pager ───────────────────────────────────────────── */
+    (function() {
+      var pager    = document.querySelector('.page');
+      var sections = Array.from(document.querySelectorAll('[data-section]'));
+      var dots     = Array.from(document.querySelectorAll('.section-dot'));
+
+      if (!pager || !sections.length) return;
+
+      function scrollToSection(idx) {
+        var target = sections[idx];
+        if (!target) return;
+        pager.scrollTo({ top: target.offsetTop, behavior: 'smooth' });
+      }
+      window.scrollToSection = scrollToSection;
+
+      function setActiveDot(idx) {
+        dots.forEach(function(d, i) { d.classList.toggle('is-active', i === idx); });
+      }
+
+      /* IntersectionObserver — tracks which section is most visible */
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            var idx = parseInt(entry.target.getAttribute('data-section'), 10);
+            setActiveDot(idx);
+          }
+        });
+      }, { root: pager, threshold: 0.4 });
+
+      sections.forEach(function(s) { observer.observe(s); });
+
+      /* Dot click */
+      dots.forEach(function(d) {
+        d.addEventListener('click', function() {
+          scrollToSection(parseInt(d.getAttribute('data-target'), 10));
+        });
+      });
+
+      /* Keyboard navigation */
+      document.addEventListener('keydown', function(e) {
+        if (document.getElementById('wizardOverlay').classList.contains('is-open')) return;
+        var active = dots.findIndex(function(d) { return d.classList.contains('is-active'); });
+        if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+          e.preventDefault();
+          scrollToSection(Math.min(active + 1, sections.length - 1));
+        } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+          e.preventDefault();
+          scrollToSection(Math.max(active - 1, 0));
+        }
+      });
+
+    }());
+  </script>
+
+  <script>
+    /* ── Wizard open/close (called from landing page CTAs) ─────────── */
+    function openWizard() {
+      var overlay = document.getElementById('wizardOverlay');
+      if (!overlay) return;
+      document.body.style.overflow = 'hidden';
+      overlay.classList.add('is-open');
+      overlay.focus();
+    }
+    function closeWizard() {
+      var overlay = document.getElementById('wizardOverlay');
+      if (!overlay) return;
+      document.body.style.overflow = '';
+      overlay.classList.remove('is-open');
+    }
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeWizard();
+    });
+
+    (function () {
+      var SHARED_UTILITIES_STORAGE_KEY = 'reposit.utilities.snapshot.v1';
+      var API_PATHS = {
+        requestCode: '/api/consent/request-code',
+        verifyCode: '/api/consent/verify-code',
+        energyProfile: '/api/energy/profile',
+        topPackages: '/api/top-packages'
+      };
+      var assessmentState = {
+        email: '',
+        consentVerified: false,
+        consentFallback: false,
+        profile: null,
+        profileSource: ''
+      };
+      var lastPackagesData = null;
+      var usedSharedUtilitiesForLastRun = false;
+      var loadingFactTimer = null;
+      var LOADING_FACTS = [
+        'Reading your 12 months of energy data…',
+        'Calculating your current annual spend…',
+        'Building options to lower your bill…',
+        'Selecting your three best plans…'
+      ];
+
+      function escapeHtml(s) {
+        if (s == null) return '';
+        var d = document.createElement('div');
+        d.textContent = String(s);
+        return d.innerHTML;
+      }
+
+      function normalizeApiBase(raw) {
+        return String(raw || '').trim().replace(/\/$/, '');
+      }
+
+      function getApiBase() {
+        var baseEl = document.getElementById('simApiBase');
+        return normalizeApiBase(baseEl ? baseEl.value : '');
+      }
+
+      function loadSharedUtilitiesSnapshot() {
+        try {
+          var raw = localStorage.getItem(SHARED_UTILITIES_STORAGE_KEY);
+          if (!raw) return null;
+          var parsed = JSON.parse(raw);
+          if (!parsed || !parsed.utilities || typeof parsed.utilities !== 'object') return null;
+          return parsed;
+        } catch {
+          return null;
+        }
+      }
+
+      function monthlyFeeFromProfile(avgMonthlySpend) {
+        var n = Number(avgMonthlySpend);
+        if (!Number.isFinite(n) || n <= 0) return null;
+        return Math.round(n * 0.7);
+      }
+
+      function fmtMoney(n) {
+        var x = Math.round(Number(n));
+        if (!Number.isFinite(x)) x = 0;
+        return '$' + x.toLocaleString();
+      }
+
+      function demoYearOneSaving(avgMonthly, pkg) {
+        var annualRetail = Math.round(Number(avgMonthly) * 12);
+        if (!Number.isFinite(annualRetail)) annualRetail = 0;
+        var inst = pkg.installationCost ? Number(pkg.installationCost.value) : 0;
+        var fee = pkg.monthlyFee ? Number(pkg.monthlyFee.value) : 0;
+        if (!Number.isFinite(inst)) inst = 0;
+        if (!Number.isFinite(fee)) fee = 0;
+        return annualRetail - (inst + fee * 12);
+      }
+
+      function formatFairCapHtml(pkg, dailyKwh) {
+        var cell = pkg.fairUseCap;
+        if (!cell) return '—';
+        var v = cell.value;
+        if (dailyKwh > 0 && typeof v === 'number' && v > 0 && v < 20) {
+          return escapeHtml(String(v)) + '× <span class="sim-fair-sub">your typical daily use</span>';
+        }
+        return escapeHtml(cell.display != null ? String(cell.display) : String(v));
+      }
+
+      function apiJson(path, opts) {
+        var base = getApiBase();
+        if (!base) {
+          return Promise.reject(new Error('Set a valid API base URL before continuing.'));
+        }
+        var req = opts || {};
+        var headers = req.headers || {};
+        if (req.body && !headers['Content-Type']) headers['Content-Type'] = 'application/json';
+        return fetch(base + path, {
+          method: req.method || 'GET',
+          mode: 'cors',
+          headers: headers,
+          body: req.body ? JSON.stringify(req.body) : undefined
+        }).then(function (res) {
+          return res
+            .json()
+            .catch(function () {
+              return { ok: false, error: 'Response was not JSON', httpStatus: res.status };
+            })
+            .then(function (json) {
+              if (!res.ok || (json && json.ok === false)) {
+                var msg = (json && (json.error || json.message)) || ('Request failed (' + res.status + ')');
+                var err = new Error(msg);
+                err.httpStatus = res.status;
+                err.body = json;
+                err.path = path;
+                throw err;
+              }
+              return json;
+            });
+        });
+      }
+
+      function friendlyApiError(err, fallbackMsg) {
+        var status = err && err.httpStatus;
+        var path = err && err.path ? String(err.path) : '';
+        if (status === 404) {
+          if (path.indexOf(API_PATHS.requestCode) === 0 || path.indexOf(API_PATHS.verifyCode) === 0) {
+            return 'Consent endpoint not found on this API base URL. Continuing in manual consent mode.';
+          }
+          if (path.indexOf(API_PATHS.energyProfile) === 0) {
+            return 'Energy profile endpoint not found. Please enter your energy details manually.';
+          }
+          if (path.indexOf(API_PATHS.topPackages) === 0) {
+            return 'Offer endpoint not found. Check API base URL and ensure /api/top-packages is running.';
+          }
+        }
+        return (err && err.message) || fallbackMsg;
+      }
+
+      function numFromAny(obj, keys) {
+        for (var i = 0; i < keys.length; i++) {
+          var v = obj[keys[i]];
+          var n = Number(v);
+          if (Number.isFinite(n) && n >= 0) return n;
+        }
+        return null;
+      }
+
+      function parseEnergyProfile(resp) {
+        var src = (resp && (resp.profile || resp.data || resp)) || {};
+        var avgMonthly = numFromAny(src, [
+          'avgMonthlySpend',
+          'averageMonthlySpend',
+          'monthlySpend',
+          'avg_monthly_spend',
+          'average_monthly_spend'
+        ]);
+        var dailyKwh = numFromAny(src, [
+          'dailyKwh',
+          'avgDailyKwh',
+          'typicalDailyKwh',
+          'daily_kwh',
+          'avg_daily_kwh'
+        ]);
+        return {
+          avgMonthly: avgMonthly,
+          dailyKwh: Number.isFinite(dailyKwh) ? dailyKwh : 0
+        };
+      }
+
+      /* ── Wizard step navigation ──────────────────────── */
+      var currentWizStep = 1;
+
+      function showWizStep(n) {
+        currentWizStep = n;
+        for (var s = 1; s <= 5; s++) {
+          var el = document.getElementById('wizStep' + s);
+          if (el) el.classList.toggle('is-active', s === n);
+        }
+        // Update top progress bars (4 bars, steps map: 1→1, 2→2, 3→3, 4&5→4)
+        var progActive = n <= 4 ? n : 4;
+        for (var p = 1; p <= 4; p++) {
+          var prog = document.getElementById('wizProg' + p);
+          if (!prog) continue;
+          prog.classList.remove('is-active', 'is-done');
+          if (p < progActive) prog.classList.add('is-done');
+          if (p === progActive) prog.classList.add('is-active');
+        }
+      }
+
+      /* ── Loading animation ───────────────────────────── */
+      var loadingFactTimer = null;
+      var loadingProgressTimer = null;
+
+      function startLoading(onComplete) {
+        showWizStep(3);
+        var fill = document.getElementById('wizProgressFill');
+        var factEl = document.getElementById('wizLoadingFact');
+        var progress = 0;
+        var factIdx = 0;
+        var facts = LOADING_FACTS;
+
+        if (fill) fill.style.width = '0%';
+        if (factEl) factEl.textContent = facts[0];
+
+        clearInterval(loadingFactTimer);
+        clearInterval(loadingProgressTimer);
+
+        loadingFactTimer = setInterval(function() {
+          factIdx = (factIdx + 1) % facts.length;
+          if (factEl) {
+            factEl.style.animation = 'none';
+            factEl.offsetHeight; // reflow
+            factEl.style.animation = '';
+            factEl.textContent = facts[factIdx];
+          }
+        }, 2200);
+
+        loadingProgressTimer = setInterval(function() {
+          progress += (100 / (4500 / 80));
+          if (fill) fill.style.width = Math.min(progress, 95) + '%';
+          if (progress >= 100) {
+            clearInterval(loadingProgressTimer);
+            clearInterval(loadingFactTimer);
+            if (fill) fill.style.width = '100%';
+            setTimeout(onComplete, 300);
+          }
+        }, 80);
+      }
+
+      function stopLoading() {
+        clearInterval(loadingFactTimer);
+        clearInterval(loadingProgressTimer);
+      }
+
+      /* ── Profile helpers ─────────────────────────────── */
+      function getProfileSnapshot() {
+        var avg = assessmentState.profile && Number(assessmentState.profile.avgMonthly);
+        var daily = assessmentState.profile && Number(assessmentState.profile.dailyKwh);
+        if (!Number.isFinite(avg)) avg = 0;
+        if (!Number.isFinite(daily) || daily < 0) daily = 0;
+        return { avgMonthly: avg, annualRetail: Math.round(avg * 12), dailyKwh: daily };
+      }
+
+      /* ── Offer rendering ─────────────────────────────── */
+      function renderOffers(data) {
+        var grid = document.getElementById('wizOffersGrid');
+        var errBanner = document.getElementById('wizOffersErrorBanner');
+        var banner = document.getElementById('wizOffersBanner');
+        var intro = document.getElementById('wizOffersIntro');
+        var constraint = document.getElementById('wizConstraintNote');
+        if (!grid) return;
+
+        grid.innerHTML = '';
+        if (errBanner) errBanner.style.display = 'none';
+        var confirmPanel = document.getElementById('wizConfirmPanel');
+        if (confirmPanel) confirmPanel.style.display = 'none';
+
+        if (!data || !data.ok || !data.topPackages || !data.topPackages.length) {
+          if (errBanner) { errBanner.textContent = 'Unexpected API response — no packages returned.'; errBanner.style.display = 'block'; }
+          return;
+        }
+
+        var snap = getProfileSnapshot();
+        lastPackagesData = data;
+
+        // Banner
+        if (banner && snap.annualRetail > 0) {
+          banner.style.display = 'flex';
+          banner.innerHTML =
+            '<div><div class="wiz-offers-banner-label">Your estimated current annual spend</div>' +
+            '<div class="wiz-offers-banner-val">' + fmtMoney(snap.annualRetail) + ' <span style="font-size:1rem;font-weight:600;opacity:0.7;">/yr</span></div></div>' +
+            '<div><div class="wiz-offers-banner-sub">Based on your usage profile</div>' +
+            (snap.dailyKwh > 0 ? '<div class="wiz-offers-banner-sub">~' + snap.dailyKwh + ' kWh typical daily use</div>' : '') + '</div>';
+        }
+
+        if (intro) intro.textContent = 'Three options built for your home. Compare the upfront cost, monthly fee, and estimated annual saving — then choose the one that suits you.';
+
+        var c = data.constraints && data.constraints.monthlyFee;
+        if (c && constraint) {
+          constraint.style.display = 'block';
+          constraint.textContent = 'All three options use ' + (c.display || '$' + c.value + '/mo') + ' as the fixed monthly fee — the other terms vary to maximise value for your profile.';
+        }
+
+        data.topPackages.forEach(function(row) {
+          var pkg = row.package || {};
+          var rec = row.rank === 1;
+          function disp(cell) { return cell ? (cell.display != null ? String(cell.display) : String(cell.value)) : '—'; }
+          var fairHtml = formatFairCapHtml(pkg, snap.dailyKwh);
+          var saving = demoYearOneSaving(snap.avgMonthly, pkg);
+          var savingBlock = Number.isFinite(saving) && saving >= 0
+            ? '<div class="wiz-pkg-saving-lbl">Indicative annual saving</div><div class="wiz-pkg-saving-val">' + fmtMoney(saving) + ' <span style="font-size:.8rem;font-weight:600;color:#15803d;">/yr</span></div><div class="wiz-pkg-saving-note">vs your stated current spend</div>'
+            : '<div class="wiz-pkg-saving-lbl">Year-one comparison</div><div class="wiz-pkg-saving-val" style="font-size:1rem;color:#64748b;">Higher upfront cost</div>';
+
+          var card = document.createElement('article');
+          card.className = 'wiz-pkg-card' + (rec ? ' wiz-pkg-card--recommended' : '');
+          card.setAttribute('data-offer-rank', String(row.rank));
+          card.innerHTML =
+            (rec ? '<div class="wiz-pkg-ribbon">Our pick for you</div>' : '') +
+            (rec ? '<div class="wiz-pkg-badge wiz-pkg-badge--best">Best match</div>' : '<div class="wiz-pkg-badge wiz-pkg-badge--alt">Alternative</div>') +
+            '<div class="wiz-pkg-install">' + escapeHtml(disp(pkg.installationCost)) + '</div>' +
+            '<div class="wiz-pkg-install-label">Installation cost</div>' +
+            '<div class="wiz-pkg-monthly"><div class="wiz-pkg-monthly-amt">' + escapeHtml(disp(pkg.monthlyFee)) + '</div><div class="wiz-pkg-monthly-lbl">Monthly fee</div></div>' +
+            '<ul class="wiz-pkg-attrs">' +
+            '<li><span>Sign-up incentive</span><strong>' + escapeHtml(disp(pkg.signupIncentive)) + '</strong></li>' +
+            '<li><span>FAIR use cap</span><strong>' + fairHtml + '</strong></li>' +
+            '<li><span>Contract term</span><strong>' + escapeHtml(disp(pkg.contractTerm)) + '</strong></li></ul>' +
+            '<div class="wiz-pkg-saving">' + savingBlock + '</div>' +
+            '<button type="button" class="wiz-pkg-select" data-rank="' + row.rank + '">Choose this plan</button>';
+          grid.appendChild(card);
+        });
+
+        // Card click → confirm panel
+        grid.addEventListener('click', function(e) {
+          var btn = e.target.closest && e.target.closest('.wiz-pkg-select');
+          if (!btn) return;
+          var rank = parseInt(btn.getAttribute('data-rank'), 10);
+          showConfirmPanel(rank);
+        });
+      }
+
+      function showConfirmPanel(rank) {
+        if (!lastPackagesData || !lastPackagesData.topPackages) return;
+        var row = null;
+        for (var i = 0; i < lastPackagesData.topPackages.length; i++) {
+          if (lastPackagesData.topPackages[i].rank === rank) { row = lastPackagesData.topPackages[i]; break; }
+        }
+        if (!row) return;
+        var pkg = row.package || {};
+        var snap = getProfileSnapshot();
+
+        /* Highlight selected offer card */
+        document.querySelectorAll('.wiz-pkg-card').forEach(function(c) {
+          c.classList.toggle('wiz-pkg-card--selected', parseInt(c.getAttribute('data-offer-rank'), 10) === rank);
+        });
+
+        function disp(cell) { return cell ? (cell.display != null ? String(cell.display) : String(cell.value)) : '—'; }
+
+        /* ── Savings hero ──────────────────────────────── */
+        var savedEl      = document.getElementById('wizSavingsAmt');
+        var certaintyFee = document.getElementById('wizCertaintyFee');
+        var saving       = demoYearOneSaving(snap.avgMonthly, pkg);
+        var hero         = document.getElementById('wizSavingsHero');
+
+        /* Populate the fixed fee certainty bar */
+        if (certaintyFee) certaintyFee.textContent = disp(pkg.monthlyFee) || '—';
+
+        if (Number.isFinite(saving) && saving > 0) {
+          if (savedEl) savedEl.textContent = '~' + fmtMoney(saving);
+          if (hero) hero.style.display = 'block';
+        } else {
+          /* No reliable saving estimate — show certainty-only message */
+          if (savedEl) savedEl.textContent = '';
+          var estLabel = hero && hero.querySelector('.wiz-savings-est-label');
+          var estSub   = hero && hero.querySelector('.wiz-savings-est-sub');
+          var estQual  = hero && hero.querySelector('.wiz-savings-est-qualifier');
+          if (estLabel) estLabel.textContent = 'Your fixed monthly fee';
+          if (savedEl)  savedEl.textContent  = disp(pkg.monthlyFee) || '—';
+          if (estSub)   estSub.textContent   = 'No electricity bill on top. Ever.';
+          if (estQual)  estQual.textContent  = 'Your fee is set below your average spend and never changes with the market.';
+          if (hero) hero.style.display = 'block';
+        }
+
+        /* ── Plan recap grid ───────────────────────────── */
+        var recapGrid = document.getElementById('wizPlanRecapGrid');
+        if (recapGrid) {
+          var items = [
+            ['Installation cost', disp(pkg.installationCost)],
+            ['Monthly fee',       disp(pkg.monthlyFee)],
+            ['Sign-up incentive', disp(pkg.signupIncentive)],
+            ['Contract term',     disp(pkg.contractTerm)]
+          ];
+          recapGrid.innerHTML = items.map(function(item) {
+            return '<div class="wiz-plan-recap-item">' +
+              '<span class="wiz-plan-recap-item-label">' + escapeHtml(item[0]) + '</span>' +
+              '<span class="wiz-plan-recap-item-val">' + escapeHtml(item[1]) + '</span>' +
+              '</div>';
+          }).join('');
+        }
+
+        /* Reset next-steps toggle */
+        var nextSteps = document.getElementById('wizNextSteps');
+        var nextToggle = document.getElementById('wizNextToggle');
+        if (nextSteps) nextSteps.classList.remove('is-open');
+        if (nextToggle) nextToggle.textContent = '▼ What happens after I confirm?';
+
+        var panel = document.getElementById('wizConfirmPanel');
+        if (panel) { panel.style.display = 'block'; panel.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+
+        var restartRow = document.getElementById('wizRestartRow');
+        if (restartRow) restartRow.style.display = 'none';
+      }
+
+      function openManualModal(msg) {
+        var modal = document.getElementById('manualEnergyModal');
+        var err = document.getElementById('manualEnergyError');
+        if (!modal || !err) return;
+        if (msg) {
+          err.textContent = msg;
+          err.classList.remove('hidden');
+        } else {
+          err.textContent = '';
+          err.classList.add('hidden');
+        }
+        modal.classList.add('is-open');
+      }
+
+      function closeManualModal() {
+        var modal = document.getElementById('manualEnergyModal');
+        if (modal) modal.classList.remove('is-open');
+        /* Reset upload zone for next use */
+        var zone = document.getElementById('billUploadZone');
+        var fname = document.getElementById('billUploadFilename');
+        var inp = document.getElementById('billUploadInput');
+        if (zone) zone.classList.remove('is-selected', 'is-drag-over');
+        if (fname) { fname.style.display = 'none'; fname.textContent = ''; }
+        if (inp) inp.value = '';
+      }
+
+      function loadEnergyProfile() {
+        var readout = document.getElementById('simFeeReadout');
+        if (readout) readout.textContent = 'Fetching your profile from API...';
+        return apiJson(
+          API_PATHS.energyProfile + '?email=' + encodeURIComponent(String(assessmentState.email || '').trim()),
+          { method: 'GET' }
+        )
+          .then(function (json) {
+            var profile = parseEnergyProfile(json);
+            if (!Number.isFinite(profile.avgMonthly) || profile.avgMonthly <= 0) {
+              throw new Error('Profile fetched but missing monthly spend. Enter details manually.');
+            }
+            assessmentState.profile = profile;
+            assessmentState.profileSource = 'api';
+            updateFeeReadout();
+          })
+          .catch(function (err) {
+            assessmentState.profile = null;
+            assessmentState.profileSource = '';
+            updateFeeReadout();
+            openManualModal(friendlyApiError(err, 'Unable to load profile.'));
+          });
+      }
+
+      function requestOffers() {
+        if (!assessmentState.profile || !Number.isFinite(assessmentState.profile.avgMonthly)) {
+          openManualModal('Please add your monthly spend before building offers.');
+          return;
+        }
+        var fee = monthlyFeeFromProfile(assessmentState.profile.avgMonthly);
+        if (!Number.isFinite(fee)) {
+          openManualModal('Average monthly spend must be greater than zero.');
+          return;
+        }
+
+        /* fetch offers */
+        var shared = loadSharedUtilitiesSnapshot();
+        usedSharedUtilitiesForLastRun = Boolean(shared);
+        var req = shared
+          ? { method: 'POST', body: { monthlyFee: fee, utilities: shared.utilities } }
+          : { method: 'GET' };
+        var path = API_PATHS.topPackages + '?monthlyFee=' + encodeURIComponent(String(fee));
+
+        startLoading(function() {
+          apiJson(path, req)
+            .then(function(json) {
+              stopLoading();
+              showWizStep(4);
+              renderOffers(json);
+            })
+            .catch(function(err) {
+              stopLoading();
+              showWizStep(4);
+              var errBanner = document.getElementById('wizOffersErrorBanner');
+              if (errBanner) { errBanner.textContent = friendlyApiError(err, 'Offer API request failed.'); errBanner.style.display = 'block'; }
+            });
+        });
+      }
+
+      /* ── Step 1: Send code ───────────────────────────── */
+      var wizSendBtn = document.getElementById('wizSendCodeBtn');
+      if (wizSendBtn) {
+        wizSendBtn.addEventListener('click', function() {
+          var emailEl = document.getElementById('wizEmail');
+          var errEl = document.getElementById('wizEmailError');
+          var email = emailEl ? String(emailEl.value || '').trim() : '';
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            if (errEl) { errEl.textContent = 'Please enter a valid email address.'; errEl.style.display = 'block'; }
+            if (emailEl) emailEl.focus();
+            return;
+          }
+          if (errEl) errEl.style.display = 'none';
+          wizSendBtn.disabled = true;
+          wizSendBtn.textContent = 'Sending…';
+          apiJson(API_PATHS.requestCode, { method: 'POST', body: { email: email } })
+            .then(function() {
+              assessmentState.email = email;
+              assessmentState.consentFallback = false;
+              wizSendBtn.textContent = 'Code sent';
+              var note = document.getElementById('wizCodeSentNote');
+              if (note) note.textContent = 'We sent a 6-digit code to ' + email + '. Enter it below to confirm.';
+              showWizStep(2);
+            })
+            .catch(function(err) {
+              assessmentState.email = email;
+              wizSendBtn.disabled = false;
+              wizSendBtn.textContent = 'Send my verification code';
+              if (err && err.httpStatus === 404) {
+                assessmentState.consentFallback = true;
+                if (errEl) { errEl.textContent = 'Consent API not available. Enter any 6 digits to continue in manual mode.'; errEl.style.display = 'block'; }
+                showWizStep(2);
+                return;
+              }
+              if (errEl) { errEl.textContent = friendlyApiError(err, 'Could not send verification code.'); errEl.style.display = 'block'; }
+            });
+        });
+      }
+
+      /* ── Step 2: Verify code ─────────────────────────── */
+      var wizVerifyBtn = document.getElementById('wizVerifyBtn');
+      if (wizVerifyBtn) {
+        wizVerifyBtn.addEventListener('click', function() {
+          var codeEl = document.getElementById('wizCode');
+          var errEl = document.getElementById('wizCodeError');
+          var successEl = document.getElementById('wizCodeSuccess');
+          var code = codeEl ? String(codeEl.value || '').trim() : '';
+          var email = assessmentState.email;
+          if (!code) { if (codeEl) codeEl.focus(); return; }
+          if (errEl) errEl.style.display = 'none';
+          wizVerifyBtn.disabled = true;
+          wizVerifyBtn.textContent = 'Verifying…';
+
+          var proceed = function() {
+            assessmentState.consentVerified = true;
+            if (successEl) { successEl.style.display = 'block'; successEl.textContent = 'Code confirmed. Fetching your usage data…'; }
+            setTimeout(function() {
+              loadEnergyProfile().then(function() { requestOffers(); }).catch(function() { requestOffers(); });
+            }, 800);
+          };
+
+          if (assessmentState.consentFallback) {
+            if (!/^[0-9]{4,10}$/.test(code)) {
+              wizVerifyBtn.disabled = false;
+              wizVerifyBtn.textContent = 'Confirm & get my offer';
+              if (errEl) { errEl.textContent = 'Enter a valid code to continue.'; errEl.style.display = 'block'; }
+              return;
+            }
+            proceed();
+            return;
+          }
+
+          apiJson(API_PATHS.verifyCode, { method: 'POST', body: { email: email, code: code } })
+            .then(function() { proceed(); })
+            .catch(function(err) {
+              wizVerifyBtn.disabled = false;
+              wizVerifyBtn.textContent = 'Confirm & get my offer';
+              if (errEl) { errEl.textContent = friendlyApiError(err, 'Code verification failed. Try again.'); errEl.style.display = 'block'; }
+            });
+        });
+      }
+
+      /* ── Resend / change email ───────────────────────── */
+      var wizResendBtn = document.getElementById('wizResendBtn');
+      if (wizResendBtn) {
+        wizResendBtn.addEventListener('click', function() {
+          var wizSendBtnFresh = document.getElementById('wizSendCodeBtn');
+          if (wizSendBtnFresh) { wizSendBtnFresh.disabled = false; wizSendBtnFresh.textContent = 'Send my verification code'; }
+          var errEl = document.getElementById('wizEmailError');
+          if (errEl) errEl.style.display = 'none';
+          showWizStep(1);
+        });
+      }
+
+      /* ── Confirm & complete ──────────────────────────── */
+      var wizCompleteBtn = document.getElementById('wizCompleteBtn');
+      if (wizCompleteBtn) {
+        wizCompleteBtn.addEventListener('click', function() {
+          showWizStep(5);
+        });
+      }
+
+      var wizChangeBtn = document.getElementById('wizChangeBtn');
+      if (wizChangeBtn) {
+        wizChangeBtn.addEventListener('click', function() {
+          var panel = document.getElementById('wizConfirmPanel');
+          if (panel) panel.style.display = 'none';
+          var restartRow = document.getElementById('wizRestartRow');
+          if (restartRow) restartRow.style.display = 'block';
+          document.querySelectorAll('.wiz-pkg-card').forEach(function(c) { c.classList.remove('wiz-pkg-card--selected'); });
+        });
+      }
+
+      /* ── Restart ─────────────────────────────────────── */
+      var wizRestartBtn = document.getElementById('wizRestartBtn');
+      if (wizRestartBtn) {
+        wizRestartBtn.addEventListener('click', function() {
+          stopLoading();
+          assessmentState = { email: '', consentVerified: false, consentFallback: false, profile: null, profileSource: '' };
+          var fields = ['wizEmail', 'wizCode', 'manualAvgMonthly', 'manualDailyKwh'];
+          fields.forEach(function(id) { var el = document.getElementById(id); if (el) el.value = ''; });
+          var sendBtn = document.getElementById('wizSendCodeBtn');
+          if (sendBtn) { sendBtn.disabled = false; sendBtn.textContent = 'Send my verification code'; }
+          var verBtn = document.getElementById('wizVerifyBtn');
+          if (verBtn) { verBtn.disabled = false; verBtn.textContent = 'Confirm & get my offer'; }
+          ['wizEmailError','wizCodeError'].forEach(function(id) { var el = document.getElementById(id); if (el) el.style.display = 'none'; });
+          ['wizCodeSuccess'].forEach(function(id) { var el = document.getElementById(id); if (el) el.style.display = 'none'; });
+          closeManualModal();
+          showWizStep(1);
+          var grid = document.getElementById('wizOffersGrid');
+          if (grid) grid.innerHTML = '';
+          var banner = document.getElementById('wizOffersBanner');
+          if (banner) banner.style.display = 'none';
+          lastPackagesData = null;
+        });
+      }
+
+      /* ── Bill upload zone ─────────────────────────────── */
+      var billInput    = document.getElementById('billUploadInput');
+      var billZone     = document.getElementById('billUploadZone');
+      var billFilename = document.getElementById('billUploadFilename');
+
+      if (billInput && billZone) {
+        billInput.addEventListener('change', function() {
+          var file = billInput.files && billInput.files[0];
+          if (!file) return;
+          billZone.classList.add('is-selected');
+          if (billFilename) {
+            billFilename.textContent = '✓ ' + file.name;
+            billFilename.style.display = 'block';
+          }
+          /* In production: POST file to bill-parsing service.
+             For now: acknowledge and prompt manual entry to confirm total. */
+          var errEl = document.getElementById('manualEnergyError');
+          if (errEl) {
+            errEl.className = 'energy-modal-error';
+            errEl.style.background = '#f0fdf4';
+            errEl.style.borderColor = '#bbf7d0';
+            errEl.style.color = '#166534';
+            errEl.textContent = 'Bill uploaded. Please confirm the total monthly amount below so we can calculate your offer.';
+            errEl.classList.remove('hidden');
+          }
+          var avgEl = document.getElementById('manualAvgMonthly');
+          if (avgEl) avgEl.focus();
+        });
+
+        billZone.addEventListener('dragover', function(e) { e.preventDefault(); billZone.classList.add('is-drag-over'); });
+        billZone.addEventListener('dragleave', function()  { billZone.classList.remove('is-drag-over'); });
+        billZone.addEventListener('drop', function(e) {
+          e.preventDefault();
+          billZone.classList.remove('is-drag-over');
+          if (e.dataTransfer && e.dataTransfer.files.length) {
+            billInput.files = e.dataTransfer.files;
+            billInput.dispatchEvent(new Event('change'));
+          }
+        });
+      }
+
+      /* ── Manual energy modal — Continue ─────────────── */
+      var manualSave = document.getElementById('manualEnergySaveBtn');
+      if (manualSave) {
+        manualSave.addEventListener('click', function() {
+          var avgEl = document.getElementById('manualAvgMonthly');
+          var kEl   = document.getElementById('manualDailyKwh');
+          var errEl = document.getElementById('manualEnergyError');
+          var avg   = Number(avgEl ? avgEl.value : '');
+          var k     = Number(kEl ? kEl.value : '');
+          if (!Number.isFinite(avg) || avg <= 0) {
+            if (errEl) {
+              errEl.removeAttribute('style');
+              errEl.className = 'energy-modal-error';
+              errEl.textContent = 'Please enter your monthly electricity spend so we can size your offer.';
+              errEl.classList.remove('hidden');
+            }
+            if (avgEl) avgEl.focus();
+            return;
+          }
+          assessmentState.profile = { avgMonthly: avg, dailyKwh: Number.isFinite(k) && k > 0 ? k : 0 };
+          assessmentState.profileSource = billInput && billInput.files && billInput.files[0] ? 'bill upload' : 'manual input';
+          closeManualModal();
+          requestOffers();
+        });
+      }
+
+      var manualCancel = document.getElementById('manualEnergyCancelBtn');
+      if (manualCancel) manualCancel.addEventListener('click', closeManualModal);
+
+    }());
+  </script>
+  {{ standard_footer_includes }}
+</body>
+</html>

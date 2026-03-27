@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reposit Power - Kill Your Electricity Bill</title>
+
+    <!-- Tailwind CSS (CDN for HubSpot) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        forest: {
+                            900: '#064E3B',
+                            800: '#065F46',
+                            700: '#047857',
+                            200: '#A7F3D0',
+                            100: '#D1FAE5'
+                        },
+                        techBlue: {
+                            600: '#2563EB',
+                            500: '#3B82F6',
+                            400: '#60A5FA',
+                            100: '#DBEAFE',
+                            50: '#EFF6FF'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- React & ReactDOM -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+
+    <!-- Babel standalone for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50">
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+        // --- SVG ICONS (Replaces Lucide to avoid extra dependencies) ---
+        const Icons = {
+            ShieldCheck: () => (
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />><path d="m9 12 2 2 4-4" /></svg>
+            ),
+            Zap: () => (
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z" /></svg>
+            ),
+            Banknote: () => (
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="12" x="2" y="6" rx="2" /><circle cx="12" cy="12" r="2" /><path d="M6 12h.01M18 12h.01" /></svg>
+            ),
+            ArrowDown: () => (
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14" /><path d="m19 12-7 7-7-7" /></svg>
+            ),
+            BadgeCheck: () => (
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z" /><path d="m9 12 2 2 4-4" /></svg>
+            ),
+            Clock: () => (
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
+            ),
+            ShieldAlert: () => (
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" /><path d="M12 8v4" /><path d="M12 16h.01" /></svg>
+            ),
+            CheckCircle2: () => (
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="m9 12 2 2 4-4" /></svg>
+            )
+        };
+
+        const { useState } = React;
+
+        const App = () => {
+            const [activeTab, setActiveTab] = useState('National');
+            const [isWeekly, setIsWeekly] = useState(true);
+
+            const scrollToTriage = () => {
+                document.getElementById('triage')?.scrollIntoView({ behavior: 'smooth' });
+            };
+
+            const pricingData = [
+                { spend: '$1k–$2k', system: 'XS (5.7kW + 10kWh)', price: '$15,490 – $18,490', financeWeekly: '~$36/wk', financeAnnual: '~$1,872/yr' },
+                { spend: '$2k–$3k', system: 'Small (6.6kW + 15kWh)', price: '$16,990 – $20,990', financeWeekly: '~$44/wk', financeAnnual: '~$2,288/yr' },
+                { spend: '$3k–$4k', system: 'Medium (10kW + 25kWh)', price: '$19,990 – $24,490', financeWeekly: '~$55/wk', financeAnnual: '~$2,860/yr' },
+                { spend: '$4k–$5k', system: 'Large (13.3kW + 30kWh)', price: '$22,490 – $28,490', financeWeekly: '~$68/wk', financeAnnual: '~$3,536/yr' },
+                { spend: '$5k–$7k', system: 'XL+ (15kW+ + 40kWh+)', price: '$34,990 – $44,990', financeWeekly: 'Custom Quote', financeAnnual: 'Custom Quote' },
+            ];
+
+            const rebates = {
+                'National': { title: 'STC Solar Credits', desc: 'Upfront point-of-sale discount applied directly to your system based on small-scale technology certificates.' },
+                'NSW': { title: '$1,800 Battery Rebate', desc: 'Financial incentive available for eligible NSW residents installing new home battery systems.' },
+                'VIC': { title: '$1,400 Solar Rebate', desc: 'Solar Homes Program rebate for eligible Victorian households installing solar panels.' },
+                'ACT': { title: '$15,000 Interest-Free Loan', desc: 'Sustainable Household Scheme offering zero-interest loans for energy-efficient upgrades.' }
+            };
+
+            return (
+                <div className="min-h-screen bg-slate-50 text-slate-900">
+
+                    {/* 1. Hero Section */}
+                    <section className="relative bg-forest-900 text-white overflow-hidden py-24 sm:py-32 flex flex-col items-center justify-center text-center px-6">
+                        <div className="absolute inset-0 z-0 bg-gradient-to-br from-forest-900 via-forest-800 to-slate-900 opacity-90"></div>
+                        <div className="relative z-10 max-w-4xl mx-auto flex flex-col items-center">
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-techBlue-500/20 text-techBlue-400 border border-techBlue-500/30 text-sm font-medium mb-8">
+                                <Icons.BadgeCheck />
+                                <span>Australia's Most Awarded Provider</span>
+                            </div>
+                            <h1 className="text-5xl sm:text-7xl font-extrabold tracking-tight mb-6">
+                                Kill Your Electricity Bill.<br />
+                                <span className="text-techBlue-500">For Good.</span>
+                            </h1>
+                            <p className="text-xl sm:text-2xl text-slate-300 max-w-2xl mb-12">
+                                Get a custom-engineered solar and battery system with a Guaranteed $0 Bill for 7 years. No guesswork—just pure energy independence.
+                            </p>
+                            <button
+                                onClick={scrollToTriage}
+                                className="group inline-flex items-center justify-center gap-2 bg-techBlue-600 hover:bg-techBlue-500 transition-all text-white font-bold text-lg px-8 py-4 rounded-full shadow-lg"
+                            >
+                                Find Your Path To $0
+                                <Icons.ArrowDown />
+                            </button>
+                        </div>
+                    </section>
+
+                    {/* 4. Value Propositions */}
+                    <section className="py-20 bg-white px-6">
+                        <div className="max-w-6xl mx-auto">
+                            <div className="text-center mb-16">
+                                <h2 className="text-3xl font-bold text-forest-900">Why Reposit Is Different</h2>
+                            </div>
+                            <div className="grid md:grid-cols-3 gap-8">
+                                <div className="p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:shadow-lg transition-shadow">
+                                    <div className="w-14 h-14 bg-forest-900/10 rounded-xl flex items-center justify-center mb-6 text-forest-900 border border-forest-900/20">
+                                        <Icons.ShieldCheck />
+                                    </div>
+                                    <h3 className="text-xl font-bold mb-3 text-forest-900">7-Year Guarantee</h3>
+                                    <p className="text-slate-600 leading-relaxed">We back our engineering. If your bill isn't $0, we pay the difference. Complete peace of mind.</p>
+                                </div>
+                                <div className="p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:shadow-lg transition-shadow">
+                                    <div className="w-14 h-14 bg-techBlue-500/10 rounded-xl flex items-center justify-center mb-6 text-techBlue-600 border border-techBlue-500/20">
+                                        <Icons.Zap />
+                                    </div>
+                                    <h3 className="text-xl font-bold mb-3 text-forest-900">Smart Trading AI</h3>
+                                    <p className="text-slate-600 leading-relaxed">Our proprietary algorithms trade your excess energy automatically on wholesale markets to offset all your costs.</p>
+                                </div>
+                                <div className="p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:shadow-lg transition-shadow">
+                                    <div className="w-14 h-14 bg-forest-900/10 rounded-xl flex items-center justify-center mb-6 text-forest-900 border border-forest-900/20">
+                                        <Icons.Banknote />
+                                    </div>
+                                    <h3 className="text-xl font-bold mb-3 text-forest-900">$0 Upfront</h3>
+                                    <p className="text-slate-600 leading-relaxed">Get started immediately with discounted green finance (HEUF) via Plenti without draining your savings.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* 2. The Engagement Triage */}
+                    <section id="triage" className="py-24 bg-slate-50 px-6 border-y border-slate-200">
+                        <div className="max-w-6xl mx-auto">
+                            <div className="text-center mb-16 max-w-3xl mx-auto">
+                                <h2 className="text-4xl font-bold text-forest-900 mb-4">Choose Your Path</h2>
+                                <p className="text-lg text-slate-600">Select how deeply you want to dive into your personal energy independence strategy today.</p>
+                            </div>
+
+                            <div className="grid lg:grid-cols-3 gap-6">
+                                {/* Card A */}
+                                <div className="flex flex-col bg-white rounded-3xl p-8 border border-slate-200 shadow-sm hover:shadow-xl transition-all h-full">
+                                    <div className="flex flex-col flex-grow">
+                                        <h3 className="text-2xl font-bold text-forest-900 mb-2">The Quick Estimate</h3>
+                                        <p className="text-slate-500 mb-8">A fast, 5-question quiz to see if you qualify for a $0 bill.</p>
+
+                                        <ul className="space-y-4 mb-8">
+                                            <li className="flex items-center gap-3 text-sm text-slate-700 font-medium">
+                                                <div className="text-techBlue-500"><Icons.Clock /></div> Speed: 2 Mins
+                                            </li>
+                                            <li className="flex items-center gap-3 text-sm text-slate-700 font-medium">
+                                                <div className="text-techBlue-500"><Icons.ShieldAlert /></div> Accuracy: General
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <button className="w-full py-4 px-6 rounded-xl font-bold text-techBlue-600 bg-techBlue-50 hover:bg-techBlue-100 transition-colors border border-techBlue-100 mt-auto">
+                                        Get Instant Estimate
+                                    </button>
+                                </div>
+
+                                {/* Card B (Featured) */}
+                                <div className="flex flex-col bg-forest-900 rounded-3xl p-8 shadow-2xl relative border border-forest-800 lg:-translate-y-4 h-[calc(100%+2rem)]">
+                                    <div className="absolute top-0 inset-x-0 h-1 bg-techBlue-500"></div>
+
+                                    <div className="inline-block px-3 py-1 bg-techBlue-500 text-white text-xs font-bold tracking-wider uppercase rounded-full mb-6 w-max">
+                                        Recommended
+                                    </div>
+
+                                    <div className="flex flex-col flex-grow text-white">
+                                        <h3 className="text-2xl font-bold mb-2">Precision Audit</h3>
+                                        <p className="text-forest-100 mb-8">Securely link your Smart Meter data so our engineers can design your perfect system.</p>
+
+                                        <ul className="space-y-4 mb-8">
+                                            <li className="flex items-center gap-3 text-sm font-medium">
+                                                <div className="text-techBlue-400"><Icons.Clock /></div> Speed: 24-48 Hours
+                                            </li>
+                                            <li className="flex items-center gap-3 text-sm font-medium">
+                                                <div className="text-techBlue-400"><Icons.CheckCircle2 /></div> Accuracy: 100%
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <button className="w-full py-4 px-6 rounded-xl font-bold text-white bg-techBlue-600 hover:bg-techBlue-500 transition-colors shadow-lg mt-auto">
+                                        Start My Data Audit
+                                    </button>
+                                </div>
+
+                                {/* Card C */}
+                                <div className="flex flex-col bg-white rounded-3xl p-8 border border-slate-200 shadow-sm hover:shadow-xl transition-all h-full">
+                                    <div className="flex flex-col flex-grow">
+                                        <h3 className="text-2xl font-bold text-forest-900 mb-2">2026 Price Guide</h3>
+                                        <p className="text-slate-500 mb-8">View current pricing, technical specs, and standard package layouts.</p>
+
+                                        <ul className="space-y-4 mb-8">
+                                            <li className="flex items-center gap-3 text-sm text-slate-700 font-medium">
+                                                <div className="text-forest-900"><div style={{ transform: "scale(0.65)" }}><Icons.Zap /></div></div> Speed: Instant
+                                            </li>
+                                            <li className="flex items-center gap-3 text-sm text-slate-700 font-medium">
+                                                <div className="text-forest-900"><Icons.ShieldAlert /></div> Accuracy: General Range
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <button className="w-full py-4 px-6 rounded-xl font-bold text-forest-900 bg-slate-100 hover:bg-slate-200 transition-colors mt-auto">
+                                        Download Price Guide
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* 3. Interactive Pricing & Table */}
+                    <section className="py-24 bg-white px-6">
+                        <div className="max-w-5xl mx-auto flex flex-col items-center">
+                            <div className="text-center mb-12">
+                                <h2 className="text-4xl font-bold text-forest-900 mb-4">Transparent Pricing</h2>
+                                <p className="text-lg text-slate-600">No hidden fees. Every system is guaranteed to wipe out your electricity bill.</p>
+                            </div>
+
+                            <div className="flex bg-slate-100 p-1 rounded-xl mb-10 border border-slate-200">
+                                <button
+                                    onClick={() => setIsWeekly(true)}
+                                    className={`px-8 py-2.5 rounded-lg text-sm font-bold transition-all ${isWeekly ? 'bg-white text-forest-900 shadow-sm' : 'text-slate-500 hover:text-forest-900'}`}
+                                >
+                                    Weekly View
+                                </button>
+                                <button
+                                    onClick={() => setIsWeekly(false)}
+                                    className={`px-8 py-2.5 rounded-lg text-sm font-bold transition-all ${!isWeekly ? 'bg-white text-forest-900 shadow-sm' : 'text-slate-500 hover:text-forest-900'}`}
+                                >
+                                    Annual View
+                                </button>
+                            </div>
+
+                            <div className="w-full bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm mb-12">
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-left border-collapse min-w-[700px]">
+                                        <thead>
+                                            <tr className="bg-forest-900 text-white text-sm">
+                                                <th className="py-4 px-6 font-semibold border-b border-forest-800">Annual Spend</th>
+                                                <th className="py-4 px-6 font-semibold border-b border-forest-800">System Package</th>
+                                                <th className="py-4 px-6 font-semibold border-b border-forest-800">Price Range</th>
+                                                <th className="py-4 px-6 font-semibold border-b border-forest-800">{isWeekly ? 'Weekly Finance' : 'Annual Finance'}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-slate-100">
+                                            {pricingData.map((row, idx) => (
+                                                <tr key={idx} className="hover:bg-slate-50 transition-colors">
+                                                    <td className="py-4 px-6 text-slate-700 font-medium whitespace-nowrap">{row.spend}</td>
+                                                    <td className="py-4 px-6 text-slate-900 font-bold whitespace-nowrap">{row.system}</td>
+                                                    <td className="py-4 px-6 text-techBlue-600 font-semibold whitespace-nowrap">{row.price}</td>
+                                                    <td className="py-4 px-6 text-forest-900 font-bold whitespace-nowrap">{isWeekly ? row.financeWeekly : row.financeAnnual}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            {/* Girl Math Logic Box */}
+                            <div className="bg-techBlue-50 border-l-4 border-techBlue-500 rounded-r-xl p-6 md:p-8 w-full max-w-3xl flex gap-6 items-start shadow-sm">
+                                <div className="bg-techBlue-100 p-3 rounded-full shrink-0">
+                                    <div className="text-techBlue-600"><Icons.Zap /></div>
+                                </div>
+                                <div>
+                                    <h4 className="text-lg font-bold text-forest-900 mb-2">The "Girl Math" Reposit Logic</h4>
+                                    <p className="text-slate-700 leading-relaxed text-lg">
+                                        If your current power bill is <strong>$80/wk</strong> and your finance is <strong>$55/wk</strong>, you are literally making a <strong>$25/wk profit from Day 1</strong>. You stop paying the energy company and start paying yourself.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* 5. Regional Rebates Section */}
+                    <section className="py-24 bg-forest-900 text-white px-6">
+                        <div className="max-w-4xl mx-auto flex flex-col items-center">
+                            <div className="text-center mb-12">
+                                <h2 className="text-4xl font-bold mb-4">Government Rebates Available</h2>
+                                <p className="text-forest-200">Select your state to see the financial incentives you could claim.</p>
+                            </div>
+
+                            <div className="w-full">
+                                <div className="flex flex-wrap justify-center gap-2 mb-8">
+                                    {Object.keys(rebates).map((state) => (
+                                        <button
+                                            key={state}
+                                            onClick={() => setActiveTab(state)}
+                                            className={`px-8 py-3 rounded-xl font-bold transition-all ${activeTab === state
+                                                    ? 'bg-techBlue-500 text-white shadow-lg'
+                                                    : 'bg-forest-800 border border-forest-700 text-forest-200 hover:bg-forest-700 hover:text-white'
+                                                }`}
+                                        >
+                                            {state}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                <div className="bg-forest-800 border border-forest-700/50 rounded-2xl p-8 md:p-12 text-center transition-all shadow-inner">
+                                    <h3 className="text-3xl font-extrabold text-white mb-4">
+                                        {rebates[activeTab].title}
+                                    </h3>
+                                    <p className="text-xl text-forest-100 max-w-2xl mx-auto">
+                                        {rebates[activeTab].desc}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Footer */}
+                    <footer className="bg-slate-900 text-slate-400 py-12 text-center px-6">
+                        <div className="flex justify-center mb-6 text-white font-bold text-xl tracking-tighter">
+                            REPOSIT<span className="text-techBlue-500">.</span>
+                        </div>
+                        <p>© 2026 Reposit Power. Empowering energy independence.</p>
+                    </footer>
+
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+
+</html>

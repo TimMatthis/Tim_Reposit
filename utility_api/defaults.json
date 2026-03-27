@@ -1,0 +1,22 @@
+{
+  "installationCost": {
+    "options": [0, 500, 1000, 1500],
+    "utilities": [80.0, 44.4, 0.0, 0.0]
+  },
+  "monthlyFee": {
+    "options": [0, 39, 79, 149],
+    "utilities": [100.0, 55.6, 22.2, 0.0]
+  },
+  "signupIncentive": {
+    "options": [0, 250, 500, 1000],
+    "utilities": [0.0, 33.3, 66.7, 100.0]
+  },
+  "fairUseCap": {
+    "options": [1.2, 1.4, 1.5, 2.0],
+    "utilities": [0.0, 55.6, 77.8, 100.0]
+  },
+  "contractTerm": {
+    "options": ["Month to month", "3 months", "12 months", "24 months"],
+    "utilities": [100.0, 66.7, 22.2, 0.0]
+  }
+}

@@ -1,0 +1,566 @@
+<!--
+  templateType: page
+  isAvailableForNewContent: true
+  screenshotPath: ../images/new_lp2_screen.png
+  label: Reposit - Request A Quote
+  description: Landing page featuring a hero section with support for legacy forms.
+-->
+
+{% extends "./layouts/base-lp.html" %}
+
+{% block body %}
+<style>
+    #hero_banner {
+        background: url(https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/noise.png), -moz-radial-gradient(circle at top left, rgba(246, 141, 38, 1) 5%, rgba(203, 128, 70, 1) 20%, rgba(42, 107, 148, 1) 60%, rgba(19, 26, 43, 1) 100%);
+        background: url(https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/noise.png), -webkit-radial-gradient(circle at top left, rgba(246, 141, 38, 1) 5%, rgba(203, 128, 70, 1) 20%, rgba(42, 107, 148, 1) 60%, rgba(19, 26, 43, 1) 100%);
+        background: url(https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/noise.png), radial-gradient(circle at top left, rgba(246, 141, 38, 1) 5%, rgba(203, 128, 70, 1) 20%, rgba(42, 107, 148, 1) 60%, rgba(19, 26, 43, 1) 100%);
+        background-blend-mode: multiply;
+    }
+
+    #hero_banner .flex-container {
+        justify-content: space-between;
+        align-items: center;
+        gap: 4%;
+        position: relative;
+        height: 110vh;
+        /* Add +10vh to stack the second section on top */
+    }
+
+    /* MOBILE */
+    @media (max-width: {
+                {
+                theme.layout.style_opts.slim_width
+            }
+        }
+
+        px) {
+        #hero_banner .flex-container {
+            flex-direction: column;
+            align-items: start;
+            justify-content: center;
+            gap: 24px;
+            height: auto;
+            padding: 120px 0;
+        }
+
+        #hero_banner .column-1 .flex-container {
+            padding: 0;
+        }
+
+        #hero_banner .flex-content {
+            width: 100%;
+        }
+
+        #hero_banner .text-bottom p {
+            font-size: 18px !important;
+        }
+    }
+</style>
+
+<!-----------------------  HERO BANNER  ----------------------->
+<div id="hero_banner">
+    <div class="container">
+        <div class="flex-container">
+            {# COLUMN 1 #}
+            <div class="flex-content column-1">
+                {# LP SINGLE COLUMN #}
+                {% dnd_area "column_1_area" class='body-container', label='Main section - Column 1' %}
+                {% dnd_section padding={'top': 0, 'bottom': 0, 'left': 0, 'right': 0}, full_width='true',
+                vertical_alignment='MIDDLE' %}
+                {% dnd_module "lp_single_col" path="../modules/Reposit - LP Single Column", label="Reposit - LP Single
+                Column" %}
+                {% module_attribute "col_1" is_json=True %}
+                {
+                "eyebrow": {
+                "text": ""
+                },
+                "title": {
+                "text": "Request Your Custom No-Bill Quote",
+                "text_color": {
+                "color": "#FFF",
+                "opacity": 100
+                }
+                },
+                "text_area": {
+                "content": "<p style='color: #FFF;'>Tell us a bit about your goals and your property. We'll tailor a
+                    custom energy analysis just for you, matching your preferred way of reviewing the details.</p>"
+                },
+                "button": [
+                {
+                "text": "Calculate Now",
+                "style_option": "cta-primary",
+                "use_arrow_icon": true
+                }
+                ]
+                }
+                {% end_module_attribute %}
+                {% end_dnd_module %}
+                {% end_dnd_section %}
+                {% end_dnd_area %}
+            </div> {# /.column-1 #}
+
+            {# COLUMN 2 #}
+            <div class="flex-content column-2">
+                {% dnd_area "column_2_area" class='body-container', label='Main section - Column 2' %}
+                {% dnd_section padding={'top': 0, 'bottom': 0, 'left': 0, 'right': 0}, full_width='true',
+                vertical_alignment='MIDDLE' %}
+                {% dnd_module "lp_form" path="../modules/Reposit - LP Form", label="Reposit - LP Form" %}
+                {% module_attribute "form" is_json=True %}
+                {
+                "form_id": "a40045ca-66a2-45fc-ae8c-26267db405f0"
+                }
+                {% end_module_attribute %}
+                {% end_dnd_module %}
+                {% end_dnd_section %}
+                {% end_dnd_area %}
+            </div> {# /.column-2 #}
+        </div> {# /.flex #}
+    </div> {# /.container #}
+</div>
+
+{% dnd_area "dnd_area" class='body-container', label='Main section' %}
+
+<!----------------------- LOGO GRID  ----------------------->
+{% dnd_section
+padding={
+'top': 0,
+'bottom': 0,
+'left': 0,
+'right': 0
+},
+full_width='true',
+vertical_alignment='MIDDLE'
+%}
+{% dnd_module "reposit_logo_grid"
+path="../modules/Reposit - Logo Grid",
+label="Reposit - Logo Grid",
+offset=0
+%}
+{% module_attribute "eyebrow" is_json=True %}
+{
+"text": "We're Australia's Most Awarded Provider"
+}
+{% end_module_attribute %}
+{% module_attribute "group_logos" is_json=True %}
+[
+{ "logo": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/australian.png", "alt":
+"australian" } },
+{ "logo": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/10.png", "alt": "network
+10" } },
+{ "logo": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/9.png", "alt": "9 news" }
+},
+{ "logo": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/7.png", "alt": "7 network"
+} },
+{ "logo": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/abc.png", "alt": "abc" }
+},
+{ "logo": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/guardian.png", "alt":
+"guardian" } },
+{ "logo": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/energyinsights.png",
+"alt": "energy insights" } },
+{ "logo": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/techcouncil.png", "alt":
+"tech council" } },
+{ "logo": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/renew.png", "alt": "renew
+economy" } },
+{ "logo": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/solar.png", "alt": "solar
+victoria" } }
+]
+{% end_module_attribute %}
+{% module_attribute "section" is_json=True %}
+{
+"overlap_section": "true"
+}
+{% end_module_attribute %}
+{% end_dnd_module %}
+{% end_dnd_section %}
+
+<!----------------------- TEXT WITH COUNTER  ----------------------->
+{% dnd_section
+padding={
+'top': 0,
+'bottom': 0,
+'left': 0,
+'right': 0
+},
+full_width='true',
+vertical_alignment='MIDDLE'
+%}
+{% dnd_module "reposit_text_counter"
+path="../modules/Reposit - Text with Counter",
+label="Reposit - Text with Counter",
+offset=0
+%}
+{% module_attribute "col_1" is_json=True %}
+{
+"eyebrow": {
+"text": ""
+},
+"title": {
+"text": ""
+},
+"text_area": {
+"content": "<h2><span style='color: #4698cb;'>Reposit Proposal</span></h2>"
+}
+}
+{% end_module_attribute %}
+{% module_attribute "col_2" is_json=True %}
+{
+"richtext": "<p><span style='color: #1f2a44;'>When you request a Design and Quote from Reposit Power, we'll provide you
+        with a comprehensive plan tailored to your specific needs. We'll carefully analyze your electricity bills,
+        taking into account any changes in usage due to gas conversions or electric vehicles.</span></p>\n<p><span
+        style='color: #1f2a44;'>Our quote will guarantee you'll be Bill Free for the next seven years. We'll also
+        provide a detailed comparison of the savings between our Bill Free plan, a solar-only system, and a standard
+        solar and battery system. This will help you understand the best option for your home and budget.</span></p>\n
+<p><span style='color: #1f2a44;'><strong>To take the next step towards being A NO Bill customer for seven years, follow
+            these simple steps & choose what you would like to do:</strong></span></p>",
+"text_bottom_space": 0
+}
+{% end_module_attribute %}
+{% module_attribute "section" is_json=True %}
+{
+"bg_color": {
+"color": "#FFF",
+"opacity": 100
+},
+"spacing": {
+"top": 0,
+"bottom": 150,
+"top_sm": 0,
+"bottom_sm": 80
+},
+"round_corners": {
+"top_corners": 0,
+"bottom_corners": 64,
+"top_corners_sm": 0,
+"bottom_corners_sm": 42
+}
+}
+{% end_module_attribute %}
+{% end_dnd_module %}
+{% end_dnd_section %}
+
+<!----------------------- ICON CARDS  ----------------------->
+{% dnd_section
+padding={
+'top': 0,
+'bottom': 0,
+'left': 0,
+'right': 0
+},
+full_width='true',
+vertical_alignment='MIDDLE'
+%}
+{% dnd_module "reposit_icon_cards"
+path="../modules/Reposit - Icon Cards",
+label="Reposit - Icon Cards",
+offset=0
+%}
+{% module_attribute "headings" is_json=True %}
+{
+"num_col": "1",
+"col_1": {
+"eyebrow": {
+"text": ""
+},
+"title": {
+"text": "How",
+"text_color": {
+"color": "#4698CB",
+"opacity": 100
+},
+"highlight_text": "does it work?",
+"highlight_color": {
+"color": "#FFF",
+"opacity": 100
+}
+},
+"text_area": {
+"content": ""
+}
+}
+}
+{% end_module_attribute %}
+{% module_attribute "cards" is_json=True %}
+{
+"card":
+[
+{
+"title": {
+"display_as": "h3",
+"text": "⭐ Share Raw Energy Data (Recommended)"
+},
+"description": "<p style='color: #fff;'>By <a
+        href='https://info.repositpower.com/reposit-electricity-cost-saving-recommendation-calculator-lp'
+        style='color: #4698CB; text-decoration: underline;' target='_blank'>clicking here and choosing to share your raw
+        energy data</a>, you'll allow Reposit to fine-tune your system design and optimize it for your specific energy
+    usage. This ensures you get the most out of your solar and battery system.</p>",
+"img_icon": {
+"img": {
+"src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Extra%20Icons/data.svg",
+"alt": "Share Raw Energy Data"
+},
+"bottom_space": 34,
+"position": "start"
+},
+"bg_color": {
+"color": "#184561",
+"opacity": 100
+},
+"round_corners": 20
+},
+{
+"title": {
+"display_as": "h3",
+"text": "Upload Electricity Bills & Photos"
+},
+"description": "<p style='color: #fff;'>Share your last 12 months of electricity bills by clicking on this link. This
+    will help us understand your current energy usage patterns. This goes straight through to our system designers for
+    automated sizing and costing.</p>",
+"img_icon": {
+"img": {
+"src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Extra%20Icons/analysis.svg",
+"alt": "Upload Electricity Bills"
+},
+"bottom_space": 34,
+"position": "start"
+},
+"bg_color": {
+"color": "#1A243B",
+"opacity": 100
+},
+"round_corners": 20
+},
+{
+"title": {
+"display_as": "h3",
+"text": "Book a Discovery Call"
+},
+"description": "<p style='color: #fff;'>Schedule a time for one of our consultants to call you and discuss your energy
+    needs (link to sales assistant triage).</p>",
+"img_icon": {
+"img": {
+"src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Extra%20Icons/recommendations.svg",
+"alt": "Book a Discovery Call"
+},
+"bottom_space": 34,
+"position": "start"
+},
+"bg_color": {
+"color": "#1A243B",
+"opacity": 100
+},
+"round_corners": 20
+},
+{
+"title": {
+"display_as": "h3",
+"text": "Phone Reposit"
+},
+"description": "<p style='color: #fff;'>Call our friendly team at <strong>1800 773 851</strong> to speak with a
+    consultant directly.</p>",
+"img_icon": {
+"img": {
+"src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Extra%20Icons/recommendations.svg",
+"alt": "Phone Reposit"
+},
+"bottom_space": 34,
+"position": "start"
+},
+"bg_color": {
+"color": "#1A243B",
+"opacity": 100
+},
+"round_corners": 20
+},
+{
+"title": {
+"display_as": "h3",
+"text": "Receive a Price Guide"
+},
+"description": "<p style='color: #fff;'>Just looking for pricing information? Request a copy of our latest price guide.
+</p>",
+"img_icon": {
+"img": {
+"src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Extra%20Icons/recommendations.svg",
+"alt": "Receive a Price Guide"
+},
+"bottom_space": 34,
+"position": "start"
+},
+"bg_color": {
+"color": "#1A243B",
+"opacity": 100
+},
+"round_corners": 20
+}
+]
+}
+{% end_module_attribute %}
+{% module_attribute "section" is_json=True %}
+{
+"bg_color": {
+"color": "#1F2A44",
+"opacity": 100
+},
+"spacing": {
+"top": 200,
+"bottom": 250,
+"top_sm": 100,
+"bottom_sm": 120
+},
+"round_corners": {
+"top_corners": 0,
+"bottom_corners": 0,
+"top_corners_sm": 0,
+"bottom_corners_sm": 0
+}
+}
+{% end_module_attribute %}
+{% end_dnd_module %}
+{% end_dnd_section %}
+
+<!----------------------- CTA  ----------------------->
+{% dnd_section
+padding={
+'top': 0,
+'bottom': 0,
+'left': 0,
+'right': 0
+},
+full_width='true',
+vertical_alignment='MIDDLE'
+%}
+{% dnd_module "reposit_cta"
+path="../modules/Reposit - CTA",
+label="Reposit - CTA",
+offset=0
+%}
+{% module_attribute "col_1" is_json=True %}
+{
+"width": "50",
+"eyebrow": {
+"text": ""
+},
+"title": {
+"text": "Need Personal Assistance?",
+"highlight_text": "",
+"bottom_space": 24
+},
+"text_area": {
+"content": "<h3><span style='color: #ffffff;'>Book a Discovery Call</span></h3>\n<p>Speak to one of our Home Energy
+    Experts today about how a smart home energy system can completely eliminate your electricity bill:</p>",
+"bottom_space": 24
+},
+"button": [
+{
+"text": "Book Your Discovery Call",
+"style_option": "cta-secondary",
+"use_arrow_icon": true
+}
+]
+}
+{% end_module_attribute %}
+{% module_attribute "col_2" is_json=True %}
+{
+"content_type": "text_area",
+"width": "45",
+"text_area": {
+"richtext": "<h3><span style='color: #ffffff;'>Ready to talk now?</span></h3>\n<p>Jump the queue and speak to a Home
+    Energy Expert on our direct line <strong>(Mon-Fri 9am-5pm)</strong>.</p>",
+"bottom_space": 24,
+"button": [
+{
+"text": "1800 773 851",
+"style_option": "cta-secondary",
+"use_arrow_icon": false,
+"url": {
+"href": "+611800773851",
+"type": "PHONE_NUMBER",
+"content_id": null
+}
+}
+]
+}
+}
+{% end_module_attribute %}
+{% module_attribute "section" is_json=True %}
+{
+"bg_color": {
+"color": "#1F2A44",
+"opacity": 100
+},
+"spacing": {
+"top": 0,
+"bottom": 200,
+"top_sm": 0,
+"bottom_sm": 100
+},
+"round_corners": {
+"top_corners": 0,
+"bottom_corners": 0,
+"top_corners_sm": 0,
+"bottom_corners_sm": 0
+}
+}
+{% end_module_attribute %}
+{% end_dnd_module %}
+{% end_dnd_section %}
+
+<!-----------------------  FORM  ----------------------->
+{% dnd_section
+padding={
+'top': 0,
+'bottom': 0,
+'left': 0,
+'right': 0
+},
+full_width='true',
+vertical_alignment='MIDDLE'
+%}
+{% dnd_module "reposit_form"
+path="../modules/Reposit - New Form",
+label="Reposit - New Form",
+offset=0
+%}
+{% module_attribute "col_1" is_json=True %}
+{
+"eyebrow": {
+"text": ""
+},
+"title": {
+"text": "Link Your",
+"highlight_text": "Energy Data",
+"bottom_space": 12
+},
+"text_area": {
+"content": "<p>Where Should We Send Your Results? This question is required.*</p>",
+"bottom_space": 24
+}
+}
+{% end_module_attribute %}
+{% module_attribute "form" is_json=True %}
+{
+"form_id": "f9fee2ae-51ec-428d-b966-a68c6be4ee7b"
+}
+{% end_module_attribute %}
+{% module_attribute "section" is_json=True %}
+{
+"overlap_section": "false",
+"spacing": {
+"top": 150,
+"bottom": 150,
+"top_sm": 80,
+"bottom_sm": 80
+},
+"round_corners": {
+"top_corners": 64,
+"bottom_corners": 64,
+"top_corners_sm": 42,
+"bottom_corners_sm": 42
+}
+}
+{% end_module_attribute %}
+{% end_dnd_module %}
+{% end_dnd_section %}
+
+{% end_dnd_area %}
+{% endblock body %}

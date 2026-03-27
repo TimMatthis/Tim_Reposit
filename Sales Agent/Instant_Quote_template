@@ -1,0 +1,484 @@
+<!--
+  templateType: page
+  isAvailableForNewContent: true
+  screenshotPath: ../../images/screenshots/lp-6-6-2.jpg
+  label: Landing Page - Opt 6 - C-Pro - YEM CHILD
+-->
+{% extends "../layouts/base-lp.html" %}
+
+{% block body %}
+
+<main class="body-container-wrapper">
+    {% dnd_area "dnd_area" class='body-container', label='Main section' %}
+  
+  <!----------------------- GLOBAL HEADER  ----------------------->
+    {% dnd_section
+      padding={
+        'top': 0,
+        'bottom': 0,
+        'left': 0,
+        'right': 0
+      },
+      full_width='true',
+      vertical_alignment='TOP'
+    %}
+      {% dnd_module "global_header"
+        path="../../modules/Global Header v2",
+        label="Global Header - Opt2",
+        offset=0
+      %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+
+ <!----------------------- HEADER FOOTER OVERRIDES  ----------------------->
+    {% dnd_section
+      padding={
+        'top': 0,
+        'bottom': 0,
+        'left': 0,
+        'right': 0
+      },
+      full_width='true',
+      vertical_alignment='TOP'
+    %}
+      {% dnd_module "header_footer_overrides"
+        path='../../modules/CLEAN - Style - Header Footer Override',
+        label="Header Footer Override",
+        offset=0,
+        use_alt_nav=true,
+        hide_nav=true,
+        hide_header_hat=true,
+        hide_footer=true
+      %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+    
+<!----------------------- HERO BANNER  ----------------------->
+    {% dnd_section
+      padding={
+        'top': 0,
+        'bottom': 0,
+        'left': 0,
+        'right': 0
+      },
+      full_width='true',
+      vertical_alignment='TOP'
+    %}
+      {% dnd_module "hero_baner"
+        path='../../modules/CLEAN - Hero Banner',
+        label="Hero Banner",
+        offset=0
+      %}
+        {% module_attribute "start" is_json=True %} 
+          {
+            "num_cols": "2",
+            "col_arrangement": "opt5"
+          }
+        {% end_module_attribute %}
+        {% module_attribute "col_1" is_json=True %}
+          {
+            "rotating_text": false,
+            "content": "<h1>Marketing Superpowers</h1><h4>They could be all yours going with CLEAN.</h4>",
+            "style": {
+              "content_align": "left",
+              "font_color": {
+                "color": "#444444",
+                "opacity": 100
+              }
+            }
+          }
+        {% end_module_attribute %}
+        {% module_attribute "col_2" is_json=True %}
+          {
+            "col_content_type": "rich_text",
+            "content": "<img src='https://cdn2.hubspot.net/hubfs/507386/CLEAN-images/gfx/clean-video-embed-sml.jpg' alt='example' />",
+            "style": {
+              "content_align": "left",
+              "col_bg": "none"
+            }
+          }
+        {% end_module_attribute %}
+        {% module_attribute "row_settings" is_json=True %}
+          {
+            "bg_type": "color",
+            "bg_color": {
+              "color": "#f2f5f8",
+              "opacity": 100
+            },
+            "overlay_bg": "none",
+            "content_width": "container",
+            "adv_settings": {
+              "padding_top": "100px",
+              "padding_bottom": "50px",
+              "padding_top_tablet": "100px",
+              "padding_bottom_tablet": "100px",
+              "padding_top_mobile": "50px",
+              "padding_bottom_mobile": "50px"
+            }
+          }
+        {% end_module_attribute %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+
+<!----------------------- LOGO SCROLLER  ----------------------->
+    {% dnd_section
+      padding={
+        'top': 0,
+        'bottom': 0,
+        'left': 0,
+        'right': 0
+      },
+      full_width='true',
+      vertical_alignment='TOP'
+    %}
+      {% dnd_module "logo_scroller"
+        path='../../modules/CLEAN - Row - Logo Scroller',
+        label="Logo Scroller",
+        offset=0
+      %}
+        {% module_attribute "start" is_json=True %} 
+          {
+            "num_logos": 5
+          }
+        {% end_module_attribute %}
+        {% module_attribute "logo_group" is_json=True %}
+          [
+              {
+                "logo": {
+                  "src": "https://cdn2.hubspot.net/hubfs/507386/CLEAN-images/logos/gray-entrepreneur-mag.png"
+                }
+              },
+              {
+                "logo": {
+                  "src": "https://cdn2.hubspot.net/hubfs/507386/CLEAN-images/logos/gray-fast-company.png"
+                }
+              },
+              {
+                "logo": {
+                  "src": "https://cdn2.hubspot.net/hubfs/507386/CLEAN-images/logos/gray-forbes-logo.png"
+                }
+              },
+              {
+                "logo": {
+                  "src": "https://cdn2.hubspot.net/hubfs/507386/CLEAN-images/logos/gray-mashable@2x.png"
+                }
+              },
+              {
+                "logo": {
+                  "src": "https://cdn2.hubspot.net/hubfs/507386/CLEAN-images/logos/gray-ny-times@2x.png"
+                }
+              },
+              {
+                "logo": {
+                  "src": "https://cdn2.hubspot.net/hubfs/507386/CLEAN-images/logos/gray-techcrunch@2x.png"
+                }
+              },
+              {
+                "logo": {
+                  "src": "https://cdn2.hubspot.net/hubfs/507386/CLEAN-images/logos/gray-wired@2x.png"
+                }
+              }
+          ]
+        {% end_module_attribute %}
+        {% module_attribute "slider_options" is_json=True %} 
+          {
+            "auto_rotate": true,
+            "dots": true,
+            "show_arrows": false,
+            "make_logos_links": false,
+            "section_title": true 
+          }
+        {% end_module_attribute %}
+        {% module_attribute "title" %} 
+        {% end_module_attribute %}
+        {% module_attribute "row_settings" is_json=True %}
+          {
+            "bg_color": {
+              "color": "#f2f5f8",
+              "opacity": 100
+            },
+            "content_width": "container",
+            "adv_settings": {
+              "padding_top": "0px",
+              "padding_bottom": "50px",
+              "padding_top_tablet": "50px",
+              "padding_bottom_tablet": "50px",
+              "padding_top_mobile": "50px",
+              "padding_bottom_mobile": "50px"
+            }
+          }
+        {% end_module_attribute %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+
+
+
+<!----------------------- IMAGE AND TEXT OPT 2  ----------------------->
+    {% dnd_section
+      padding={
+        'top': 0,
+        'bottom': 0,
+        'left': 0,
+        'right': 0
+      },
+      full_width='true',
+      vertical_alignment='TOP'
+    %}
+      {% dnd_module "image_text_opt_2_1"
+        path='../../modules/CLEAN - Row - Image and Text - Opt 2',
+        label="Image and Text - Opt 2",
+        offset=0
+      %}
+        {% module_attribute "start" is_json=True %} 
+          {
+            "img_col": "left",
+            "col_arrangement":  "opt1"
+          }
+        {% end_module_attribute %}
+        {% module_attribute "content" is_json=True %}
+          {
+            "text": "<h3>Fully Drag-n-Drop</h3><p>Gone are the days of having to know how to code or having to rely on someone who does in order to create and manage your marketing site, landing pages, and email campaigns. CLEAN-6-2 is based on insanely flexible and customizable row modules that you can drag and drop to create pages and easily optimize them along the way.</p>",
+            "image": {
+              "src": "https://cdn2.hubspot.net/hubfs/5816394/CLEAN-images/gifs/clean-5s-drag-n-drop.gif" 
+            },
+            "settings": {
+              "show_divider": false
+            },
+            "advanced": {
+              "img_shadow": true,
+              "shadow_size": 50,
+              "shadow_color": {
+                "color:": "#1c2125",
+                "opacity": 20
+              }
+            }
+          }
+        {% end_module_attribute %}
+        {% module_attribute "row_settings" is_json=True %}
+          {
+            "content_width": "custom",
+            "set_width": 1300,
+            "adv_settings": {
+              "padding_top": "100px",
+              "padding_bottom": "100px",
+              "padding_top_tablet": "50px",
+              "padding_bottom_tablet": "50px",
+              "padding_top_mobile": "50px",
+              "padding_bottom_mobile": "50px"
+            }
+          }
+        {% end_module_attribute %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+
+<!----------------------- IMAGE AND TEXT OPT 2  ----------------------->
+    {% dnd_section
+      padding={
+        'top': 0,
+        'bottom': 0,
+        'left': 0,
+        'right': 0
+      },
+      full_width='true',
+      vertical_alignment='TOP'
+    %}
+      {% dnd_module "image_text_opt_2_2"
+        path='../../modules/CLEAN - Row - Image and Text - Opt 2',
+        label="Image and Text - Opt 2",
+        offset=0
+      %}
+        {% module_attribute "start" is_json=True %} 
+          {
+            "img_col": "right",
+            "col_arrangement":  "opt1"
+          }
+        {% end_module_attribute %}
+        {% module_attribute "content" is_json=True %}
+          {
+            "text": "<h3>Wonderfully Customizable</h3><p><span>You will have access to loads of fine grain customization controls right from within the page editor. Select the rows background color, text color, row spacing, how things animate in, and so much more.</span></p>",
+            "image": {
+              "src": "https://cdn2.hubspot.net/hubfs/5816394/CLEAN-images/gifs/clean-5s-color-settings.gif" 
+            },
+            "settings": {
+              "show_divider": false
+            },
+            "text_align": "right",
+            "text_align_mobile": "left",
+            "advanced": {
+              "img_shadow": true,
+              "shadow_size": 50,
+              "shadow_color": {
+                "color:": "#1c2125",
+                "opacity": 20
+              }
+            }
+          }
+        {% end_module_attribute %}
+        {% module_attribute "row_settings" is_json=True %}
+          {
+            "content_width": "custom",
+            "set_width": 1300,
+            "adv_settings": {
+              "padding_top": "100px",
+              "padding_bottom": "100px",
+              "padding_top_tablet": "50px",
+              "padding_bottom_tablet": "50px",
+              "padding_top_mobile": "50px",
+              "padding_bottom_mobile": "50px"
+            }
+          }
+        {% end_module_attribute %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+
+<!----------------------- IMAGE AND TEXT OPT 2  ----------------------->
+    {% dnd_section
+      padding={
+        'top': 0,
+        'bottom': 0,
+        'left': 0,
+        'right': 0
+      },
+      full_width='true',
+      vertical_alignment='TOP'
+    %}
+      {% dnd_module "image_text_opt_2_3"
+        path='../../modules/CLEAN - Row - Image and Text - Opt 2',
+        label="Image and Text - Opt 2",
+        offset=0
+      %}
+        {% module_attribute "start" is_json=True %} 
+          {
+            "img_col": "left",
+            "col_arrangement":  "opt1"
+          }
+        {% end_module_attribute %}
+        {% module_attribute "content" is_json=True %}
+          {
+            "text": "<h3>A Designers Dream Tempalte</h3><p>Just because you are using a template system doesn not mean your website has to look like a template. CLEAN was built with designers, like you, in mind. You will have wide ranging control of style elements including color, spacing, column sizes, shadows, and much more.</p><p><strong>Not a designer? Not a problem. Your team will think you are by using CLEAN.</strong></p>",
+            "image": {
+              "src": "https://cdn2.hubspot.net/hubfs/5816394/CLEAN-images/gifs/clean-5s-design-settings-2.gif" 
+            },
+            "settings": {
+              "show_divider": false
+            },
+            "advanced": {
+              "img_shadow": true,
+              "shadow_size": 50,
+              "shadow_color": {
+                "color:": "#1c2125",
+                "opacity": 20
+              }
+            }
+          }
+        {% end_module_attribute %}
+        {% module_attribute "row_settings" is_json=True %}
+          {
+            "content_width": "custom",
+            "set_width": 1300,
+            "adv_settings": {
+              "padding_top": "100px",
+              "padding_bottom": "100px",
+              "padding_top_tablet": "50px",
+              "padding_bottom_tablet": "50px",
+              "padding_top_mobile": "50px",
+              "padding_bottom_mobile": "50px"
+            }
+          }
+        {% end_module_attribute %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+
+<!----------------------- MULTI-COLUMN CONTENT  ----------------------->
+    {% dnd_section
+      padding={
+        'top': 0,
+        'bottom': 0,
+        'left': 0,
+        'right': 0
+      },
+      full_width='true',
+      vertical_alignment='TOP'
+    %}
+      {% dnd_module "multi_col_content_2"
+        path='../../modules/CLEAN - Row - Multi-Column Content',
+        label="Multi-Column Content",
+        offset=0
+      %}
+        {% module_attribute "start" is_json=True %}
+          {
+            "num_cols": "1"
+          }
+        {% end_module_attribute %}
+        {% module_attribute "col_1" is_json=True %}
+          {
+            "content": "<h2>Get Updates on CLEAN</h2><p>Drop your name and email below to be the first to know when updates to the CLEAN series are released.</p>",
+            "settings": {
+              "align_desktop": "center",
+              "align_mobile": "center",
+              "show_divider": false,
+              "custom_text_color": true,
+              "custom_divider_color": true,
+              "text_color": {
+                "color": "#ffffff",
+                "opacity": 100
+              },
+              "form_max_width": 50,
+              "divider_color": {
+                "color": "#ffffff",
+                "opacity": 100
+              }
+            }
+          }
+        {% end_module_attribute %}
+        {% module_attribute "row_settings" is_json=True %}
+          {
+            "bg_type": "gradient",
+            "color_1": {
+              "color": "#00a4bd",
+              "opacity": 100
+            },
+            "color_2": {
+              "color": "#00bda5",
+              "opacity": 100
+            },
+            "gradient_angle": "45deg",
+            "content_width": "container",
+            "adv_settings": {
+              "padding_top": "100px",
+              "padding_bottom": "100px",
+              "padding_top_tablet": "50px",
+              "padding_bottom_tablet": "50px",
+              "padding_top_mobile": "25px",
+              "padding_bottom_mobile": "25px"
+            },
+            "style": {
+              "pull_up": false
+            }
+          }
+        {% end_module_attribute %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+  
+  <!----------------------- GLOBAL FOOTER  ----------------------->
+    {% dnd_section
+      padding={
+        'top': 0,
+        'bottom': 0,
+        'left': 0,
+        'right': 0
+      },
+      full_width='true',
+      vertical_alignment='TOP'
+    %}
+      {% dnd_module "global_footer"
+        path="../../modules/Global Footer",
+        label="Global Footer",
+        offset=0
+      %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+
+    {% end_dnd_area %}
+</main>
+{% endblock body %}

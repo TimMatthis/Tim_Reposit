@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  {{ standard_header_includes }}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project Mega Drive – Arena Investment Calculator</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+    :root {
+      --bg: #0b0f1a;
+      --surface: #131929;
+      --card: #1a2235;
+      --border: #27354f;
+      --accent: #00d4a0;
+      --accent2: #3b82f6;
+      --warn: #f59e0b;
+      --danger: #ef4444;
+      --text: #e4ecf7;
+      --muted: #8899b3;
+      --input-bg: #0f1724;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 20px 16px 60px;
+    }
+
+    /* ── Header ── */
+    header {
+      max-width: 1400px;
+      margin: 0 auto 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 20px;
+    }
+
+    .logo-mark {
+      width: 46px;
+      height: 46px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 800;
+      color: #000;
+      flex-shrink: 0;
+    }
+
+    header h1 {
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    header p {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    /* ── Layout ── */
+    .layout {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+    }
+
+    .card-title {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-title::before {
+      content: '';
+      display: inline-block;
+      width: 3px;
+      height: 13px;
+      border-radius: 99px;
+      background: var(--accent);
+    }
+
+    /* ── Input Groups ── */
+    .input-group {
+      margin-bottom: 12px;
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .input-row {
+      display: flex;
+      align-items: center;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      transition: border-color .2s;
+    }
+
+    .input-row:focus-within {
+      border-color: var(--accent);
+    }
+
+    .input-row input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 9px 11px;
+    }
+
+    .input-row input::-webkit-inner-spin-button,
+    .input-row input::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+    }
+
+    .unit {
+      font-size: 10px;
+      color: var(--muted);
+      padding: 0 9px;
+      white-space: nowrap;
+      border-left: 1px solid var(--border);
+      background: var(--surface);
+      height: 100%;
+      display: flex;
+      align-items: center;
+      min-height: 36px;
+    }
+
+    .section-divider {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin: 18px 0 12px;
+      padding-bottom: 5px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ── Hurdle Badge ── */
+    .hurdle-badge {
+      background: linear-gradient(135deg, rgba(0, 212, 160, .12), rgba(59, 130, 246, .08));
+      border: 1px solid var(--accent);
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .hurdle-badge .label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+
+    .hurdle-badge .value {
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: -.02em;
+      line-height: 1;
+    }
+
+    .hurdle-badge .sub {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 5px;
+    }
+
+    .hurdle-badge.not-reached .value {
+      color: var(--danger);
+    }
+
+    .hurdle-badge.reached .value {
+      color: var(--accent);
+    }
+
+    /* ── KPI Grid ── */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .kpi {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+    }
+
+    .kpi .kpi-label {
+      font-size: 10px;
+      color: var(--muted);
+      margin-bottom: 3px;
+    }
+
+    .kpi .kpi-value {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .kpi .kpi-value.pos {
+      color: var(--accent);
+    }
+
+    .kpi .kpi-value.neg {
+      color: var(--danger);
+    }
+
+    /* ── Charts Grid ── */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 1100px) {
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .chart-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+    }
+
+    .chart-card.wide {
+      grid-column: 1 / -1;
+    }
+
+    .chart-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .chart-sub {
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+
+    .chart-wrap {
+      position: relative;
+      height: 240px;
+    }
+
+    .chart-wrap.tall {
+      height: 280px;
+    }
+
+    /* ── Breakeven Callout ── */
+    .breakeven-strip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0, 212, 160, .06);
+      border: 1px solid rgba(0, 212, 160, .25);
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 16px;
+    }
+
+    .breakeven-strip .icon {
+      font-size: 18px;
+    }
+
+    .breakeven-strip .text {
+      font-size: 12px;
+    }
+
+    .breakeven-strip .text strong {
+      color: var(--accent);
+    }
+
+    /* ── Toggle Detail Button ── */
+    .detail-toggle-wrap {
+      max-width: 1400px;
+      margin: 0 auto 16px;
+    }
+
+    .btn-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--muted);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .btn-toggle:hover {
+      border-color: var(--accent2);
+      color: var(--text);
+    }
+
+    .btn-toggle .chevron {
+      transition: transform .3s;
+      display: inline-block;
+    }
+
+    .btn-toggle.open .chevron {
+      transform: rotate(180deg);
+    }
+
+    /* ── Table ── */
+    .detail-section {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11.5px;
+      min-width: 900px;
+    }
+
+    thead tr {
+      background: var(--surface);
+    }
+
+    th {
+      text-align: right;
+      padding: 9px 11px;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th:first-child,
+    td:first-child {
+      text-align: left;
+      position: sticky;
+      left: 0;
+      z-index: 2;
+    }
+
+    thead th:first-child {
+      background: var(--surface);
+    }
+
+    tr:nth-child(odd) td {
+      background: var(--card);
+    }
+
+    tr:nth-child(even) td {
+      background: var(--surface);
+    }
+
+    td {
+      padding: 8px 11px;
+      text-align: right;
+      white-space: nowrap;
+      border-bottom: 1px solid rgba(255, 255, 255, .04);
+      font-variant-numeric: tabular-nums;
+    }
+
+    tr:nth-child(odd) td:first-child {
+      background: var(--card);
+    }
+
+    tr:nth-child(even) td:first-child {
+      background: var(--surface);
+    }
+
+    td:first-child {
+      font-weight: 600;
+    }
+
+    .positive {
+      color: var(--accent);
+    }
+
+    .negative {
+      color: #6a7f99;
+    }
+
+    .hurdle-row td {
+      background: rgba(0, 212, 160, .08) !important;
+    }
+
+    .hurdle-row td:first-child {
+      color: var(--accent);
+    }
+
+    /* ── Result Row ── */
+    .result-row {
+      background: rgba(0, 212, 160, .06);
+      border: 1px solid rgba(0, 212, 160, .2);
+      border-radius: 8px;
+      padding: 9px 11px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .result-row .rlabel {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .result-row .rvalue {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 4px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="logo-mark">MD</div>
+    <div>
+      <h1>Project Mega Drive — Arena Investment Calculator</h1>
+      <p>V2G Financial Model · ARENA Matching · Hurdle Rate Analysis</p>
+    </div>
+  </header>
+
+  <!-- ══════════════ MAIN LAYOUT ══════════════ -->
+  <div class="layout">
+
+    <!-- ── LEFT: Inputs ── -->
+    <div>
+      <!-- Hurdle Badge -->
+      <div class="hurdle-badge not-reached" id="hurdleBadge">
+        <div class="label">⚡ CLEARS HURDLE</div>
+        <div class="value" id="hurdleVal">—</div>
+        <div class="sub" id="hurdleSub">First quarter cumulative EBIT exceeds hurdle</div>
+      </div>
+
+      <!-- KPIs -->
+      <div class="kpi-grid">
+        <div class="kpi">
+          <div class="kpi-label">Revenue / Customer p/a</div>
+          <div class="kpi-value pos" id="kpiRevPerCust">—</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">Cost / Customer p/a</div>
+          <div class="kpi-value neg" id="kpiCostPerCust">—</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">Total Capital Deployed</div>
+          <div class="kpi-value" id="kpiTotalCapital">—</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">Peak Customers</div>
+          <div class="kpi-value" id="kpiPeakCusts">—</div>
+        </div>
+      </div>
+
+      <!-- Inputs -->
+      <div class="card">
+        <div class="card-title">EV Energy Cost Work-Up</div>
+        <div class="input-group">
+          <label>Average Vehicle Battery Capacity</label>
+          <div class="input-row"><input type="number" id="battCap" value="70" step="1" min="1" /><span
+              class="unit">kWh</span></div>
+        </div>
+        <div class="input-group">
+          <label>Average Mileage p/a</label>
+          <div class="input-row"><input type="number" id="mileage" value="17500" step="100" min="0" /><span
+              class="unit">km</span></div>
+        </div>
+        <div class="input-group">
+          <label>Average Discharge Economy</label>
+          <div class="input-row"><input type="number" id="economy" value="0.18" step="0.01" min="0" /><span
+              class="unit">kWh / km</span></div>
+        </div>
+        <div class="input-group">
+          <label>Average Cost / kWh to Charge</label>
+          <div class="input-row"><input type="number" id="chargeCost" value="0.25" step="0.01" min="0" /><span
+              class="unit">AUD</span></div>
+        </div>
+        <div class="result-row">
+          <div class="rlabel">↳ Avg EV Energy Usage p/a <span style="font-size:10px;opacity:.7">(mileage ×
+              economy)</span></div>
+          <div class="rvalue" id="evEnergyUsage">—</div>
+        </div>
+        <div class="result-row">
+          <div class="rlabel">↳ Total Cost to Charge p/a <span style="font-size:10px;opacity:.7">(EV usage × charge
+              rate)</span></div>
+          <div class="rvalue" id="evChargeCost" style="color:var(--danger);">—</div>
+        </div>
+
+        <div class="section-divider">EV Revenue Work-Up</div>
+        <div class="input-group">
+          <label>Usable Export Energy (hard limit)</label>
+          <div class="input-row"><input type="number" id="usableExport" value="15" step="1" min="0" /><span
+              class="unit">kWh</span></div>
+        </div>
+        <div class="input-group">
+          <label>Window of Expected Use Per Day</label>
+          <div class="input-row"><input type="number" id="useWindow" value="2" step="0.05" min="0" /><span
+              class="unit">hours</span></div>
+        </div>
+        <div class="input-group">
+          <label>Rate Limit of Charger</label>
+          <div class="input-row"><input type="number" id="chargerRate" value="7.5" step="0.5" min="1" /><span
+              class="unit">kW</span></div>
+        </div>
+        <div class="input-group">
+          <label>Market Event Days per annum</label>
+          <div class="input-row"><input type="number" id="dayWindows" value="13" step="1" min="1" /><span
+              class="unit">days p/a</span></div>
+        </div>
+        <div class="input-group">
+          <label>Net arbitrage value per kWh</label>
+          <div class="input-row"><input type="number" id="exportRate" value="22" step="50" /><span
+              class="unit">$/kWh</span></div>
+        </div>
+        <div class="result-row">
+          <div class="rlabel">↳ Wholesale Revenue p/a <span style="font-size:10px;opacity:.7">(trading energy × event
+              days
+              × rate − dampening)</span></div>
+          <div class="rvalue" id="wholesaleResult">—</div>
+        </div>
+        <div class="input-group">
+          <label>FCAS Revenue p/a</label>
+          <div class="input-row"><input type="number" id="fcas" value="0" step="100" min="0" /><span class="unit">AUD
+              p/a</span></div>
+        </div>
+        <div class="input-group">
+          <label>MSL Revenue p/a</label>
+          <div class="input-row"><input type="number" id="msl" value="0" step="100" min="0" /><span class="unit">AUD
+              p/a</span></div>
+        </div>
+
+        <div class="section-divider">Revenue Builder Costs</div>
+        <div class="input-group">
+          <label>Cost to Acquire (one-off per customer)</label>
+          <div class="input-row"><input type="number" id="costAcquire" value="250" step="10" min="0" /><span
+              class="unit">AUD</span></div>
+        </div>
+        <div class="input-group">
+          <label>Cost to Serve (recurring p/a)</label>
+          <div class="input-row"><input type="number" id="costServe" value="20" step="5" min="0" /><span
+              class="unit">AUD p/a</span></div>
+        </div>
+
+        <div class="section-divider">Growth Metrics</div>
+        <div class="input-group">
+          <label>Starting Customer Base (Q13)</label>
+          <div class="input-row"><input type="number" id="startCustomers" value="100" step="5" min="1" /><span
+              class="unit">customers</span></div>
+        </div>
+        <div class="input-group">
+          <label>Quarterly Growth Rate (net)</label>
+          <div class="input-row"><input type="number" id="growthRate" value="10" step="1" min="0" max="200" /><span
+              class="unit">%</span></div>
+        </div>
+        <div class="input-group">
+          <label>Fleet Unavailability Dampening</label>
+          <div class="input-row"><input type="number" id="dampen" value="25" step="1" min="0" max="100" /><span
+              class="unit">%</span></div>
+        </div>
+
+        <div class="section-divider">Economic & Funding Inputs</div>
+        <div class="input-group">
+          <label>Tax Rate</label>
+          <div class="input-row"><input type="number" id="taxRate" value="30" step="1" min="0" max="100" /><span
+              class="unit">%</span></div>
+        </div>
+        <div class="input-group">
+          <label>Hurdle Rate</label>
+          <div class="input-row"><input type="number" id="hurdleRate" value="11" step="0.5" min="0" max="100" /><span
+              class="unit">% p/a</span></div>
+        </div>
+        <div class="input-group">
+          <label>Arena Matching (% of Reposit spend)</label>
+          <div class="input-row"><input type="number" id="arenaMatch" value="50" step="5" min="0" max="100" /><span
+              class="unit">%</span></div>
+        </div>
+      </div><!-- /card -->
+    </div><!-- /left -->
+
+    <!-- ── RIGHT: Charts ── -->
+    <div>
+
+      <!-- Breakeven callout -->
+      <div class="breakeven-strip" id="breakevenStrip">
+        <div class="icon">📈</div>
+        <div class="text" id="breakevenText">Calculating…</div>
+      </div>
+
+      <!-- Charts Grid -->
+      <div class="charts-grid">
+
+        <!-- Breakeven Chart -->
+        <div class="chart-card wide">
+          <div class="chart-title">Cumulative EBIT vs Hurdle Threshold</div>
+          <div class="chart-sub">Breakeven occurs where the EBIT line crosses zero</div>
+          <div class="chart-wrap tall"><canvas id="chartBreakeven"></canvas></div>
+        </div>
+
+        <!-- Revenue vs Cost -->
+        <div class="chart-card">
+          <div class="chart-title">Quarterly Revenue vs Direct Costs</div>
+          <div class="chart-sub">Post-commercial periods only (Period 13+)</div>
+          <div class="chart-wrap"><canvas id="chartRevCost"></canvas></div>
+        </div>
+
+        <!-- Customer Growth -->
+        <div class="chart-card">
+          <div class="chart-title">Customer Growth</div>
+          <div class="chart-sub">Quarterly customer base under growth model</div>
+          <div class="chart-wrap"><canvas id="chartCustomers"></canvas></div>
+        </div>
+
+        <!-- Hurdle Coverage -->
+        <div class="chart-card">
+          <div class="chart-title">Hurdle Coverage Ratio (ROIC / Hurdle Rate)</div>
+          <div class="chart-sub">Above 1× = cleared. Hurdle rate = <span id="hurdleRateLabel">11%</span></div>
+          <div class="chart-wrap"><canvas id="chartROIC"></canvas></div>
+        </div>
+
+        <!-- Capital waterfall -->
+        <div class="chart-card">
+          <div class="chart-title">Project Capital by Phase</div>
+          <div class="chart-sub">Reposit cost vs Arena matching (Periods 1–10)</div>
+          <div class="chart-wrap"><canvas id="chartCapital"></canvas></div>
+        </div>
+        <!-- Arena Matching Sensitivity -->
+        <div class="chart-card wide">
+          <div class="chart-title">Arena Matching Impact on Time to Profitability</div>
+          <div class="chart-sub">How different ARENA grant matching levels accelerate breakeven — vs current setting
+            (<span id="arenaMatchLabel">30%</span>)</div>
+          <div style="display:grid; grid-template-columns: 1fr 340px; gap: 20px; align-items: start;">
+            <div class="chart-wrap" style="height:220px;"><canvas id="chartArenaSens"></canvas></div>
+            <div>
+              <table id="arenaSensTable"
+                style="width:100%; font-size:11.5px; border-collapse:collapse; min-width:auto;">
+                <thead>
+                  <tr style="border-bottom:1px solid var(--border);">
+                    <th
+                      style="text-align:left; padding:6px 8px; color:var(--muted); font-size:10px; text-transform:uppercase;">
+                      Matching %</th>
+                    <th
+                      style="text-align:right; padding:6px 8px; color:var(--muted); font-size:10px; text-transform:uppercase;">
+                      Clears Hurdle</th>
+                    <th
+                      style="text-align:right; padding:6px 8px; color:var(--muted); font-size:10px; text-transform:uppercase;">
+                      Qtrs Saved</th>
+                    <th
+                      style="text-align:right; padding:6px 8px; color:var(--muted); font-size:10px; text-transform:uppercase;">
+                      Yrs Saved</th>
+                  </tr>
+                </thead>
+                <tbody id="arenaSensBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /charts-grid -->
+
+    </div><!-- /right -->
+  </div><!-- /layout -->
+
+  <!-- ══ Detail Toggle ══ -->
+  <div class="detail-toggle-wrap">
+    <button class="btn-toggle" id="btnToggle" onclick="toggleDetail()">
+      <span>📋</span>
+      <span>Show Quarterly Detail Table</span>
+      <span class="chevron">▼</span>
+    </button>
+  </div>
+
+  <div class="detail-section" id="detailSection" style="display:none;">
+    <div class="card" style="padding:0; overflow:hidden;">
+      <div class="table-wrap">
+        <table id="cfTable">
+          <thead>
+            <tr>
+              <th>Period</th>
+              <th>Quarter</th>
+              <th>Capital Paid-In</th>
+              <th>Arena Matching</th>
+              <th>Qtrly Hurdle Add</th>
+              <th>Cum. Hurdle</th>
+              <th>Customers</th>
+              <th>V2G Revenue</th>
+              <th>Direct Costs</th>
+              <th>Cumulative EBIT</th>
+              <th>ROIC</th>
+            </tr>
+          </thead>
+          <tbody id="cfBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ── Quarter labels ──────────────────────────────
+    const START_YEAR = 2025, START_QTR = 3;
+    function quarterLabel(p) {
+      const total = START_QTR - 1 + (p - 1);
+      const y = START_YEAR + Math.floor(total / 4);
+      const q = (total % 4) + 1;
+      return `Q${q} ${y}`;
+    }
+
+    // ── Project phase costs from XLS ──────────────
+    const PROJECT_COSTS = [
+      1636571.77, 1645586.90, 733667.56, 1810269.12, 1727741.79,
+      629604.70, 472141.15, 368078.28, 322893.09, 277707.90
+    ];
+
+    // ── Chart.js shared defaults ──────────────────
+    const FONT = { family: 'Inter', size: 11 };
+    Chart.defaults.color = '#8899b3';
+    Chart.defaults.font = FONT;
+    Chart.defaults.plugins.legend.labels.font = FONT;
+    Chart.defaults.plugins.legend.labels.boxWidth = 10;
+    Chart.defaults.plugins.legend.labels.padding = 14;
+
+    function gridColor() { return 'rgba(39,53,79,.55)'; }
+    function makeAxes(ylabel) {
+      return {
+        x: { grid: { color: gridColor() }, ticks: { maxTicksLimit: 10 } },
+        y: {
+          grid: { color: gridColor() }, ticks: {
+            callback: v => {
+              const a = Math.abs(v);
+              if (a >= 1e6) return '$' + (v / 1e6).toFixed(1) + 'M';
+              if (a >= 1e3) return '$' + (v / 1e3).toFixed(0) + 'k';
+              return '$' + v.toFixed(0);
+            }
+          }
+        }
+      };
+    }
+
+    // ── Create charts once ────────────────────────
+    let charts = {};
+    function makeChart(id, type, data, options) {
+      if (charts[id]) charts[id].destroy();
+      const ctx = document.getElementById(id).getContext('2d');
+      charts[id] = new Chart(ctx, { type, data, options });
+      return charts[id];
+    }
+
+    // ── Number formatters ─────────────────────────
+    function fmt(n) {
+      if (!isFinite(n)) return '—';
+      const abs = Math.abs(n);
+      let s;
+      if (abs >= 1e6) s = '$' + (n / 1e6).toFixed(2) + 'M';
+      else if (abs >= 1e3) s = '$' + (n / 1e3).toFixed(1) + 'k';
+      else s = '$' + n.toFixed(0);
+      s = n < 0 ? '(' + s.replace('$-', '$') + ')' : s;
+      return s;
+    }
+    function v(id) { return parseFloat(document.getElementById(id).value) || 0; }
+
+    // ── Main calculate ────────────────────────────
+    function calculate() {
+      const battCap = v('battCap');
+      const mileage = v('mileage');
+      const economy = v('economy');
+      const chargeCost = v('chargeCost');
+      const usableExportKwh = v('usableExport');   // hard kWh limit
+      const useWindow = v('useWindow');
+      const chargerRate = v('chargerRate');
+      const dayWindows = v('dayWindows');
+      const exportRate = v('exportRate');
+      const fcas = v('fcas');
+      const msl = v('msl');
+      const costAcquire = v('costAcquire');
+      const costServe = v('costServe');
+      const startCustomers = v('startCustomers');
+      const growthRate = v('growthRate') / 100;
+      const dampen = v('dampen') / 100;
+      const taxRate = v('taxRate') / 100;
+      const hurdleRatePA = v('hurdleRate') / 100;
+      const arenaMatchPct = v('arenaMatch') / 100;
+      document.getElementById('hurdleRateLabel').textContent = v('hurdleRate') + '%';
+
+      // Available trading energy per event = min(hard kWh cap, charger rate × window)
+      const tradingEnergy = Math.min(usableExportKwh, chargerRate * useWindow);
+      // Wholesale Revenue p/a = trading energy × market event days p/a × export rate — then minus dampening
+      const wholesaleRevGross = tradingEnergy * dayWindows * exportRate;
+      const wholesaleRevPA = wholesaleRevGross * (1 - dampen);   // dampening applied here
+      const revenuePerCustPA = wholesaleRevPA + fcas + msl;
+
+      // Show wholesale result
+      document.getElementById('wholesaleResult').textContent = fmt(wholesaleRevPA);
+
+      // ── EV Cost Work-Up calculated results
+      const evEnergyUsagePA = mileage * economy;           // kWh p/a
+      const evTotalChargeCost = evEnergyUsagePA * chargeCost; // AUD p/a
+      document.getElementById('evEnergyUsage').textContent =
+        evEnergyUsagePA.toLocaleString(undefined, { maximumFractionDigits: 0 }) + ' kWh p/a';
+      document.getElementById('evChargeCost').textContent = fmt(evTotalChargeCost) + ' p/a';
+
+      const costPerCustPA = costServe;
+
+      const revPerCustQtrly = revenuePerCustPA / 4;
+      const costPerCustQtrly = costPerCustPA / 4;
+      const hurdleFactorQtrly = Math.pow(1 + hurdleRatePA, 1 / 4) - 1;
+
+      // ── Build rows ───────────────────────────────
+      const NUM = 54;
+      const rows = [];
+      let cumHurdle = 0;
+      let cumEBIT = 0;
+      let prevCust = 0;
+
+      for (let p = 1; p <= NUM; p++) {
+        const isCapital = p <= 10;
+        const capitalPaidIn = isCapital ? (PROJECT_COSTS[p - 1] || 0) : 0;
+        const repositSpend = capitalPaidIn * (1 - arenaMatchPct);
+        const arenaAmount = capitalPaidIn * arenaMatchPct;
+
+        // Hurdle compounding
+        let qHurdle;
+        if (p === 1) {
+          qHurdle = 0;
+          cumHurdle = repositSpend;
+        } else if (isCapital) {
+          qHurdle = cumHurdle * hurdleFactorQtrly;
+          cumHurdle = cumHurdle + qHurdle + repositSpend;
+        } else {
+          qHurdle = cumHurdle * hurdleFactorQtrly;
+          cumHurdle = cumHurdle + qHurdle;
+        }
+
+        // Customers (starts at p=13)
+        let customers = 0;
+        if (p >= 13) {
+          const periodsIn = p - 13;
+          customers = startCustomers;
+          let prev2 = startCustomers;
+          for (let i = 1; i <= periodsIn; i++) {
+            const next = startCustomers + prev2 * growthRate + prev2;
+            prev2 = next;
+            customers = next;
+          }
+        }
+
+        // Revenue / cost
+        const acqCost = p === 13
+          ? customers * costAcquire
+          : Math.max(0, Math.round(customers) - prevCust) * costAcquire;
+        const revenue = customers * revPerCustQtrly; // dampening already baked into revenuePerCustPA
+        const costs = customers * costPerCustQtrly + acqCost;
+
+        // Cumulative EBIT
+        cumEBIT = revenue - costs - cumHurdle;
+
+        const roic = cumHurdle > 0 ? cumEBIT / cumHurdle : null;
+
+        rows.push({
+          p, quarter: quarterLabel(p), capitalPaidIn, arenaAmount,
+          qHurdle, cumHurdle, customers: Math.round(customers),
+          revenue, costs, cumEBIT, roic
+        });
+        prevCust = Math.round(customers);
+      }
+
+      // ── Find breakeven ───────────────────────────
+      const breakeven = rows.find(r => r.cumEBIT > 0);
+
+      // ── Update badge ─────────────────────────────
+      const badge = document.getElementById('hurdleBadge');
+      if (breakeven) {
+        badge.className = 'hurdle-badge reached';
+        document.getElementById('hurdleVal').textContent = breakeven.quarter;
+        document.getElementById('hurdleSub').textContent =
+          `Period ${breakeven.p} · initial ROIC ${(breakeven.roic * 100).toFixed(1)}% above hurdle`;
+        document.getElementById('breakevenText').innerHTML =
+          `Investment clears the <strong>${v('hurdleRate')}% hurdle</strong> in <strong>${breakeven.quarter}</strong> (Period ${breakeven.p}). `
+          + `Cumulative EBIT first turns positive at <strong>${fmt(breakeven.cumEBIT)}</strong>.`;
+      } else {
+        badge.className = 'hurdle-badge not-reached';
+        document.getElementById('hurdleVal').textContent = 'Not reached';
+        document.getElementById('hurdleSub').textContent = `Hurdle not cleared within ${NUM} periods`;
+        document.getElementById('breakevenText').innerHTML =
+          `⚠️ Cumulative EBIT does not exceed the <strong>${v('hurdleRate')}% hurdle</strong> within the ${NUM}-period horizon. Try adjusting revenue inputs.`;
+      }
+
+      // ── KPIs ─────────────────────────────────────
+      document.getElementById('kpiRevPerCust').textContent = fmt(revenuePerCustPA);
+      document.getElementById('kpiCostPerCust').textContent = fmt(costPerCustPA + costAcquire);
+      const totalCap = PROJECT_COSTS.reduce((s, v) => s + v, 0);
+      document.getElementById('kpiTotalCapital').textContent = fmt(totalCap);
+      document.getElementById('kpiPeakCusts').textContent =
+        rows[rows.length - 1].customers.toLocaleString();
+
+      // ── Render table ──────────────────────────────
+      const tbody = document.getElementById('cfBody');
+      tbody.innerHTML = '';
+      rows.forEach(r => {
+        const tr = document.createElement('tr');
+        if (breakeven && r.p === breakeven.p) tr.className = 'hurdle-row';
+        tr.innerHTML = `
+      <td>${r.p}</td>
+      <td>${r.quarter}</td>
+      <td class="${r.capitalPaidIn ? '' : 'negative'}">${r.capitalPaidIn ? fmt(r.capitalPaidIn) : '—'}</td>
+      <td>${r.arenaAmount ? fmt(r.arenaAmount) : '—'}</td>
+      <td class="negative">${fmt(r.qHurdle)}</td>
+      <td class="negative">${fmt(r.cumHurdle)}</td>
+      <td>${r.customers ? r.customers.toLocaleString() : '—'}</td>
+      <td class="${r.revenue > 0 ? 'positive' : 'negative'}">${r.revenue ? fmt(r.revenue) : '—'}</td>
+      <td class="negative">${r.costs ? fmt(r.costs) : '—'}</td>
+      <td class="${r.cumEBIT >= 0 ? 'positive' : 'negative'}">${fmt(r.cumEBIT)}</td>
+      <td class="${r.roic != null ? (r.roic >= 0 ? 'positive' : 'negative') : ''}">${r.roic != null ? (r.roic * 100).toFixed(1) + '%' : '—'}</td>`;
+        tbody.appendChild(tr);
+      });
+
+      // ── Arena Matching Sensitivity ────────────────
+      function runHurdleForMatch(matchPct) {
+        // Re-run just the hurdle/EBIT model with a specific arena match %
+        // Uses current input values for everything else
+        const hurdleRatePA = v('hurdleRate') / 100;
+        const costAcquire = v('costAcquire');
+        const costServe = v('costServe');
+        const startCust = v('startCustomers');
+        const growthRate = v('growthRate') / 100;
+        const dampen = v('dampen') / 100;
+        const hQtrly = Math.pow(1 + hurdleRatePA, 1 / 4) - 1;
+
+        // Revenue per customer quarterly (same as main model)
+        const usableKwh = v('usableExport');
+        const chargerRate = v('chargerRate');
+        const useWindow = v('useWindow');
+        const dayWindows = v('dayWindows');
+        const exportRate = v('exportRate');
+        const tradingE = Math.min(usableKwh, chargerRate * useWindow);
+        const revPA = tradingE * dayWindows * exportRate * (1 - dampen) + v('fcas') + v('msl');
+        const costPA = costServe;
+        const revQ = revPA / 4;
+        const costQ = costPA / 4;
+
+        let cumH = 0; let prevCust = 0;
+        for (let p = 1; p <= 54; p++) {
+          const isCapital = p <= 10;
+          const capIn = isCapital ? (PROJECT_COSTS[p - 1] || 0) : 0;
+          const repoSpend = capIn * (1 - matchPct);
+          if (p === 1) { cumH = repoSpend; }
+          else if (isCapital) { cumH = cumH + cumH * hQtrly + repoSpend; }
+          else { cumH = cumH + cumH * hQtrly; }
+
+          let customers = 0;
+          if (p >= 13) {
+            customers = startCust;
+            let prev2 = startCust;
+            for (let i = 1; i <= (p - 13); i++) {
+              const next = startCust + prev2 * growthRate + prev2;
+              prev2 = next; customers = next;
+            }
+          }
+          const acqCost = p === 13 ? customers * costAcquire
+            : Math.max(0, Math.round(customers) - prevCust) * costAcquire;
+          const revenue = customers * revQ;
+          const costs = customers * costQ + acqCost;
+          const cumEBIT = revenue - costs - cumH;
+          if (cumEBIT > 0) return { p, quarter: quarterLabel(p) };
+          prevCust = Math.round(customers);
+        }
+        return null;
+      }
+
+      function renderArenaSensitivity() {
+        const scenarios = [0, 15, 30, 45, 60, 75];
+        const currentMatch = v('arenaMatch');
+        if (!scenarios.includes(currentMatch)) scenarios.push(currentMatch);
+        scenarios.sort((a, b) => a - b);
+        document.getElementById('arenaMatchLabel').textContent = currentMatch + '%';
+
+        const results = scenarios.map(pct => ({
+          pct,
+          result: runHurdleForMatch(pct / 100)
+        }));
+
+        // Baseline = 0% matching
+        const baseline = results.find(r => r.pct === 0);
+        const baselinePeriod = baseline?.result?.p ?? 999;
+
+        // ── Table
+        const tbody = document.getElementById('arenaSensBody');
+        tbody.innerHTML = '';
+        results.forEach(({ pct, result }) => {
+          const isCurrent = pct === currentMatch;
+          const qtrsSaved = result ? Math.max(0, baselinePeriod - result.p) : 0;
+          const yrsSaved = (qtrsSaved / 4).toFixed(1);
+          const label = result ? result.quarter : '> 13yr';
+          const tr = document.createElement('tr');
+          tr.style.cssText = isCurrent
+            ? 'background:rgba(0,212,160,.08); font-weight:600;'
+            : 'border-bottom:1px solid rgba(255,255,255,.04);';
+          tr.innerHTML = `
+          <td style="padding:7px 8px; color:${isCurrent ? 'var(--accent)' : 'var(--text)'}; white-space:nowrap;">${pct}%${isCurrent ? ' ← current' : ''}</td>
+          <td style="text-align:right; padding:7px 8px; color:var(--accent); font-variant-numeric:tabular-nums;">${label}</td>
+          <td style="text-align:right; padding:7px 8px; color:${qtrsSaved > 0 ? '#a78bfa' : 'var(--muted)'}; font-variant-numeric:tabular-nums;">${qtrsSaved > 0 ? '-' + qtrsSaved + ' qtrs' : '—'}</td>
+          <td style="text-align:right; padding:7px 8px; color:${qtrsSaved > 0 ? '#a78bfa' : 'var(--muted)'}; font-variant-numeric:tabular-nums;">${qtrsSaved > 0 ? '-' + yrsSaved + ' yrs' : '—'}</td>`;
+          tbody.appendChild(tr);
+        });
+
+        // ── Bar chart: periods to breakeven per scenario
+        const labels = results.map(r => r.pct + '%');
+        const data = results.map(r => r.result ? r.result.p : 55);
+        const colors = results.map(r => r.pct === currentMatch
+          ? 'rgba(0,212,160,.85)' : 'rgba(59,130,246,.6)');
+
+        makeChart('chartArenaSens', 'bar', {
+          labels,
+          datasets: [{
+            label: 'Periods to Hurdle Clearance',
+            data,
+            backgroundColor: colors,
+            borderRadius: 5,
+          }]
+        }, {
+          indexAxis: 'y',
+          responsive: true, maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: ctx => {
+                  const r = results[ctx.dataIndex];
+                  const saved = Math.max(0, baselinePeriod - (r.result?.p ?? baselinePeriod));
+                  return r.result
+                    ? `Clears in ${r.result.quarter} (Period ${r.result.p})${saved > 0 ? ' — saves ' + saved + ' qtrs' : ''}`
+                    : 'Not cleared within model horizon';
+                }
+              }
+            }
+          },
+          scales: {
+            x: { grid: { color: gridColor() }, ticks: { callback: v => 'P' + v } },
+            y: { grid: { color: 'transparent' } }
+          }
+        });
+      }
+
+      // ── Render Charts ─────────────────────────────
+      renderCharts(rows, breakeven, hurdleRatePA);
+      renderArenaSensitivity();
+    }
+
+    function renderCharts(rows, breakeven, hurdleRatePA) {
+      const labels = rows.map(r => r.quarter);
+      const commRows = rows.filter(r => r.p >= 13);
+      const commLabels = commRows.map(r => r.quarter);
+      const beIdx = breakeven ? rows.findIndex(r => r.p === breakeven.p) : -1;
+
+      // ── 1. Breakeven chart ────────────────────────
+      {
+        const ebitData = rows.map(r => r.cumEBIT);
+        const hurdleData = rows.map(r => -r.cumHurdle);   // hurdle as negative zone line
+
+        // Build a zero-line annotation + vertical breakeven line
+        const annotations = {
+          zeroline: {
+            type: 'line', yMin: 0, yMax: 0,
+            borderColor: 'rgba(255,255,255,.2)', borderWidth: 1, borderDash: [4, 4]
+          }
+        };
+        if (breakeven) {
+          annotations.beVert = {
+            type: 'line',
+            xMin: labels.indexOf(breakeven.quarter),
+            xMax: labels.indexOf(breakeven.quarter),
+            borderColor: '#00d4a0', borderWidth: 1.5, borderDash: [4, 4],
+            label: {
+              content: breakeven.quarter, enabled: true,
+              backgroundColor: '#00d4a0', color: '#000',
+              font: { size: 10, weight: '700' }, position: 'start', yAdjust: -8
+            }
+          };
+        }
+
+        makeChart('chartBreakeven', 'line', {
+          labels,
+          datasets: [
+            {
+              label: 'Cumulative EBIT',
+              data: ebitData,
+              borderColor: '#3b82f6', backgroundColor: ctx => {
+                const g = ctx.chart.ctx.createLinearGradient(0, 0, 0, 300);
+                g.addColorStop(0, 'rgba(59,130,246,.18)'); g.addColorStop(1, 'rgba(59,130,246,.01)');
+                return g;
+              },
+              fill: true, tension: .35, pointRadius: 0, borderWidth: 2
+            },
+            {
+              label: 'Hurdle Threshold',
+              data: hurdleData,
+              borderColor: '#ef4444', backgroundColor: 'transparent',
+              borderDash: [5, 3], tension: .3, pointRadius: 0, borderWidth: 1.5
+            }
+          ]
+        }, {
+          responsive: true, maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: { display: true },
+            annotation: { annotations },
+            tooltip: {
+              callbacks: {
+                label: ctx => `${ctx.dataset.label}: ${fmt(ctx.parsed.y)}`
+              }
+            }
+          },
+          scales: makeAxes()
+        });
+      }
+
+      // ── 2. Revenue vs Costs ───────────────────────
+      {
+        makeChart('chartRevCost', 'bar', {
+          labels: commLabels,
+          datasets: [
+            {
+              label: 'Revenue',
+              data: commRows.map(r => r.revenue),
+              backgroundColor: 'rgba(0,212,160,.7)',
+              borderRadius: 3, order: 2
+            },
+            {
+              label: 'Direct Costs',
+              data: commRows.map(r => r.costs),
+              backgroundColor: 'rgba(239,68,68,.6)',
+              borderRadius: 3, order: 2
+            },
+            {
+              label: 'Net (Revenue-Cost)',
+              data: commRows.map(r => r.revenue - r.costs),
+              type: 'line',
+              borderColor: '#f59e0b', backgroundColor: 'transparent',
+              pointRadius: 0, tension: .3, borderWidth: 2, order: 1
+            }
+          ]
+        }, {
+          responsive: true, maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: { display: true },
+            tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${fmt(ctx.parsed.y)}` } }
+          },
+          scales: makeAxes()
+        });
+      }
+
+      // ── 3. Customer Growth ────────────────────────
+      {
+        makeChart('chartCustomers', 'line', {
+          labels: commLabels,
+          datasets: [{
+            label: 'Customers',
+            data: commRows.map(r => r.customers),
+            borderColor: '#a78bfa',
+            backgroundColor: ctx => {
+              const g = ctx.chart.ctx.createLinearGradient(0, 0, 0, 200);
+              g.addColorStop(0, 'rgba(167,139,250,.25)'); g.addColorStop(1, 'rgba(167,139,250,.01)');
+              return g;
+            },
+            fill: true, tension: .4, pointRadius: 0, borderWidth: 2
+          }]
+        }, {
+          responsive: true, maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: { callbacks: { label: ctx => `Customers: ${ctx.parsed.y.toLocaleString()}` } }
+          },
+          scales: {
+            x: { grid: { color: gridColor() } },
+            y: {
+              grid: { color: gridColor() },
+              ticks: { callback: v => v >= 1000 ? (v / 1000).toFixed(0) + 'k' : v }
+            }
+          }
+        });
+      }
+
+      // ── 4. ROIC / Hurdle Coverage ─────────────────
+      {
+        const hurdleLine = v('hurdleRate');
+        const roicRows = commRows.filter(r => r.roic !== null);
+        const roicLabels = roicRows.map(r => r.quarter);
+        makeChart('chartROIC', 'line', {
+          labels: roicLabels,
+          datasets: [
+            {
+              label: 'Quarterly ROIC',
+              data: roicRows.map(r => (r.roic * 100).toFixed(2)),
+              borderColor: '#f59e0b',
+              backgroundColor: ctx => {
+                const g = ctx.chart.ctx.createLinearGradient(0, 0, 0, 220);
+                g.addColorStop(0, 'rgba(245,158,11,.2)'); g.addColorStop(1, 'rgba(245,158,11,.01)');
+                return g;
+              },
+              fill: true, tension: .4, pointRadius: 0, borderWidth: 2
+            },
+            {
+              label: `Hurdle (${hurdleLine}%)`,
+              data: roicRows.map(() => hurdleLine),
+              borderColor: '#ef4444', borderDash: [5, 3],
+              backgroundColor: 'transparent', pointRadius: 0, borderWidth: 1.5
+            }
+          ]
+        }, {
+          responsive: true, maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: { display: true },
+            tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y}%` } }
+          },
+          scales: {
+            x: { grid: { color: gridColor() } },
+            y: { grid: { color: gridColor() }, ticks: { callback: v => v + '%' } }
+          }
+        });
+      }
+
+      // ── 5. Capital Waterfall ──────────────────────
+      {
+        const capRows = rows.filter(r => r.p <= 10);
+        makeChart('chartCapital', 'bar', {
+          labels: capRows.map(r => r.quarter),
+          datasets: [
+            {
+              label: 'Reposit Contribution',
+              data: capRows.map(r => r.capitalPaidIn - r.arenaAmount),
+              backgroundColor: 'rgba(59,130,246,.75)',
+              borderRadius: 4
+            },
+            {
+              label: 'Arena Matching',
+              data: capRows.map(r => r.arenaAmount),
+              backgroundColor: 'rgba(0,212,160,.65)',
+              borderRadius: 4
+            }
+          ]
+        }, {
+          responsive: true, maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: { display: true },
+            tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${fmt(ctx.parsed.y)}` } }
+          },
+          scales: {
+            ...makeAxes(),
+            x: { stacked: true, grid: { color: gridColor() } },
+            y: {
+              stacked: true, grid: { color: gridColor() }, ticks: {
+                callback: v => { const a = Math.abs(v); return a >= 1e6 ? '$' + (v / 1e6).toFixed(1) + 'M' : a >= 1e3 ? '$' + (v / 1e3).toFixed(0) + 'k' : '$' + v; }
+              }
+            }
+          }
+        });
+      }
+    }
+
+    // ── Toggle detail ─────────────────────────────
+    function toggleDetail() {
+      const sec = document.getElementById('detailSection');
+      const btn = document.getElementById('btnToggle');
+      const open = sec.style.display !== 'none';
+      sec.style.display = open ? 'none' : 'block';
+      btn.classList.toggle('open', !open);
+      btn.querySelector('span:nth-child(2)').textContent = open
+        ? 'Show Quarterly Detail Table' : 'Hide Quarterly Detail Table';
+    }
+
+    // ── Wire inputs ───────────────────────────────
+    document.querySelectorAll('input').forEach(el => el.addEventListener('input', calculate));
+    calculate();
+  </script>
+  {{ standard_footer_includes }}
+</body>
+
+</html>

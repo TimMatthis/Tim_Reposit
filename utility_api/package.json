@@ -1,0 +1,10 @@
+{
+  "name": "utility-top-packages-api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Returns top 3 conjoint packages for a fixed monthly fee (same logic as Product Utility Calculator). No npm deps — uses Node built-in http only.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  }
+}

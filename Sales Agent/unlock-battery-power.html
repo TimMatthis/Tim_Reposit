@@ -1,0 +1,840 @@
+<!--
+  templateType: "page"
+  label: "Reposit - Unlock Battery Power"
+  isAvailableForNewContent: true
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unlock the power of your battery</title>
+    {{ standard_header_includes }}
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: url(https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/noise.png), radial-gradient(circle at top left, rgba(246, 141, 38, 1) 5%, rgba(203, 128, 70, 1) 20%, rgba(42, 107, 148, 1) 60%, rgba(19, 26, 43, 1) 100%);
+            background-blend-mode: multiply;
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .screen {
+            display: none;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 24px;
+            padding: 50px 48px;
+            max-width: 600px;
+            margin: 0 auto;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            text-align: center;
+            backdrop-filter: blur(10px);
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .screen.wide {
+            max-width: 1000px;
+            background: transparent;
+            box-shadow: none;
+            backdrop-filter: none;
+            padding: 20px;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            height: 48px;
+            margin-bottom: 24px;
+            border-radius: 4px;
+        }
+
+        h1,
+        h2 {
+            font-size: 2.2rem;
+            color: #1f2937;
+            margin-bottom: 16px;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+
+        .screen p {
+            font-size: 1.1rem;
+            color: #4b5563;
+            margin-bottom: 32px;
+            line-height: 1.6;
+        }
+
+        .btn {
+            display: inline-block;
+            width: 100%;
+            padding: 18px 24px;
+            background: linear-gradient(135deg, #F68D26 0%, #2A6B94 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+            text-align: center;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.4);
+            filter: brightness(1.05);
+        }
+
+        .btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .input-group {
+            margin-bottom: 24px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.95rem;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            transition: all 0.3s ease;
+            background: #f9fafb;
+        }
+
+        .input-field:focus {
+            border-color: #F68D26;
+            background: white;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(246, 141, 38, 0.1);
+        }
+
+        .error-msg {
+            color: #ef4444;
+            font-size: 0.9rem;
+            margin-top: 8px;
+            display: none;
+        }
+
+        .input-field.invalid {
+            border-color: #ef4444;
+        }
+
+        .input-field.invalid+.error-msg {
+            display: block;
+        }
+
+        /* Loader Enhancements */
+        .loader-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 0;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 12px;
+            background: #e5e7eb;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #F68D26 0%, #2A6B94 100%);
+            width: 0%;
+            border-radius: 12px;
+            transition: width 0.1s linear;
+        }
+
+        .fun-facts {
+            position: relative;
+            height: 60px;
+            width: 100%;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        .fact {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+            font-size: 1.1rem;
+            color: #4b5563;
+            font-style: italic;
+            text-align: center;
+        }
+
+        .fact.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Offers Grid */
+        .screen.wide h1 {
+            color: white;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            margin-bottom: 40px;
+        }
+
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .package-card {
+            background: white;
+            border-radius: 20px;
+            padding: 32px 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            text-align: center;
+        }
+
+        .package-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #F68D26 0%, #2A6B94 100%);
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+            transform-origin: left;
+        }
+
+        .package-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+        }
+
+        .package-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #F68D26 0%, #2A6B94 100%);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .upfront-fee {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: #1f2937;
+            margin-bottom: 8px;
+            line-height: 1;
+        }
+
+        .upfront-label {
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .monthly-fee {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+        }
+
+        .monthly-fee-amount {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #4ade80;
+        }
+
+        .monthly-fee-label {
+            font-size: 0.8rem;
+            color: #6b7280;
+            text-transform: uppercase;
+        }
+
+        .attribute-list {
+            list-style: none;
+            margin-bottom: 24px;
+        }
+
+        .attribute-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 0.95rem;
+        }
+
+        .attribute-label {
+            color: #6b7280;
+        }
+
+        .attribute-value {
+            color: #1f2937;
+            font-weight: 700;
+        }
+
+        .select-btn {
+            width: 100%;
+            padding: 14px;
+            background: #f3f4f6;
+            color: #374151;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .package-card:hover .select-btn {
+            background: linear-gradient(135deg, #F68D26 0%, #2A6B94 100%);
+            color: white;
+        }
+
+        .success-icon {
+            font-size: 5rem;
+            color: #22c55e;
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 16px;
+        }
+
+        .form-row .input-group {
+            flex: 1;
+        }
+
+        @media (max-width: 900px) {
+            .cards-container {
+                grid-template-columns: 1fr;
+                max-width: 450px;
+                margin: 0 auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- Step 1: Welcome -->
+        <div id="step1" class="screen active" style="max-width: 680px;">
+            <img src="https://placehold.co/200x50/transparent/FFFFFF?text=REPOSIT+POWER&font=montserrat"
+                alt="Reposit Power" class="logo" style="filter: invert(1);">
+            <h1>More value.<br>Zero volatility.</h1>
+            <p style="margin-bottom: 28px;">Your battery is a tool for stability. Connect your data to unlock a tailored
+                offer built on the best long-term rates in the market.</p>
+
+            <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px; text-align: left;">
+                <div
+                    style="display: flex; gap: 16px; align-items: flex-start; background: #f9fafb; border-radius: 12px; padding: 16px 20px;">
+                    <div style="font-size: 1.6rem; flex-shrink: 0;">🔗</div>
+                    <div>
+                        <div style="font-weight: 700; color: #1f2937; margin-bottom: 4px;">Connect in a click</div>
+                        <div style="font-size: 0.9rem; color: #6b7280;">Securely link your battery so we can see how
+                            your home uses power.</div>
+                    </div>
+                </div>
+                <div
+                    style="display: flex; gap: 16px; align-items: flex-start; background: #f9fafb; border-radius: 12px; padding: 16px 20px;">
+                    <div style="font-size: 1.6rem; flex-shrink: 0;">⚡</div>
+                    <div>
+                        <div style="font-weight: 700; color: #1f2937; margin-bottom: 4px;">Calculate your
+                            &ldquo;Wholesale Value&rdquo;</div>
+                        <div style="font-size: 0.9rem; color: #6b7280;">Our tech works out how much your battery could
+                            earn trading on the open market—value your current provider is likely keeping.</div>
+                    </div>
+                </div>
+                <div
+                    style="display: flex; gap: 16px; align-items: flex-start; background: #f9fafb; border-radius: 12px; padding: 16px 20px;">
+                    <div style="font-size: 1.6rem; flex-shrink: 0;">💰</div>
+                    <div>
+                        <div style="font-weight: 700; color: #1f2937; margin-bottom: 4px;">Claim your savings</div>
+                        <div style="font-size: 0.9rem; color: #6b7280;">We apply those earnings directly to your
+                            account, giving you a lower, fixed-price offer that beats the &ldquo;standard&rdquo; rates
+                            every time.</div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn" onclick="nextStep(2)">Let's start (takes 60 seconds)</button>
+        </div>
+
+        <!-- Step 2: Email Input -->
+        <div id="step2" class="screen">
+            <h2>Connect your battery</h2>
+            <p>Enter the email address you use to log in to your Solax or Sigenstor battery app.</p>
+
+            <div class="input-group">
+                <label for="batteryEmail">Email Address</label>
+                <input type="email" id="batteryEmail" class="input-field" placeholder="hello@example.com">
+                <div class="error-msg" id="emailError">Please enter a valid email address.</div>
+            </div>
+
+            <button class="btn" onclick="validateEmailAndProceed()">Send verification code</button>
+        </div>
+
+        <!-- Step 3: Consent Code -->
+        <div id="step3" class="screen">
+            <div style="font-size: 3rem; margin-bottom: 16px;">🔐</div>
+            <h2>Verify your consent</h2>
+            <p>We've sent a 6-digit authorisation code to your email. Enter it below to grant Reposit secure, read-only
+                access to your battery usage data.</p>
+
+            <div class="input-group">
+                <label for="consentCode">Authorisation Code</label>
+                <input type="text" id="consentCode" class="input-field" placeholder="e.g. 123456" maxlength="10"
+                    autocomplete="one-time-code"
+                    style="text-align: center; font-size: 2rem; letter-spacing: 0.4rem; font-weight: 700;">
+                <div class="error-msg" id="codeError">Please enter the code we sent you.</div>
+            </div>
+
+            <button class="btn" onclick="validateCode()">Authorise &amp; Analyse My Battery</button>
+            <button
+                style="background: transparent; border: none; color: #6b7280; margin-top: 14px; cursor: pointer; text-decoration: underline; display: block; width: 100%; font-size: 0.9rem;"
+                onclick="nextStep(2)">&#8592; Back / Resend code</button>
+        </div>
+
+        <!-- Step 4: Loading -->
+        <div id="step4" class="screen">
+            <div class="loader-container">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill" id="progressBar"></div>
+                </div>
+                <h2>Calculating your offer...</h2>
+                <div class="fun-facts" id="funFactsContainer">
+                    <p class="fact active">Accessing your usage data from Solax...</p>
+                    <p class="fact">Analyzing 12 months of energy patterns...</p>
+                    <p class="fact">Sizing your perfect system...</p>
+                    <p class="fact">Building your best offer...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 5: Offers Grid -->
+        <div id="step5" class="screen wide">
+            <h1>Your 3 Best Offers</h1>
+
+            <!-- Current Spend Banner -->
+            <div
+                style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 14px; padding: 18px 28px; max-width: 620px; margin: -10px auto 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; backdrop-filter: blur(8px);">
+                <div style="color: white;">
+                    <div style="font-size: 0.85rem; opacity: 0.75; text-transform: uppercase; letter-spacing: 0.5px;">
+                        Your estimated current annual spend</div>
+                    <div style="font-size: 2rem; font-weight: 800;">$3,240 <span
+                            style="font-size: 1rem; font-weight: 400; opacity: 0.8;">/yr</span></div>
+                </div>
+                <div style="color: white; text-align: right;">
+                    <div style="font-size: 0.85rem; opacity: 0.75;">Based on your Solax data</div>
+                    <div style="font-size: 0.9rem; opacity: 0.9;">~8.2 kWh avg daily usage</div>
+                </div>
+            </div>
+
+            <p style="color: white; text-align: center; margin-bottom: 28px; opacity: 0.9;">Each offer below shows your
+                estimated <strong>annual saving</strong> compared to your current plan.</p>
+            <div class="cards-container">
+
+                <!-- Offer 1: Starter -->
+                <div class="package-card" onclick="selectOffer('Starter Plan')">
+                    <div class="card-badge" style="background: #e5e7eb; color: #374151;">Another Option You May Prefer
+                    </div>
+
+                    <div class="upfront-fee">$500</div>
+                    <div class="upfront-label">Installation Cost</div>
+
+                    <div class="monthly-fee">
+                        <div class="monthly-fee-amount">$39</div>
+                        <div class="monthly-fee-label">Monthly Fee</div>
+                    </div>
+
+                    <ul class="attribute-list">
+                        <li class="attribute-item">
+                            <span class="attribute-label">Sign-up Incentive</span>
+                            <span class="attribute-value" style="color: #9ca3af;">$0</span>
+                        </li>
+                        <li class="attribute-item">
+                            <span class="attribute-label">FAIR Use Cap</span>
+                            <span class="attribute-value highlight">1.4x <span style="font-size:0.8em;color:#6b7280;">of
+                                    your usage</span></span>
+                        </li>
+                        <li class="attribute-item">
+                            <span class="attribute-label">Contract Term</span>
+                            <span class="attribute-value">12 months</span>
+                        </li>
+                    </ul>
+
+                    <div
+                        style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 10px 14px; margin-bottom: 14px;">
+                        <div
+                            style="font-size: 0.75rem; color: #15803d; text-transform: uppercase; letter-spacing: 0.4px;">
+                            Est. annual saving</div>
+                        <div style="font-size: 1.5rem; font-weight: 800; color: #16a34a;">$468 <span
+                                style="font-size: 0.9rem; font-weight: 400; color: #15803d;">/yr</span></div>
+                    </div>
+
+                    <button class="select-btn">Select This Package</button>
+                </div>
+
+                <!-- Offer 2: Popular (Recommended) -->
+                <div class="package-card" onclick="selectOffer('Popular Plan')"
+                    style="transform: scale(1.05); z-index: 1; border: 2px solid #4ade80;">
+                    <div
+                        style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: #4ade80; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.8rem; font-weight: bold; white-space: nowrap;">
+                        ⭐ OUR SELECTION FOR YOU</div>
+                    <div class="card-badge">Our Best Fit</div>
+
+                    <div class="upfront-fee">$0</div>
+                    <div class="upfront-label">Installation Cost</div>
+
+                    <div class="monthly-fee" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);">
+                        <div class="monthly-fee-amount" style="color: #166534;">$79</div>
+                        <div class="monthly-fee-label" style="color: #166534;">Monthly Fee</div>
+                    </div>
+
+                    <ul class="attribute-list">
+                        <li class="attribute-item">
+                            <span class="attribute-label">Sign-up Incentive</span>
+                            <span class="attribute-value" style="color: #22c55e; font-weight: 700;">$250 cash</span>
+                        </li>
+                        <li class="attribute-item">
+                            <span class="attribute-label">FAIR Use Cap</span>
+                            <span class="attribute-value highlight">2x <span style="font-size:0.8em;color:#6b7280;">of
+                                    your usage</span></span>
+                        </li>
+                        <li class="attribute-item">
+                            <span class="attribute-label">Contract Term</span>
+                            <span class="attribute-value">12 months</span>
+                        </li>
+                    </ul>
+
+                    <div
+                        style="background: #f0fdf4; border: 2px solid #4ade80; border-radius: 10px; padding: 10px 14px; margin-bottom: 14px;">
+                        <div
+                            style="font-size: 0.75rem; color: #15803d; text-transform: uppercase; letter-spacing: 0.4px;">
+                            Est. annual saving</div>
+                        <div style="font-size: 1.5rem; font-weight: 800; color: #16a34a;">$1,002 <span
+                                style="font-size: 0.9rem; font-weight: 400; color: #15803d;">/yr</span></div>
+                    </div>
+
+                    <button class="select-btn"
+                        style="background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%); color: white;">Select
+                        This Package</button>
+                </div>
+
+                <!-- Offer 3: Flex -->
+                <div class="package-card" onclick="selectOffer('Flex Plan')">
+                    <div class="card-badge" style="background: #e5e7eb; color: #374151;">Another Option You May Prefer
+                    </div>
+
+                    <div class="upfront-fee">$0</div>
+                    <div class="upfront-label">Installation Cost</div>
+
+                    <div class="monthly-fee">
+                        <div class="monthly-fee-amount">$129</div>
+                        <div class="monthly-fee-label">Monthly Fee</div>
+                    </div>
+
+                    <ul class="attribute-list">
+                        <li class="attribute-item">
+                            <span class="attribute-label">Sign-up Incentive</span>
+                            <span class="attribute-value" style="color: #22c55e; font-weight: 700;">$500 cash</span>
+                        </li>
+                        <li class="attribute-item">
+                            <span class="attribute-label">FAIR Use Cap</span>
+                            <span class="attribute-value highlight">4x <span style="font-size:0.8em;color:#6b7280;">of
+                                    your usage</span></span>
+                        </li>
+                        <li class="attribute-item">
+                            <span class="attribute-label">Contract Term</span>
+                            <span class="attribute-value">Month to month</span>
+                        </li>
+                    </ul>
+
+                    <div
+                        style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 10px 14px; margin-bottom: 14px;">
+                        <div
+                            style="font-size: 0.75rem; color: #15803d; text-transform: uppercase; letter-spacing: 0.4px;">
+                            Est. annual saving</div>
+                        <div style="font-size: 1.5rem; font-weight: 800; color: #16a34a;">$732 <span
+                                style="font-size: 0.9rem; font-weight: 400; color: #15803d;">/yr</span></div>
+                    </div>
+
+                    <button class="select-btn">Select This Package</button>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- Step 6: Confirmation -->
+        <div id="step6" class="screen">
+            <h2>Confirm your choice</h2>
+            <p>You have selected the <strong id="selectedPlanName" style="color: #F68D26;">Plan</strong>. Let's get your
+                details sorted so you can start saving immediately.</p>
+
+            <div
+                style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; margin-bottom: 30px; text-align: left;">
+                <p style="margin-bottom: 8px;"><strong>Next Steps:</strong></p>
+                <ul style="padding-left: 20px; color: #4b5563; line-height: 1.6;">
+                    <li>Setup your billing profile</li>
+                    <li>We assume control of your grid bills</li>
+                    <li>You enjoy predictable, low energy costs</li>
+                </ul>
+            </div>
+
+            <button class="btn" onclick="nextStep(7)">Confirm &amp; Checkout</button>
+            <button
+                style="background: transparent; border: none; color: #6b7280; margin-top: 16px; cursor: pointer; text-decoration: underline;"
+                onclick="nextStep(5)">Change my selection</button>
+        </div>
+
+        <!-- Step 7: Stripe Wireframe -->
+        <div id="step7" class="screen">
+            <h2>Payment Details</h2>
+            <p>Enter your credit card information securely below to activate your account. No upfront fees are charged
+                today.</p>
+
+            <div class="input-group">
+                <label>Name on Card</label>
+                <input type="text" class="input-field" placeholder="John Doe">
+            </div>
+
+            <div class="input-group">
+                <label>Card Number</label>
+                <div style="position: relative;">
+                    <input type="text" class="input-field" placeholder="0000 0000 0000 0000" maxlength="19">
+                    <span style="position: absolute; right: 16px; top: 16px; color: #9ca3af;">💳</span>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="input-group">
+                    <label>Expiry (MM/YY)</label>
+                    <input type="text" class="input-field" placeholder="MM/YY" maxlength="5">
+                </div>
+                <div class="input-group">
+                    <label>CVC</label>
+                    <input type="text" class="input-field" placeholder="123" maxlength="4">
+                </div>
+            </div>
+
+            <div
+                style="text-align: left; margin-bottom: 24px; font-size: 0.85rem; color: #6b7280; display: flex; align-items: center; gap: 8px;">
+                <span>🔒</span> Payments are securely processed by Stripe.
+            </div>
+
+            <button class="btn" id="payBtn" onclick="processPayment()">Pay &amp; Subscribe</button>
+        </div>
+
+        <!-- Step 8: Success -->
+        <div id="step8" class="screen">
+            <div class="success-icon">✓</div>
+            <h2>Welcome to Reposit NoBill!</h2>
+            <p>Your subscription is active and we look forward to a wonderful relationship.</p>
+            <p style="font-size: 0.95rem;">You will receive a confirmation email shortly with details on how to access
+                your new Nobill dashboard.</p>
+            <button class="btn" onclick="window.location.href='https://repositpower.com'"
+                style="margin-top: 20px; background: #f3f4f6; color: #374151; box-shadow: none;">Back to
+                Reposit</button>
+        </div>
+
+    </div>
+
+    {{ standard_footer_includes }}
+
+    <script>
+        let calculationInterval;
+        let factsInterval;
+
+        function nextStep(stepNumber) {
+            // Hide all screens
+            document.querySelectorAll('.screen').forEach(el => {
+                el.classList.remove('active');
+            });
+
+            // Show target screen
+            document.getElementById('step' + stepNumber).classList.add('active');
+
+            // Special handling for loading screen
+            if (stepNumber === 4) {
+                startCalculationAnimation();
+            } else {
+                // Clear intervals if navigating away prematurely
+                clearInterval(calculationInterval);
+                clearInterval(factsInterval);
+            }
+        }
+
+        function startCalculationAnimation() {
+            const progressBar = document.getElementById('progressBar');
+            const facts = document.querySelectorAll('.fact');
+            let progress = 0;
+            let currentFactIndex = 0;
+
+            // Reset state
+            progressBar.style.width = '0%';
+            facts.forEach(f => f.classList.remove('active'));
+            if (facts.length > 0) facts[0].classList.add('active');
+
+            const totalDuration = 4500; // 4.5 seconds
+            const intervalTime = 50;
+            const increment = (100 / (totalDuration / intervalTime));
+
+            calculationInterval = setInterval(() => {
+                progress += increment;
+                progressBar.style.width = Math.min(progress, 100) + '%';
+
+                if (progress >= 100) {
+                    clearInterval(calculationInterval);
+                    clearInterval(factsInterval);
+                    setTimeout(() => nextStep(5), 400); // slight pause at 100%
+                }
+            }, intervalTime);
+
+            factsInterval = setInterval(() => {
+                facts[currentFactIndex].classList.remove('active');
+                currentFactIndex = (currentFactIndex + 1) % facts.length;
+                facts[currentFactIndex].classList.add('active');
+            }, 1200); // Rotate fact every 1.2 seconds
+        }
+
+        function validateEmailAndProceed() {
+            const emailInput = document.getElementById('batteryEmail');
+            const email = emailInput.value.trim();
+            const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (regex.test(email)) {
+                emailInput.classList.remove('invalid');
+                nextStep(3); // go to consent code step
+            } else {
+                emailInput.classList.add('invalid');
+            }
+        }
+
+        function validateCode() {
+            const codeInput = document.getElementById('consentCode');
+            const code = codeInput.value.trim();
+
+            if (code.length >= 4) { // any non-trivial code accepted
+                codeInput.classList.remove('invalid');
+                nextStep(4); // go to calculation loader
+            } else {
+                codeInput.classList.add('invalid');
+                document.getElementById('codeError').style.display = 'block';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const codeInput = document.getElementById('consentCode');
+            if (codeInput) {
+                codeInput.addEventListener('input', function () {
+                    this.classList.remove('invalid');
+                    document.getElementById('codeError').style.display = 'none';
+                });
+            }
+        });
+
+        // Clear error style on input
+        document.getElementById('batteryEmail').addEventListener('input', function () {
+            this.classList.remove('invalid');
+        });
+
+        let chosenPlan = '';
+
+        function selectOffer(planName) {
+            chosenPlan = planName;
+            document.getElementById('selectedPlanName').textContent = planName;
+            nextStep(6);
+        }
+
+        function processPayment() {
+            const btn = document.getElementById('payBtn');
+            const originalText = btn.innerHTML;
+
+            btn.innerHTML = 'Processing...';
+            btn.disabled = true;
+
+            // Simulate payment processing
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                nextStep(8);
+            }, 2000);
+        }
+    </script>
+
+</body>
+
+</html>

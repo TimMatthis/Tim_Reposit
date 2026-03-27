@@ -1,0 +1,524 @@
+<!--
+  templateType: page
+  isAvailableForNewContent: true
+  screenshotPath: ../images/new_lp2_screen.png
+  label: Reposit - Landing Page 2 (Opt.2)
+  description: Landing page featuring a hero section with support for legacy forms.
+-->
+
+{% extends "./layouts/base-lp.html" %}
+
+{% block body %}
+<style>
+    #hero_banner {
+        background: url(https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/noise.png), -moz-radial-gradient(circle at top left, rgba(246, 141, 38, 1) 5%, rgba(203, 128, 70, 1) 20%, rgba(42, 107, 148, 1) 60%, rgba(19, 26, 43, 1) 100%);
+        background: url(https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/noise.png), -webkit-radial-gradient(circle at top left, rgba(246, 141, 38, 1) 5%, rgba(203, 128, 70, 1) 20%, rgba(42, 107, 148, 1) 60%, rgba(19, 26, 43, 1) 100%);
+        background: url(https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/noise.png), radial-gradient(circle at top left, rgba(246, 141, 38, 1) 5%, rgba(203, 128, 70, 1) 20%, rgba(42, 107, 148, 1) 60%, rgba(19, 26, 43, 1) 100%);
+        background-blend-mode: multiply;
+    }
+
+    #hero_banner .flex-container {
+        justify-content: space-between;
+        align-items: center;
+        gap: 4%;
+        position: relative;
+        height: 110vh;
+        /* Add +10vh to stack the second section on top */
+    }
+
+    /* MOBILE */
+    @media (max-width: {
+                {
+                theme.layout.style_opts.slim_width
+            }
+        }
+
+        px) {
+        #hero_banner .flex-container {
+            flex-direction: column;
+            align-items: start;
+            justify-content: center;
+            gap: 24px;
+            height: auto;
+            padding: 120px 0;
+        }
+
+        #hero_banner .column-1 .flex-container {
+            padding: 0;
+        }
+
+        #hero_banner .flex-content {
+            width: 100%;
+        }
+
+        #hero_banner .text-bottom p {
+            font-size: 18px !important;
+        }
+    }
+</style>
+
+<!-----------------------  HERO BANNER  ----------------------->
+<div id="hero_banner">
+    <div class="container">
+        <div class="flex-container">
+            {# COLUMN 1 #}
+            <div class="flex-content column-1">
+                {# LP SINGLE COLUMN #}
+                {% dnd_area "column_1_area" class='body-container', label='Main section - Column 1' %}
+                {% dnd_section padding={'top': 0, 'bottom': 0, 'left': 0, 'right': 0}, full_width='true',
+                vertical_alignment='MIDDLE' %}
+                {% dnd_module "lp_single_col" path="../modules/Reposit - LP Single Column", label="Reposit - LP Single
+                Column" %}
+                {% module_attribute "col_1" is_json=True %}
+                {
+                "eyebrow": {
+                "text": ""
+                },
+                "title": {
+                "text": "Make Your Energy Data Work for You",
+                "text_color": {
+                "color": "#FFF",
+                "opacity": 100
+                }
+                },
+                "text_area": {
+                "content": "<p style='color: #FFF;'>Harness the power of your own energy data with our Home Energy
+                    Calculator and receive a personalised recommendation about how to reduce your bills.</p>"
+                },
+                "button": [
+                {
+                "text": "Calculate Now",
+                "style_option": "cta-primary",
+                "use_arrow_icon": true
+                }
+                ]
+                }
+                {% end_module_attribute %}
+                {% end_dnd_module %}
+                {% end_dnd_section %}
+                {% end_dnd_area %}
+            </div> {# /.column-1 #}
+
+            {# COLUMN 2 #}
+            <div class="flex-content column-2">
+                {% dnd_area "column_2_area" class='body-container', label='Main section - Column 2' %}
+                {% dnd_section padding={'top': 0, 'bottom': 0, 'left': 0, 'right': 0}, full_width='true',
+                vertical_alignment='MIDDLE' %}
+                {% dnd_module "lp_form" path="../modules/Reposit - LP Form", label="Reposit - LP Form" %}
+                {% module_attribute "form" is_json=True %}
+                {
+                "form_id": "a40045ca-66a2-45fc-ae8c-26267db405f0"
+                }
+                {% end_module_attribute %}
+                {% end_dnd_module %}
+                {% end_dnd_section %}
+                {% end_dnd_area %}
+            </div> {# /.column-2 #}
+        </div> {# /.flex #}
+    </div> {# /.container #}
+</div>
+
+{% dnd_area "dnd_area" class='body-container', label='Main section' %}
+
+<!----------------------- LOGO GRID  ----------------------->
+{% dnd_section
+padding={
+'top': 0,
+'bottom': 0,
+'left': 0,
+'right': 0
+},
+full_width='true',
+vertical_alignment='MIDDLE'
+%}
+{% dnd_module "reposit_logo_grid"
+path="../modules/Reposit - Logo Grid",
+label="Reposit - Logo Grid",
+offset=0
+%}
+{% module_attribute "eyebrow" is_json=True %}
+{
+"text": "We're Australia's Most Awarded Provider"
+}
+{% end_module_attribute %}
+{% module_attribute "group_logos" is_json=True %}
+[
+{ "logo": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/australian.png", "alt":
+"australian" } },
+{ "logo": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/10.png", "alt": "network
+10" } },
+{ "logo": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/9.png", "alt": "9 news" }
+},
+{ "logo": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/7.png", "alt": "7 network"
+} },
+{ "logo": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/abc.png", "alt": "abc" }
+},
+{ "logo": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/guardian.png", "alt":
+"guardian" } },
+{ "logo": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/energyinsights.png",
+"alt": "energy insights" } },
+{ "logo": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/techcouncil.png", "alt":
+"tech council" } },
+{ "logo": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/renew.png", "alt": "renew
+economy" } },
+{ "logo": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/solar.png", "alt": "solar
+victoria" } }
+]
+{% end_module_attribute %}
+{% module_attribute "section" is_json=True %}
+{
+"overlap_section": "true"
+}
+{% end_module_attribute %}
+{% end_dnd_module %}
+{% end_dnd_section %}
+
+<!----------------------- TEXT WITH COUNTER  ----------------------->
+{% dnd_section
+padding={
+'top': 0,
+'bottom': 0,
+'left': 0,
+'right': 0
+},
+full_width='true',
+vertical_alignment='MIDDLE'
+%}
+{% dnd_module "reposit_text_counter"
+path="../modules/Reposit - Text with Counter",
+label="Reposit - Text with Counter",
+offset=0
+%}
+{% module_attribute "col_1" is_json=True %}
+{
+"eyebrow": {
+"text": ""
+},
+"title": {
+"text": ""
+},
+"text_area": {
+"content": "<h2>Get a <span style='color: #4698cb;'>personalised electricity assessment</span> using your data, and our
+    technology</h2>"
+}
+}
+{% end_module_attribute %}
+{% module_attribute "col_2" is_json=True %}
+{
+"richtext": "<p><span style='color: #1f2a44;'><strong>For many people, making the loan repayments on a smart home energy
+            system that guarantees no electricity bills is cheaper than paying their current electricity
+            costs.</strong></span></p>
+<p><span style='color: #1f2a44;'>Thanks to a recent government initiative promoting transparency in the energy sector,
+        you can now leverage your data to make informed decisions about how to reduce your bill.</span></p>
+<p><span style='color: #1f2a44;'>Securely share your electricity information with us and we'll provide you with a
+        personalised report with savings insights that are tailored to your household. It's quick, easy, and your data
+        is used solely to benefit you.</span></p>",
+"text_bottom_space": 0
+}
+{% end_module_attribute %}
+{% module_attribute "section" is_json=True %}
+{
+"bg_color": {
+"color": "#FFF",
+"opacity": 100
+},
+"spacing": {
+"top": 0,
+"bottom": 150,
+"top_sm": 0,
+"bottom_sm": 80
+},
+"round_corners": {
+"top_corners": 0,
+"bottom_corners": 64,
+"top_corners_sm": 0,
+"bottom_corners_sm": 42
+}
+}
+{% end_module_attribute %}
+{% end_dnd_module %}
+{% end_dnd_section %}
+
+<!----------------------- ICON CARDS  ----------------------->
+{% dnd_section
+padding={
+'top': 0,
+'bottom': 0,
+'left': 0,
+'right': 0
+},
+full_width='true',
+vertical_alignment='MIDDLE'
+%}
+{% dnd_module "reposit_icon_cards"
+path="../modules/Reposit - Icon Cards",
+label="Reposit - Icon Cards",
+offset=0
+%}
+{% module_attribute "headings" is_json=True %}
+{
+"num_col": "1",
+"col_1": {
+"eyebrow": {
+"text": ""
+},
+"title": {
+"text": "How",
+"text_color": {
+"color": "#4698CB",
+"opacity": 100
+},
+"highlight_text": "does it work?",
+"highlight_color": {
+"color": "#FFF",
+"opacity": 100
+}
+},
+"text_area": {
+"content": ""
+}
+}
+}
+{% end_module_attribute %}
+{% module_attribute "cards" is_json=True %}
+{
+"card":
+[
+{
+"title": {
+"display_as": "h3",
+"text": "Secure Data Retrieval"
+},
+"description": "<p style='color: #fff;'>We use procedures established by the Australian Federal Government to access
+    your data. Your data is encrypted during transmission and is deleted once we have completed processing your
+    recommendations.</p>",
+"img_icon": {
+"img": {
+"src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Extra%20Icons/data.svg",
+"alt": "Secure Data Retrieval"
+},
+"bottom_space": 34,
+"position": "start"
+},
+"bg_color": {
+"color": "#1A243B",
+"opacity": 100
+},
+"round_corners": 20
+},
+{
+"title": {
+"display_as": "h3",
+"text": "Personalised Analysis"
+},
+"description": "<p style='color: #fff;'>Our AI-driven platform analyses your actual energy usage, roof space, and local
+    solar potential to craft a customised energy-saving recommendation.</p>",
+"img_icon": {
+"img": {
+"src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Extra%20Icons/analysis.svg",
+"alt": "Personalised Analysis"
+},
+"bottom_space": 34,
+"position": "start"
+},
+"bg_color": {
+"color": "#1A243B",
+"opacity": 100
+},
+"round_corners": 20
+},
+{
+"title": {
+"display_as": "h3",
+"text": "Clear Recommendations"
+},
+"description": "<p style='color: #fff;'>Receive clear, actionable advice tailored to your household: whether it's
+    optimising for immediate savings with a home energy system, planning for future benefits, or simply switching to a
+    cheaper provider.</p>",
+"img_icon": {
+"img": {
+"src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Extra%20Icons/recommendations.svg",
+"alt": "Clear Recommendations"
+},
+"bottom_space": 34,
+"position": "start"
+},
+"bg_color": {
+"color": "#1A243B",
+"opacity": 100
+},
+"round_corners": 20
+}
+]
+}
+{% end_module_attribute %}
+{% module_attribute "section" is_json=True %}
+{
+"bg_color": {
+"color": "#1F2A44",
+"opacity": 100
+},
+"spacing": {
+"top": 200,
+"bottom": 250,
+"top_sm": 100,
+"bottom_sm": 120
+},
+"round_corners": {
+"top_corners": 0,
+"bottom_corners": 0,
+"top_corners_sm": 0,
+"bottom_corners_sm": 0
+}
+}
+{% end_module_attribute %}
+{% end_dnd_module %}
+{% end_dnd_section %}
+
+<!----------------------- CTA  ----------------------->
+{% dnd_section
+padding={
+'top': 0,
+'bottom': 0,
+'left': 0,
+'right': 0
+},
+full_width='true',
+vertical_alignment='MIDDLE'
+%}
+{% dnd_module "reposit_cta"
+path="../modules/Reposit - CTA",
+label="Reposit - CTA",
+offset=0
+%}
+{% module_attribute "col_1" is_json=True %}
+{
+"width": "50",
+"eyebrow": {
+"text": ""
+},
+"title": {
+"text": "Need Personal Assistance?",
+"highlight_text": "",
+"bottom_space": 24
+},
+"text_area": {
+"content": "<h3><span style='color: #ffffff;'>Book a Discovery Call</span></h3>
+<p>Speak to one of our Home Energy Experts today about how a smart home energy system can completely eliminate your
+    electricity bill:</p>",
+"bottom_space": 24
+},
+"button": [
+{
+"text": "Book Your Discovery Call",
+"style_option": "cta-secondary",
+"use_arrow_icon": true
+}
+]
+}
+{% end_module_attribute %}
+{% module_attribute "col_2" is_json=True %}
+{
+"content_type": "text_area",
+"width": "45",
+"text_area": {
+"richtext": "<h3><span style='color: #ffffff;'>Ready to talk now?</span></h3>
+<p>Jump the queue and speak to a Home Energy Expert on our direct line <strong>(Mon-Fri 9am-5pm)</strong>.</p>",
+"bottom_space": 24,
+"button": [
+{
+"text": "1800 773 851",
+"style_option": "cta-secondary",
+"use_arrow_icon": false,
+"url": {
+"href": "+611800773851",
+"type": "PHONE_NUMBER",
+"content_id": null
+}
+}
+]
+}
+}
+{% end_module_attribute %}
+{% module_attribute "section" is_json=True %}
+{
+"bg_color": {
+"color": "#1F2A44",
+"opacity": 100
+},
+"spacing": {
+"top": 0,
+"bottom": 200,
+"top_sm": 0,
+"bottom_sm": 100
+},
+"round_corners": {
+"top_corners": 0,
+"bottom_corners": 0,
+"top_corners_sm": 0,
+"bottom_corners_sm": 0
+}
+}
+{% end_module_attribute %}
+{% end_dnd_module %}
+{% end_dnd_section %}
+
+<!-----------------------  FORM  ----------------------->
+{% dnd_section
+padding={
+'top': 0,
+'bottom': 0,
+'left': 0,
+'right': 0
+},
+full_width='true',
+vertical_alignment='MIDDLE'
+%}
+{% dnd_module "reposit_form"
+path="../modules/Reposit - New Form",
+label="Reposit - New Form",
+offset=0
+%}
+{% module_attribute "col_1" is_json=True %}
+{
+"eyebrow": {
+"text": ""
+},
+"title": {
+"text": "Link Your",
+"highlight_text": "Energy Data",
+"bottom_space": 12
+},
+"text_area": {
+"content": "<p>Where Should We Send Your Results? This question is required.*</p>",
+"bottom_space": 24
+}
+}
+{% end_module_attribute %}
+{% module_attribute "form" is_json=True %}
+{
+"form_id": "f9fee2ae-51ec-428d-b966-a68c6be4ee7b"
+}
+{% end_module_attribute %}
+{% module_attribute "section" is_json=True %}
+{
+"overlap_section": "false",
+"spacing": {
+"top": 150,
+"bottom": 150,
+"top_sm": 80,
+"bottom_sm": 80
+},
+"round_corners": {
+"top_corners": 64,
+"bottom_corners": 64,
+"top_corners_sm": 42,
+"bottom_corners_sm": 42
+}
+}
+{% end_module_attribute %}
+{% end_dnd_module %}
+{% end_dnd_section %}
+
+{% end_dnd_area %}
+{% endblock body %}

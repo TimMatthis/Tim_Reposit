@@ -1,0 +1,475 @@
+<!--
+  templateType: page
+  isAvailableForNewContent: true
+  label: Actually Smart Battery Campaign
+  description: React-based landing page for the Actually Smart Battery campaign.
+-->
+{% extends "./layouts/base-lp.html" %}
+
+{% block body %}
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+<!-- React & Tailwind -->
+<script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+
+{% raw %}
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    'neon-green': '#39FF14',
+                    'deep-slate': '#1A202C',
+                    'slate-dark': '#111827',
+                    'slate-light': '#2D3748',
+                },
+                fontFamily: {
+                    sans: ['Inter', 'sans-serif'],
+                },
+                animation: {
+                    'glitch': 'glitch 1s linear infinite',
+                    'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                },
+                keyframes: {
+                    glitch: {
+                        '2%, 64%': { transform: 'translate(2px,0) skew(0deg)' },
+                        '4%, 60%': { transform: 'translate(-2px,0) skew(0deg)' },
+                        '62%': { transform: 'translate(0,0) skew(5deg)' },
+                    }
+                }
+            }
+        }
+    }
+</script>
+
+<style>
+    /* Ensure the root takes full height if valid in the layout */
+    #root {
+        min-height: 100vh;
+    }
+
+    /* Scoped global styles for this module */
+    .neon-text {
+        text-shadow: 0 0 10px rgba(57, 255, 20, 0.7);
+    }
+
+    .glitch-wrapper {
+        position: relative;
+        display: inline-block;
+    }
+
+    .glitch-wrapper::before,
+    .glitch-wrapper::after {
+        content: attr(data-text);
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #1A202C;
+        /* Deep Slate matches bg */
+    }
+
+    .glitch-wrapper::before {
+        left: 2px;
+        text-shadow: -1px 0 #ff00c1;
+        clip: rect(44px, 450px, 56px, 0);
+        animation: glitch-anim 5s infinite linear alternate-reverse;
+    }
+
+    .glitch-wrapper::after {
+        left: -2px;
+        text-shadow: -1px 0 #39FF14;
+        clip: rect(44px, 450px, 56px, 0);
+        animation: glitch-anim2 5s infinite linear alternate-reverse;
+    }
+
+    @keyframes glitch-anim {
+        0% {
+            clip: rect(38px, 9999px, 81px, 0);
+        }
+
+        20% {
+            clip: rect(66px, 9999px, 12px, 0);
+        }
+
+        40% {
+            clip: rect(12px, 9999px, 58px, 0);
+        }
+
+        60% {
+            clip: rect(98px, 9999px, 8px, 0);
+        }
+
+        80% {
+            clip: rect(44px, 9999px, 2px, 0);
+        }
+
+        100% {
+            clip: rect(10px, 9999px, 90px, 0);
+        }
+    }
+
+    @keyframes glitch-anim2 {
+        0% {
+            clip: rect(65px, 9999px, 92px, 0);
+        }
+
+        20% {
+            clip: rect(3px, 9999px, 6px, 0);
+        }
+
+        40% {
+            clip: rect(89px, 9999px, 16px, 0);
+        }
+
+        60% {
+            clip: rect(2px, 9999px, 4px, 0);
+        }
+
+        80% {
+            clip: rect(96px, 9999px, 93px, 0);
+        }
+
+        100% {
+            clip: rect(21px, 9999px, 57px, 0);
+        }
+    }
+</style>
+
+<div id="root" class="bg-[#1A202C] text-[#E2E8F0]"></div>
+
+<script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // --- COMPONENTS ---
+
+    const Hero = () => {
+        return (
+            <section className="min-h-screen flex flex-col justify-center items-center text-center px-4 relative overflow-hidden">
+                <div className="absolute inset-0 bg-[url('https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/noise.png')] opacity-10 pointer-events-none"></div>
+                <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent via-transparent to-deep-slate pointer-events-none"></div>
+
+                <h1 className="text-5xl md:text-7xl font-black mb-6 tracking-tight relative z-10">
+                    Stop watching <br />
+                    the price spikes. <br />
+                    Start <span className="text-neon-green neon-text glitch-wrapper" data-text="catching">catching</span> them.
+                </h1>
+
+                <p className="text-xl md:text-2xl max-w-2xl text-gray-300 mb-10 relative z-10">
+                    While "other" apps are busy "optimizing" (read: crashing during a <span className="text-white font-bold">$15/kWh</span> spike),
+                    our tech is already banking your credit. <br />
+                    <span className="text-neon-green font-bold">No lag. No excuses. Just actual control.</span>
+                </p>
+
+                <button className="bg-neon-green text-deep-slate font-black text-lg px-8 py-4 rounded hover:bg-white hover:scale-105 transition-all duration-200 relative z-10 shadow-[0_0_20px_rgba(57,255,20,0.5)]">
+                    Ditch the Lag – Switch Now
+                </button>
+
+                <div className="absolute bottom-10 animate-bounce">
+                    <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+                </div>
+            </section>
+        );
+    };
+
+    const LagChart = () => {
+        const [spikeActive, setSpikeActive] = useState(false);
+        const [competitorStatus, setCompetitorStatus] = useState("Idle");
+        const [ourStatus, setOurStatus] = useState("Idle");
+        const [timer, setTimer] = useState(0);
+
+        const triggerSpike = () => {
+            if (spikeActive) return;
+            setSpikeActive(true);
+            setTimer(0);
+            setOurStatus("DISCHARGING (100%)");
+            setCompetitorStatus("Syncing API...");
+        };
+
+        useEffect(() => {
+            let interval;
+            if (spikeActive) {
+                interval = setInterval(() => {
+                    setTimer(prev => {
+                        if (prev >= 100) {
+                            setSpikeActive(false);
+                            setOurStatus("Idle (+ $45.20 Cached)");
+                            setCompetitorStatus("Connected (Missed Spike)");
+                            return 0;
+                        }
+                        // Simulate competitor lag
+                        if (prev > 80 && competitorStatus === "Syncing API...") {
+                            setCompetitorStatus("Attempting Discharge...");
+                        }
+                        return prev + 1;
+                    });
+                }, 50);
+            }
+            return () => clearInterval(interval);
+        }, [spikeActive, competitorStatus]);
+
+        return (
+            <section className="py-20 bg-slate-dark px-4">
+                <div className="max-w-5xl mx-auto">
+                    <div className="text-center mb-16">
+                        <h2 className="text-3xl md:text-4xl font-bold mb-4">The "3-Minute API Lag" <span className="text-red-500">Reality Check</span></h2>
+                        <p className="text-gray-400 max-w-2xl mx-auto">
+                            In the time it takes their server to tell your battery the price just spiked, the spike is over.
+                            You're left with a full battery and a $0.05 feed-in tariff. <span className="italic">Stiff bickies.</span>
+                        </p>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-8 items-center bg-slate-light p-8 rounded-xl border border-gray-700 shadow-2xl relative overflow-hidden">
+                        {/* Visualizer */}
+                        <div className="space-y-6">
+                            <div className="flex justify-between items-center mb-2">
+                                <span className="text-sm font-mono text-gray-400">MARKET PRICE</span>
+                                {spikeActive && <span className="text-xs font-bold text-red-500 animate-pulse">SPIKE DETECTED</span>}
+                            </div>
+                            <div className="h-40 bg-gray-900 rounded-lg relative overflow-hidden flex items-end">
+                                {/* Base Price Line */}
+                                <div className="absolute bottom-4 left-0 right-0 h-1 bg-blue-500 opacity-30"></div>
+
+                                {/* Spike Visual */}
+                                <div
+                                    className={`w-full bg-neon-green transition-all duration-300 ease-out origin-bottom ${spikeActive ? 'h-32 opacity-100' : 'h-1 opacity-20'}`}
+                                    style={{ boxShadow: spikeActive ? '0 0 30px #39FF14' : 'none' }}
+                                ></div>
+
+                                <div className="absolute top-2 right-2 font-mono text-2xl text-neon-green">
+                                    {spikeActive ? '$15.00/kWh' : '$0.25/kWh'}
+                                </div>
+                            </div>
+
+                            <button
+                                onClick={triggerSpike}
+                                disabled={spikeActive}
+                                className={`w-full py-3 rounded font-bold transition ${spikeActive ? 'bg-gray-700 text-gray-500 cursor-not-allowed' : 'bg-red-600 text-white hover:bg-red-500'}`}
+                            >
+                                {spikeActive ? 'Spike in Progress...' : 'Simulate Price Spike'}
+                            </button>
+                        </div>
+
+                        {/* Status Board */}
+                        <div className="space-y-4">
+                            <div className="p-4 bg-gray-900 rounded border border-gray-700">
+                                <div className="text-xs text-gray-500 uppercase font-bold tracking-widest mb-1">Competitor VPP</div>
+                                <div className={`font-mono text-lg ${competitorStatus.includes('Missed') ? 'text-red-500' : 'text-yellow-500'}`}>
+                                    Status: {competitorStatus}
+                                </div>
+                                {spikeActive && timer < 80 && (
+                                    <div className="h-1 bg-yellow-900 mt-2 w-full overflow-hidden">
+                                        <div className="h-full bg-yellow-500 animate-pulse w-1/3"></div>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="p-4 bg-gray-900 rounded border border-neon-green shadow-[0_0_15px_rgba(57,255,20,0.1)] relative">
+                                <div className="absolute -right-1 -top-1 w-3 h-3 bg-neon-green rounded-full animate-pulse-fast"></div>
+                                <div className="text-xs text-neon-green uppercase font-bold tracking-widest mb-1">Our Local Control</div>
+                                <div className="font-mono text-lg text-neon-green">
+                                    Status: {ourStatus}
+                                </div>
+                            </div>
+
+                            <p className="text-sm text-gray-400 mt-4 italic">
+                                "We see the market move, and your battery reacts in milliseconds—not minutes."
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        );
+    };
+
+    const ControlSection = () => {
+        const [isLocal, setIsLocal] = useState(true);
+
+        return (
+            <section className="py-20 px-4 bg-deep-slate border-b border-gray-800">
+                <div className="max-w-4xl mx-auto text-center">
+                    <h2 className="text-3xl md:text-5xl font-bold mb-12">The "Anti-VPP" VPP</h2>
+
+                    <div className="grid md:grid-cols-3 gap-8 text-left">
+                        <div className="p-6 bg-slate-light rounded-xl hover:bg-gray-700 transition duration-300">
+                            <div className="text-neon-green text-4xl mb-4">⚡</div>
+                            <h3 className="text-xl font-bold mb-2 text-white">Direct-to-Inverter</h3>
+                            <p className="text-gray-400 text-sm">We don't ask the cloud nicely. We tell the inverter directly. Local control means zero latency.</p>
+                        </div>
+                        <div className="p-6 bg-slate-light rounded-xl hover:bg-gray-700 transition duration-300 border border-neon-green shadow-[0_0_10px_rgba(57,255,20,0.2)]">
+                            <div className="text-neon-green text-4xl mb-4">🔒</div>
+                            <h3 className="text-xl font-bold mb-2 text-white">Battle-Tested</h3>
+                            <p className="text-gray-400 text-sm">Reliability isn't a roadmap feature. It’s the product. 99.9% uptime even in heatwaves.</p>
+                        </div>
+                        <div className="p-6 bg-slate-light rounded-xl hover:bg-gray-700 transition duration-300">
+                            <div className="text-neon-green text-4xl mb-4">💰</div>
+                            <h3 className="text-xl font-bold mb-2 text-white">Real Gains</h3>
+                            <p className="text-gray-400 text-sm">We’re not 'forecasting' your savings. We’re delivering them directly to your bill.</p>
+                        </div>
+                    </div>
+
+                    <div className="mt-20 flex flex-col items-center">
+                        <h3 className="text-2xl font-bold mb-8">Real Battery Control</h3>
+
+                        <div className="flex items-center gap-8 p-8 bg-black/30 rounded-2xl border border-gray-700">
+                            <div className="text-right hidden md:block">
+                                <div className="font-bold text-gray-500">Cloud API Requests</div>
+                                <div className="text-xs text-gray-600">Lag: 180s</div>
+                            </div>
+
+                            {/* Toggle Switch Visual */}
+                            <div
+                                className="relative w-24 h-12 bg-gray-700 rounded-full cursor-pointer transition-colors duration-300"
+                                onClick={() => setIsLocal(!isLocal)}
+                                style={{ backgroundColor: isLocal ? '#39FF14' : '#4B5563' }}
+                            >
+                                <div
+                                    className={`absolute top-1 left-1 w-10 h-10 bg-white rounded-full transition-transform duration-300 shadow-lg flex items-center justify-center`}
+                                    style={{ transform: isLocal ? 'translateX(48px)' : 'translateX(0)' }}
+                                >
+                                    <div className={`w-2 h-2 rounded-full ${isLocal ? 'bg-neon-green' : 'bg-gray-400'}`}></div>
+                                </div>
+                            </div>
+
+                            <div className="text-left">
+                                <div className={`font-bold ${isLocal ? 'text-neon-green' : 'text-gray-400'}`}>
+                                    {isLocal ? 'Local Override ACTIVE' : 'Local Override OFF'}
+                                </div>
+                                <div className="text-xs text-gray-400">
+                                    {isLocal ? 'Response: <100ms' : 'Response: Unknown'}
+                                </div>
+                            </div>
+                        </div>
+                        <p className="mt-6 text-gray-400 italic">
+                            "Your battery shouldn't have 'stage fright' when the grid gets sweaty."
+                        </p>
+                    </div>
+                </div>
+            </section>
+        );
+    };
+
+    const ComparisonTable = () => {
+        return (
+            <section className="py-20 px-4 bg-slate-dark">
+                <div className="max-w-5xl mx-auto">
+                    <h2 className="text-3xl font-bold text-center mb-12">The "Smart-Shit" vs. Actually Smart Index</h2>
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left border-collapse">
+                            <thead>
+                                <tr>
+                                    <th className="p-4 border-b border-gray-700 text-gray-400 font-mono uppercase text-sm">Feature</th>
+                                    <th className="p-4 border-b border-gray-700 text-gray-500 font-mono uppercase text-sm">The "Other" Guys</th>
+                                    <th className="p-4 border-b border-neon-green text-neon-green font-mono uppercase text-sm bg-gray-900">Us (Actually Smart)</th>
+                                </tr>
+                            </thead>
+                            <tbody className="text-lg">
+                                <tr>
+                                    <td className="p-4 border-b border-gray-800 font-bold">Response Time</td>
+                                    <td className="p-4 border-b border-gray-800 text-gray-400">"Whenever the API wakes up"</td>
+                                    <td className="p-4 border-b border-gray-800 text-white bg-white/5">Real-time Local Control</td>
+                                </tr>
+                                <tr>
+                                    <td className="p-4 border-b border-gray-800 font-bold">User Support</td>
+                                    <td className="p-4 border-b border-gray-800 text-gray-400">A chatbot named 'Dave'</td>
+                                    <td className="p-4 border-b border-gray-800 text-white bg-white/5">Actual humans in Australia</td>
+                                </tr>
+                                <tr>
+                                    <td className="p-4 border-b border-gray-800 font-bold">Reliability</td>
+                                    <td className="p-4 border-b border-gray-800 text-gray-400">"Check the Reddit thread"</td>
+                                    <td className="p-4 border-b border-gray-800 text-white bg-white/5">99.9% Uptime (Even in a Heatwave)</td>
+                                </tr>
+                                <tr>
+                                    <td className="p-4 border-b border-gray-800 font-bold">Your Profit</td>
+                                    <td className="p-4 border-b border-gray-800 text-gray-400">Eaten by 'Subscription Fees'</td>
+                                    <td className="p-4 border-b border-gray-800 text-neon-green font-bold bg-white/5">Transparent, lag-free gains</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        );
+    };
+
+    const AdCreative = () => {
+        return (
+            <section className="py-20 px-4 bg-deep-slate">
+                <div className="max-w-6xl mx-auto">
+                    <h2 className="text-3xl font-bold text-center mb-12 text-gray-500">Seen us on your feed?</h2>
+                    <div className="grid md:grid-cols-2 gap-8">
+                        {/* Ad Concept A */}
+                        <div className="bg-slate-light p-4 rounded-lg transform rotate-1 hover:rotate-0 transition duration-300 shadow-xl">
+                            <div className="aspect-video bg-gray-800 mb-4 flex items-center justify-center relative overflow-hidden group">
+                                <div className="absolute inset-0 bg-cover bg-center opacity-40 group-hover:scale-110 transition duration-700" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1534363261880-0a3aaee25191?auto=format&fit=crop&q=80')" }}></div>
+                                <div className="relative z-10 bg-black/80 px-4 py-2 rounded border border-red-500 text-red-500 font-mono">
+                                    Status: Syncing...
+                                </div>
+                            </div>
+                            <h3 className="text-xl font-bold text-white mb-2">"Don't get Smart-Shifted. Get paid."</h3>
+                            <p className="text-sm text-gray-400">The "FOMO" Campaign</p>
+                        </div>
+
+                        {/* Ad Concept B */}
+                        <div className="bg-slate-light p-4 rounded-lg transform -rotate-1 hover:rotate-0 transition duration-300 shadow-xl">
+                            <div className="aspect-video bg-gray-800 mb-4 flex items-center justify-center relative overflow-hidden group">
+                                <div className="absolute inset-0 bg-cover bg-center opacity-40 group-hover:scale-110 transition duration-700" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80')" }}></div>
+                                <div className="relative z-10 bg-black/80 px-4 py-2 rounded border border-neon-green text-neon-green font-mono">
+                                    Status: OPTIMIZED
+                                </div>
+                            </div>
+                            <h3 className="text-xl font-bold text-white mb-2">"Your battery is smart. Is your software?"</h3>
+                            <p className="text-sm text-gray-400">The "Reliability" Campaign</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        );
+    };
+
+    const Footer = () => {
+        return (
+            <footer className="bg-black py-16 text-center border-t border-gray-800">
+                <div className="max-w-4xl mx-auto px-4">
+                    <h2 className="text-4xl md:text-6xl font-black mb-8 text-white tracking-tighter">
+                        Ready to stop <br />
+                        <span className="text-gray-600">guessing?</span>
+                    </h2>
+                    <button className="bg-neon-green text-deep-slate font-black text-xl px-10 py-5 rounded hover:bg-white transition-all transform hover:-translate-y-1 shadow-[0_0_30px_rgba(57,255,20,0.6)] mb-12">
+                        Ditch the Lag – Switch Now
+                    </button>
+
+                    <p className="text-gray-600 text-sm max-w-lg mx-auto">
+                        © 2026 Reposit Power. "No batteries were harmed in the making of this software. Only egos."
+                    </p>
+                </div>
+            </footer>
+        );
+    };
+
+    const App = () => {
+        return (
+            <main className="font-sans antialiased text-gray-100">
+                <Hero />
+                <LagChart />
+                <ControlSection />
+                <ComparisonTable />
+                <AdCreative />
+                <Footer />
+            </main>
+        );
+    };
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+
+</script>
+{% endraw %}
+{% endblock body %}

@@ -1,0 +1,520 @@
+[
+  {
+    "uid": "8eb15b3c8e16431a9392e55da24bcf7f",
+    "address": "13 Herschell Cct, Flynn ACT 2615, Australia",
+    "actual_bill": -205.6684514,
+    "simulated_bill": 288.1910608770296,
+    "savings": -493.8595122770296
+  },
+  {
+    "uid": "41be0fc5926e4d21af996fa867d862af",
+    "address": "9  Stewart Place, Glenmore Park NSW 2745, Australia",
+    "actual_bill": 829.84672634,
+    "simulated_bill": 603.7795607260018,
+    "savings": 226.0671656139982
+  },
+  {
+    "uid": "78bf988115ee405bb8089b420f227064",
+    "address": "6 Landra Avenue, Mount Colah NSW 2079, Australia",
+    "actual_bill": 561.47769151,
+    "simulated_bill": 556.9939695874741,
+    "savings": 4.483721922525888
+  },
+  {
+    "uid": "54363009b3ce477db284cd0fb6b808c8",
+    "address": "49  Wilshire Street, Dickson ACT 2602, Australia",
+    "actual_bill": 1009.26473532,
+    "simulated_bill": 470.4854295430742,
+    "savings": 538.7793057769259
+  },
+  {
+    "uid": "1fbe8337141345329398a22b4d959c51",
+    "address": "1  Miller Ave, Dundas Valley  NSW 2117, Australia",
+    "actual_bill": 784.76933454,
+    "simulated_bill": 922.7382642262199,
+    "savings": -137.9689296862199
+  },
+  {
+    "uid": "f762027a23a9459b953597d42fd92327",
+    "address": "17  Allison Ashby Crs, Banks ACT 2906, Australia",
+    "actual_bill": 725.35563759,
+    "simulated_bill": 1103.7765425553346,
+    "savings": -378.42090496533456
+  },
+  {
+    "uid": "bbb1ebd24baa4f0986883e764ce8a873",
+    "address": "15 Borodin close, Cranebrook NSW 2749, Australia",
+    "actual_bill": 596.17220596,
+    "simulated_bill": 238.25388341381688,
+    "savings": 357.91832254618316
+  },
+  {
+    "uid": "86095eef7d0e42a09acf0a49f17dbfb2",
+    "address": "39 MacDonald Street, Sans Souci NSW 2219, Australia",
+    "actual_bill": 1600.230618,
+    "simulated_bill": 831.4588324531059,
+    "savings": 768.7717855468942
+  },
+  {
+    "uid": "a66b6a950b7448f694f00df7658ba8da",
+    "address": "15 Munro Road, Queanbeyan NSW 2620, Australia",
+    "actual_bill": 1106.75559428,
+    "simulated_bill": 706.6336757289439,
+    "savings": 400.12191855105607
+  },
+  {
+    "uid": "ea5985d1f8ad4b858f38b31ffd119d54",
+    "address": "7 Mcwhae Cct, Wanniassa ACT 2903, Australia",
+    "actual_bill": 1270.36252932,
+    "simulated_bill": 976.362493426726,
+    "savings": 294.000035893274
+  },
+  {
+    "uid": "d08fc708c0634246ac5557b3bff9da92",
+    "address": "23  Lister Cres, Ainslie ACT 2602, Australia",
+    "actual_bill": 765.80136252,
+    "simulated_bill": 698.8204830229867,
+    "savings": 66.98087949701335
+  },
+  {
+    "uid": "226b968a9c764454934db07f52d619c1",
+    "address": "6 Florence Ct, Balgowlah NSW 2093, Australia",
+    "actual_bill": 1061.26146096,
+    "simulated_bill": 1051.8609749950429,
+    "savings": 9.40048596495717
+  },
+  {
+    "uid": "588f81d9da2d451786a04d8b5a3525a4",
+    "address": "18 Riviera Ave, Avalon Beach NSW 2107, Australia",
+    "actual_bill": 229.62827174,
+    "simulated_bill": 295.8573875339771,
+    "savings": -66.22911579397709
+  },
+  {
+    "uid": "a9f8596de97f48b49e5c73af89e931bb",
+    "address": "40 Abena Ave, Crace ACT 2911, Australia",
+    "actual_bill": 2338.98192332,
+    "simulated_bill": 1367.7192007481228,
+    "savings": 971.2627225718772
+  },
+  {
+    "uid": "2c84b83d0244450fb727d6a509f398e6",
+    "address": "5 Gibran Place, St. Ives NSW 2075, Australia",
+    "actual_bill": 1130.02848249,
+    "simulated_bill": 742.4270107052694,
+    "savings": 387.6014717847306
+  },
+  {
+    "uid": "1e6304e95d064760999f85ec8675f708",
+    "address": "7 Jagungal Close, Jindabyne NSW 2627, Australia",
+    "actual_bill": 1034.53251063,
+    "simulated_bill": 513.7308929127237,
+    "savings": 520.8016177172763
+  },
+  {
+    "uid": "ff14ba8b918c4d458e475d613c983b63",
+    "address": "36  Dexter Street, Cook ACT 2614, Australia",
+    "actual_bill": 202.20470233,
+    "simulated_bill": 569.4925660844824,
+    "savings": -367.2878637544824
+  },
+  {
+    "uid": "2158bbd93c904aefae649495b84e96a7",
+    "address": "23  Macleay, Turvey Park NSW 2650, Australia",
+    "actual_bill": 1723.92834964,
+    "simulated_bill": 674.9252804181225,
+    "savings": 1049.0030692218775
+  },
+  {
+    "uid": "61f6aafa41fa4039ae040a8553768dd6",
+    "address": "160 Goyder, Narrabundah ACT 2604, Australia",
+    "actual_bill": 696.88029957,
+    "simulated_bill": 576.7552307849412,
+    "savings": 120.12506878505883
+  },
+  {
+    "uid": "0749d7f20a2140dab6b6dd472b82f0e8",
+    "address": "30 Navala Avenue, Nelson Bay NSW 2315, Australia",
+    "actual_bill": 330.19259747,
+    "simulated_bill": 243.692173996249,
+    "savings": 86.500423473751
+  },
+  {
+    "uid": "c04219ce066f46aebde4416f84960194",
+    "address": "40 Mackerras Cres, Theodore ACT 2905, Australia",
+    "actual_bill": 363.48438243,
+    "simulated_bill": 375.7485882802059,
+    "savings": -12.26420585020594
+  },
+  {
+    "uid": "9c098c1f838b4fd18172e2e72c9538d7",
+    "address": "6 Horne Place, Latham ACT 2615, Australia",
+    "actual_bill": 236.98459327,
+    "simulated_bill": 388.16075837688624,
+    "savings": -151.17616510688623
+  },
+  {
+    "uid": "975a2eabb014447097315b856b37f46c",
+    "address": "14  Hann St, Griffith ACT 2603, Australia",
+    "actual_bill": 794.92440192,
+    "simulated_bill": 1035.2219588869468,
+    "savings": -240.2975569669468
+  },
+  {
+    "uid": "40d077ed22734b069fbe79d5a807a9e3",
+    "address": "46 Bundilla Parade, Berkeley Vale NSW 2261, Australia",
+    "actual_bill": 495.57328507,
+    "simulated_bill": 901.8938180956168,
+    "savings": -406.3205330256168
+  },
+  {
+    "uid": "69b3df4b9f854da69d695f4cf123c560",
+    "address": "22 Biraban St, Macquarie ACT 2614, Australia",
+    "actual_bill": 32.00511286,
+    "simulated_bill": 528.292480561588,
+    "savings": -496.28736770158804
+  },
+  {
+    "uid": "11552354b15c4f20bc2776da2feb481d",
+    "address": "18 North Avoca Parade, North Avoca NSW 2260, Australia",
+    "actual_bill": -261.39759893,
+    "simulated_bill": 745.766258694202,
+    "savings": -1007.1638576242019
+  },
+  {
+    "uid": "7559ce87a7544d0db1c214207b46f909",
+    "address": "58 Lincoln Ave, Collaroy NSW 2097, Australia",
+    "actual_bill": 1301.29463155,
+    "simulated_bill": 586.8296551086577,
+    "savings": 714.4649764413424
+  },
+  {
+    "uid": "a0d8ebbf155543c28fc1350f34e16bed",
+    "address": "34A Delmar Parade, Dee Why NSW 2099, Australia",
+    "actual_bill": 689.9263834,
+    "simulated_bill": 518.1067451418749,
+    "savings": 171.8196382581251
+  },
+  {
+    "uid": "4c4ac569d5224b499b416e8cc3b08b93",
+    "address": "461  Griffith Road, Lovington NSW 2641, Australia",
+    "actual_bill": 651.39064544,
+    "simulated_bill": 206.42472758756765,
+    "savings": 444.9659178524323
+  },
+  {
+    "uid": "90264d526eaa4f3bba284e9b51fe96de",
+    "address": "33 Macedon Crescent, Palmerston ACT 2913, Australia",
+    "actual_bill": 1095.30696709,
+    "simulated_bill": 801.0990132596692,
+    "savings": 294.2079538303308
+  },
+  {
+    "uid": "cb79e3b946604a92a43693d7870070e5",
+    "address": "16 Joe Croft, Bonner ACT 2914, Australia",
+    "actual_bill": 834.65593015,
+    "simulated_bill": 1160.4610530641605,
+    "savings": -325.8051229141605
+  },
+  {
+    "uid": "997a1ddf657548f3be85519ae8d227cc",
+    "address": "9  Ord St, Forrest ACT 2603, Australia",
+    "actual_bill": 410.04468428,
+    "simulated_bill": 1229.8449507396526,
+    "savings": -819.8002664596527
+  },
+  {
+    "uid": "408e795f3a8d4a288900917f896eec9f",
+    "address": "16 Norton , Evatt ACT 2617, Australia",
+    "actual_bill": 665.82904328,
+    "simulated_bill": 288.0906377074028,
+    "savings": 377.7384055725972
+  },
+  {
+    "uid": "e3ff22eefc494826ab651caf1d30f7a3",
+    "address": "52 Eucumbene Dr, Duffy ACT 2611, Australia",
+    "actual_bill": -102.56424437,
+    "simulated_bill": 271.59388182551675,
+    "savings": -374.15812619551673
+  },
+  {
+    "uid": "3e19028569964f50833896e791d3b5ca",
+    "address": "3 Haddon Ct, Yass NSW 2582, Australia",
+    "actual_bill": 680.6677193,
+    "simulated_bill": 440.89417431216344,
+    "savings": 239.7735449878366
+  },
+  {
+    "uid": "e87a603573c64a27a2934397af0c0c6f",
+    "address": "8534 Kings Highway, Manar NSW 2622, Australia",
+    "actual_bill": 2028.87564429,
+    "simulated_bill": 1468.093017599712,
+    "savings": 560.782626690288
+  },
+  {
+    "uid": "f560ee0d2f454e3f96bba2a6992a466c",
+    "address": "4 Brash Place, Melba ACT 2615, Australia",
+    "actual_bill": 237.97407272,
+    "simulated_bill": 352.6763019095615,
+    "savings": -114.7022291895615
+  },
+  {
+    "uid": "6b980e36eb174e2aa930af93e7f124e7",
+    "address": "Unit 1 / 12 Pipistrelle St, Throsby ACT 2914, Australia",
+    "actual_bill": 341.95410268,
+    "simulated_bill": 274.5408503787254,
+    "savings": 67.41325230127461
+  },
+  {
+    "uid": "c987abb5b80744ba830b9ff03ab3d633",
+    "address": "16 Short Street, Ganmain NSW 2702, Australia",
+    "actual_bill": 668.68225798,
+    "simulated_bill": 286.1526626599029,
+    "savings": 382.52959532009714
+  },
+  {
+    "uid": "53bc959b8c7743af930fbc7fa9e5b0a7",
+    "address": "9B Narambi , Narrabundah ACT 2604, Australia",
+    "actual_bill": 65.77770638,
+    "simulated_bill": 240.58913967250703,
+    "savings": -174.81143329250705
+  },
+  {
+    "uid": "423857466bef41d1994713b27a4f55d2",
+    "address": "10 Lamble Place, Oxley ACT 2903, Australia",
+    "actual_bill": 228.68549263,
+    "simulated_bill": 336.77664333379556,
+    "savings": -108.09115070379556
+  },
+  {
+    "uid": "31f3ea7352e944049ecf2c5ab17a5e4c",
+    "address": "2 Garagarang St, Malua Bay NSW 2536, Australia",
+    "actual_bill": 714.87023818,
+    "simulated_bill": 456.8528480113389,
+    "savings": 258.0173901686611
+  },
+  {
+    "uid": "6e5e96877d6847368e67fd79f483d486",
+    "address": "10 Governor Dr, Murrumbateman NSW 2582, Australia",
+    "actual_bill": 1481.15820486,
+    "simulated_bill": 549.7825632861909,
+    "savings": 931.3756415738092
+  },
+  {
+    "uid": "8dbc7546ca724dd7858b6aa21d4e17eb",
+    "address": "10 Ashmead Avenue, Castle Hill NSW 2154, Australia",
+    "actual_bill": 36.9365531,
+    "simulated_bill": 387.19657782444483,
+    "savings": -350.26002472444486
+  },
+  {
+    "uid": "6d4e42d57c5d41db90e5a8a57132e4ed",
+    "address": "27 Burringbar Street, North Balgowlah NSW 2903, Australia",
+    "actual_bill": 1197.91731004,
+    "simulated_bill": 816.1317439160176,
+    "savings": 381.78556612398245
+  },
+  {
+    "uid": "a9924816ac814a02b1e4c1f2eecd2196",
+    "address": "5 Almond Place, Casula NSW 2170, Australia",
+    "actual_bill": 998.32654096,
+    "simulated_bill": 501.46487651569475,
+    "savings": 496.86166444430523
+  },
+  {
+    "uid": "413792ba048b4f6b9793961a102d23ce",
+    "address": "30 Kavel Street, Torrens ACT 2607, Australia",
+    "actual_bill": -227.62011312,
+    "simulated_bill": 216.7414440616285,
+    "savings": -444.36155718162854
+  },
+  {
+    "uid": "b8f1e315915247c0a89dfba08d2676ac",
+    "address": "55 Wilshire St, Dickson ACT 2602, Australia",
+    "actual_bill": 640.68986102,
+    "simulated_bill": 638.7787116315824,
+    "savings": 1.9111493884175843
+  },
+  {
+    "uid": "b2a4a2790a6b488d9828f1d02cc3401b",
+    "address": "10  Calvert Street, Ainslie ACT 2602, Australia",
+    "actual_bill": 530.37700578,
+    "simulated_bill": 705.1302012226934,
+    "savings": -174.75319544269337
+  },
+  {
+    "uid": "cdb9655fa4fb403680dddccd828864f6",
+    "address": "13 Harvest Street, Googong NSW 2620, Australia",
+    "actual_bill": 1276.81200782,
+    "simulated_bill": 521.1082606279217,
+    "savings": 755.7037471920783
+  },
+  {
+    "uid": "52f57bd6bf1943e7b5b37c67467e63e7",
+    "address": "39 Tanumbirini Street, Hawker ACT 2614, Australia",
+    "actual_bill": 1623.40100859,
+    "simulated_bill": 1080.5281520816168,
+    "savings": 542.8728565083832
+  },
+  {
+    "uid": "c1c6950ccb144ffba833e81c591b854e",
+    "address": "3 Nambucca Street, Kaleen ACT 2617, Australia",
+    "actual_bill": 1637.82129838,
+    "simulated_bill": 592.3309619584174,
+    "savings": 1045.4903364215825
+  },
+  {
+    "uid": "cb556ebf79b647189e41ca180934ee35",
+    "address": "43 Coronation Street, Bardon QLD 4065, Australia",
+    "actual_bill": 1949.58220791,
+    "simulated_bill": 1091.5309808419602,
+    "savings": 858.0512270680399
+  },
+  {
+    "uid": "1dc3765f77ef45d6a9c6e25ece11e6cd",
+    "address": "41 Hastings Street, Chifley NSW 2036, Australia",
+    "actual_bill": 506.88277436,
+    "simulated_bill": 310.6478194628904,
+    "savings": 196.23495489710956
+  },
+  {
+    "uid": "d10932d8718848248c03d6b1ac4efd5e",
+    "address": "42 Prichard Cct, Richardson ACT 2905, Australia",
+    "actual_bill": 292.18408982,
+    "simulated_bill": 289.8752844204333,
+    "savings": 2.3088053995667224
+  },
+  {
+    "uid": "a76db2f9188d41fd9594dc7d8123c375",
+    "address": "19 Khull Cres, Kambah ACT 2902, Australia",
+    "actual_bill": 1175.17199271,
+    "simulated_bill": 401.6335923391249,
+    "savings": 773.5384003708751
+  },
+  {
+    "uid": "4a26b3e4e927493b8edb08edbed6d79f",
+    "address": "11 Weatherburn Place, Bruce ACT 2617, Australia",
+    "actual_bill": 924.03958471,
+    "simulated_bill": 1510.6614800061557,
+    "savings": -586.6218952961557
+  },
+  {
+    "uid": "90f910f1ab624735a922272b61eea63d",
+    "address": "1 Souter Place, Weston  ACT 2611, Australia",
+    "actual_bill": -614.0270501,
+    "simulated_bill": 642.3343764693725,
+    "savings": -1256.3614265693725
+  },
+  {
+    "uid": "91cfd787e248474aaffa4fdadeef6b30",
+    "address": "8  Hoadley St , Mawson ACT 2607, Australia",
+    "actual_bill": 98.44067317,
+    "simulated_bill": 819.3432887082632,
+    "savings": -720.9026155382633
+  },
+  {
+    "uid": "00f4ba6a7d0c44e39360761e9067369a",
+    "address": "15 Cooloola St, Amaroo ACT 2914, Australia",
+    "actual_bill": -597.02412567,
+    "simulated_bill": 127.96924597129323,
+    "savings": -724.9933716412933
+  },
+  {
+    "uid": "f6202121d13746188ea262e915db33b3",
+    "address": "7  Tamborine Cl, Palmerston ACT 2913, Australia",
+    "actual_bill": -143.19726264,
+    "simulated_bill": 136.29359227669536,
+    "savings": -279.49085491669535
+  },
+  {
+    "uid": "ab8271d14a51496b888c43a096f9f63c",
+    "address": "40  Buchanans Road, Barooga NSW 3644, Australia",
+    "actual_bill": 1044.91191473,
+    "simulated_bill": 546.2209774487862,
+    "savings": 498.6909372812138
+  },
+  {
+    "uid": "24e1f73410b44b889e04db1241753686",
+    "address": "98 Slim Dusty Circuit, Moncrieff ACT 2914, Australia",
+    "actual_bill": 1005.74428088,
+    "simulated_bill": 1344.4794264357638,
+    "savings": -338.7351455557638
+  },
+  {
+    "uid": "b481d610354f4e3d98534640a53de3c6",
+    "address": "130 Barracks Flat Drive, Karabar NSW 2620, Australia",
+    "actual_bill": 978.57509532,
+    "simulated_bill": 437.5893714111571,
+    "savings": 540.9857239088428
+  },
+  {
+    "uid": "fdfefffb910245c58ec3f03e6f5ac68d",
+    "address": "24 Ford St, Queanbeyan East NSW 2620, Australia",
+    "actual_bill": 882.33498621,
+    "simulated_bill": 430.78136135533526,
+    "savings": 451.55362485466475
+  },
+  {
+    "uid": "14866ca6923444199be9c2cb52ef3f74",
+    "address": "21 Booth Crescent, Cook ACT 2614, Australia",
+    "actual_bill": -525.90286665,
+    "simulated_bill": 38.622610978904355,
+    "savings": -564.5254776289044
+  },
+  {
+    "uid": "ddca956318f54fc3943599c66c54ff2b",
+    "address": "78 Hadleigh Circuit, Isabella Plains NSW 2905, Australia",
+    "actual_bill": 1088.58286736,
+    "simulated_bill": 1004.5765301764795,
+    "savings": 84.00633718352037
+  },
+  {
+    "uid": "1f8c1d19d4a04df7b08b7ff37d42992f",
+    "address": "2 Guest Place, Macquarie ACT 2614, Australia",
+    "actual_bill": -878.43650538,
+    "simulated_bill": 241.08277327387538,
+    "savings": -1119.5192786538753
+  },
+  {
+    "uid": "44c37b48568e492b9d82fb2dc961c194",
+    "address": "220 Dryandra, O'Connor ACT 2602, Australia",
+    "actual_bill": 467.28141715,
+    "simulated_bill": 731.970887133481,
+    "savings": -264.68946998348105
+  },
+  {
+    "uid": "9b8a01313c2742a797ac4e3a978fe09e",
+    "address": "4  Dickinson St, Watson ACT 2602, Australia",
+    "actual_bill": 422.76471057,
+    "simulated_bill": 325.0113887410945,
+    "savings": 97.75332182890548
+  },
+  {
+    "uid": "a89f98373c3c4473be81fcdbd83d946f",
+    "address": "5  Bowden Cres, , MacGregor ACT 2615, Australia",
+    "actual_bill": -261.75664812,
+    "simulated_bill": 78.6674374392809,
+    "savings": -340.4240855592809
+  },
+  {
+    "uid": "8afba8ce0136410bbe3055f76d1b866d",
+    "address": "18 Hoskins Avenue, Warrawong NSW 2502, Australia",
+    "actual_bill": 198.16067512,
+    "simulated_bill": 328.3820423218818,
+    "savings": -130.22136720188178
+  },
+  {
+    "uid": "c95a24faea1047e7bcb751b0a9bb7b12",
+    "address": "6  Selwyn, Hackett ACT 2602, Australia",
+    "actual_bill": 1254.06762347,
+    "simulated_bill": 469.2695509628411,
+    "savings": 784.7980725071588
+  },
+  {
+    "uid": "03e42575a73a4a08ae38ea4020595a82",
+    "address": "1 Davis Place, Thirlmere NSW 2572, Australia",
+    "actual_bill": 1128.23387998,
+    "simulated_bill": 1421.411525552635,
+    "savings": -293.17764557263513
+  }
+]

@@ -1,0 +1,26 @@
+Submitted through API on page: Sig Energy - Package Preference Survey
+
+ 
+First Name:
+
+Michael
+ 
+Last Name:
+
+Hecker
+ 
+Email:
+
+mhecker@ieee.org
+ 
+Conjoint Survey Data:
+
+{"userProfile":{"batteryStatus":"other","batteryBrand":"Other"},"responses":[{"taskId":1,"option1":{"installationCost":0,"monthlyFee":39,"signupIncentive":0,"fairUseCap":4,"contractTerm":"3 months"},"option2":{"installationCost":1500,"monthlyFee":79,"signupIncentive":500,"fairUseCap":2,"contractTerm":"3 months"},"option3":{"installationCost":500,"monthlyFee":39,"signupIncentive":500,"fairUseCap":1.2,"contractTerm":"24 months"},"selectedOption":1},{"taskId":2,"option1":{"installationCost":500,"monthlyFee":39,"signupIncentive":1000,"fairUseCap":1.2,"contractTerm":"24 months"},"option2":{"installationCost":0,"monthlyFee":79,"signupIncentive":0,"fairUseCap":2,"contractTerm":"24 months"},"option3":{"installationCost":1500,"monthlyFee":129,"signupIncentive":500,"fairUseCap":1.5,"contractTerm":"3 months"},"selectedOption":1},{"taskId":3,"option1":{"installationCost":0,"monthlyFee":39,"signupIncentive":250,"fairUseCap":1.5,"contractTerm":"3 months"},"option2":{"installationCost":1000,"monthlyFee":0,"signupIncentive":250,"fairUseCap":1.4,"contractTerm":"Month to month"},"option3":{"installationCost":1000,"monthlyFee":39,"signupIncentive":250,"fairUseCap":1.2,"contractTerm":"3 months"},"selectedOption":1},{"taskId":4,"option1":{"installationCost":1500,"monthlyFee":0,"signupIncentive":0,"fairUseCap":1.2,"contractTerm":"Month to month"},"option2":{"installationCost":500,"monthlyFee":79,"signupIncentive":250,"fairUseCap":1.2,"contractTerm":"12 months"},"option3":{"installationCost":500,"monthlyFee":39,"signupIncentive":0,"fairUseCap":2,"contractTerm":"3 months"},"selectedOption":3},{"taskId":5,"option1":{"installationCost":1000,"monthlyFee":129,"signupIncentive":500,"fairUseCap":1.2,"contractTerm":"12 months"},"option2":{"installationCost":0,"monthlyFee":79,"signupIncentive":0,"fairUseCap":1.4,"contractTerm":"24 months"},"option3":{"installationCost":1500,"monthlyFee":79,"signupIncentive":0,"fairUseCap":1.4,"contractTerm":"12 months"},"selectedOption":2},{"taskId":6,"option1":{"installationCost":500,"monthlyFee":39,"signupIncentive":0,"fairUseCap":1.2,"contractTerm":"Month to month"},"option2":{"installationCost":1500,"monthlyFee":39,"signupIncentive":500,"fairUseCap":1.2,"contractTerm":"Month to month"},"option3":{"installationCost":1500,"monthlyFee":79,"signupIncentive":500,"fairUseCap":1.4,"contractTerm":"Month to month"},"selectedOption":1},{"taskId":7,"option1":{"installationCost":1500,"monthlyFee":79,"signupIncentive":500,"fairUseCap":1.5,"contractTerm":"3 months"},"option2":{"installationCost":500,"monthlyFee":129,"signupIncentive":250,"fairUseCap":2,"contractTerm":"12 months"},"option3":{"installationCost":0,"monthlyFee":39,"signupIncentive":500,"fairUseCap":2,"contractTerm":"Month to month"},"selectedOption":3},{"taskId":8,"option1":{"installationCost":500,"monthlyFee":129,"signupIncentive":0,"fairUseCap":4,"contractTerm":"3 months"},"option2":{"installationCost":500,"monthlyFee":39,"signupIncentive":500,"fairUseCap":1.5,"contractTerm":"Month to month"},"option3":{"installationCost":500,"monthlyFee":129,"signupIncentive":0,"fairUseCap":1.2,"contractTerm":"3 months"},"selectedOption":2}]}
+ 
+Battery Status:
+
+other
+ 
+Battery Brand:
+
+Other

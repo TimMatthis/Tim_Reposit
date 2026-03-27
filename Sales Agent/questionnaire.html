@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reposit Power - Site Inspection Survey</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-orange: #F68D26;
+            --primary-blue: #2A6B94;
+            --primary-dark: #1f2937;
+            --bg-noise: url(https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/noise.png);
+            --success-green: #22c55e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-noise), radial-gradient(circle at top left, rgba(246, 141, 38, 1) 5%, rgba(203, 128, 70, 1) 20%, rgba(42, 107, 148, 1) 60%, rgba(19, 26, 43, 1) 100%);
+            background-blend-mode: multiply;
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .form-card {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            position: relative;
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .progress-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: #eee;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-orange), var(--primary-blue));
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        .step-info {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            background: rgba(42, 107, 148, 0.1);
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .survey-step {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .survey-step.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h2 {
+            font-size: 1.6rem;
+            color: var(--primary-dark);
+            margin-bottom: 24px;
+            border-bottom: 2px solid #f3f4f6;
+            padding-bottom: 12px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--primary-dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-orange);
+        }
+
+        .radio-group {
+            display: grid;
+            gap: 12px;
+        }
+
+        .radio-option {
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 14px 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .radio-option:hover {
+            border-color: var(--primary-orange);
+            background: #fffcf9;
+        }
+
+        .radio-option.selected {
+            border-color: var(--primary-orange);
+            background: #fffcf9;
+            box-shadow: 0 4px 10px rgba(246, 141, 38, 0.1);
+        }
+
+        .radio-option input {
+            margin-right: 12px;
+            accent-color: var(--primary-orange);
+            width: 18px;
+            height: 18px;
+        }
+
+        .conditional-content {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8fafc;
+            border-left: 4px solid var(--primary-blue);
+            border-radius: 0 10px 10px 0;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .media-upload {
+            border: 2px dashed #cbd5e1;
+            padding: 30px;
+            text-align: center;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #64748b;
+        }
+
+        .media-upload:hover {
+            border-color: var(--primary-blue);
+            background: #f1f5f9;
+        }
+
+        .scoring-feedback {
+            margin-top: 12px;
+            padding: 16px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .scoring-feedback.pass {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid var(--success-green);
+        }
+
+        .scoring-feedback.fail {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid #ef4444;
+        }
+
+        .score-pill {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 700;
+            margin-right: 8px;
+            font-size: 0.8rem;
+        }
+
+        .score-pill.high {
+            background: var(--success-green);
+            color: white;
+        }
+
+        .score-pill.low {
+            background: #ef4444;
+            color: white;
+        }
+
+        .ai-loading {
+            font-size: 0.85rem;
+            color: #64748b;
+            font-style: italic;
+            margin-top: 8px;
+            display: none;
+        }
+
+        .nav-buttons {
+            margin-top: auto;
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            padding-top: 30px;
+        }
+
+        .btn {
+            padding: 14px 30px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: none;
+        }
+
+        .btn-next {
+            background: linear-gradient(135deg, var(--primary-orange), var(--primary-blue));
+            color: white;
+            flex-grow: 1;
+        }
+
+        .btn-prev {
+            background: #f3f4f6;
+            color: #4b5563;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.05);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slider-container {
+            padding: 10px 0;
+        }
+
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #e5e7eb;
+            outline: none;
+            accent-color: var(--primary-orange);
+        }
+
+        .slider-value {
+            text-align: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--primary-blue);
+            margin-top: 10px;
+        }
+
+        @media (max-width: 640px) {
+            .form-card {
+                padding: 30px 20px;
+            }
+
+            .header h1 {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Site Inspection Survey</h1>
+            <p>Reposit No Bill Site Inspection - 2026 Update</p>
+        </div>
+
+        <div class="form-card">
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div class="step-info" id="stepInfo">Step 1 of 13</div>
+
+            <form id="surveyForm">
+                <!-- STEP 1: TITLE PAGE -->
+                <div class="survey-step active" data-step="1">
+                    <h2>Title Page</h2>
+                    <div class="form-group">
+                        <label class="form-label">Document No.</label>
+                        <input type="text" class="form-control" name="doc_no" placeholder="Enter document number">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Customer Name</label>
+                        <input type="text" class="form-control" name="customer_name" placeholder="Enter customer name">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Customer Address</label>
+                        <input type="text" class="form-control" name="customer_address"
+                            placeholder="Enter full address">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Physical inspection required?</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="physical_req" value="yes"> Yes
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="physical_req" value="no"> No
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">NMI For Address we are installing on</label>
+                        <input type="number" class="form-control" name="nmi" placeholder="Enter NMI number">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Main breaker/switch current rating (Amps)</label>
+                        <input type="number" class="form-control" name="breaker_rating" placeholder="Amps">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Get clear photo of main switch</label>
+                        <div class="media-upload" onclick="this.querySelector('input').click()">
+                            <span>📷 Click to upload photo</span>
+                            <input type="file" name="main_switch_photo" accept="image/*" capture="environment"
+                                style="display:none" onchange="window.handleFileUpload(this)">
+                        </div>
+                        <div class="ai-loading" id="main_switch_photo_loading">🤖 AI is analyzing image...</div>
+                        <div class="scoring-feedback" id="main_switch_photo_feedback"></div>
+                    </div>
+                </div>
+
+                <!-- STEP 2: DETAILS -->
+                <div class="survey-step" data-step="2">
+                    <h2>Conducted On</h2>
+                    <div class="form-group">
+                        <label class="form-label">Enter Date and Time</label>
+                        <input type="datetime-local" class="form-control" name="conducted_at">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Prepared by</label>
+                        <input type="text" class="form-control" name="prepared_by" placeholder="Your name">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Life support equipment on site?</label>
+                        <div class="radio-group">
+                            <label class="radio-option"><input type="radio" name="life_support" value="yes"> Yes</label>
+                            <label class="radio-option"><input type="radio" name="life_support" value="no"> No</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Is there Vodaphone 4G connectivity?</label>
+                        <div class="radio-group">
+                            <label class="radio-option"><input type="radio" name="voda_4g" value="yes"> Yes</label>
+                            <label class="radio-option"><input type="radio" name="voda_4g" value="no"> No</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Can you make mobile phone calls not on WIFI?</label>
+                        <div class="radio-group">
+                            <label class="radio-option"><input type="radio" name="mobile_calls" value="yes"> Yes</label>
+                            <label class="radio-option"><input type="radio" name="mobile_calls" value="no"> No</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Do you have a back up generator?</label>
+                        <div class="radio-group">
+                            <label class="radio-option"><input type="radio" name="generator" value="yes"> Yes</label>
+                            <label class="radio-option"><input type="radio" name="generator" value="no"> No</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 3: AUDIT METER BOARD -->
+                <div class="survey-step" data-step="3">
+                    <h2>Audit - Meter Board</h2>
+                    <div class="form-group">
+                        <label class="form-label">Photo of Meter board and surrounds from 5m away, Lid open and
+                            closed.</label>
+                        <div class="media-upload" onclick="this.querySelector('input').click()">
+                            <span>📷 Upload Media</span>
+                            <input type="file" name="mb_surrounds" accept="image/*" multiple style="display:none"
+                                onchange="window.handleFileUpload(this)">
+                        </div>
+                        <div class="ai-loading" id="mb_surrounds_loading">🤖 AI is analyzing image...</div>
+                        <div class="scoring-feedback" id="mb_surrounds_feedback"></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Close up photo of meter</label>
+                        <div class="media-upload" onclick="this.querySelector('input').click()">
+                            <span>📷 Upload Media</span>
+                            <input type="file" name="meter_closeup" accept="image/*" style="display:none"
+                                onchange="window.handleFileUpload(this)">
+                        </div>
+                        <div class="ai-loading" id="meter_closeup_loading">🤖 AI is analyzing image...</div>
+                        <div class="scoring-feedback" id="meter_closeup_feedback"></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Close up of Circuit Breakers in all boards. In Focus.</label>
+                        <div class="radio-group">
+                            <label class="radio-option"><input type="radio" name="cb_closeup_done" value="yes">
+                                Yes</label>
+                            <label class="radio-option"><input type="radio" name="cb_closeup_done" value="no">
+                                No</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Is DB separate from MB?</label>
+                        <div class="radio-group" data-toggle="db_separate_logic">
+                            <label class="radio-option"><input type="radio" name="db_separate" value="yes"> Yes</label>
+                            <label class="radio-option"><input type="radio" name="db_separate" value="no"> No</label>
+                        </div>
+                        <div class="conditional-content" id="db_separate_logic">
+                            <div class="form-group">
+                                <label class="form-label">If Yes how far from the MB is the DB location (in
+                                    meters)?</label>
+                                <input type="text" class="form-control" name="db_distance">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Is there a roof cavity for cabling?</label>
+                                <div class="radio-group">
+                                    <label class="radio-option"><input type="radio" name="db_roof_cavity" value="yes">
+                                        Yes</label>
+                                    <label class="radio-option"><input type="radio" name="db_roof_cavity" value="no">
+                                        No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Close up of Generator Circuit Breakers and Generator Unit</label>
+                        <div class="radio-group">
+                            <label class="radio-option"><input type="radio" name="gen_closeup" value="yes"> Yes</label>
+                            <label class="radio-option"><input type="radio" name="gen_closeup" value="no"> No</label>
+                            <label class="radio-option"><input type="radio" name="gen_closeup" value="na"> N/A</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 4: UPGRADES -->
+                <div class="survey-step" data-step="4">
+                    <h2>Meter Board Upgrade</h2>
+                    <div class="form-group">
+                        <label class="form-label">Is a meter board upgrade required? this includes breaker
+                            upgrades</label>
+                        <div class="radio-group" data-toggle="mb_upgrade_logic">
+                            <label class="radio-option"><input type="radio" name="mb_upgrade" value="yes"> Yes</label>
+                            <label class="radio-option"><input type="radio" name="mb_upgrade" value="no"> No</label>
+                        </div>
+                        <div class="conditional-content" id="mb_upgrade_logic">
+                            <div class="form-group">
+                                <label class="form-label">If yes is it circuit upgrades or full cut in? Note back up
+                                    crts need to be compliant</label>
+                                <input type="text" class="form-control" name="mb_upgrade_type" id="mb_upgrade_type">
+                            </div>
+                            <div class="form-group" id="board_work_approval" style="display:none">
+                                <label class="form-label">Board work needed- has it been quoted/approved by install
+                                    ops?</label>
+                                <div class="radio-group" data-toggle="quote_details">
+                                    <label class="radio-option"><input type="radio" name="mb_approved" value="yes">
+                                        Yes</label>
+                                    <label class="radio-option"><input type="radio" name="mb_approved" value="no">
+                                        No</label>
+                                </div>
+                                <div class="conditional-content" id="quote_details">
+                                    <label class="form-label">If yes what is the quote/email link?</label>
+                                    <input type="text" class="form-control" name="quote_link">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Is there a controlled load?</label>
+                        <div class="radio-group">
+                            <label class="radio-option"><input type="radio" name="controlled_load" value="yes">
+                                Yes</label>
+                            <label class="radio-option"><input type="radio" name="controlled_load" value="no">
+                                No</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 5: BLACKOUT & CONNECTION -->
+                <div class="survey-step" data-step="5">
+                    <h2>Connection Details</h2>
+                    <div class="form-group">
+                        <label class="form-label">Do they want blackout protection?</label>
+                        <div class="radio-group" data-toggle="blackout_logic">
+                            <label class="radio-option"><input type="radio" name="blackout" value="yes"> Yes</label>
+                            <label class="radio-option"><input type="radio" name="blackout" value="no"> No</label>
+                        </div>
+                        <div class="conditional-content" id="blackout_logic">
+                            <label class="form-label">Please specify what circuits are being backed up - note 2 crts are
+                                allowed.</label>
+                            <textarea class="form-control" name="blackout_circuits" rows="3"
+                                placeholder="VAST 10kw offer more than 2. We DO NOT guarantee full house back up."></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Select phase type of AC connection point</label>
+                        <div class="radio-group">
+                            <label class="radio-option"><input type="radio" name="phase" value="single"> Single
+                                Phase</label>
+                            <label class="radio-option"><input type="radio" name="phase" value="three"> Three
+                                Phase</label>
+                            <label class="radio-option"><input type="radio" name="phase" value="dual"> Dual
+                                Phase</label>
+                            <label class="radio-option"><input type="radio" name="phase" value="unsure">
+                                Unsure/Other</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Type of connection</label>
+                        <div class="radio-group">
+                            <label class="radio-option"><input type="radio" name="connection_type" value="overhead">
+                                Overhead connection</label>
+                            <label class="radio-option"><input type="radio" name="connection_type" value="underground">
+                                Underground connection</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Roof Details: Roof type</label>
+                        <div class="radio-group">
+                            <label class="radio-option"><input type="radio" name="roof_type" value="colorbond">
+                                Colorbond</label>
+                            <label class="radio-option"><input type="radio" name="roof_type" value="tile"> Tile</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 6: ROOF CONTINUED -->
+                <div class="survey-step" data-step="6">
+                    <h2>Roof Details (Cont.)</h2>
+                    <div class="form-group">
+                        <label class="form-label">Roof type (Other)</label>
+                        <div class="radio-group">
+                            <label class="radio-option"><input type="radio" name="roof_type_ext" value="terracotta">
+                                Terracotta</label>
+                            <label class="radio-option"><input type="radio" name="roof_type_ext" value="klip_lok"> Klip
+                                Lok</label>
+                            <label class="radio-option"><input type="radio" name="roof_type_ext" value="not_sure"> Not
+                                sure</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">How many stories?</label>
+                        <div class="radio-group">
+                            <label class="radio-option"><input type="radio" name="stories" value="1"> Single
+                                Story</label>
+                            <label class="radio-option"><input type="radio" name="stories" value="2"> Double
+                                Story</label>
+                            <label class="radio-option"><input type="radio" name="stories" value="3"> Three
+                                Story</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Second roof type, if applicable</label>
+                        <div class="radio-group" id="second_roof_group">
+                            <label class="radio-option"><input type="radio" name="second_roof" value="colorbond">
+                                Colorbond</label>
+                            <label class="radio-option"><input type="radio" name="second_roof" value="tile">
+                                Tile</label>
+                            <label class="radio-option"><input type="radio" name="second_roof" value="terracotta">
+                                Terracotta</label>
+                            <label class="radio-option"><input type="radio" name="second_roof" value="klip_lok"> Klip
+                                Lok</label>
+                            <label class="radio-option"><input type="radio" name="second_roof" value="not_sure"> Not
+                                sure</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Approximate roof pitch</label>
+                        <div class="slider-container">
+                            <input type="range" class="slider" name="roof_pitch" min="1" max="50" value="25">
+                            <div class="slider-value"><span id="pitchVal">25</span>°</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Does the house have a Raked or Cathedral Ceiling?</label>
+                        <div class="radio-group" data-toggle="ceiling_logic">
+                            <label class="radio-option"><input type="radio" name="ceiling" value="yes"> Yes</label>
+                            <label class="radio-option"><input type="radio" name="ceiling" value="no"> No</label>
+                        </div>
+                        <div class="conditional-content" id="ceiling_logic">
+                            <label class="form-label">If Yes have you advised customer external conduit will be
+                                necessary?</label>
+                            <div class="radio-group">
+                                <label class="radio-option"><input type="radio" name="conduit_advised" value="yes">
+                                    Yes</label>
+                                <label class="radio-option"><input type="radio" name="conduit_advised" value="no">
+                                    No</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 7: ROOF CONDITION & EXISTING -->
+                <div class="survey-step" data-step="7">
+                    <h2>Condition & Existing System</h2>
+                    <div class="form-group">
+                        <label class="form-label">Condition of roof?</label>
+                        <div class="radio-group">
+                            <label class="radio-option"><input type="radio" name="roof_condition" value="good">
+                                Good</label>
+                            <label class="radio-option"><input type="radio" name="roof_condition" value="fair">
+                                Fair</label>
+                            <label class="radio-option"><input type="radio" name="roof_condition" value="poor">
+                                Poor</label>
+                            <label class="radio-option"><input type="radio" name="roof_condition" value="na">
+                                N/A</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Photo of roof- Clear view of roof type esp for Colourbond/Tin</label>
+                        <div class="media-upload" onclick="this.querySelector('input').click()">
+                            <span>📷 Upload Photo</span>
+                            <input type="file" name="roof_photo" accept="image/*" style="display:none"
+                                onchange="window.handleFileUpload(this)">
+                        </div>
+                        <div class="ai-loading" id="roof_photo_loading">🤖 AI is analyzing image...</div>
+                        <div class="scoring-feedback" id="roof_photo_feedback"></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Roof Cavity- Is there sufficient roof space to run cables (for entire
+                            cable run)</label>
+                        <div class="radio-group" data-toggle="roof_cavity_no_logic" data-show-on="no">
+                            <label class="radio-option"><input type="radio" name="roof_cavity" value="yes"> Yes</label>
+                            <label class="radio-option"><input type="radio" name="roof_cavity" value="no"> No</label>
+                        </div>
+                        <div class="conditional-content" id="roof_cavity_no_logic">
+                            <div class="form-group">
+                                <label class="form-label">If NO is there underfloor access? Is it clear?</label>
+                                <div class="radio-group" data-toggle="underfloor_no_logic" data-show-on="no">
+                                    <label class="radio-option"><input type="radio" name="underfloor" value="yes">
+                                        Yes</label>
+                                    <label class="radio-option"><input type="radio" name="underfloor" value="no">
+                                        No</label>
+                                </div>
+                                <div class="conditional-content" id="underfloor_no_logic">
+                                    <label class="form-label">Does it require tunnelling or excavation? (If Yes this
+                                        will require a physical site visit)</label>
+                                    <div class="radio-group">
+                                        <label class="radio-option"><input type="radio" name="tunneling" value="yes">
+                                            Yes</label>
+                                        <label class="radio-option"><input type="radio" name="tunneling" value="no">
+                                            No</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Is there an existing system?</label>
+                        <div class="radio-group">
+                            <label class="radio-option"><input type="radio" name="existing_system" value="yes">
+                                Yes</label>
+                            <label class="radio-option"><input type="radio" name="existing_system" value="no">
+                                No</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 8: EXISTING SYSTEM DETAILS -->
+                <div class="survey-step" data-step="8">
+                    <h2>Existing System Audit</h2>
+                    <div class="form-group">
+                        <label class="form-label">Is the existing system being removed?</label>
+                        <div class="radio-group" data-toggle="removal_logic">
+                            <label class="radio-option"><input type="radio" name="removal" value="yes"> Yes</label>
+                            <label class="radio-option"><input type="radio" name="removal" value="no"> No</label>
+                        </div>
+                        <div class="conditional-content" id="removal_logic">
+                            <div class="form-group">
+                                <label class="form-label">Are the customers keeping the old system?</label>
+                                <div class="radio-group" data-toggle="keep_system_logic" data-show-on="no">
+                                    <label class="radio-option"><input type="radio" name="keep_old" value="yes">
+                                        Yes</label>
+                                    <label class="radio-option"><input type="radio" name="keep_old" value="no">
+                                        No</label>
+                                </div>
+                                <div class="conditional-content" id="keep_system_logic">
+                                    <label class="form-label">If No do we need the installers to organise
+                                        removal/disposal of old system materials?</label>
+                                    <div class="radio-group">
+                                        <label class="radio-option"><input type="radio" name="removal_org" value="yes">
+                                            Yes</label>
+                                        <label class="radio-option"><input type="radio" name="removal_org" value="no">
+                                            No</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Is the existing system Export Limited - almost always YES</label>
+                        <div class="radio-group" data-toggle="export_logic">
+                            <label class="radio-option"><input type="radio" name="export_limited" value="yes">
+                                Yes</label>
+                            <label class="radio-option"><input type="radio" name="export_limited" value="no"> No</label>
+                        </div>
+                        <div class="conditional-content" id="export_logic">
+                            <label class="form-label">What is the Export Limit (If it is less than 5kw this will affect
+                                NoBill Ability)</label>
+                            <input type="text" class="form-control" name="export_limit">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 9: COMPONENT LOCATIONS -->
+                <div class="survey-step" data-step="9">
+                    <h2>Component Locations</h2>
+                    <div class="form-group">
+                        <label class="form-label">Existing System Panel details- Brand, wattage, how many? Needed for
+                            DNSP approval</label>
+                        <textarea class="form-control" name="existing_panels" rows="2"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Existing Inverter details- including up close Pic of Serial Number and
+                            Model Number</label>
+                        <textarea class="form-control" name="existing_inverter" rows="2"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Photo of existing system- Inverter & Panels (can be from
+                            ground)</label>
+                        <div class="media-upload" onclick="this.querySelector('input').click()">
+                            <span>📷 Upload Media</span>
+                            <input type="file" name="existing_photos" accept="image/*" multiple style="display:none"
+                                onchange="window.handleFileUpload(this)">
+                        </div>
+                        <div class="ai-loading" id="existing_photos_loading">🤖 AI is analyzing image...</div>
+                        <div class="scoring-feedback" id="existing_photos_feedback"></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Photo of Ideal inverter location</label>
+                        <div class="media-upload" onclick="this.querySelector('input').click()">
+                            <span>📷 Upload Media</span>
+                            <input type="file" name="ideal_inverter_loc" accept="image/*" style="display:none"
+                                onchange="window.handleFileUpload(this)">
+                        </div>
+                        <div class="ai-loading" id="ideal_inverter_loc_loading">🤖 AI is analyzing image...</div>
+                        <div class="scoring-feedback" id="ideal_inverter_loc_feedback"></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Photo of Ideal battery locations- including surrounds (do you have 1m
+                            of space in front?)</label>
+                        <div class="media-upload" onclick="this.querySelector('input').click()">
+                            <span>📷 Upload Media</span>
+                            <input type="file" name="ideal_battery_loc" accept="image/*" style="display:none"
+                                onchange="window.handleFileUpload(this)">
+                        </div>
+                        <div class="ai-loading" id="ideal_battery_loc_loading">🤖 AI is analyzing image...</div>
+                        <div class="scoring-feedback" id="ideal_battery_loc_feedback"></div>
+                    </div>
+                </div>
+
+                <!-- STEP 10: CLEARANCES -->
+                <div class="survey-step" data-step="10">
+                    <h2>Clearances & Compliance</h2>
+                    <div class="form-group">
+                        <label class="form-label">Do these locations have the required clearances?</label>
+                        <div class="radio-group" data-toggle="clearance_no_logic" data-show-on="no">
+                            <label class="radio-option"><input type="radio" name="clearances_ok" value="yes">
+                                Yes</label>
+                            <label class="radio-option"><input type="radio" name="clearances_ok" value="no"> No</label>
+                        </div>
+                        <div class="conditional-content" id="clearance_no_logic">
+                            <label class="form-label">Get picture of measurements- get the customer to physically
+                                measure the location</label>
+                            <div class="media-upload" onclick="this.querySelector('input').click()">
+                                <span>📷 Upload Evidence</span>
+                                <input type="file" name="clearance_evidence" accept="image/*" style="display:none"
+                                    onchange="window.handleFileUpload(this)">
+                            </div>
+                            <div class="ai-loading" id="clearance_evidence_loading">🤖 AI is analyzing image...</div>
+                            <div class="scoring-feedback" id="clearance_evidence_feedback"></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Is the location of the batteries and inverter underneath/or next to a
+                            window, next to a door, HWS, AC unit?</label>
+                        <div class="radio-group" data-toggle="window_logic">
+                            <label class="radio-option"><input type="radio" name="near_opening" value="yes"> Yes</label>
+                            <label class="radio-option"><input type="radio" name="near_opening" value="no"> No</label>
+                        </div>
+                        <div class="conditional-content" id="window_logic">
+                            <div class="form-group">
+                                <label class="form-label">What room is behind the window?</label>
+                                <input type="text" class="form-control" name="behind_room" id="behind_room">
+                            </div>
+                            <div id="habitability_logic" style="display:none">
+                                <div class="form-group">
+                                    <label class="form-label">Is the Room classed as habitable?</label>
+                                    <div class="radio-group" data-toggle="new_location_logic">
+                                        <label class="radio-option"><input type="radio" name="is_habitable" value="yes">
+                                            Yes</label>
+                                        <label class="radio-option"><input type="radio" name="is_habitable" value="no">
+                                            No</label>
+                                    </div>
+                                    <div class="conditional-content" id="new_location_logic">
+                                        <label class="form-label">Find new location</label>
+                                        <div class="radio-group">
+                                            <label class="radio-option"><input type="radio" name="new_loc_found"
+                                                    value="yes"> Yes</label>
+                                            <label class="radio-option"><input type="radio" name="new_loc_found"
+                                                    value="no"> No</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 11: SITE PROTECTION -->
+                <div class="survey-step" data-step="11">
+                    <h2>Site Protection & Safety</h2>
+                    <div class="form-group">
+                        <label class="form-label">Is shading and protection cover required?</label>
+                        <div class="radio-group">
+                            <label class="radio-option"><input type="radio" name="shading_req" value="awning"> Shade
+                                awning</label>
+                            <label class="radio-option"><input type="radio" name="shading_req" value="cover"> Shade
+                                cover</label>
+                            <label class="radio-option"><input type="radio" name="shading_req" value="no"> No</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Are bollards needed?</label>
+                        <div class="radio-group">
+                            <label class="radio-option"><input type="radio" name="bollards" value="yes"> Yes</label>
+                            <label class="radio-option"><input type="radio" name="bollards" value="no"> No</label>
+                            <label class="radio-option"><input type="radio" name="bollards" value="na"> N/A</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Is a smoke alarm needed?</label>
+                        <div class="radio-group">
+                            <label class="radio-option"><input type="radio" name="smoke_alarm" value="yes"> Yes</label>
+                            <label class="radio-option"><input type="radio" name="smoke_alarm" value="no"> No</label>
+                            <label class="radio-option"><input type="radio" name="smoke_alarm" value="na"> N/A</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Is fire proof sheeting required?</label>
+                        <div class="radio-group">
+                            <label class="radio-option"><input type="radio" name="fire_proof" value="yes"> Yes</label>
+                            <label class="radio-option"><input type="radio" name="fire_proof" value="no"> No</label>
+                            <label class="radio-option"><input type="radio" name="fire_proof" value="na"> N/A</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Are optimisers required?</label>
+                        <div class="radio-group" data-toggle="optimiser_logic">
+                            <label class="radio-option"><input type="radio" name="optimisers" value="yes"> Yes</label>
+                            <label class="radio-option"><input type="radio" name="optimisers" value="no"> No</label>
+                        </div>
+                        <div class="conditional-content" id="optimiser_logic">
+                            <div class="form-group">
+                                <label class="form-label">How many?</label>
+                                <input type="number" class="form-control" name="opt_qty">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Upload image indicating panels which require
+                                    optimisers</label>
+                                <div class="media-upload" onclick="this.querySelector('input').click()">
+                                    <span>📷 Upload Photo</span>
+                                    <input type="file" name="opt_photo" accept="image/*" style="display:none"
+                                        onchange="window.handleFileUpload(this)">
+                                </div>
+                                <div class="ai-loading" id="opt_photo_loading">🤖 AI is analyzing image...</div>
+                                <div class="scoring-feedback" id="opt_photo_feedback"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 12: WALL MATERIALS -->
+                <div class="survey-step" data-step="12">
+                    <h2>Wall Construction</h2>
+                    <div class="form-group">
+                        <label class="form-label">What is the Wall made of</label>
+                        <div class="radio-group">
+                            <label class="radio-option"><input type="radio" name="wall_material" value="brick">
+                                Brick</label>
+                            <label class="radio-option"><input type="radio" name="wall_material" value="hebel">
+                                Hebel</label>
+                            <label class="radio-option"><input type="radio" name="wall_material" value="weatherboard">
+                                Weatherboard</label>
+                            <label class="radio-option"><input type="radio" name="wall_material" value="concrete">
+                                Concrete</label>
+                            <label class="radio-option"><input type="radio" name="wall_material" value="tin"> Tin
+                                sheeting</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 13: SUBMISSION -->
+                <div class="survey-step" data-step="13">
+                    <h2>Survey Complete</h2>
+                    <div style="text-align:center; padding: 40px 0;">
+                        <div style="font-size: 5rem; color: var(--success-green); margin-bottom: 20px;">✓</div>
+                        <p style="font-size: 1.2rem; margin-bottom: 20px;">All inspection data has been captured.</p>
+                        <p style="color: #64748b;">Click submit below to finalise the report and send for processing.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="nav-buttons">
+                    <button type="button" class="btn btn-prev" id="prevBtn" style="display:none">Back</button>
+                    <button type="button" class="btn btn-next" id="nextBtn">Continue</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 13;
+        const form = document.getElementById('surveyForm');
+        const progressBar = document.getElementById('progressBar');
+        const stepInfo = document.getElementById('stepInfo');
+        const nextBtn = document.getElementById('nextBtn');
+        const prevBtn = document.getElementById('prevBtn');
+
+        function updateStep() {
+            // Update active step visibility
+            document.querySelectorAll('.survey-step').forEach(step => step.classList.remove('active'));
+            document.querySelector(`.survey-step[data-step="${currentStep}"]`).classList.add('active');
+
+            // Update progress & labels
+            progressBar.style.width = `${(currentStep / totalSteps) * 100}%`;
+            stepInfo.innerText = `Step ${currentStep} of ${totalSteps}`;
+
+            // Button controls
+            prevBtn.style.display = currentStep === 1 ? 'none' : 'block';
+            nextBtn.innerText = currentStep === totalSteps ? 'Submit Report' : 'Continue';
+
+            // Scroll to top of card on step change
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // NAVIGATION
+        nextBtn.addEventListener('click', () => {
+            if (currentStep < totalSteps) {
+                currentStep++;
+                updateStep();
+            } else {
+                // Final Submission to HubSpot
+                submitToHubSpot();
+            }
+        });
+
+        prevBtn.addEventListener('click', () => {
+            if (currentStep > 1) {
+                currentStep--;
+                updateStep();
+            }
+        });
+
+        // CONDITIONAL LOGIC HANDLER
+        document.body.addEventListener('change', (e) => {
+            // Handle Radio Options Visuals
+            if (e.target.type === 'radio') {
+                const groupName = e.target.name;
+                document.querySelectorAll(`input[name="${groupName}"]`).forEach(input => {
+                    input.closest('.radio-option').classList.remove('selected');
+                });
+                e.target.closest('.radio-option').classList.add('selected');
+
+                // Handle Step Triggers (if defined in data-toggle)
+                const radioGroup = e.target.closest('.radio-group');
+                if (radioGroup && radioGroup.dataset.toggle) {
+                    const targetId = radioGroup.dataset.toggle;
+                    const content = document.getElementById(targetId);
+                    const showOn = radioGroup.dataset.showOn || 'yes';
+
+                    if (content) {
+                        content.style.display = (e.target.value === showOn) ? 'block' : 'none';
+                    }
+                }
+            }
+
+            // Specific logic for Step 4 (Meter Board Upgrade Text)
+            if (e.target.id === 'mb_upgrade_type') {
+                const boardWork = document.getElementById('board_work_approval');
+                boardWork.style.display = e.target.value.trim().length > 0 ? 'block' : 'none';
+            }
+
+            // Specific logic for Step 10 (Habitability Room Text)
+            if (e.target.id === 'behind_room') {
+                const habLogic = document.getElementById('habitability_logic');
+                habLogic.style.display = e.target.value.trim().length > 0 ? 'block' : 'none';
+            }
+        });
+
+        // IMAGE ANALYSIS LOGIC
+        window.handleFileUpload = async function (input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const fieldName = input.name;
+            const loadingIndicator = document.getElementById(`${fieldName}_loading`);
+            const feedbackContainer = document.getElementById(`${fieldName}_feedback`);
+
+            if (loadingIndicator) loadingIndicator.style.display = 'block';
+            if (feedbackContainer) feedbackContainer.style.display = 'none';
+
+            try {
+                // Prepare the rubric for this specific field (example)
+                const rubric = {
+                    main_switch_photo: "Is the main switch clearly visible? Is it centered and well-lit?",
+                    mb_surrounds: "Is the entire meter board visible from 5m distance? Are surroundings clear of obstructions?",
+                    meter_closeup: "Is the meter serial number and dial clearly readable? Is the image sharp?"
+                }[fieldName] || "General quality check.";
+
+                const result = await analyzeImage(file, rubric);
+                displayScoringFeedback(fieldName, result);
+            } catch (error) {
+                console.error('AI Analysis Error:', error);
+            } finally {
+                if (loadingIndicator) loadingIndicator.style.display = 'none';
+            }
+        };
+
+        async function analyzeImage(file, rubric) {
+            const formData = new FormData();
+            formData.append('image', file);
+            formData.append('rubric', rubric);
+
+            try {
+                const response = await fetch('http://localhost:3001/analyze-image', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error('AI Proxy Error');
+                }
+
+                return await response.json();
+            } catch (error) {
+                console.error('AI Analysis Error:', error);
+                // Fallback result if proxy fails
+                return {
+                    score: 0,
+                    passed: false,
+                    description: "Error connecting to AI service. Please check your proxy.",
+                    itemsFound: [],
+                    inverterDetected: false,
+                    feedback: "Could not analyze image accurately."
+                };
+            }
+        }
+
+        function displayScoringFeedback(fieldName, result) {
+            const container = document.getElementById(`${fieldName}_feedback`);
+            if (!container) return;
+
+            container.className = `scoring-feedback ${result.passed ? 'pass' : 'fail'}`;
+            container.innerHTML = `
+                <div style="font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center;">
+                        <span class="score-pill ${result.score >= 4 ? 'high' : 'low'}">Score: ${result.score}/5</span>
+                        ${result.passed ? '✅ Image Approved' : '⚠️ Action Required'}
+                    </div>
+                    <div style="font-size: 0.8rem; color: ${result.inverterDetected ? 'var(--success-green)' : '#64748b'}; font-weight: 800;">
+                        ${result.inverterDetected ? '🔍 INVERTER DETECTED' : '❌ NO INVERTER SEEN'}
+                    </div>
+                </div>
+                <div style="margin-bottom: 12px; font-style: italic; color: #475569;">
+                    "${result.description}"
+                </div>
+                <div style="margin-bottom: 12px;">
+                    <strong style="font-size: 0.8rem; text-transform: uppercase; color: #64748b;">Items Identified:</strong>
+                    <ul style="margin: 4px 0 0 16px; padding: 0; font-size: 0.85rem;">
+                        ${result.itemsFound.map(item => `<li>${item}</li>`).join('')}
+                    </ul>
+                </div>
+                <div style="border-top: 1px solid rgba(0,0,0,0.05); pt-8 mt-8;">
+                    <strong>AI Recommendation:</strong> ${result.feedback}
+                </div>
+            `;
+            container.style.display = 'block';
+
+            // Add detailed data to hidden input for HubSpot
+            let hiddenInput = document.getElementById(`${fieldName}_ai_data`);
+            if (!hiddenInput) {
+                hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.id = `${fieldName}_ai_data`;
+                hiddenInput.name = `${fieldName}_ai_data`;
+                form.appendChild(hiddenInput);
+            }
+            hiddenInput.value = JSON.stringify(result);
+        }
+
+        // HubSpot Submission Logic
+        async function submitToHubSpot() {
+            const formData = new FormData(form);
+            const portalId = '3445699'; // From conjoint survey
+            const formGuid = 'YOUR_QUESTIONNAIRE_FORM_GUID'; // User needs to provide this
+
+            // Show loading state
+            const submitBtn = document.getElementById('nextBtn');
+            const originalText = submitBtn.innerText;
+            submitBtn.innerText = 'Submitting...';
+            submitBtn.disabled = true;
+
+            // Create submission overlay if it doesn't exist
+            let overlay = document.getElementById('submissionOverlay');
+            if (!overlay) {
+                overlay = document.createElement('div');
+                overlay.id = 'submissionOverlay';
+                overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(255,255,255,0.9);display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:9999;';
+                overlay.innerHTML = `
+                    <div style="width:50px;height:50px;border:5px solid #f3f3f3;border-top:5px solid var(--primary-orange);border-radius:50%;animation:spin 1s linear infinite;margin-bottom:20px;"></div>
+                    <div style="font-weight:700;color:var(--primary-dark);">Uploading Inspection Data...</div>
+                    <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
+                `;
+                document.body.appendChild(overlay);
+            }
+            overlay.style.display = 'flex';
+
+            try {
+                // Using the v2 Uploads API which supports multipart/form-data (including files)
+                const endpoint = `https://forms.hubspot.com/uploads/form/v2/${portalId}/${formGuid}`;
+
+                // Add context data
+                formData.append('hs_context', JSON.stringify({
+                    pageUri: window.location.href,
+                    pageName: document.title
+                }));
+
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    body: formData // Fetch handles the correct boundary for multipart
+                });
+
+                if (response.ok) {
+                    // Success
+                    currentStep++;
+                    updateStep();
+                } else {
+                    const errorMsg = await response.text();
+                    console.error('HubSpot Error:', errorMsg);
+                    alert('There was an error submitting the survey. Please check your connection and try again.');
+                }
+            } catch (error) {
+                console.error('Submission Error:', error);
+                alert('Connection error. Please try again.');
+            } finally {
+                overlay.style.display = 'none';
+                submitBtn.innerText = originalText;
+                submitBtn.disabled = false;
+            }
+        }
+
+        // Slider Preview
+        const pitchSlider = document.querySelector('input[name="roof_pitch"]');
+        const pitchVal = document.getElementById('pitchVal');
+        if (pitchSlider) {
+            pitchSlider.addEventListener('input', (e) => {
+                pitchVal.innerText = e.target.value;
+            });
+        }
+
+        // Initialize
+        updateStep();
+    </script>
+</body>
+
+</html>

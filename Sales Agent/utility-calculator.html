@@ -1,0 +1,1733 @@
+<!--
+  templateType: "page"
+  label: "Product Utility Calculator"
+  isAvailableForNewContent: true
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Utility Calculator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --uc-primary-orange: #F68D26;
+            --uc-primary-blue: #2A6B94;
+            --uc-primary-dark: #1f2937;
+            --uc-success-green: #22c55e;
+            --uc-bg-noise: url(https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/noise.png);
+        }
+
+        /* Scoped Reset */
+        .uc-wrapper * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .uc-wrapper {
+            font-family: 'Inter', sans-serif;
+            background: var(--uc-bg-noise), radial-gradient(circle at top left, rgba(246, 141, 38, 1) 5%, rgba(203, 128, 70, 1) 20%, rgba(42, 107, 148, 1) 60%, rgba(19, 26, 43, 1) 100%);
+            background-blend-mode: multiply;
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: #333;
+        }
+
+        .uc-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .uc-header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .uc-header h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            line-height: normal;
+        }
+
+        .uc-header p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+            line-height: normal;
+        }
+
+        .uc-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .uc-panel {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        }
+
+        .uc-panel h2 {
+            font-size: 1.8rem;
+            color: var(--uc-primary-dark);
+            margin-bottom: 30px;
+            border-bottom: 3px solid var(--uc-primary-orange);
+            padding-bottom: 12px;
+            line-height: normal;
+        }
+
+        .uc-control-group {
+            margin-bottom: 36px;
+            position: relative;
+        }
+
+        .uc-control-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .uc-control-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex: 1;
+            font-weight: 600;
+            color: var(--uc-primary-dark);
+        }
+
+        .uc-control-label-text {
+            font-size: 1rem;
+        }
+
+        .uc-control-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--uc-primary-blue);
+            background: rgba(42, 107, 148, 0.1);
+            padding: 4px 12px;
+            border-radius: 8px;
+        }
+
+        .uc-lock-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            border: 2px solid #cbd5e1;
+            background: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            margin-left: 12px;
+            font-size: 1.2rem;
+        }
+
+        .uc-lock-btn:hover {
+            border-color: var(--uc-primary-orange);
+            background: #fffbf7;
+        }
+
+        .uc-lock-btn.locked {
+            border-color: var(--uc-primary-orange);
+            background: linear-gradient(135deg, var(--uc-primary-orange), var(--uc-primary-blue));
+            color: white;
+        }
+
+        .uc-slider-container {
+            position: relative;
+        }
+
+        .uc-slider {
+            width: 100%;
+            height: 10px;
+            border-radius: 5px;
+            background: linear-gradient(90deg, #e5e7eb 0%, #cbd5e1 100%);
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            cursor: pointer;
+            display: block;
+            /* Ensure block level */
+        }
+
+        .uc-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--uc-primary-orange), var(--uc-primary-blue));
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s;
+            margin-top: -7px;
+            /* Fix alignment on some browsers if needed, though appearance none handles mostly */
+        }
+
+        .uc-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+
+        .uc-slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--uc-primary-orange), var(--uc-primary-blue));
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s;
+        }
+
+        .uc-slider::-moz-range-thumb:hover {
+            transform: scale(1.15);
+        }
+
+        .uc-display {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        }
+
+        .uc-display h2 {
+            font-size: 1.8rem;
+            color: var(--uc-primary-dark);
+            margin-bottom: 24px;
+            text-align: center;
+            line-height: normal;
+        }
+
+        .uc-score {
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(135deg, rgba(246, 141, 38, 0.1), rgba(42, 107, 148, 0.1));
+            border-radius: 16px;
+            margin-bottom: 30px;
+        }
+
+        .uc-score-label {
+            font-size: 1rem;
+            color: #6b7280;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .uc-score-value {
+            font-size: 5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--uc-primary-orange), var(--uc-primary-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+        }
+
+        .uc-breakdown {
+            margin-top: 30px;
+        }
+
+        .uc-breakdown h3 {
+            font-size: 1.2rem;
+            color: var(--uc-primary-dark);
+            margin-bottom: 16px;
+            font-weight: 700;
+            line-height: normal;
+        }
+
+        .uc-breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .uc-breakdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .uc-breakdown-label {
+            font-size: 0.95rem;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .uc-breakdown-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--uc-primary-blue);
+        }
+
+        .uc-bar {
+            width: 100%;
+            height: 20px;
+            background: #e5e7eb;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .uc-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--uc-success-green), var(--uc-primary-blue));
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            color: white;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .uc-optimizer {
+            margin-top: 40px;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            grid-column: 1 / -1;
+        }
+
+        .uc-optimizer h2 {
+            font-size: 1.8rem;
+            color: var(--uc-primary-dark);
+            margin-bottom: 20px;
+            border-bottom: 3px solid var(--uc-success-green);
+            padding-bottom: 12px;
+            line-height: normal;
+        }
+
+        .uc-optimize-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--uc-success-green), #16a34a);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 30px;
+        }
+
+        .uc-optimize-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(34, 197, 94, 0.3);
+        }
+
+        .uc-optimize-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .uc-optimal-packages {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .uc-package-card {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s;
+        }
+
+        .uc-package-card.rank-1 {
+            border-color: #fbbf24;
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.05), rgba(245, 158, 11, 0.05));
+        }
+
+        .uc-package-card.rank-2 {
+            border-color: #cbd5e1;
+        }
+
+        .uc-package-card.rank-3 {
+            border-color: #cd7f32;
+            background: linear-gradient(135deg, rgba(205, 127, 50, 0.05), rgba(205, 127, 50, 0.05));
+        }
+
+        .uc-package-rank {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .uc-package-utility {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--uc-primary-orange), var(--uc-primary-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            line-height: normal;
+        }
+
+        .uc-package-attributes {
+            list-style: none;
+        }
+
+        .uc-package-attribute {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: 0.9rem;
+        }
+
+        .uc-package-attribute:last-child {
+            border-bottom: none;
+        }
+
+        .uc-attr-name {
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .uc-attr-value {
+            color: var(--uc-primary-dark);
+            font-weight: 700;
+        }
+
+        .uc-no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: #9ca3af;
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 1200px) {
+            .uc-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .uc-optimal-packages {
+                grid-template-columns: 1fr;
+            }
+
+            .uc-header h1 {
+                font-size: 2rem;
+            }
+
+            .uc-score-value {
+                font-size: 3.5rem;
+            }
+
+            .uc-package-utility {
+                font-size: 2.5rem;
+            }
+        }
+
+        /* Data Integration Styles */
+        .uc-settings-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid #e5e7eb;
+            border-radius: 25px;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            min-width: 44px;
+            height: 44px;
+            gap: 8px;
+            font-weight: 600;
+            color: #4b5563;
+        }
+
+        .uc-settings-toggle:hover {
+            transform: translateY(-2px);
+            background: white;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+        }
+
+        .uc-stats-summary {
+            font-size: 0.85rem;
+            color: #6b7280;
+            white-space: nowrap;
+            display: none;
+            border-left: 1px solid #e5e7eb;
+            padding-left: 8px;
+            margin-left: 0;
+        }
+
+        .uc-settings-toggle.has-data {
+            padding: 8px 16px;
+        }
+
+        .uc-settings-toggle.has-data .uc-stats-summary {
+            display: block;
+        }
+
+        .uc-data-panel {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 600px;
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            z-index: 1001;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .uc-data-panel.active {
+            display: block;
+        }
+
+        .uc-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+        }
+
+        .uc-overlay.active {
+            display: block;
+        }
+
+        .uc-textarea {
+            width: 100%;
+            height: 200px;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-family: monospace;
+            font-size: 0.9rem;
+            resize: vertical;
+        }
+
+        .uc-btn-secondary {
+            background: white;
+            border: 1px solid #d1d5db;
+            color: #374151;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            margin-right: 10px;
+        }
+
+        .uc-apply-btn {
+            background: var(--uc-success-green);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-top: 15px;
+            width: 100%;
+            transition: background 0.2s;
+        }
+
+        .uc-apply-btn:hover {
+            background: #16a34a;
+        }
+
+
+
+        .uc-log-modal,
+        .uc-curves-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 800px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            z-index: 1002;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .uc-curves-modal {
+            max-width: 1000px;
+            max-height: 90vh;
+        }
+
+        .uc-curves-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            overflow-y: auto;
+            flex-grow: 1;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+        }
+
+        .uc-chart-container {
+            position: relative;
+            height: 250px;
+            width: 100%;
+        }
+
+        .uc-log-modal h3,
+        .uc-curves-modal h3 {
+            margin-top: 0;
+            color: var(--uc-primary-dark);
+        }
+
+        .uc-log-table-container {
+            overflow-y: auto;
+            flex-grow: 1;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            margin: 10px 0;
+        }
+
+        .uc-log-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .uc-log-table th,
+        .uc-log-table td {
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .uc-log-table th {
+            background: #f9fafb;
+            position: sticky;
+            top: 0;
+            font-weight: 600;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    {{ standard_header_includes }}
+</head>
+
+<body>
+    <div class="uc-wrapper">
+        <div class="uc-container">
+            <div class="uc-header">
+                <h1>🎯 Product Utility Calculator <span style="font-size: 0.8rem; opacity: 0.5;">v1.2 (HubSpot
+                        Ready)</span></h1>
+                <p>Configure your ideal product and see how it scores based on customer preferences</p>
+            </div>
+
+            <div class="uc-grid">
+                <div class="uc-panel">
+                    <h2>Product Configuration</h2>
+
+                    <div class="uc-control-group">
+                        <div class="uc-control-header">
+                            <div class="uc-control-label">
+                                <span class="uc-control-label-text">Installation Cost</span>
+                                <span class="uc-control-value" id="installationCost-value">$0</span>
+                            </div>
+                            <button class="uc-lock-btn" id="lock-installationCost" data-attr="installationCost">
+                                🔓
+                            </button>
+                        </div>
+                        <input type="range" class="uc-slider" id="installationCost" min="0" max="3" step="1" value="0">
+                    </div>
+
+                    <div class="uc-control-group">
+                        <div class="uc-control-header">
+                            <div class="uc-control-label">
+                                <span class="uc-control-label-text">Monthly Fee</span>
+                                <span class="uc-control-value" id="monthlyFee-value">$0</span>
+                            </div>
+                            <button class="uc-lock-btn" id="lock-monthlyFee" data-attr="monthlyFee">
+                                🔓
+                            </button>
+                        </div>
+                        <input type="range" class="uc-slider" id="monthlyFee" min="0" max="3" step="1" value="0">
+                    </div>
+
+                    <div class="uc-control-group">
+                        <div class="uc-control-header">
+                            <div class="uc-control-label">
+                                <span class="uc-control-label-text">Signup Incentive</span>
+                                <span class="uc-control-value" id="signupIncentive-value">$0</span>
+                            </div>
+                            <button class="uc-lock-btn" id="lock-signupIncentive" data-attr="signupIncentive">
+                                🔓
+                            </button>
+                        </div>
+                        <input type="range" class="uc-slider" id="signupIncentive" min="0" max="3" step="1" value="0">
+                    </div>
+
+                    <div class="uc-control-group">
+                        <div class="uc-control-header">
+                            <div class="uc-control-label">
+                                <span class="uc-control-label-text">Fair Use Cap (kWh/day)</span>
+                                <span class="uc-control-value" id="fairUseCap-value">1.2</span>
+                            </div>
+                            <button class="uc-lock-btn" id="lock-fairUseCap" data-attr="fairUseCap">
+                                🔓
+                            </button>
+                        </div>
+                        <input type="range" class="uc-slider" id="fairUseCap" min="0" max="4" step="1" value="0">
+                    </div>
+
+                    <div class="uc-control-group">
+                        <div class="uc-control-header">
+                            <div class="uc-control-label">
+                                <span class="uc-control-label-text">Contract Term</span>
+                                <span class="uc-control-value" id="contractTerm-value">Month to month</span>
+                            </div>
+                            <button class="uc-lock-btn" id="lock-contractTerm" data-attr="contractTerm">
+                                🔓
+                            </button>
+                        </div>
+                        <input type="range" class="uc-slider" id="contractTerm" min="0" max="3" step="1" value="0">
+                    </div>
+                </div>
+
+                <div class="uc-display">
+                    <h2>Current Configuration</h2>
+                    <div class="uc-score">
+                        <div class="uc-score-label">Total Indexed Utility</div>
+                        <div class="uc-score-value" id="totalUtility">0</div>
+                    </div>
+
+                    <div class="uc-bar">
+                        <div class="uc-bar-fill" id="utilityBar" style="width: 0%"></div>
+                    </div>
+
+                    <div class="uc-breakdown">
+                        <h3>Breakdown by Attribute</h3>
+                        <div class="uc-breakdown-item">
+                            <span class="uc-breakdown-label">Installation Cost</span>
+                            <span class="uc-breakdown-value" id="breakdown-installationCost">0%</span>
+                        </div>
+                        <div class="uc-breakdown-item">
+                            <span class="uc-breakdown-label">Monthly Fee</span>
+                            <span class="uc-breakdown-value" id="breakdown-monthlyFee">0%</span>
+                        </div>
+                        <div class="uc-breakdown-item">
+                            <span class="uc-breakdown-label">Signup Incentive</span>
+                            <span class="uc-breakdown-value" id="breakdown-signupIncentive">0%</span>
+                        </div>
+                        <div class="uc-breakdown-item">
+                            <span class="uc-breakdown-label">Fair Use Cap</span>
+                            <span class="uc-breakdown-value" id="breakdown-fairUseCap">0%</span>
+                        </div>
+                        <div class="uc-breakdown-item">
+                            <span class="uc-breakdown-label">Contract Term</span>
+                            <span class="uc-breakdown-value" id="breakdown-contractTerm">0%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="uc-optimizer">
+                <h2>🔍 Find Optimal Packages with Constraints</h2>
+                <p style="margin-bottom: 20px; color: #6b7280;">Lock any attributes above (🔒) to set constraints, then
+                    find
+                    the top 3 packages that maximize utility.</p>
+                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                    <button class="uc-optimize-btn" id="optimizeBtn" style="margin-top: 0; flex: 1;">
+                        Find Top 3 Optimal Packages
+                    </button>
+                    <button class="uc-btn-secondary" id="ucCurvesBtn" style="margin-top: 0; background: white;">
+                        📈 View Utility Curves
+                    </button>
+                </div>
+                <div id="optimalPackagesContainer">
+                    <div class="uc-no-results">
+                        Click "Find Top 3 Optimal Packages" to see recommendations
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Injection UI -->
+    <div class="uc-overlay" id="ucOverlay"></div>
+    <div class="uc-settings-toggle" id="ucSettingsToggle" title="Import Survey Data">
+        <span style="font-size: 1.2rem;">⚙️</span>
+        <span id="ucToggleStats" class="uc-stats-summary"></span>
+    </div>
+    <div class="uc-data-panel" id="ucDataPanel">
+        <h2 style="margin-bottom: 15px; color: var(--uc-primary-dark); margin-top: 0;">Import Survey Data</h2>
+        <p style="margin-bottom: 15px; color: #6b7280; font-size: 0.95rem;">
+            Upload a CSV file containing survey responses. The tool will attempt to find the JSON data automatically.
+        </p>
+
+        <input type="file" id="ucCsvInput" accept=".csv" style="margin-bottom: 15px; width: 100%;">
+
+        <div id="ucColumnSelector" style="display: none; margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 0.9rem;">Select Data
+                Column:</label>
+            <select id="ucColumnSelect"
+                style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #d1d5db;"></select>
+        </div>
+
+        <div id="ucUpdateStatus" style="margin-bottom: 10px; font-size: 0.9rem; font-weight: 600;"></div>
+
+        <div id="ucStatsBox"
+            style="display: none; background: #f0f9ff; border: 1px solid #0ea5e9; border-radius: 8px; padding: 12px; margin-bottom: 15px;">
+            <div style="font-weight: 600; color: #0369a1; margin-bottom: 8px; font-size: 0.95rem;">📊 Sample Statistics
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.9rem;">
+                <div>
+                    <span style="color: #64748b;">Sample Size (N):</span>
+                    <span style="font-weight: 600; color: #0f172a; margin-left: 5px;" id="ucSampleN">0</span>
+                </div>
+                <div>
+                    <span style="color: #64748b;">Margin of Error:</span>
+                    <span style="font-weight: 600; color: #0f172a; margin-left: 5px;" id="ucMarginError">±0%</span>
+                </div>
+            </div>
+            <div style="margin-top: 8px; font-size: 0.85rem; color: #64748b;">95% confidence level • <span
+                    id="ucTotalTasks">0</span> total conjoint tasks</div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; gap: 10px;">
+                <button class="uc-btn-secondary" id="ucViewLogBtn" style="display: none;">View Log</button>
+                <button class="uc-btn-secondary" id="ucResetBtn" style="display: none; color: #dc2626;">Reset
+                    Data</button>
+            </div>
+            <div style="display: flex;">
+                <button class="uc-btn-secondary" id="ucCancelBtn">Cancel</button>
+                <button class="uc-apply-btn" style="width: auto; margin: 0; padding: 10px 24px;" id="ucUpdateBtn"
+                    disabled>
+                    Process CSV
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Log Modal -->
+    <div class="uc-log-modal" id="ucLogModal" style="display: none;">
+        <h3>Survey Response Log</h3>
+        <div class="uc-log-table-container">
+            <table class="uc-log-table">
+                <thead>
+                    <tr>
+                        <th style="width: 60px;">Row #</th>
+                        <th>Battery Status</th>
+                        <th>Tasks</th>
+                        <th>Valid</th>
+                    </tr>
+                </thead>
+                <tbody id="ucLogTableBody"></tbody>
+            </table>
+        </div>
+        <div style="text-align: right; margin-top: 10px;">
+            <button class="uc-btn-secondary" id="ucCloseLogBtn">Close</button>
+        </div>
+    </div>
+
+    <!-- Curves Modal -->
+    <div class="uc-curves-modal" id="ucCurvesModal" style="display: none;">
+        <h3>Utility Curves (Sensitivity Analysis)</h3>
+        <p style="margin-bottom: 10px; color: #6b7280; font-size: 0.95rem;">
+            Visualize how utility changes across different values for each attribute. Steeper lines indicate higher
+            sensitivity and importance to the overall score.
+        </p>
+        <div class="uc-curves-grid" id="ucCurvesGrid">
+            <!-- Charts will be injected here -->
+        </div>
+        <div style="text-align: right; margin-top: 10px;">
+            <button class="uc-btn-secondary" id="ucCloseCurvesBtn">Close</button>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            // Part-worth utilities from survey analysis (win rates converted to utilities)
+            const defaultUtilities = {
+                installationCost: {
+                    options: [0, 500, 1000, 1500],
+                    utilities: [80.0, 44.4, 0.0, 0.0]
+                },
+                monthlyFee: {
+                    options: [0, 39, 79, 149],
+                    utilities: [100.0, 55.6, 22.2, 0.0]
+                },
+                signupIncentive: {
+                    options: [0, 250, 500, 1000],
+                    utilities: [0.0, 33.3, 66.7, 100.0]
+                },
+                fairUseCap: {
+                    options: [1.2, 1.4, 1.5, 2.0],
+                    utilities: [0.0, 55.6, 77.8, 100.0]
+                },
+                contractTerm: {
+                    options: ["Month to month", "3 months", "12 months", "24 months"],
+                    utilities: [100.0, 66.7, 22.2, 0.0]
+                }
+            };
+
+            // Create deep copy for working utilities
+            const utilities = JSON.parse(JSON.stringify(defaultUtilities));
+
+            // Track locked attributes
+            const lockedAttributes = {};
+
+            // --- CSV Parsing Logic ---
+
+            let currentCsvData = [];
+            let csvHeaders = [];
+
+            function parseCSV(text) {
+                // Simple CSV parser handling quoted fields
+                const rows = [];
+                let row = [];
+                let cell = "";
+                let inQuotes = false;
+
+                for (let i = 0; i < text.length; i++) {
+                    const char = text[i];
+                    const nextChar = text[i + 1];
+
+                    if (char === '"') {
+                        if (inQuotes && nextChar === '"') {
+                            cell += '"';
+                            i++;
+                        } else {
+                            inQuotes = !inQuotes;
+                        }
+                    } else if (char === ',' && !inQuotes) {
+                        row.push(cell);
+                        cell = "";
+                    } else if ((char === '\r' || char === '\n') && !inQuotes) {
+                        if (char === '\r' && nextChar === '\n') i++;
+                        row.push(cell);
+                        if (row.length > 0 && (row.length > 1 || row[0] !== "")) rows.push(row);
+                        row = [];
+                        cell = "";
+                    } else {
+                        cell += char;
+                    }
+                }
+                if (cell || inQuotes) row.push(cell); // Push last cell even if empty or unclosed quotes
+                if (row.length > 0 && (row.length > 1 || row[0] !== "")) rows.push(row);
+
+                return rows;
+            }
+
+            function extractJSONFromColumn(rows, columnIndex) {
+                const results = [];
+                const logData = []; // Store metadata for log view
+
+                // Skip header row
+                for (let i = 1; i < rows.length; i++) {
+                    const row = rows[i];
+
+                    let status = "Skipped";
+                    let battery = "N/A";
+                    let taskCount = 0;
+                    let isValid = false;
+
+                    if (row.length > columnIndex) {
+                        const cellData = row[columnIndex];
+                        if (cellData && cellData.trim()) {
+                            let data = null;
+
+                            // Clean the cell data if it's wrapped in quotes and has escaped quotes
+                            let cleanedData = cellData.trim();
+                            // Handle double escaped quotes from CSV
+                            cleanedData = cleanedData.replace(/""/g, '"');
+                            // If it starts and ends with quotes, remove them
+                            if (cleanedData.startsWith('"') && cleanedData.endsWith('"')) {
+                                cleanedData = cleanedData.substring(1, cleanedData.length - 1);
+                            }
+
+                            // Try parsing
+                            try {
+                                const parsed = JSON.parse(cleanedData);
+                                data = parsed.conjointData || parsed; // Handle various wrappings
+                            } catch (e) {
+                                // Fallback regex extraction
+                                const jsonStartMarker = "Conjoint Survey Data:";
+                                const idx = cleanedData.indexOf(jsonStartMarker);
+                                if (idx !== -1) {
+                                    const raw = cleanedData.substring(idx + jsonStartMarker.length);
+                                    const firstBrace = raw.indexOf('{');
+                                    if (firstBrace !== -1) {
+                                        try { data = JSON.parse(raw.substring(firstBrace).trim()); } catch (e) { }
+                                    }
+                                }
+                            }
+
+                            if (data && (data.responses || (data.conjointData && data.conjointData.responses))) {
+                                const finalData = data.conjointData || data;
+                                results.push({ conjointData: finalData });
+
+                                isValid = true;
+                                status = "Success";
+                                battery = (finalData.userProfile && finalData.userProfile.batteryStatus) || "Unknown";
+                                taskCount = finalData.responses ? finalData.responses.length : 0;
+                            } else {
+                                status = "Invalid Format";
+                            }
+                        } else {
+                            status = "Empty Cell";
+                        }
+                    }
+
+                    logData.push({ rowId: i, battery, taskCount, status, isValid });
+                }
+                return { results, logData };
+            }
+
+            let lastLogData = [];
+
+            function processCSVFile(file, callback) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const text = e.target.result;
+                    const rows = parseCSV(text);
+                    if (rows.length < 2) {
+                        callback({ success: false, message: "CSV file is empty or invalid." });
+                        return;
+                    }
+
+                    csvHeaders = rows[0];
+                    currentCsvData = rows;
+
+                    // Auto-detect column
+                    const candidates = csvHeaders.map((h, i) => ({ h, i }))
+                        .filter(item => {
+                            const lower = item.h.toLowerCase();
+                            return lower.includes('conjoint') || lower.includes('survey') || lower.includes('json') || lower.includes('data');
+                        });
+
+                    callback({
+                        success: true,
+                        headers: csvHeaders,
+                        candidates: candidates,
+                        rowCount: rows.length - 1
+                    });
+                };
+                reader.readAsText(file);
+            }
+
+            function updateUtilitiesFromCSV(columnIndex) {
+                const { results, logData } = extractJSONFromColumn(currentCsvData, columnIndex);
+                lastLogData = logData; // Store for view
+
+                if (results.length === 0) {
+                    return { success: false, message: "No valid conjoint data found in selected column." };
+                }
+
+                const stats = calculateWinRates(results);
+                let updatedCount = 0;
+
+                // Update global utilities object
+                stats.forEach((valuesMap, attr) => {
+                    if (utilities[attr]) {
+                        updatedCount++;
+                        // Create a map of value -> winRate
+                        const winRates = {};
+                        valuesMap.forEach((stat, valStr) => {
+                            const rate = stat.shown > 0 ? (stat.selected / stat.shown) * 100 : 0;
+                            winRates[valStr] = rate;
+                        });
+
+                        // Map back to the 'utilities' array order
+                        utilities[attr].utilities = utilities[attr].options.map(opt => {
+                            return winRates[String(opt)] || 0;
+                        });
+                    }
+                });
+
+                // Calculate total conjoint tasks (sum of all tasks in all survey responses)
+                const totalTasks = results.reduce((sum, s) => {
+                    return sum + (s.conjointData?.responses?.length || 0);
+                }, 0);
+
+                // Trigger re-calc
+                calculateUtility();
+                return {
+                    success: true,
+                    message: `Updated weights based on ${results.length} valid rows found.`,
+                    sampleSize: results.length,
+                    totalTasks: totalTasks
+                };
+            }
+
+            function renderSurveyLog() {
+                const tbody = document.getElementById('ucLogTableBody');
+                tbody.innerHTML = lastLogData.map(d => `
+                    <tr style="background-color: ${d.isValid ? '#ecfdf5' : '#fff'}">
+                        <td>${d.rowId}</td>
+                        <td>${d.battery}</td>
+                        <td>${d.taskCount}</td>
+                        <td>${d.status}</td>
+                    </tr>
+                `).join('');
+
+                document.getElementById('ucLogModal').style.display = 'flex';
+                // Keep overlay active
+            }
+
+            function calculateMarginOfError(sampleSize) {
+                // Standard margin of error formula: ME = Z * sqrt(p(1-p)/n)
+                // Z = 1.96 for 95% confidence interval
+                // p = 0.5 (most conservative estimate)
+                if (sampleSize === 0) return 0;
+                const z = 1.96;
+                const p = 0.5;
+                const marginOfError = z * Math.sqrt((p * (1 - p)) / sampleSize);
+                return (marginOfError * 100).toFixed(1); // Return as percentage
+            }
+
+            function updateToggleStats(n, tasks) {
+                const toggle = document.getElementById('ucSettingsToggle');
+                const statsSpan = document.getElementById('ucToggleStats');
+
+                if (n && n > 0) {
+                    const me = calculateMarginOfError(n);
+                    statsSpan.textContent = `N: ${n} | ±${me}%`;
+                    toggle.classList.add('has-data');
+                } else {
+                    statsSpan.textContent = '';
+                    toggle.classList.remove('has-data');
+                }
+            }
+
+            function resetData() {
+                const confirmed = confirm(
+                    "Are you sure you want to reset all data?\\n\\n" +
+                    "This will:\\n" +
+                    "• Restore default utility weights\\n" +
+                    "• Clear CSV import data\\n" +
+                    "• Reset all sliders\\n" +
+                    "• Clear the survey log\\n\\n" +
+                    "This action cannot be undone."
+                );
+
+                if (!confirmed) return;
+
+                // Restore default utilities
+                Object.keys(defaultUtilities).forEach(attr => {
+                    utilities[attr].utilities = [...defaultUtilities[attr].utilities];
+                });
+
+                // Clear CSV data
+                currentCsvData = [];
+                csvHeaders = [];
+                lastLogData = [];
+
+                // Reset UI
+                document.getElementById('ucCsvInput').value = '';
+                document.getElementById('ucColumnSelector').style.display = 'none';
+                document.getElementById('ucUpdateBtn').disabled = true;
+                document.getElementById('ucViewLogBtn').style.display = 'none';
+                document.getElementById('ucResetBtn').style.display = 'none';
+                document.getElementById('ucStatsBox').style.display = 'none';
+                updateToggleStats(0, 0);
+                document.getElementById('ucUpdateStatus').textContent = '';
+
+                // Reset sliders to first option
+                Object.keys(utilities).forEach(attr => {
+                    const slider = document.getElementById(attr);
+                    if (slider) {
+                        slider.value = 0;
+                        slider.dispatchEvent(new Event('input'));
+                    }
+                });
+
+                // Recalculate
+                calculateUtility();
+
+                // Show success message
+                const statusDiv = document.getElementById('ucUpdateStatus');
+                statusDiv.textContent = 'Data reset to defaults';
+                statusDiv.style.color = 'green';
+                setTimeout(() => {
+                    statusDiv.textContent = '';
+                }, 2000);
+            }
+
+            function calculateWinRates(surveys) {
+                const stats = new Map();
+
+                const increment = (attr, value, type) => {
+                    const valStr = String(value);
+                    if (!stats.has(attr)) {
+                        stats.set(attr, new Map());
+                    }
+                    const attrMap = stats.get(attr);
+                    if (!attrMap.has(valStr)) {
+                        attrMap.set(valStr, { shown: 0, selected: 0 });
+                    }
+                    const s = attrMap.get(valStr);
+                    if (type === 'shown') s.shown++;
+                    if (type === 'selected') s.selected++;
+                };
+
+                for (const survey of surveys) {
+                    if (!survey.conjointData || !survey.conjointData.responses) continue;
+
+                    for (const task of survey.conjointData.responses) {
+                        const opts = [task.option1, task.option2, task.option3];
+
+                        // Track what was shown
+                        opts.forEach(opt => {
+                            for (const [key, val] of Object.entries(opt)) {
+                                increment(key, val, 'shown');
+                            }
+                        });
+
+                        // Track what was selected (1-based index)
+                        const selectedIdx = task.selectedOption - 1;
+                        if (selectedIdx >= 0 && selectedIdx < 3) {
+                            const selectedOpt = opts[selectedIdx];
+                            for (const [key, val] of Object.entries(selectedOpt)) {
+                                increment(key, val, 'selected');
+                            }
+                        }
+                    }
+                }
+
+                return stats;
+            }
+
+            function updateUtilitiesFromSurveys(text) {
+                const surveys = parseSurveyText(text);
+                if (surveys.length === 0) {
+                    return { success: false, message: "No valid conjoint data found." };
+                }
+
+                const stats = calculateWinRates(surveys);
+                let updatedCount = 0;
+
+                // Update global utilities object
+                stats.forEach((valuesMap, attr) => {
+                    if (utilities[attr]) {
+                        updatedCount++;
+                        // Create a map of value -> winRate
+                        const winRates = {};
+                        valuesMap.forEach((stat, valStr) => {
+                            const rate = stat.shown > 0 ? (stat.selected / stat.shown) * 100 : 0;
+                            winRates[valStr] = rate;
+                        });
+
+                        // Map back to the 'utilities' array order
+                        utilities[attr].utilities = utilities[attr].options.map(opt => {
+                            return winRates[String(opt)] || 0;
+                        });
+                    }
+                });
+
+                // Calculate total tasks for statistics
+                const totalTasks = surveys.reduce((sum, s) => {
+                    return sum + (s.conjointData?.responses?.length || 0);
+                }, 0);
+
+                // Trigger re-calc
+                calculateUtility();
+                return {
+                    success: true,
+                    message: `Updated weights based on ${surveys.length} surveys.`,
+                    sampleSize: surveys.length,
+                    totalTasks: totalTasks
+                };
+            }
+
+            // applyPackage function
+            function applyPackage(combo) {
+                Object.keys(combo).forEach(attr => {
+                    const slider = document.getElementById(attr);
+                    if (slider) {
+                        // Update slider value
+                        slider.value = combo[attr];
+                        // Trigger input event to update UI and logic
+                        slider.dispatchEvent(new Event('input'));
+                    }
+                });
+
+                // Scroll to top to see applied settings
+                document.querySelector('.uc-panel').scrollIntoView({ behavior: 'smooth' });
+
+                // Re-run optimization to show that this is indeed the current state (optional, but good feedback)
+                // findOptimalPackages(); 
+            }
+
+            // Initialize sliders
+            function initSliders() {
+                Object.keys(utilities).forEach(attr => {
+                    const slider = document.getElementById(attr);
+                    const valueDisplay = document.getElementById(`${attr}-value`);
+
+                    if (slider) {
+                        slider.addEventListener('input', function () {
+                            const index = parseInt(this.value);
+                            const option = utilities[attr].options[index];
+
+                            // If this attribute is locked, update the locked value
+                            if (lockedAttributes[attr] !== undefined) {
+                                lockedAttributes[attr] = index;
+                            }
+
+                            // Format display value
+                            let displayValue = option;
+                            if (attr === 'installationCost' || attr === 'signupIncentive') {
+                                displayValue = `$${option}`;
+                            } else if (attr === 'monthlyFee') {
+                                displayValue = `$${option}/mo`;
+                            }
+
+                            valueDisplay.textContent = displayValue;
+                            calculateUtility();
+                        });
+
+                        // Trigger initial display
+                        slider.dispatchEvent(new Event('input'));
+                    }
+                });
+            }
+
+            function toggleLock(attr) {
+                const lockButton = document.getElementById(`lock-${attr}`);
+                const slider = document.getElementById(attr);
+
+                if (!lockButton || !slider) return;
+
+                if (lockedAttributes[attr] !== undefined) {
+                    // Unlock
+                    delete lockedAttributes[attr];
+                    lockButton.textContent = '🔓';
+                    lockButton.classList.remove('locked');
+                } else {
+                    // Lock at current value
+                    lockedAttributes[attr] = parseInt(slider.value);
+                    lockButton.textContent = '🔒';
+                    lockButton.classList.add('locked');
+                }
+            }
+
+            function calculateUtility() {
+                let totalUtility = 0;
+                const breakdown = {};
+
+                // Calculate utility for each attribute
+                Object.keys(utilities).forEach(attr => {
+                    const slider = document.getElementById(attr);
+                    if (slider) {
+                        const index = parseInt(slider.value);
+                        const utility = utilities[attr].utilities[index];
+
+                        breakdown[attr] = utility;
+                        totalUtility += utility;
+                    }
+                });
+
+                // Average utility (0-100 scale)
+                const avgUtility = totalUtility / Object.keys(utilities).length;
+
+                // Update display
+                document.getElementById('totalUtility').textContent = avgUtility.toFixed(1);
+                document.getElementById('utilityBar').style.width = `${avgUtility}%`;
+
+                // Update breakdown
+                Object.keys(breakdown).forEach(attr => {
+                    document.getElementById(`breakdown-${attr}`).textContent =
+                        `${breakdown[attr].toFixed(1)}%`;
+                });
+            }
+
+            function findOptimalPackages() {
+                // Build constraints from current DOM state to ensure WYSIWYG
+                const currentConstraints = {};
+                Object.keys(utilities).forEach(attr => {
+                    const lockButton = document.getElementById(`lock-${attr}`);
+                    const slider = document.getElementById(attr);
+                    // Trust the visual state: if it looks locked, it IS locked.
+                    if (lockButton && lockButton.classList.contains('locked')) {
+                        currentConstraints[attr] = parseInt(slider.value);
+                    }
+                });
+
+                // Get all possible combinations respecting constraints
+                const combinations = [];
+
+                // Generate all combinations
+                function generateCombinations(attrs, current = {}) {
+                    if (attrs.length === 0) {
+                        combinations.push({ ...current });
+                        return;
+                    }
+
+                    const attr = attrs[0];
+                    const remainingAttrs = attrs.slice(1);
+
+                    // If attribute is locked, use only the locked value
+                    if (currentConstraints[attr] !== undefined) {
+                        const newCurrent = { ...current };
+                        newCurrent[attr] = currentConstraints[attr];
+                        generateCombinations(remainingAttrs, newCurrent);
+                    } else {
+                        // Try all possible values for this attribute
+                        const optCount = utilities[attr].options.length;
+                        for (let i = 0; i < optCount; i++) {
+                            const newCurrent = { ...current };
+                            newCurrent[attr] = i;
+                            generateCombinations(remainingAttrs, newCurrent);
+                        }
+                    }
+                }
+
+                generateCombinations(Object.keys(utilities));
+
+                // Calculate utility for each combination
+                const scored = combinations.map(combo => {
+                    let totalUtility = 0;
+                    Object.keys(combo).forEach(attr => {
+                        totalUtility += utilities[attr].utilities[combo[attr]];
+                    });
+                    return {
+                        combo,
+                        utility: totalUtility / Object.keys(utilities).length
+                    };
+                });
+
+                // Sort by utility (descending)
+                scored.sort((a, b) => b.utility - a.utility);
+
+                // Get top 3
+                const top3 = scored.slice(0, 3);
+
+                // Display results
+                displayOptimalPackages(top3, currentConstraints);
+            }
+
+            function displayOptimalPackages(packages, constraints = {}) {
+                const container = document.getElementById('optimalPackagesContainer');
+
+                if (packages.length === 0) {
+                    container.innerHTML = '<div class="uc-no-results">No packages found</div>';
+                    return;
+                }
+
+                const html = '<div class="uc-optimal-packages">' + packages.map((pkg, idx) => {
+                    const rankClass = `rank-${idx + 1}`;
+                    const rankLabel = idx === 0 ? '🥇 Best Package' :
+                        idx === 1 ? '🥈 Second Best' :
+                            '🥉 Third Best';
+
+                    // Prepare JSON for the button data attribute
+                    const comboJSON = JSON.stringify(pkg.combo).replace(/"/g, '&quot;');
+
+                    const attributes = Object.keys(pkg.combo).map(attr => {
+                        const index = pkg.combo[attr];
+                        let value = utilities[attr].options[index];
+
+                        // Format value
+                        if (attr === 'installationCost' || attr === 'signupIncentive') {
+                            value = `$${value}`;
+                        } else if (attr === 'monthlyFee') {
+                            value = `$${value}/mo`;
+                        }
+
+                        // Format attribute name
+                        const name = attr.replace(/([A-Z])/g, ' $1')
+                            .replace(/^./, str => str.toUpperCase());
+
+                        const isLocked = constraints[attr] !== undefined ? ' (🔒 locked)' : '';
+
+                        return `
+                            <li class="uc-package-attribute">
+                                <span class="uc-attr-name">${name}${isLocked}</span>
+                                <span class="uc-attr-value">${value}</span>
+                            </li>
+                        `;
+                    }).join('');
+
+                    return `
+                        <div class="uc-package-card ${rankClass}">
+                            <div class="uc-package-rank">${rankLabel}</div>
+                            <div class="uc-package-utility">${pkg.utility.toFixed(1)}</div>
+                            <button class="uc-apply-btn" data-combo="${comboJSON}">Apply This Package</button>
+                            <ul class="uc-package-attributes">
+                                ${attributes}
+                            </ul>
+                        </div>
+                    `;
+                }).join('') + '</div>';
+
+                container.innerHTML = html;
+
+                // Attach event listeners to new buttons
+                container.querySelectorAll('.uc-apply-btn').forEach(btn => {
+                    btn.addEventListener('click', function () {
+                        const combo = JSON.parse(this.getAttribute('data-combo'));
+                        applyPackage(combo);
+                    });
+                });
+            }
+
+            // Chart objects storage
+            let chartInstances = {};
+
+            function renderUtilityCurves() {
+                const grid = document.getElementById('ucCurvesGrid');
+                grid.innerHTML = '';
+
+                // Clear old chart instances
+                Object.values(chartInstances).forEach(chart => chart.destroy());
+                chartInstances = {};
+
+                Object.keys(utilities).forEach(attr => {
+                    const attrData = utilities[attr];
+
+                    // Format attribute name
+                    const title = attr.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+
+                    // Format x labels
+                    const labels = attrData.options.map(opt => {
+                        if (attr === 'installationCost' || attr === 'signupIncentive') return `$${opt}`;
+                        if (attr === 'monthlyFee') return `$${opt}/mo`;
+                        return opt;
+                    });
+
+                    // Create container
+                    const container = document.createElement('div');
+                    container.className = 'uc-chart-container';
+                    const canvas = document.createElement('canvas');
+                    container.appendChild(canvas);
+                    grid.appendChild(container);
+
+                    // Render chart
+                    chartInstances[attr] = new Chart(canvas, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Utility Score',
+                                data: attrData.utilities,
+                                borderColor: '#F68D26',
+                                backgroundColor: 'rgba(246, 141, 38, 0.1)',
+                                borderWidth: 2,
+                                pointBackgroundColor: '#2A6B94',
+                                pointRadius: 4,
+                                fill: true,
+                                tension: 0.3
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: title,
+                                    font: { size: 14 }
+                                },
+                                legend: { display: false }
+                            },
+                            scales: {
+                                y: {
+                                    min: 0,
+                                    max: 100,
+                                    title: { display: true, text: 'Utility (0-100)' }
+                                }
+                            }
+                        }
+                    });
+                });
+
+                document.getElementById('ucCurvesModal').style.display = 'flex';
+                document.getElementById('ucOverlay').classList.add('active');
+            }
+
+            // UI Toggles
+            function toggleDataPanel(show) {
+                const panel = document.getElementById('ucDataPanel');
+                const overlay = document.getElementById('ucOverlay');
+                if (show) {
+                    panel.classList.add('active');
+                    overlay.classList.add('active');
+                } else {
+                    panel.classList.remove('active');
+                    overlay.classList.remove('active');
+                }
+            }
+
+            // Initialize on page load (DOMContentLoaded for safety in HubSpot)
+            document.addEventListener('DOMContentLoaded', function () {
+                initSliders();
+                calculateUtility();
+
+                // Attach event listeners for lock buttons
+                document.querySelectorAll('.uc-lock-btn').forEach(btn => {
+                    btn.addEventListener('click', function (e) {
+                        // Find the button element even if clicked on the emoji (if emoji was wrapped separately, but here it's text content)
+                        // currentTarget refers to the element the listener is attached to
+                        const attr = this.getAttribute('data-attr');
+                        if (attr) toggleLock(attr);
+                    });
+                });
+
+                // Attach event listener for optimize button
+                const optimizeBtn = document.getElementById('optimizeBtn');
+                if (optimizeBtn) {
+                    optimizeBtn.addEventListener('click', findOptimalPackages);
+                }
+
+                // Data Panel Listeners
+                const toggleBtn = document.getElementById('ucSettingsToggle');
+                const overlay = document.getElementById('ucOverlay');
+                const cancelBtn = document.getElementById('ucCancelBtn');
+                const updateBtn = document.getElementById('ucUpdateBtn');
+                const csvInput = document.getElementById('ucCsvInput');
+                const colSelect = document.getElementById('ucColumnSelect');
+                const colDiv = document.getElementById('ucColumnSelector');
+                const statusDiv = document.getElementById('ucUpdateStatus');
+                const viewLogBtn = document.getElementById('ucViewLogBtn');
+                const closeLogBtn = document.getElementById('ucCloseLogBtn');
+                const resetBtn = document.getElementById('ucResetBtn');
+
+                const curvesBtn = document.getElementById('ucCurvesBtn');
+                const closeCurvesBtn = document.getElementById('ucCloseCurvesBtn');
+
+                if (toggleBtn) toggleBtn.addEventListener('click', () => toggleDataPanel(true));
+                if (overlay) overlay.addEventListener('click', () => {
+                    toggleDataPanel(false);
+                    document.getElementById('ucLogModal').style.display = 'none';
+                    document.getElementById('ucCurvesModal').style.display = 'none';
+                });
+                if (cancelBtn) cancelBtn.addEventListener('click', () => toggleDataPanel(false));
+
+                if (closeLogBtn) closeLogBtn.addEventListener('click', () => {
+                    document.getElementById('ucLogModal').style.display = 'none';
+                });
+
+                if (curvesBtn) curvesBtn.addEventListener('click', renderUtilityCurves);
+                if (closeCurvesBtn) closeCurvesBtn.addEventListener('click', () => {
+                    document.getElementById('ucCurvesModal').style.display = 'none';
+                    document.getElementById('ucOverlay').classList.remove('active');
+                });
+
+                if (viewLogBtn) viewLogBtn.addEventListener('click', renderSurveyLog);
+                if (resetBtn) resetBtn.addEventListener('click', resetData);
+
+                if (csvInput) {
+                    csvInput.addEventListener('change', function (e) {
+                        if (this.files && this.files[0]) {
+                            updateBtn.disabled = true;
+                            statusDiv.textContent = "Analyzing CSV...";
+                            statusDiv.style.color = "blue";
+                            viewLogBtn.style.display = 'none'; // Hide log button on new file
+
+                            processCSVFile(this.files[0], (result) => {
+                                if (result.success) {
+                                    statusDiv.textContent = `CSV loaded. ${result.rowCount} rows. Select column if needed.`;
+                                    statusDiv.style.color = "black";
+
+                                    // Populate dropdown
+                                    colSelect.innerHTML = '';
+                                    result.headers.forEach((h, i) => {
+                                        const opt = document.createElement('option');
+                                        opt.value = i;
+                                        opt.textContent = h || `Column ${i + 1}`;
+                                        colSelect.appendChild(opt);
+                                    });
+
+                                    // Smart Select
+                                    if (result.candidates.length > 0) {
+                                        colSelect.value = result.candidates[0].i;
+                                    }
+
+                                    colDiv.style.display = 'block';
+                                    updateBtn.disabled = false;
+                                } else {
+                                    statusDiv.textContent = result.message;
+                                    statusDiv.style.color = 'red';
+                                }
+                            });
+                        }
+                    });
+                }
+
+                if (updateBtn) updateBtn.addEventListener('click', () => {
+                    const colIndex = parseInt(colSelect.value);
+                    const result = updateUtilitiesFromCSV(colIndex);
+
+                    statusDiv.textContent = result.message;
+                    statusDiv.style.color = result.success ? 'green' : 'red';
+
+                    if (result.success) {
+                        viewLogBtn.style.display = 'inline-block'; // Show view log button
+                        resetBtn.style.display = 'inline-block'; // Show reset button
+
+                        // Show statistics
+                        const statsBox = document.getElementById('ucStatsBox');
+                        const sampleN = document.getElementById('ucSampleN');
+                        const marginError = document.getElementById('ucMarginError');
+                        const totalTasks = document.getElementById('ucTotalTasks');
+
+                        if (result.sampleSize) {
+                            sampleN.textContent = result.sampleSize;
+                            marginError.textContent = `±${calculateMarginOfError(result.sampleSize)}%`;
+                            totalTasks.textContent = result.totalTasks || 0;
+                            statsBox.style.display = 'block';
+
+                            // Update toggle stats
+                            updateToggleStats(result.sampleSize, result.totalTasks);
+                        }
+
+                        // Don't auto-close if success, let user choose to view log or close
+                    }
+                });
+            });
+
+        })();
+    </script>
+    {{ standard_footer_includes }}
+</body>
+
+</html>
