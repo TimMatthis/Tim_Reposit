@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Energy Cluster Analysis</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+  <div class="page-wrap">
+
+    <header class="site-header">
+      <div class="header-inner">
+        <span class="header-icon">&#9889;</span>
+        <div>
+          <h1>Energy Cluster Analysis</h1>
+          <p class="header-sub">Identify archetypal daily usage patterns across your home portfolio</p>
+        </div>
+      </div>
+    </header>
+
+    <main class="main-content">
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+          <div class="alert alert--{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endwith %}
+
+      <section class="card">
+        <h2 class="card-title">Run Analysis</h2>
+
+        <form action="{{ url_for('run') }}" method="POST" enctype="multipart/form-data" id="upload-form">
+
+          <div class="field-group">
+            <label for="csv_file" class="field-label">
+              Energy Data CSV
+              <span class="field-hint">One row per home, columns = 5-min intervals across the year</span>
+            </label>
+            <div class="file-drop" id="file-drop">
+              <input type="file" name="csv_file" id="csv_file" accept=".csv" class="file-input" required />
+              <div class="file-drop-inner">
+                <span class="file-drop-icon">&#128190;</span>
+                <span class="file-drop-text" id="file-drop-text">Drag &amp; drop your CSV here, or <u>browse</u></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="field-group field-group--inline">
+            <label for="n_clusters" class="field-label">Number of Clusters</label>
+            <div class="stepper">
+              <button type="button" class="stepper-btn" data-target="n_clusters" data-delta="-1">&#8722;</button>
+              <input type="number" name="n_clusters" id="n_clusters" value="5" min="2" max="20" class="stepper-input" />
+              <button type="button" class="stepper-btn" data-target="n_clusters" data-delta="1">&#43;</button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-primary" id="submit-btn">
+            <span class="btn-text">Run Cluster Analysis</span>
+            <span class="btn-spinner" hidden>Analysing&hellip;</span>
+          </button>
+
+        </form>
+      </section>
+
+      <section class="card card--info">
+        <h3 class="card-title">How it works</h3>
+        <ol class="steps-list">
+          <li><strong>Average Daily Profile</strong> — year of 5-min readings is folded into a single representative 24-hour curve per home.</li>
+          <li><strong>Min-Max Scaling</strong> — each profile is normalised to [0–1] so clustering captures <em>shape</em>, not volume.</li>
+          <li><strong>KShape Clustering</strong> — uses normalised cross-correlation to group homes by behavioural pattern (e.g. Evening Peakers, Solar Exporters, Flatliners).</li>
+          <li><strong>Results</strong> — a visualisation and a CSV mapping each home to its cluster.</li>
+        </ol>
+      </section>
+
+    </main>
+
+    <footer class="site-footer">
+      Built with Python · Pandas · tslearn · Matplotlib · Flask
+    </footer>
+
+  </div>
+
+  <script>
+    // File drop label update
+    const input = document.getElementById('csv_file');
+    const dropText = document.getElementById('file-drop-text');
+    input.addEventListener('change', () => {
+      dropText.textContent = input.files[0]
+        ? input.files[0].name
+        : 'Drag & drop your CSV here, or browse';
+    });
+
+    // Stepper buttons
+    document.querySelectorAll('.stepper-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = document.getElementById(btn.dataset.target);
+        const delta  = parseInt(btn.dataset.delta, 10);
+        const min    = parseInt(target.min, 10);
+        const max    = parseInt(target.max, 10);
+        target.value = Math.min(max, Math.max(min, parseInt(target.value, 10) + delta));
+      });
+    });
+
+    // Loading state on submit
+    document.getElementById('upload-form').addEventListener('submit', () => {
+      const btn = document.getElementById('submit-btn');
+      btn.querySelector('.btn-text').hidden   = true;
+      btn.querySelector('.btn-spinner').hidden = false;
+      btn.disabled = true;
+    });
+  </script>
+
+</body>
+</html>

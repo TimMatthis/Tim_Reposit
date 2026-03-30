@@ -1,0 +1,20 @@
+# Large data files
+Cluster/dummy_energy_data.csv
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# Node
+node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Uploads / outputs (runtime generated)
+Cluster/uploads/
+Cluster/outputs/

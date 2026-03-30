@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Running Analysis — Energy Cluster Analysis</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+  <div class="page-wrap">
+
+    <header class="site-header">
+      <div class="header-inner">
+        <span class="header-icon">&#9889;</span>
+        <div>
+          <h1>Energy Cluster Analysis</h1>
+          <p class="header-sub">Analysis in progress</p>
+        </div>
+      </div>
+    </header>
+
+    <main class="main-content main-content--centered">
+
+      <section class="card progress-card">
+
+        <div class="progress-icon" id="progress-icon">&#9881;</div>
+
+        <h2 class="progress-title" id="progress-title">Running Analysis</h2>
+
+        <p class="progress-message" id="progress-message">Starting&hellip;</p>
+
+        <div class="progress-track">
+          <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+        </div>
+        <div class="progress-pct" id="progress-pct">0%</div>
+
+        <div class="progress-steps">
+          <div class="step" id="step-load">
+            <span class="step-dot"></span>Load data
+          </div>
+          <div class="step" id="step-profile">
+            <span class="step-dot"></span>Average daily profiles
+          </div>
+          <div class="step" id="step-scale">
+            <span class="step-dot"></span>Min-Max scaling
+          </div>
+          <div class="step" id="step-cluster">
+            <span class="step-dot"></span>KShape clustering
+          </div>
+          <div class="step" id="step-metrics">
+            <span class="step-dot"></span>Quality metrics
+          </div>
+          <div class="step" id="step-viz">
+            <span class="step-dot"></span>Visualisation
+          </div>
+          <div class="step" id="step-save">
+            <span class="step-dot"></span>Save results
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+
+    <footer class="site-footer">
+      Built with Python · Pandas · tslearn · Matplotlib · Flask
+    </footer>
+
+  </div>
+
+  <script>
+    const JOB_ID       = {{ job_id | tojson }};
+    const RESULTS_URL  = "{{ url_for('results_page', job_id=job_id) }}";
+    const INDEX_URL    = "{{ url_for('index') }}";
+
+    const fillEl     = document.getElementById('progress-fill');
+    const pctEl      = document.getElementById('progress-pct');
+    const msgEl      = document.getElementById('progress-message');
+    const titleEl    = document.getElementById('progress-title');
+    const iconEl     = document.getElementById('progress-icon');
+
+    // Step thresholds: [elementId, activatesAt%]
+    const STEPS = [
+      ['step-load',    5],
+      ['step-profile', 20],
+      ['step-scale',   35],
+      ['step-cluster', 42],
+      ['step-metrics', 80],
+      ['step-viz',     88],
+      ['step-save',    96],
+    ];
+
+    function updateSteps(pct) {
+      STEPS.forEach(([id, threshold]) => {
+        const el = document.getElementById(id);
+        if (pct >= threshold + 10) {
+          el.className = 'step step--done';
+        } else if (pct >= threshold) {
+          el.className = 'step step--active';
+        } else {
+          el.className = 'step';
+        }
+      });
+    }
+
+    const source = new EventSource(`/stream/${JOB_ID}`);
+
+    source.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      const pct  = data.progress || 0;
+
+      fillEl.style.width = pct + '%';
+      pctEl.textContent  = pct + '%';
+      msgEl.textContent  = data.message || '';
+      updateSteps(pct);
+
+      if (data.status === 'done') {
+        source.close();
+        fillEl.style.width        = '100%';
+        pctEl.textContent         = '100%';
+        iconEl.textContent        = '✓';
+        iconEl.classList.add('progress-icon--done');
+        titleEl.textContent       = 'Analysis Complete';
+        titleEl.classList.add('progress-title--done');
+        updateSteps(100);
+        setTimeout(() => { window.location.href = RESULTS_URL; }, 800);
+      }
+
+      if (data.status === 'error') {
+        source.close();
+        iconEl.textContent  = '✕';
+        iconEl.classList.add('progress-icon--error');
+        titleEl.textContent = 'Analysis Failed';
+        titleEl.classList.add('progress-title--error');
+        msgEl.classList.add('progress-message--error');
+        fillEl.classList.add('progress-fill--error');
+      }
+    };
+
+    source.onerror = () => {
+      source.close();
+      msgEl.textContent = 'Connection lost. Please try again.';
+      msgEl.classList.add('progress-message--error');
+    };
+  </script>
+
+</body>
+</html>

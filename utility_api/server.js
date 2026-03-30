@@ -308,6 +308,22 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  if (url.pathname === '/api/consent/request-code') {
+    if (req.method !== 'POST') { sendJson(res, 405, { ok: false, error: 'Method not allowed' }); return; }
+    readJsonBody(req).then(() => {
+      sendJson(res, 200, { ok: true, message: 'Code sent (dev mode — use any 6 digits)' });
+    }).catch(e => sendJson(res, 400, { ok: false, error: e.message }));
+    return;
+  }
+
+  if (url.pathname === '/api/consent/verify-code') {
+    if (req.method !== 'POST') { sendJson(res, 405, { ok: false, error: 'Method not allowed' }); return; }
+    readJsonBody(req).then(() => {
+      sendJson(res, 200, { ok: true, message: 'Code verified (dev mode)' });
+    }).catch(e => sendJson(res, 400, { ok: false, error: e.message }));
+    return;
+  }
+
   sendJson(res, 404, { ok: false, error: 'Not found' });
 });
 
