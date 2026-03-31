@@ -26,15 +26,22 @@ from tslearn.utils import to_time_series_dataset
 # Configuration
 # ---------------------------------------------------------------------------
 
-INTERVALS_PER_DAY = 288          # 5-minute intervals in 24 hours
+INTERVALS_PER_DAY = 288          # default: 5-minute intervals in 24 hours
+INTERVAL_MINUTES = 5
 N_CLUSTERS = 5
 RANDOM_SEED = 42
 KSHAPE_N_INIT = 3
 KSHAPE_MAX_ITER = 30
 
-TIME_LABELS = [
-    f"{h:02d}:{m:02d}" for h in range(24) for m in range(0, 60, 5)
-]  # ['00:00', '00:05', ..., '23:55']
+def _build_time_labels(interval_minutes: int) -> list[str]:
+    labels: list[str] = []
+    for minutes_since_midnight in range(0, 24 * 60, interval_minutes):
+        h, m = divmod(minutes_since_midnight, 60)
+        labels.append(f"{h:02d}:{m:02d}")
+    return labels
+
+
+TIME_LABELS = _build_time_labels(INTERVAL_MINUTES)
 
 CENTROID_COLORS = [
     "#FF4D6D",  # bright red-pink
@@ -49,6 +56,16 @@ CENTROID_COLORS = [
 # Step 1 – Load data
 # ---------------------------------------------------------------------------
 
+def _set_time_resolution(interval_minutes: int) -> None:
+    """
+    Update global time resolution metadata used for profile shape and chart labels.
+    """
+    global INTERVAL_MINUTES, INTERVALS_PER_DAY, TIME_LABELS
+    INTERVAL_MINUTES = int(interval_minutes)
+    INTERVALS_PER_DAY = int(24 * 60 / INTERVAL_MINUTES)
+    TIME_LABELS = _build_time_labels(INTERVAL_MINUTES)
+
+
 def load_data(csv_path: str) -> tuple[pd.Series, pd.DataFrame]:
     """
     Load the raw CSV.
@@ -61,6 +78,7 @@ def load_data(csv_path: str) -> tuple[pd.Series, pd.DataFrame]:
     home_ids : pd.Series
     readings : pd.DataFrame  (homes × time-intervals, numeric only)
     """
+    _set_time_resolution(5)
     print(f"[1/5] Loading data from '{csv_path}' …")
     df = pd.read_csv(csv_path, index_col=0, engine="c")
 
@@ -87,6 +105,52 @@ def load_average_daily_profiles(csv_path: str) -> tuple[pd.Series, np.ndarray]:
     home_ids : pd.Series
     profiles : np.ndarray  shape (n_homes, 288), dtype float32
     """
+    header = pd.read_csv(csv_path, nrows=0)
+    long_format_cols = {"SiteUID", "timekey", "Consumption_kWh"}
+
+    if long_format_cols.issubset(set(header.columns)):
+        print(f"[1/5] Loading long-format data from '{csv_path}' …")
+        df = pd.read_csv(csv_path, usecols=["SiteUID", "timekey", "Consumption_kWh"])
+        df["Consumption_kWh"] = pd.to_numeric(df["Consumption_kWh"], errors="coerce")
+        df = df.dropna(subset=["SiteUID", "timekey", "Consumption_kWh"])
+
+        # Infer cadence from unique timestamps in the file.
+        unique_timekeys = np.sort(df["timekey"].astype(np.int64).unique())
+        if len(unique_timekeys) < 2:
+            raise ValueError("Not enough timestamp values in 'timekey' to infer interval cadence.")
+
+        step_seconds = int(np.median(np.diff(unique_timekeys)))
+        if step_seconds <= 0 or 86400 % step_seconds != 0:
+            raise ValueError(
+                f"Unsupported cadence inferred from 'timekey': {step_seconds} seconds."
+            )
+
+        interval_minutes = step_seconds // 60
+        _set_time_resolution(interval_minutes)
+        print(
+            f"      Detected long format with {INTERVALS_PER_DAY} intervals/day "
+            f"({INTERVAL_MINUTES}-minute cadence)."
+        )
+
+        dt = pd.to_datetime(df["timekey"], unit="s")
+        slot = (dt.dt.hour * 60 + dt.dt.minute) // INTERVAL_MINUTES
+        df["slot"] = slot.astype(np.int32)
+
+        grouped = (
+            df.groupby(["SiteUID", "slot"], sort=True)["Consumption_kWh"]
+            .mean()
+            .unstack("slot")
+            .reindex(columns=range(INTERVALS_PER_DAY))
+        )
+
+        home_ids = pd.Series(grouped.index.astype(str), name="home_id").reset_index(drop=True)
+        profiles = grouped.to_numpy(dtype=np.float32, copy=False)
+
+        print(f"      {len(home_ids)} homes loaded from long-format rows.")
+        print(f"      Profiles shape: {profiles.shape}")
+        return home_ids, np.nan_to_num(profiles, nan=0.0).astype(np.float32, copy=False)
+
+    # Fallback: existing wide matrix format (one row per home).
     home_ids, readings = load_data(csv_path)
     profiles = compute_average_daily_profile(readings)
     return home_ids, profiles
@@ -195,6 +259,59 @@ def run_kshape(scaled_profiles: np.ndarray) -> tuple[KShape, np.ndarray]:
 
 
 # ---------------------------------------------------------------------------
+# Step 4a – Auto-detect optimal k via silhouette sweep
+# ---------------------------------------------------------------------------
+
+def find_optimal_k(
+    scaled_profiles: np.ndarray,
+    k_min: int = 2,
+    k_max: int = 10,
+    progress_cb=None,
+) -> tuple[int, list[dict]]:
+    """
+    Run KShape for each k in [k_min, k_max] and return the k with the
+    highest mean silhouette score, plus the full sweep log.
+    """
+    ts_dataset = to_time_series_dataset(scaled_profiles.astype(np.float32, copy=False))
+    k_max = min(k_max, len(scaled_profiles) - 1)
+    sweep_results: list[dict] = []
+
+    print(f"[auto] Sweeping k={k_min}..{k_max} to find optimal cluster count …")
+
+    for k in range(k_min, k_max + 1):
+        if progress_cb:
+            progress_cb(k, k_max)
+
+        model = KShape(
+            n_clusters=k,
+            n_init=KSHAPE_N_INIT,
+            max_iter=KSHAPE_MAX_ITER,
+            random_state=RANDOM_SEED,
+            verbose=False,
+        )
+        labels = model.fit_predict(ts_dataset)
+
+        n_unique = len(np.unique(labels))
+        if n_unique < 2:
+            sil = -1.0
+        else:
+            sil = float(silhouette_score(scaled_profiles, labels, metric="euclidean"))
+
+        entry = {
+            "k": k,
+            "silhouette": round(sil, 4),
+            "inertia": round(float(model.inertia_), 4),
+        }
+        sweep_results.append(entry)
+        print(f"      k={k}  silhouette={sil:.4f}  inertia={model.inertia_:.4f}")
+
+    best = max(sweep_results, key=lambda r: r["silhouette"])
+    print(f"[auto] Best k = {best['k']}  (silhouette {best['silhouette']:.4f})")
+
+    return best["k"], sweep_results
+
+
+# ---------------------------------------------------------------------------
 # Step 4b – Cluster quality metrics
 # ---------------------------------------------------------------------------
 
@@ -217,6 +334,8 @@ def compute_metrics(scaled_profiles: np.ndarray, labels: np.ndarray, model: KSha
     if n_clusters < 2:
         return {"silhouette": None, "davies_bouldin": None, "inertia": float(model.inertia_)}
 
+    from sklearn.metrics import silhouette_samples
+
     sil  = float(
         silhouette_score(
             scaled_profiles,
@@ -229,7 +348,23 @@ def compute_metrics(scaled_profiles: np.ndarray, labels: np.ndarray, model: KSha
     db   = float(davies_bouldin_score(scaled_profiles, labels))
     ine  = float(model.inertia_)
 
-    # Plain-language quality rating based on silhouette
+    sample_scores = silhouette_samples(scaled_profiles, labels, metric="euclidean")
+    per_cluster: dict[int, dict] = {}
+    for k in range(n_clusters):
+        mask = labels == k
+        cluster_scores = sample_scores[mask]
+        mean_sil = float(cluster_scores.mean())
+        if mean_sil >= 0.5:
+            k_rating = "Strong"
+        elif mean_sil >= 0.25:
+            k_rating = "Reasonable"
+        elif mean_sil >= 0.0:
+            k_rating = "Weak"
+        else:
+            k_rating = "Poor"
+        per_cluster[k] = {"silhouette": round(mean_sil, 4), "rating": k_rating}
+        print(f"      Cluster {k} silhouette: {mean_sil:.4f}  ({k_rating})")
+
     if sil >= 0.5:
         rating = "Strong"
     elif sil >= 0.25:
@@ -239,15 +374,16 @@ def compute_metrics(scaled_profiles: np.ndarray, labels: np.ndarray, model: KSha
     else:
         rating = "Poor"
 
-    print(f"      Silhouette score : {sil:.4f}  ({rating})")
-    print(f"      Davies-Bouldin   : {db:.4f}")
-    print(f"      Inertia          : {ine:.4f}")
+    print(f"      Overall Silhouette : {sil:.4f}  ({rating})")
+    print(f"      Davies-Bouldin     : {db:.4f}")
+    print(f"      Inertia            : {ine:.4f}")
 
     return {
         "silhouette":      round(sil, 4),
         "davies_bouldin":  round(db,  4),
         "inertia":         round(ine, 4),
         "rating":          rating,
+        "per_cluster":     per_cluster,
     }
 
 
@@ -255,26 +391,12 @@ def compute_metrics(scaled_profiles: np.ndarray, labels: np.ndarray, model: KSha
 # Step 5 – Visualise
 # ---------------------------------------------------------------------------
 
-# Time-of-day zones: (start_slot, end_slot, label, fill_color, fill_alpha)
-_TOD_BANDS = [
-    (0,   72,  "Night",    "#0a0f1e", 0.95),   # 00:00–06:00  deep blue-black
-    (72,  108, "Morning",  "#0f1f10", 0.95),   # 06:00–09:00  deep green-black
-    (108, 192, "Daytime",  "#0f0f1f", 0.95),   # 09:00–16:00  deep indigo-black
-    (192, 228, "Evening",  "#1f0f0a", 0.95),   # 16:00–19:00  deep amber-black
-    (228, 288, "Night",    "#0a0f1e", 0.95),   # 19:00–24:00  deep blue-black
-]
-
-# Vertical divider positions (slot indices) and matching time strings
-_TOD_DIVIDERS = [
-    (72,  "06:00"),
-    (108, "09:00"),
-    (192, "16:00"),
-    (228, "19:00"),
-]
+def _slot_for_hour(hour: int) -> int:
+    return int((hour * 60) // INTERVAL_MINUTES)
 
 # Auto-label cluster archetype based on centroid peak time
 def _behaviour_label(centroid: np.ndarray) -> str:
-    peak_h = int(np.argmax(centroid)) * 5 / 60   # convert slot → hours
+    peak_h = int(np.argmax(centroid)) * INTERVAL_MINUTES / 60   # convert slot → hours
     if peak_h < 6:   return "Late Night Activity"
     if peak_h < 10:  return "Morning Peaker"
     if peak_h < 14:  return "Daytime User"
@@ -284,7 +406,14 @@ def _behaviour_label(centroid: np.ndarray) -> str:
 
 
 def _draw_tod_bands(ax: plt.Axes) -> None:
-    for start, end, label, colour, alpha in _TOD_BANDS:
+    tod_bands = [
+        (_slot_for_hour(0),  _slot_for_hour(6),  "Night",   "#0a0f1e", 0.95),
+        (_slot_for_hour(6),  _slot_for_hour(9),  "Morning", "#0f1f10", 0.95),
+        (_slot_for_hour(9),  _slot_for_hour(16), "Daytime", "#0f0f1f", 0.95),
+        (_slot_for_hour(16), _slot_for_hour(19), "Evening", "#1f0f0a", 0.95),
+        (_slot_for_hour(19), INTERVALS_PER_DAY,  "Night",   "#0a0f1e", 0.95),
+    ]
+    for start, end, label, colour, alpha in tod_bands:
         ax.axvspan(start, end, color=colour, alpha=alpha, zorder=0)
         mid = (start + end) / 2
         ax.text(
@@ -293,7 +422,7 @@ def _draw_tod_bands(ax: plt.Axes) -> None:
             fontsize=7, color="#55607a", fontstyle="italic",
             transform=ax.get_xaxis_transform(),
         )
-    for slot, _ in _TOD_DIVIDERS:
+    for slot in (_slot_for_hour(6), _slot_for_hour(9), _slot_for_hour(16), _slot_for_hour(19)):
         ax.axvline(slot, color="#2a2f45", linewidth=0.9, linestyle="-", alpha=1.0, zorder=1)
 
 
@@ -338,7 +467,8 @@ def visualise(
 
     n_homes_total = len(labels)
     x             = np.arange(INTERVALS_PER_DAY)
-    x_ticks_pos   = list(range(0, INTERVALS_PER_DAY, 24))   # every 2 hours
+    tick_step_slots = max(1, int(120 // INTERVAL_MINUTES))  # every 2 hours
+    x_ticks_pos   = list(range(0, INTERVALS_PER_DAY, tick_step_slots))
     x_ticks_lbl   = [TIME_LABELS[i] for i in x_ticks_pos]
 
     ncols = min(N_CLUSTERS, 3)

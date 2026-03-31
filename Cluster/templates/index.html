@@ -47,6 +47,14 @@
           </div>
 
           <div class="field-group field-group--inline">
+            <label class="field-label toggle-label">
+              <input type="checkbox" name="auto_detect" id="auto_detect" value="1" />
+              Auto-detect optimal k
+              <span class="field-hint">(sweeps k=2–10 and picks the best silhouette — takes longer)</span>
+            </label>
+          </div>
+
+          <div class="field-group field-group--inline" id="manual-k-group">
             <label for="n_clusters" class="field-label">Number of Clusters</label>
             <div class="stepper">
               <button type="button" class="stepper-btn" data-target="n_clusters" data-delta="-1">&#8722;</button>
@@ -100,6 +108,13 @@
         const max    = parseInt(target.max, 10);
         target.value = Math.min(max, Math.max(min, parseInt(target.value, 10) + delta));
       });
+    });
+
+    // Auto-detect toggle hides the manual k stepper
+    const autoBox   = document.getElementById('auto_detect');
+    const manualGrp = document.getElementById('manual-k-group');
+    autoBox.addEventListener('change', () => {
+      manualGrp.style.display = autoBox.checked ? 'none' : '';
     });
 
     // Loading state on submit

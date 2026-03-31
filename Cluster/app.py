@@ -11,9 +11,12 @@ import uuid
 from pathlib import Path
 
 import cluster_analysis as ca
+import pandas as pd
+
 from cluster_analysis import (
     compute_metrics,
     export_mapping,
+    find_optimal_k,
     load_average_daily_profiles,
     minmax_scale_rows,
     run_kshape,
@@ -35,6 +38,8 @@ app.secret_key = os.environ.get("SECRET_KEY", "dev-secret-change-me")
 
 UPLOAD_DIR = Path("uploads")
 OUTPUT_DIR = Path("outputs")
+UPLOAD_DIR.mkdir(exist_ok=True)
+OUTPUT_DIR.mkdir(exist_ok=True)
 ALLOWED_EXTENSIONS = {"csv"}
 app.config["MAX_CONTENT_LENGTH"] = 500 * 1024 * 1024  # 500 MB
 
@@ -62,16 +67,39 @@ def run_analysis_job(
     n_clusters: int,
     figure_path: Path,
     mapping_path: Path,
+    auto_detect: bool = False,
 ) -> None:
     try:
-        _set(job_id, progress=5, message="Starting data load…")
-        _set(job_id, progress=20, message="Loading and aggregating daily profiles…")
+        _set(job_id, progress=5, message="Scanning CSV for distinct sites…")
+        header = pd.read_csv(str(csv_path), nrows=0)
+        if "SiteUID" in header.columns:
+            site_col = pd.read_csv(str(csv_path), usecols=["SiteUID"])["SiteUID"]
+            n_rows = len(site_col)
+            n_sites = site_col.nunique()
+            _set(job_id, progress=10,
+                 message=f"Found {n_sites:,} distinct sites across {n_rows:,} rows. Loading profiles…")
+        else:
+            n_sites = None
+            n_rows = None
+            _set(job_id, progress=10, message="Loading data…")
+
+        _set(job_id, progress=15, message="Loading and aggregating daily profiles…")
         home_ids, profiles = load_average_daily_profiles(str(csv_path))
 
-        _set(job_id, progress=35, message="Applying Min-Max scaling…")
+        _set(job_id, progress=25, message="Applying Min-Max scaling…")
         scaled = minmax_scale_rows(profiles)
 
-        _set(job_id, progress=42, message=f"Running KShape clustering (k={n_clusters}) — this may take a minute…")
+        sweep_results = None
+
+        if auto_detect:
+            def sweep_cb(k, k_max):
+                pct = 30 + int(35 * (k - 2) / max(k_max - 2, 1))
+                _set(job_id, progress=pct, message=f"Sweep: testing k={k} of {k_max}…")
+
+            _set(job_id, progress=30, message="Auto-detecting optimal cluster count…")
+            n_clusters, sweep_results = find_optimal_k(scaled, k_min=2, k_max=10, progress_cb=sweep_cb)
+
+        _set(job_id, progress=65, message=f"Running KShape clustering (k={n_clusters}) — this may take a minute…")
         ca.N_CLUSTERS = n_clusters
         model, labels = run_kshape(scaled)
 
@@ -92,12 +120,15 @@ def run_analysis_job(
             progress=100,
             message="Analysis complete!",
             result={
-                "figure_file":   figure_path.name,
-                "mapping_file":  mapping_path.name,
-                "n_clusters":    n_clusters,
-                "n_homes":       len(home_ids),
+                "figure_file":    figure_path.name,
+                "mapping_file":   mapping_path.name,
+                "n_clusters":     n_clusters,
+                "n_homes":        len(home_ids),
+                "n_sites_raw":    n_sites,
+                "n_rows_raw":     n_rows,
                 "cluster_counts": cluster_counts,
-                "metrics":       metrics,
+                "metrics":        metrics,
+                "sweep":          sweep_results,
             },
         )
 
@@ -111,13 +142,16 @@ def run_analysis_job(
 
 @app.route("/", methods=["GET"])
 def index():
-    return render_template("index.html")
+    page = render_template("index.html")
+    # Defensive guard: Flask requires a non-None return value from views.
+    return page if page is not None else ""
 
 
 @app.route("/run", methods=["POST"])
 def run():
-    file       = request.files.get("csv_file")
-    n_clusters = int(request.form.get("n_clusters", 5))
+    file        = request.files.get("csv_file")
+    n_clusters  = int(request.form.get("n_clusters", 5))
+    auto_detect = request.form.get("auto_detect") == "1"
 
     if not file or file.filename == "":
         flash("Please select a CSV file before running.", "error")
@@ -140,7 +174,7 @@ def run():
 
     thread = threading.Thread(
         target=run_analysis_job,
-        args=(job_id, csv_path, n_clusters, figure_path, mapping_path),
+        args=(job_id, csv_path, n_clusters, figure_path, mapping_path, auto_detect),
         daemon=True,
     )
     thread.start()
@@ -206,8 +240,11 @@ def results_page(job_id: str):
         mapping_file=r["mapping_file"],
         n_clusters=r["n_clusters"],
         n_homes=r["n_homes"],
+        n_sites_raw=r.get("n_sites_raw"),
+        n_rows_raw=r.get("n_rows_raw"),
         cluster_counts=r["cluster_counts"],
         metrics=r["metrics"],
+        sweep=r.get("sweep"),
     )
 
 

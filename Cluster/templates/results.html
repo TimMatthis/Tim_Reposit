@@ -24,6 +24,18 @@
       <section class="card">
         <h2 class="card-title">Summary</h2>
         <div class="summary-grid">
+          {% if n_sites_raw %}
+          <div class="summary-stat">
+            <span class="summary-value">{{ "{:,}".format(n_sites_raw) }}</span>
+            <span class="summary-label">Distinct sites in CSV</span>
+          </div>
+          {% endif %}
+          {% if n_rows_raw %}
+          <div class="summary-stat">
+            <span class="summary-value">{{ "{:,}".format(n_rows_raw) }}</span>
+            <span class="summary-label">Data rows</span>
+          </div>
+          {% endif %}
           <div class="summary-stat">
             <span class="summary-value">{{ n_homes }}</span>
             <span class="summary-label">Homes analysed</span>
@@ -40,10 +52,12 @@
               <th>Cluster</th>
               <th>Homes</th>
               <th>Share</th>
+              <th>Strength</th>
             </tr>
           </thead>
           <tbody>
             {% for k, count in cluster_counts.items() %}
+            {% set pc = metrics.per_cluster[k] if metrics.per_cluster is defined and k in metrics.per_cluster else {} %}
             <tr>
               <td>
                 <span class="cluster-badge cluster-badge--{{ k % 5 }}">{{ k }}</span>
@@ -54,6 +68,15 @@
                   <div class="bar bar--{{ k % 5 }}" style="width: {{ (count / n_homes * 100) | round(1) }}%"></div>
                   <span class="bar-pct">{{ (count / n_homes * 100) | round(1) }}%</span>
                 </div>
+              </td>
+              <td>
+                {% if pc %}
+                <span class="metric-badge metric-badge--{{ pc.rating | lower }}" title="Silhouette: {{ pc.silhouette }}">
+                  {{ pc.silhouette }} &mdash; {{ pc.rating }}
+                </span>
+                {% else %}
+                  N/A
+                {% endif %}
               </td>
             </tr>
             {% endfor %}
@@ -91,11 +114,38 @@
           </div>
 
         </div>
+        {% if not sweep %}
         <p class="metrics-tip">
           &#128161; Try different cluster counts and compare the Silhouette Score to find the optimal k &mdash;
-          look for the highest value before it starts to plateau.
+          look for the highest value before it starts to plateau, or use <strong>Auto-detect</strong>.
         </p>
+        {% endif %}
       </section>
+
+      {% if sweep %}
+      <section class="card">
+        <h2 class="card-title">Optimal k Sweep</h2>
+        <p class="metrics-tip">
+          Silhouette score for each k tested. The best k={{ n_clusters }} is highlighted.
+        </p>
+        <div class="sweep-chart" id="sweep-chart"></div>
+        <table class="cluster-table sweep-table">
+          <thead>
+            <tr><th>k</th><th>Silhouette</th><th>Inertia</th><th></th></tr>
+          </thead>
+          <tbody>
+            {% for s in sweep %}
+            <tr{% if s.k == n_clusters %} class="sweep-best"{% endif %}>
+              <td>{{ s.k }}</td>
+              <td>{{ s.silhouette }}</td>
+              <td>{{ s.inertia }}</td>
+              <td>{% if s.k == n_clusters %}<span class="metric-badge metric-badge--strong">Best</span>{% endif %}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </section>
+      {% endif %}
 
       <section class="card">
         <div class="plot-card-header">
@@ -279,6 +329,43 @@
     lbStage.addEventListener('touchend', () => {
       dragStart = null; lastTouchDist = null;
     }, { passive: true });
+
+    {% if sweep %}
+    // Sweep bar chart
+    (function() {
+      const data   = {{ sweep | tojson }};
+      const bestK  = {{ n_clusters }};
+      const chart  = document.getElementById('sweep-chart');
+      if (!chart || !data.length) return;
+
+      const maxSil = Math.max(...data.map(d => d.silhouette), 0.01);
+      data.forEach(d => {
+        const row  = document.createElement('div');
+        row.className = 'sweep-row';
+
+        const lbl  = document.createElement('span');
+        lbl.className = 'sweep-label';
+        lbl.textContent = 'k=' + d.k;
+
+        const barWrap = document.createElement('div');
+        barWrap.className = 'sweep-bar-wrap';
+
+        const bar  = document.createElement('div');
+        bar.className = 'sweep-bar' + (d.k === bestK ? ' sweep-bar--best' : '');
+        bar.style.width = Math.max(2, (d.silhouette / maxSil) * 100) + '%';
+
+        const val  = document.createElement('span');
+        val.className = 'sweep-val';
+        val.textContent = d.silhouette.toFixed(4);
+
+        barWrap.appendChild(bar);
+        row.appendChild(lbl);
+        row.appendChild(barWrap);
+        row.appendChild(val);
+        chart.appendChild(row);
+      });
+    })();
+    {% endif %}
   </script>
 
 </body>
