@@ -1,0 +1,4675 @@
+<!--
+  templateType: "page"
+  label: "Reposit - CVP Retrofit (Energy Uncertainty)"
+  isAvailableForNewContent: true
+-->
+{# HubSpot: set offers API origin below (HTTPS, no trailing slash). CORS must allow your page domain. Title/description from page SEO. hubfs noise.png URL may need replacing for your portal. #}
+{% set reposit_offer_api_origin = "https://YOUR-OFFERS-API.example.com" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% if page_meta and page_meta.html_title %}{{ page_meta.html_title }}{% else %}Reposit Power — Take Control (Energy Uncertainty){% endif %}</title>
+  {% if page_meta and page_meta.meta_description %}
+  <meta name="description" content="{{ page_meta.meta_description }}">
+  {% endif %}
+  {% if content.absolute_url %}
+  <link rel="canonical" href="{{ content.absolute_url }}">
+  {% endif %}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  {{ standard_header_includes }}
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --green:        #19c37d;
+      --green-glow:   rgba(25, 195, 125, 0.28);
+      --blue:         #2a6b94;
+      --ink:          #0f172a;
+      --muted:        #374151;
+      --line:         #d7e3f4;
+      --glass:        rgba(255, 255, 255, 0.15);
+      --glass-border: rgba(255, 255, 255, 0.26);
+      --card-bg:      rgba(255, 255, 255, 0.97);
+      --shadow:       0 10px 32px rgba(10, 20, 40, 0.2);
+      --shadow-lg:    0 16px 48px rgba(10, 20, 40, 0.3);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    html { overflow: hidden; }
+
+    body {
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.55;
+      color: var(--ink);
+      background:
+        url(https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/noise.png),
+        radial-gradient(circle at top left, rgba(232,120,28,1) 6%, rgba(188,95,42,1) 24%, rgba(38,95,132,1) 58%, rgba(14,18,32,1) 100%);
+      background-blend-mode: multiply;
+      padding: 0;
+      overflow: hidden;
+      height: 100dvh;
+    }
+
+    /* ─── PAGER SCROLL CONTAINER ─────────────── */
+    .page {
+      height: 100dvh;
+      overflow-y: scroll;
+      scroll-snap-type: y mandatory;
+      scroll-behavior: smooth;
+      padding-bottom: 42px;
+    }
+
+    .container {
+      max-width: 1180px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+
+    /* ─── SECTION BASE — full-screen pager ─── */
+    .section {
+      scroll-snap-align: start;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 48px 20px 60px;
+      position: relative;
+      box-sizing: border-box;
+    }
+
+    .section::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      border-radius: 0;
+    }
+
+    .section > * { position: relative; z-index: 1; }
+
+    .section[data-section="0"]::before {
+      background: radial-gradient(ellipse at 20% 30%, rgba(185,28,28,0.12) 0%, transparent 70%);
+    }
+
+    .section[data-section="1"]::before {
+      background: radial-gradient(ellipse at 80% 50%, rgba(185,28,28,0.08) 0%, transparent 60%),
+                  radial-gradient(ellipse at 20% 60%, rgba(25,195,125,0.06) 0%, transparent 60%);
+    }
+
+    .section[data-section="2"]::before {
+      background: radial-gradient(ellipse at 50% 50%, rgba(42,107,148,0.08) 0%, transparent 70%);
+    }
+
+    .section[data-section="3"]::before {
+      background: radial-gradient(ellipse at 30% 40%, rgba(25,195,125,0.1) 0%, transparent 65%);
+    }
+
+    .section[data-section="4"]::before {
+      background: radial-gradient(ellipse at 50% 50%, rgba(25,195,125,0.14) 0%, transparent 60%);
+    }
+
+    /* ─── SECTION PROGRESS DOTS ─────────────── */
+    .section-dots {
+      position: fixed;
+      right: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .section-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.28);
+      border: 1.5px solid rgba(255,255,255,0.4);
+      cursor: pointer;
+      padding: 0;
+      transition: transform 0.25s, background 0.25s, height 0.25s;
+      display: block;
+    }
+
+    .section-dot:hover { background: rgba(255,255,255,0.6); transform: scale(1.3); }
+
+    .section-dot.is-active {
+      background: #fff;
+      transform: scale(1.25);
+      border-color: #fff;
+      height: 22px;
+      border-radius: 4px;
+    }
+
+    .section-dot-label {
+      position: absolute;
+      right: calc(100% + 10px);
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: rgba(255,255,255,0.85);
+      background: rgba(0,0,0,0.45);
+      border-radius: 6px;
+      padding: 3px 8px;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .section-dot:hover .section-dot-label { opacity: 1; }
+
+    /* ─── SCROLL HINT ────────────────────────── */
+    .scroll-hint {
+      position: absolute;
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      color: rgba(255,255,255,0.45);
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      text-align: center;
+      transition: color 0.2s;
+      white-space: nowrap;
+    }
+
+    .scroll-hint:hover { color: rgba(255,255,255,0.8); }
+
+    .scroll-hint-arrow {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      animation: hintBounce 2.2s ease-in-out infinite;
+    }
+
+    @keyframes hintBounce {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(5px); }
+    }
+
+    /* ─── TYPOGRAPHY ─────────────────────────── */
+    h1 {
+      font-size: clamp(2.1rem, 3.6vw, 3.2rem);
+      line-height: 1.08;
+      font-weight: 900;
+      color: #fff;
+      text-wrap: balance;
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      font-size: clamp(1.5rem, 2.6vw, 2.1rem);
+      line-height: 1.18;
+      font-weight: 800;
+      color: #fff;
+      text-wrap: balance;
+      margin-bottom: 10px;
+    }
+
+    h3 {
+      font-size: 1.06rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      color: #a8d8f5;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.75rem;
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
+
+    .lead {
+      color: rgba(255,255,255,0.9);
+      font-size: 1.05rem;
+      max-width: 820px;
+      margin-bottom: 20px;
+    }
+
+    .card-body {
+      color: var(--muted);
+      font-size: 0.94rem;
+      line-height: 1.5;
+    }
+
+    /* ─── GLASS PANEL ────────────────────────── */
+    .glass {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: 18px;
+      backdrop-filter: blur(14px);
+      padding: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    /* ─── WHITE CARD ─────────────────────────── */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    /* ─── BUTTONS ────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 11px 20px;
+      border-radius: 11px;
+      font-size: 0.95rem;
+      font-weight: 800;
+      border: 1px solid transparent;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #2de49d 0%, #15b876 100%);
+      color: #042d14;
+      box-shadow: 0 8px 22px var(--green-glow);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 10px 28px rgba(25, 195, 125, 0.42);
+    }
+
+    .btn-ghost {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.32);
+      color: #fff;
+    }
+
+    /* ─── PILL TAGS ──────────────────────────── */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .tag {
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.26);
+      background: rgba(255,255,255,0.09);
+      color: rgba(255,255,255,0.92);
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 5px 11px;
+    }
+
+    /* ─── HERO ───────────────────────────────── */
+    .hero { padding-top: 32px; padding-bottom: 52px; }
+
+    .hero-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.18);
+      box-shadow: var(--shadow-lg);
+      position: relative;
+    }
+
+    .hero-split::after {
+      content: "";
+      position: absolute;
+      top: 0; bottom: 0;
+      left: 50%;
+      width: 2px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.22) 50%, rgba(255,255,255,0.06) 100%);
+      z-index: 2;
+    }
+
+    .hero-pane {
+      padding: 32px 28px 28px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      min-height: 380px;
+    }
+
+    .hero-pane--chaos {
+      background:
+        linear-gradient(160deg, rgba(127,29,29,0.88) 0%, rgba(154,52,18,0.84) 45%, rgba(42,50,68,0.86) 100%),
+        url('https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800&q=75&auto=format') center/cover no-repeat;
+      animation: paneJitter 4s ease-in-out infinite;
+    }
+
+    .hero-pane--calm {
+      background:
+        linear-gradient(160deg, rgba(6,95,70,0.78) 0%, rgba(12,74,110,0.68) 45%, rgba(15,23,42,0.62) 100%),
+        url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=75&auto=format') center/cover no-repeat;
+    }
+
+    @keyframes paneJitter {
+      0%, 100% { filter: brightness(1); }
+      30% { filter: brightness(1.04); }
+      60% { filter: brightness(0.97); }
+      80% { filter: brightness(1.02); }
+    }
+
+    .pane-eyebrow {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-weight: 800;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .hero-pane--chaos .pane-eyebrow { color: #fca5a5; }
+    .hero-pane--calm  .pane-eyebrow { color: #86efac; }
+
+    .pane-title {
+      color: #fff;
+      font-size: clamp(1.2rem, 1.8vw, 1.5rem);
+      font-weight: 900;
+      line-height: 1.15;
+      margin-bottom: 14px;
+      text-shadow: 0 1px 6px rgba(0,0,0,0.5);
+    }
+
+    .pane-stats {
+      list-style: none;
+      display: grid;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex: 1;
+    }
+
+    .pane-stat {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      font-size: 0.88rem;
+      color: rgba(255,255,255,0.92);
+      font-weight: 600;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+    }
+
+    .pane-stat-icon { font-size: 0.78rem; flex-shrink: 0; }
+
+    .hero-pane--chaos .pane-stat-icon { color: #f87171; }
+    .hero-pane--calm  .pane-stat-icon { color: #34d399; }
+
+    .mood-wave {
+      width: 100%;
+      height: 48px;
+      border-radius: 10px;
+      position: relative;
+      overflow: hidden;
+      background: rgba(255,255,255,0.12);
+      margin-top: auto;
+    }
+
+    .mood-wave::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+    }
+
+    .mood-wave.is-chaos::before {
+      background: linear-gradient(90deg, #ef4444 0%, #f97316 35%, #ef4444 65%, #fca5a5 100%);
+      clip-path: polygon(0 85%, 6% 38%, 13% 71%, 21% 24%, 29% 78%, 38% 22%, 47% 66%, 56% 31%, 65% 82%, 74% 35%, 82% 73%, 91% 27%, 100% 62%, 100% 100%, 0 100%);
+      animation: jitterLine 2.1s linear infinite;
+    }
+
+    .mood-wave.is-calm::before {
+      background: linear-gradient(90deg, #34d399 0%, #22c55e 48%, #93c5fd 100%);
+      clip-path: polygon(0 62%, 12% 58%, 24% 60%, 36% 56%, 48% 58%, 60% 54%, 72% 57%, 84% 55%, 100% 56%, 100% 100%, 0 100%);
+      animation: breatheLine 3.4s ease-in-out infinite;
+    }
+
+    @keyframes jitterLine {
+      0%, 100% { transform: translateX(0); filter: saturate(1); }
+      25% { transform: translateX(-4px); filter: saturate(1.18); }
+      55% { transform: translateX(3px); filter: saturate(1.26); }
+      75% { transform: translateX(-2px); filter: saturate(1.12); }
+    }
+
+    @keyframes breatheLine {
+      0%, 100% { transform: scaleY(1); opacity: 0.92; }
+      50% { transform: scaleY(0.92); opacity: 1; }
+    }
+
+    .hero-bridge {
+      text-align: center;
+      max-width: 820px;
+      margin: 28px auto 0;
+    }
+
+    .hero-bridge h1 { text-wrap: balance; }
+
+    .brand-promise {
+      color: #34d399;
+      font-size: clamp(1.05rem, 2.4vw, 1.35rem);
+      font-weight: 800;
+      text-align: center;
+      margin-top: 10px;
+      margin-bottom: 6px;
+      letter-spacing: 0.01em;
+      text-wrap: balance;
+      max-width: 34em;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero-bridge .lead { margin: 0 auto 18px; }
+
+    .hero-bridge .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin: 20px 0 14px;
+    }
+
+    .hero-note {
+      color: rgba(255,255,255,0.72);
+      font-size: 0.86rem;
+    }
+
+    /* ─── OUTCOME TILES (horizontal row) ──── */
+    .outcome-stack {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .outcome-tile {
+      border-radius: 14px;
+      padding: 16px 18px;
+      background: var(--card-bg);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .outcome-tile-label {
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: var(--blue);
+      margin-bottom: 3px;
+    }
+
+    .outcome-tile-value {
+      font-size: 1.45rem;
+      font-weight: 900;
+      color: var(--ink);
+      line-height: 1.1;
+      margin-bottom: 3px;
+    }
+
+    .outcome-tile-sub {
+      font-size: 0.86rem;
+      color: var(--muted);
+    }
+
+    .social-proof {
+      text-align: center;
+      margin-top: 18px;
+      padding: 12px 20px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .social-proof-stars {
+      color: #facc15;
+      font-size: 1.1rem;
+      letter-spacing: 2px;
+    }
+
+    .social-proof-text {
+      color: rgba(255,255,255,0.6);
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    /* ─── NEWS TICKER ──────────────────────────── */
+    .news-ticker {
+      overflow: hidden;
+      background: linear-gradient(90deg, rgba(15,23,42,0.96) 0%, rgba(6,78,59,0.88) 50%, rgba(15,23,42,0.96) 100%);
+      border-top: 1px solid rgba(52,211,153,0.28);
+      padding: 10px 0;
+      white-space: nowrap;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 900;
+    }
+
+    body.wizard-open .news-ticker {
+      background: linear-gradient(90deg, rgba(6,78,59,0.94) 0%, rgba(15,118,110,0.92) 50%, rgba(6,78,59,0.94) 100%);
+      border-top-color: rgba(110,231,183,0.45);
+    }
+
+    .news-ticker::before,
+    .news-ticker::after {
+      content: "";
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 60px;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .news-ticker::before { left: 0; background: linear-gradient(90deg, rgba(15,23,42,1) 0%, transparent 100%); }
+    .news-ticker::after  { right: 0; background: linear-gradient(270deg, rgba(15,23,42,1) 0%, transparent 100%); }
+
+    body.wizard-open .news-ticker::before { background: linear-gradient(90deg, rgba(6,78,59,1) 0%, transparent 100%); }
+    body.wizard-open .news-ticker::after  { background: linear-gradient(270deg, rgba(6,78,59,1) 0%, transparent 100%); }
+
+    .ticker-track {
+      display: inline-flex;
+      gap: 36px;
+      animation: tickerScroll 32s linear infinite;
+    }
+
+    .ticker-item {
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: rgba(209,250,229,0.92);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    body.wizard-open .ticker-item {
+      color: rgba(236,253,245,0.95);
+    }
+
+    .ticker-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #34d399;
+      animation: tickerPulse 1.8s ease-in-out infinite;
+    }
+
+    body.wizard-open .ticker-dot {
+      background: #6ee7b7;
+    }
+
+    @keyframes tickerScroll {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    @keyframes tickerPulse {
+      0%, 100% { opacity: 0.5; }
+      50%      { opacity: 1; }
+    }
+
+    /* ─── COMPARISON ─────────────────────────── */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .compare-card { padding: 22px; transition: box-shadow 0.3s; }
+
+    .compare-visual {
+      border-radius: 12px;
+      height: 140px;
+      margin-bottom: 14px;
+      border: 1px solid #e2e8f0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .compare-card--chaos .compare-visual {
+      background:
+        linear-gradient(140deg, rgba(127,29,29,0.72) 0%, rgba(154,52,18,0.55) 50%, rgba(127,29,29,0.68) 100%),
+        url('https://images.unsplash.com/photo-1596838132731-3301c3fd4317?w=800&q=75&auto=format') center/cover no-repeat;
+      border-color: #fecaca;
+    }
+
+    .compare-card--chaos {
+      animation: chaosBorderPulse 3s ease-in-out infinite;
+    }
+
+    @keyframes chaosBorderPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0), var(--shadow); }
+      50%      { box-shadow: 0 0 0 4px rgba(239,68,68,0.15), var(--shadow); }
+    }
+
+    .compare-card--calm .compare-visual {
+      background:
+        linear-gradient(140deg, rgba(6,95,70,0.72) 0%, rgba(12,74,110,0.55) 50%, rgba(6,95,70,0.68) 100%),
+        url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=75&auto=format') center/cover no-repeat;
+      border-color: #86efac;
+    }
+
+    .compare-visual-line {
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      opacity: 0.45;
+      height: 60px;
+      bottom: 18px;
+      border-radius: 8px;
+      opacity: 0.95;
+    }
+
+    .compare-visual-line.is-chaos {
+      background: linear-gradient(90deg, #dc2626 0%, #f97316 52%, #dc2626 100%);
+      clip-path: polygon(0 80%, 8% 25%, 17% 70%, 26% 14%, 35% 74%, 45% 16%, 54% 67%, 63% 24%, 72% 79%, 81% 20%, 90% 74%, 100% 38%, 100% 100%, 0 100%);
+      animation: jitterLine 2.1s linear infinite;
+    }
+
+    .compare-visual-line.is-calm {
+      background: linear-gradient(90deg, #10b981 0%, #22c55e 48%, #60a5fa 100%);
+      clip-path: polygon(0 62%, 10% 57%, 20% 59%, 30% 55%, 40% 58%, 50% 56%, 60% 58%, 70% 56%, 80% 57%, 90% 56%, 100% 57%, 100% 100%, 0 100%);
+      animation: breatheLine 3.4s ease-in-out infinite;
+    }
+
+    .compare-visual-label {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .compare-card--chaos .compare-visual-label { color: #fca5a5; }
+    .compare-card--calm .compare-visual-label { color: #86efac; }
+
+    .compare-card ul {
+      list-style: none;
+      display: grid;
+      gap: 9px;
+      margin-top: 10px;
+    }
+
+    .compare-card li {
+      font-size: 0.94rem;
+      color: var(--muted);
+      padding-left: 20px;
+      position: relative;
+    }
+
+    .compare-card li::before {
+      content: "✕";
+      position: absolute;
+      left: 0;
+      color: #f87171;
+      font-weight: 900;
+      font-size: 0.8rem;
+      top: 2px;
+    }
+
+    .compare-card.is-winner {
+      border: 2px solid var(--green);
+      box-shadow: 0 0 0 6px rgba(25,195,125,0.18), 0 0 28px rgba(25,195,125,0.12), var(--shadow);
+      animation: none;
+    }
+
+    .compare-card.is-winner li::before {
+      content: "✓";
+      color: var(--green);
+      font-size: 0.88rem;
+    }
+
+    .compare-card.is-winner li { color: var(--muted); }
+
+    .winner-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--green) 0%, #10a862 100%);
+      color: #042d14;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-bottom: 8px;
+    }
+
+    /* ─── 4-STEP JOURNEY ─────────────────────── */
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 18px;
+      position: relative;
+    }
+
+    .step-card { padding: 18px; position: relative; }
+
+    .step-num {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #e6f3ff;
+      border: 1px solid #bcd8f0;
+      color: #134b78;
+      font-weight: 900;
+      font-size: 0.95rem;
+      margin-bottom: 10px;
+    }
+
+    /* ─── REASSURANCE STRIP ──────────────────── */
+    .reassure-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .reassure-chip {
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.09);
+      padding: 12px 14px;
+      color: rgba(255,255,255,0.9);
+      font-size: 0.86rem;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .reassure-chip strong {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 2px;
+      color: #fff;
+    }
+
+    /* ─── CTA ────────────────────────────────── */
+    .cta-grid {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 22px;
+      align-items: center;
+      margin-top: 18px;
+    }
+
+    .cta-btn-stack {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .confirm-list {
+      list-style: none;
+      display: grid;
+      gap: 8px;
+      min-width: 240px;
+    }
+
+    .confirm-list li {
+      color: rgba(255,255,255,0.9);
+      font-size: 0.9rem;
+      padding-left: 20px;
+      position: relative;
+    }
+
+    .confirm-list li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: #6ef5be;
+      font-weight: 900;
+    }
+
+    /* ─── PROCESSING STATE ───────────────────── */
+    .processing-panel {
+      border-color: rgba(71,245,173,0.4);
+      box-shadow: 0 0 0 2px rgba(71,245,173,0.16), var(--shadow);
+      text-align: center;
+      padding: 40px 28px;
+    }
+
+    .processing-icon {
+      font-size: 2.4rem;
+      margin-bottom: 12px;
+    }
+
+    /* ─── ECONOMICS CHART ───────────────────── */
+    .econ-grid {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 18px;
+      align-items: start;
+      margin-top: 18px;
+    }
+
+    .chart-wrap {
+      background: rgba(255,255,255,0.97);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 22px 18px 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .chart-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 14px;
+    }
+
+    .bar-chart {
+      position: relative;
+      height: 180px;
+      display: flex;
+      align-items: flex-end;
+      gap: 5px;
+    }
+
+    .reposit-line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      border-top: 2.5px dashed var(--green);
+      bottom: calc(48% - 1px);
+      z-index: 3;
+      box-shadow: 0 0 10px 1px rgba(25,195,125,0.3);
+    }
+
+    .reposit-line-label {
+      position: absolute;
+      right: 0;
+      top: -18px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: var(--green);
+      white-space: nowrap;
+      background: rgba(255,255,255,0.95);
+      padding: 1px 5px;
+      border-radius: 4px;
+    }
+
+    .bar-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      height: 100%;
+    }
+
+    .bar {
+      width: 100%;
+      border-radius: 5px 5px 0 0;
+      position: relative;
+      min-height: 6px;
+      transition: opacity 0.2s;
+    }
+
+    .bar.is-normal { background: linear-gradient(180deg, #5b9ec9 0%, #2a6b94 100%); }
+    .bar.is-winter {
+      background: linear-gradient(180deg, #f97316 0%, #dc4a00 100%);
+      animation: winterPulse 2.4s ease-in-out infinite;
+    }
+
+    @keyframes winterPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(249,115,22,0); }
+      50%      { box-shadow: 0 0 12px 2px rgba(249,115,22,0.35); }
+    }
+
+    .bar-label {
+      font-size: 0.65rem;
+      color: #6b7280;
+      font-weight: 600;
+      margin-top: 4px;
+      text-align: center;
+    }
+
+    .bar-val {
+      position: absolute;
+      top: -16px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.6rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .bar.is-winter .bar-val { color: #c2410c; }
+    .bar.is-normal .bar-val { color: var(--blue); }
+
+    .chart-legend {
+      display: flex;
+      gap: 14px;
+      margin-top: 10px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #6b7280;
+    }
+
+    .legend-dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      margin-right: 4px;
+      vertical-align: middle;
+    }
+
+    .econ-summary {
+      display: grid;
+      gap: 12px;
+    }
+
+    .econ-tile {
+      border-radius: 13px;
+      padding: 16px;
+    }
+
+    .econ-tile.tile-current {
+      background: #fff5f0;
+      border: 1px solid #fdc9aa;
+      animation: tileRedPulse 3s ease-in-out infinite;
+    }
+
+    @keyframes tileRedPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); }
+      50%      { box-shadow: 0 0 0 3px rgba(239,68,68,0.18); }
+    }
+
+    .econ-tile.tile-reposit {
+      background: #f0fdf6;
+      border: 2px solid var(--green);
+      box-shadow: 0 0 0 4px rgba(25,195,125,0.14), 0 0 20px rgba(25,195,125,0.1);
+    }
+
+    .econ-tile.tile-saving {
+      background: var(--ink);
+      border: 1px solid #1e2d45;
+    }
+
+    .econ-tile-label {
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      margin-bottom: 3px;
+    }
+
+    .tile-current .econ-tile-label  { color: #c2410c; }
+    .tile-reposit .econ-tile-label  { color: #0a7a4a; }
+    .tile-saving  .econ-tile-label  { color: #6ef5be; }
+
+    .econ-tile-value {
+      font-size: 1.75rem;
+      font-weight: 900;
+      line-height: 1.05;
+      margin-bottom: 2px;
+    }
+
+    .tile-current .econ-tile-value  { color: var(--ink); }
+    .tile-reposit .econ-tile-value  { color: #0e6b40; }
+    .tile-saving  .econ-tile-value  { color: #fff; }
+
+    .econ-tile-sub {
+      font-size: 0.82rem;
+    }
+
+    .tile-current .econ-tile-sub  { color: #92400e; }
+    .tile-reposit .econ-tile-sub  { color: #166534; }
+    .tile-saving  .econ-tile-sub  { color: rgba(255,255,255,0.7); }
+
+    .econ-disclaimer {
+      font-size: 0.74rem;
+      color: rgba(255,255,255,0.55);
+      margin-top: 10px;
+    }
+
+    .stress-label {
+      position: absolute;
+      top: -6px;
+      font-size: 0.62rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #ef4444;
+      background: #fff5f5;
+      border: 1px solid #fecaca;
+      border-radius: 4px;
+      padding: 2px 7px;
+      white-space: nowrap;
+      z-index: 4;
+    }
+
+    /* ─── HIDDEN ─────────────────────────────── */
+    .hidden { display: none; }
+
+    /* ─── COMPACT TIMELINE ─────────────────── */
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 22px;
+    }
+
+    .timeline-step {
+      text-align: center;
+      position: relative;
+    }
+
+    .timeline-step::after {
+      content: "";
+      position: absolute;
+      top: 18px;
+      left: calc(50% + 22px);
+      width: calc(100% - 44px);
+      height: 2px;
+      background: rgba(25,195,125,0.3);
+    }
+
+    .timeline-step:last-child::after { display: none; }
+
+    .timeline-badge {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #2de49d 0%, #15b876 100%);
+      color: #042d14;
+      font-weight: 900;
+      font-size: 0.95rem;
+      margin-bottom: 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .timeline-title {
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .timeline-desc {
+      color: rgba(255,255,255,0.75);
+      font-size: 0.82rem;
+      line-height: 1.35;
+    }
+
+    .timeline-reassurance {
+      text-align: center;
+      margin-top: 20px;
+      color: rgba(255,255,255,0.6);
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+
+    /* ─── TRUST VPP STRIP ──────────────────── */
+    .trust-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .trust-chip {
+      border-radius: 12px;
+      border: 1px solid rgba(25,195,125,0.25);
+      background: rgba(25,195,125,0.06);
+      padding: 14px 16px;
+      text-align: center;
+    }
+
+    .trust-chip strong {
+      display: block;
+      color: #34d399;
+      font-size: 0.82rem;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .trust-chip span {
+      color: rgba(255,255,255,0.78);
+      font-size: 0.8rem;
+      line-height: 1.4;
+    }
+
+    .trust-label {
+      display: inline-block;
+      font-size: 0.62rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #34d399;
+      border: 1px solid rgba(25,195,125,0.35);
+      border-radius: 999px;
+      padding: 3px 10px;
+      margin-bottom: 8px;
+    }
+
+    /* ─── PACKAGE FIT / CALCULATOR BRIDGE ────── */
+    .calc-bridge-grid {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 18px;
+      align-items: start;
+      margin-top: 18px;
+    }
+
+    .calc-bridge-main .card-body { margin-bottom: 14px; }
+
+    .calc-levers {
+      list-style: none;
+      display: grid;
+      gap: 8px;
+      margin: 14px 0 18px;
+    }
+
+    .calc-levers li {
+      font-size: 0.9rem;
+      color: var(--muted);
+      padding-left: 22px;
+      position: relative;
+    }
+
+    .calc-levers li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.45em;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 0 3px rgba(25, 195, 125, 0.2);
+    }
+
+    .calc-bridge-aside {
+      border-radius: 14px;
+      padding: 20px;
+      background: linear-gradient(160deg, rgba(25, 195, 125, 0.12) 0%, rgba(42, 107, 148, 0.1) 100%);
+      border: 2px solid rgba(25, 195, 125, 0.35);
+      box-shadow: var(--shadow);
+    }
+
+    .calc-bridge-aside h3 {
+      color: var(--ink);
+      font-size: 1rem;
+      margin-bottom: 8px;
+    }
+
+    .calc-bridge-aside p {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-bottom: 14px;
+      line-height: 1.45;
+    }
+
+    .calc-bridge-seq {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--blue);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 10px;
+    }
+
+    .calc-bridge-steps {
+      list-style: none;
+      display: grid;
+      gap: 10px;
+      counter-reset: cs;
+    }
+
+    .calc-bridge-steps li {
+      counter-increment: cs;
+      font-size: 0.84rem;
+      color: var(--muted);
+      padding-left: 28px;
+      position: relative;
+      line-height: 1.4;
+    }
+
+    .calc-bridge-steps li::before {
+      content: counter(cs);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #e6f3ff;
+      border: 1px solid #bcd8f0;
+      color: #134b78;
+      font-weight: 900;
+      font-size: 0.72rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-ghost--on-light {
+      color: var(--ink);
+      border-color: rgba(15, 23, 42, 0.2);
+      background: rgba(255, 255, 255, 0.92);
+    }
+
+    .btn-ghost--on-light:hover {
+      background: rgba(255, 255, 255, 1);
+      border-color: rgba(15, 23, 42, 0.35);
+    }
+
+    .text-link-blue {
+      color: var(--blue);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .text-link-blue:hover {
+      text-decoration: underline;
+    }
+
+    .cta-inline-link {
+      color: rgba(255, 255, 255, 0.95);
+      text-decoration: underline;
+    }
+
+    .cta-inline-link:hover {
+      color: #fff;
+    }
+
+    .calc-bridge-main .btn-row {
+      margin-top: 0;
+    }
+
+    /* ─── OFFER SIMULATOR (consent → profile → API) ─ */
+    .sim-wrap {
+      margin-top: 22px;
+      padding: 22px 20px;
+      background: var(--card-bg);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .sim-demo-eyebrow {
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--blue);
+      margin-bottom: 6px;
+    }
+
+    .sim-h3 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--ink);
+      margin-bottom: 8px;
+    }
+
+    .sim-wrap > .card-body,
+    .sim-intro {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+
+    .sim-api-field {
+      margin-bottom: 16px;
+    }
+
+    .sim-api-field label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .sim-api-field input {
+      width: 100%;
+      max-width: 420px;
+      padding: 9px 11px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      font-size: 0.9rem;
+    }
+
+    .sim-progress {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin: 18px 0 8px;
+    }
+
+    .sim-progress-step {
+      text-align: center;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #64748b;
+      padding: 10px 8px;
+      border-radius: 11px;
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+    }
+
+    .sim-progress-step.is-active {
+      background: #e6f3ff;
+      color: #134b78;
+      border-color: #bcd8f0;
+    }
+
+    .sim-progress-step.is-done {
+      background: #ecfdf5;
+      color: #166534;
+      border-color: #bbf7d0;
+    }
+
+    .sim-progress-num {
+      display: block;
+      font-size: 1.05rem;
+      font-weight: 900;
+      margin-bottom: 2px;
+    }
+
+    .sim-panel {
+      display: none;
+      margin-top: 18px;
+      padding-top: 4px;
+    }
+
+    .sim-panel.is-active {
+      display: block;
+    }
+
+    .sim-field {
+      margin-bottom: 14px;
+    }
+
+    .sim-field label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 5px;
+    }
+
+    .sim-field input {
+      width: 100%;
+      max-width: 360px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      font-size: 1rem;
+    }
+
+    .sim-code-hint {
+      font-size: 0.86rem;
+      color: #166534;
+      background: #ecfdf5;
+      border: 1px solid #bbf7d0;
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin: 12px 0;
+      max-width: 420px;
+    }
+
+    .sim-fee-readout {
+      font-size: 0.9rem;
+      color: var(--ink);
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 14px;
+      max-width: 480px;
+      line-height: 1.45;
+    }
+
+    .sim-fee-readout strong {
+      color: #0e6b40;
+      font-weight: 800;
+    }
+
+    .sim-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .sim-loading {
+      text-align: center;
+      padding: 28px 16px;
+      color: var(--muted);
+    }
+
+    .sim-loading-icon {
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+
+    .sim-error {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+      padding: 12px 14px;
+      border-radius: 10px;
+      margin-bottom: 14px;
+      font-size: 0.88rem;
+      max-width: 560px;
+    }
+
+    .sim-divider {
+      margin: 26px 0 18px;
+      border: 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .processing-lead {
+      margin: 0 auto;
+      text-align: center;
+      max-width: 580px;
+    }
+
+    .processing-tip {
+      margin-top: 14px;
+      text-align: center;
+    }
+
+    .glass .sim-production-title {
+      color: #fff;
+      margin-bottom: 10px;
+      font-size: 1.15rem;
+      font-weight: 800;
+    }
+
+    .glass .sim-production-lead-tight {
+      margin-bottom: 16px;
+    }
+
+    /* ─── OFFER SIZING & PACKAGE CHOICE (customer UX) ─ */
+    .sim-sizing-banner {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 16px 20px;
+      margin-bottom: 16px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #e8f4fc 0%, #f0fdf6 100%);
+      border: 1px solid #bcd8f0;
+      box-shadow: 0 4px 16px rgba(42, 107, 148, 0.08);
+    }
+
+    .sim-sizing-label {
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: #64748b;
+      margin-bottom: 4px;
+    }
+
+    .sim-sizing-value {
+      font-size: 1.65rem;
+      font-weight: 900;
+      color: var(--ink);
+      line-height: 1.1;
+    }
+
+    .sim-sizing-value span {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #64748b;
+    }
+
+    .sim-sizing-meta {
+      text-align: right;
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .sim-sizing-meta strong {
+      color: var(--ink);
+    }
+
+    .sim-sizing-sub {
+      font-size: 0.8rem;
+      color: #64748b;
+      margin-top: 4px;
+    }
+
+    .sim-fair-sub {
+      font-size: 0.85em;
+      color: #64748b;
+    }
+
+    .sim-offers-lead {
+      font-size: 0.92rem;
+      color: var(--muted);
+      margin-bottom: 16px;
+      line-height: 1.5;
+      max-width: 720px;
+    }
+
+    .sim-constraint-summary {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-bottom: 12px;
+      padding: 10px 14px;
+      background: #f8fafc;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+    }
+
+    .sim-constraint-summary strong {
+      color: var(--ink);
+    }
+
+    .sim-offers-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 16px;
+      align-items: stretch;
+    }
+
+    .sim-pkg-card {
+      position: relative;
+      background: #fff;
+      border-radius: 16px;
+      padding: 22px 18px 18px;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .sim-pkg-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .sim-pkg-card--recommended {
+      border: 2px solid var(--green);
+      box-shadow: 0 0 0 4px rgba(25, 195, 125, 0.14), var(--shadow-lg);
+      transform: scale(1.02);
+      z-index: 1;
+    }
+
+    .sim-pkg-ribbon {
+      position: absolute;
+      top: -11px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, #2de49d 0%, #15b876 100%);
+      color: #042d14;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(25, 195, 125, 0.35);
+    }
+
+    .sim-pkg-badge {
+      display: inline-block;
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 14px;
+    }
+
+    .sim-pkg-badge--best {
+      background: linear-gradient(135deg, #f68d26 0%, #2a6b94 100%);
+      color: #fff;
+    }
+
+    .sim-pkg-badge--alt {
+      background: #e5e7eb;
+      color: #374151;
+    }
+
+    .sim-pkg-install {
+      font-size: 2.1rem;
+      font-weight: 900;
+      color: var(--ink);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .sim-pkg-install-label {
+      font-size: 0.82rem;
+      color: var(--muted);
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
+
+    .sim-pkg-monthly {
+      background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 14px;
+    }
+
+    .sim-pkg-card--recommended .sim-pkg-monthly {
+      background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+    }
+
+    .sim-pkg-monthly-amt {
+      font-size: 1.55rem;
+      font-weight: 800;
+      color: #0e6b40;
+      line-height: 1.1;
+    }
+
+    .sim-pkg-monthly-lbl {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #166534;
+      margin-top: 2px;
+    }
+
+    .sim-pkg-attrs {
+      list-style: none;
+      text-align: left;
+      margin-bottom: 12px;
+      flex: 1;
+    }
+
+    .sim-pkg-attrs li {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 0.84rem;
+      color: var(--muted);
+    }
+
+    .sim-pkg-attrs li strong {
+      color: var(--ink);
+      font-weight: 700;
+      text-align: right;
+    }
+
+    .sim-pkg-fit {
+      font-size: 0.75rem;
+      color: #64748b;
+      margin-bottom: 10px;
+    }
+
+    .sim-pkg-saving {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+      text-align: left;
+    }
+
+    .sim-pkg-card--recommended .sim-pkg-saving {
+      border-width: 2px;
+      border-color: var(--green);
+    }
+
+    .sim-pkg-saving-lbl {
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #15803d;
+      margin-bottom: 2px;
+    }
+
+    .sim-pkg-saving-val {
+      font-size: 1.35rem;
+      font-weight: 900;
+      color: #16a34a;
+    }
+
+    .sim-pkg-saving-val--muted {
+      font-size: 1rem;
+      color: #64748b;
+      font-weight: 700;
+    }
+
+    .sim-pkg-saving-suffix {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #15803d;
+    }
+
+    .sim-pkg-saving-note {
+      font-size: 0.68rem;
+      color: #6b7280;
+      margin-top: 4px;
+      line-height: 1.35;
+    }
+
+    .sim-pkg-select {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: none;
+      font-weight: 800;
+      font-size: 0.88rem;
+      cursor: pointer;
+      background: #f1f5f9;
+      color: #334155;
+      transition: all 0.2s ease;
+    }
+
+    .sim-pkg-select:hover {
+      background: linear-gradient(135deg, #2de49d 0%, #15b876 100%);
+      color: #042d14;
+    }
+
+    .sim-pkg-card--recommended .sim-pkg-select {
+      background: linear-gradient(135deg, #2de49d 0%, #15b876 100%);
+      color: #042d14;
+    }
+
+    .sim-pkg-card--selected {
+      outline: 3px solid #2a6b94;
+      outline-offset: 2px;
+    }
+
+    .sim-loading-facts {
+      min-height: 3.2em;
+      margin-top: 12px;
+    }
+
+    .sim-loading-fact {
+      font-size: 0.92rem;
+      color: var(--muted);
+      font-style: italic;
+      animation: simFadeFact 0.45s ease;
+    }
+
+    @keyframes simFadeFact {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .sim-choice-confirm {
+      margin-top: 22px;
+      padding: 20px 20px 22px;
+      border-radius: 14px;
+      background: #f8fafc;
+      border: 2px solid #2a6b94;
+      max-width: 640px;
+    }
+
+    .sim-choice-confirm.hidden {
+      display: none;
+    }
+
+    .energy-modal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(15, 23, 42, 0.58);
+      z-index: 2000;
+    }
+
+    .energy-modal.is-open {
+      display: flex;
+    }
+
+    .energy-modal-card {
+      width: min(560px, 100%);
+      background: #fff;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow-lg);
+      padding: 22px 20px;
+    }
+
+    .energy-modal-title {
+      margin-bottom: 8px;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    .energy-modal-copy {
+      font-size: 0.92rem;
+      color: var(--muted);
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .energy-modal-row {
+      margin-bottom: 12px;
+    }
+
+    .energy-modal-row label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .energy-modal-row input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 0.95rem;
+    }
+
+    /* Bill upload drop zone */
+    .bill-upload-zone {
+      border: 2px dashed #cbd5e1;
+      border-radius: 12px;
+      padding: 22px 16px;
+      text-align: center;
+      background: #f8fafc;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      margin-bottom: 16px;
+      position: relative;
+    }
+
+    .bill-upload-zone:hover,
+    .bill-upload-zone.is-drag-over {
+      border-color: var(--blue);
+      background: #eff6ff;
+    }
+
+    .bill-upload-zone.is-selected {
+      border-color: var(--green);
+      background: #f0fdf4;
+    }
+
+    .bill-upload-zone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+
+    .bill-upload-icon { font-size: 2rem; margin-bottom: 8px; }
+
+    .bill-upload-label {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+
+    .bill-upload-sub {
+      font-size: 0.78rem;
+      color: #94a3b8;
+    }
+
+    .bill-upload-filename {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #16a34a;
+      margin-top: 6px;
+    }
+
+    /* Bill guide — shows where to find the number */
+    .bill-guide {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 16px;
+      font-size: 0.82rem;
+      color: #92400e;
+      line-height: 1.55;
+    }
+
+    .bill-guide strong { color: #78350f; }
+
+    .bill-guide-items {
+      list-style: none;
+      margin-top: 6px;
+      display: grid;
+      gap: 4px;
+    }
+
+    .bill-guide-items li {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+    }
+
+    .bill-guide-items li::before {
+      content: "→";
+      font-weight: 700;
+      color: #d97706;
+      flex-shrink: 0;
+    }
+
+    /* OR divider */
+    .modal-or-divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 14px 0;
+      color: #9ca3af;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .modal-or-divider::before,
+    .modal-or-divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: #e5e7eb;
+    }
+
+    .energy-modal-error {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+      border-radius: 10px;
+      font-size: 0.84rem;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+    }
+
+    .sim-choice-confirm h4 {
+      margin-bottom: 10px;
+    }
+
+    .sim-choice-summary {
+      font-size: 0.92rem;
+      color: var(--muted);
+      line-height: 1.55;
+      margin-bottom: 14px;
+    }
+
+    .sim-choice-summary strong {
+      color: var(--ink);
+    }
+
+    .sim-choice-list {
+      list-style: none;
+      margin: 12px 0 16px;
+      padding: 12px 14px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      font-size: 0.86rem;
+    }
+
+    .sim-choice-list li {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 6px 0;
+      border-bottom: 1px solid #f1f5f9;
+      color: var(--muted);
+    }
+
+    .sim-choice-list li:last-child {
+      border-bottom: 0;
+    }
+
+    .sim-choice-list strong {
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    .sim-choice-footnote {
+      margin-top: 12px;
+      margin-bottom: 0;
+    }
+
+    .sim-sizing-banner.hidden {
+      display: none;
+    }
+
+    /* ─── ILLUSTRATED STEPS ─────────────────── */
+    .journey-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      margin-top: 28px;
+      position: relative;
+    }
+
+    .journey-step {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* connector line between steps */
+    .journey-step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 96px;
+      right: -1px;
+      width: 2px;
+      height: 40px;
+      background: linear-gradient(180deg, #bcd8f0 0%, #e2e8f0 100%);
+      z-index: 2;
+    }
+
+    @media (min-width: 769px) {
+      .journey-step:not(:last-child)::after {
+        top: 96px;
+        right: 0;
+        width: 100%;
+        height: 2px;
+        left: 50%;
+        background: linear-gradient(90deg, #bcd8f0 0%, #e2e8f0 100%);
+      }
+    }
+
+    .journey-card {
+      background: var(--card-bg);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s, box-shadow 0.2s;
+      margin: 0 6px;
+    }
+
+    .journey-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .journey-card--install {
+      border: 2px solid var(--green);
+      box-shadow: 0 0 0 3px rgba(25,195,125,0.1), var(--shadow);
+    }
+
+    .journey-illus {
+      width: 100%;
+      height: 160px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(160deg, #f0f7ff 0%, #e8f4f0 100%);
+      border-bottom: 1px solid var(--line);
+      padding: 16px;
+    }
+
+    .journey-card--install .journey-illus {
+      background: linear-gradient(160deg, #f0fdf6 0%, #e8f4ec 100%);
+    }
+
+    .journey-illus svg {
+      width: 100%;
+      height: 100%;
+      max-width: 200px;
+    }
+
+    .journey-body {
+      padding: 16px 18px 20px;
+      flex: 1;
+    }
+
+    .journey-step-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--blue);
+      margin-bottom: 8px;
+    }
+
+    .journey-step-tag .step-badge {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #e6f3ff;
+      border: 1px solid #bcd8f0;
+      color: #134b78;
+      font-weight: 900;
+      font-size: 0.72rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .journey-card--install .journey-step-tag {
+      color: #0a7a4a;
+    }
+
+    .journey-card--install .step-badge {
+      background: #ecfdf5;
+      border-color: #bbf7d0;
+      color: #166534;
+    }
+
+    .journey-h3 {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--ink);
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }
+
+    .journey-p {
+      font-size: 0.86rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .journey-time {
+      margin-top: 10px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #64748b;
+      background: #f1f5f9;
+      border-radius: 6px;
+      padding: 4px 8px;
+      display: inline-block;
+    }
+
+    .journey-card--install .journey-time {
+      background: #ecfdf5;
+      color: #166534;
+    }
+
+    .controller-callout {
+      margin-top: 20px;
+      padding: 18px 22px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #f0fdf6 0%, #e8f4f0 100%);
+      border: 2px solid var(--green);
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .controller-callout-icon {
+      font-size: 2rem;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+
+    .controller-callout h4 {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #0a7a4a;
+      margin-bottom: 4px;
+    }
+
+    .controller-callout p {
+      font-size: 0.86rem;
+      color: #166534;
+      line-height: 1.5;
+    }
+
+    /* ─── WIZARD OVERLAY ────────────────────── */
+    .wizard-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1100;
+      display: flex;
+      flex-direction: column;
+      background:
+        url(https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/noise.png),
+        radial-gradient(circle at top left, rgba(232,120,28,1) 6%, rgba(188,95,42,1) 24%, rgba(38,95,132,1) 58%, rgba(14,18,32,1) 100%);
+      background-blend-mode: multiply;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(30px);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+      overflow-y: auto;
+    }
+
+    .wizard-overlay.is-open {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    .wizard-header {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .wizard-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #fff;
+      font-weight: 900;
+      font-size: 1.1rem;
+      letter-spacing: -0.01em;
+    }
+
+    .wizard-logo-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      line-height: 1.2;
+    }
+
+    .wizard-logo-title {
+      font-size: 1.1rem;
+      font-weight: 900;
+    }
+
+    .wizard-logo-promise {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #6ee7b7;
+      letter-spacing: 0.03em;
+    }
+
+    .wizard-logo-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #F68D26 0%, #2a6b94 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+
+    .wizard-close {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 8px;
+      color: rgba(255,255,255,0.85);
+      padding: 7px 14px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .wizard-close:hover {
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+    }
+
+    .wizard-progress-bar {
+      flex-shrink: 0;
+      padding: 12px 24px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      max-width: 640px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .wizard-prog-step {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .wizard-prog-bar {
+      width: 100%;
+      height: 4px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .wizard-prog-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--green);
+      border-radius: 4px;
+      transition: width 0.4s ease;
+    }
+
+    .wizard-prog-step.is-done .wizard-prog-fill { width: 100%; }
+    .wizard-prog-step.is-active .wizard-prog-fill { width: 50%; }
+
+    .wizard-prog-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: rgba(255,255,255,0.5);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      transition: color 0.3s;
+    }
+
+    .wizard-prog-step.is-active .wizard-prog-label { color: rgba(255,255,255,0.9); }
+    .wizard-prog-step.is-done .wizard-prog-label   { color: var(--green); }
+
+    .wizard-body {
+      flex: 1;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 24px 16px 40px;
+    }
+
+    /* Individual wizard steps */
+    .wiz-step {
+      display: none;
+      width: 100%;
+      animation: wizFadeIn 0.3s ease forwards;
+    }
+
+    .wiz-step.is-active { display: block; }
+
+    /* Wide step (offers grid) */
+    .wiz-step--wide { max-width: 980px; }
+    .wiz-step--narrow { max-width: 520px; }
+
+    @keyframes wizFadeIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .wiz-card {
+      background: rgba(255,255,255,0.97);
+      border-radius: 20px;
+      padding: 36px 40px;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.3);
+    }
+
+    .wiz-card--loading {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.16);
+      text-align: center;
+      padding: 60px 40px;
+    }
+
+    .wiz-eyebrow {
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--blue);
+      margin-bottom: 6px;
+    }
+
+    .wiz-title {
+      font-size: clamp(1.4rem, 2.4vw, 1.8rem);
+      font-weight: 900;
+      color: var(--ink);
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+
+    .wiz-card--loading .wiz-title {
+      color: #fff;
+      font-size: 1.5rem;
+    }
+
+    .wiz-body-text {
+      font-size: 0.92rem;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 22px;
+    }
+
+    .wiz-field {
+      margin-bottom: 16px;
+    }
+
+    .wiz-field label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 5px;
+    }
+
+    .wiz-field input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid var(--line);
+      border-radius: 12px;
+      font-size: 1rem;
+      background: #f9fafb;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .wiz-field input:focus {
+      outline: none;
+      border-color: var(--blue);
+      background: #fff;
+      box-shadow: 0 0 0 4px rgba(42,107,148,0.1);
+    }
+
+    .wiz-field input.wiz-code-input {
+      text-align: center;
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: 0.5rem;
+    }
+
+    .wiz-hint {
+      background: #ecfdf5;
+      border: 1px solid #bbf7d0;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 0.85rem;
+      color: #166534;
+      margin-bottom: 16px;
+    }
+
+    .wiz-hint.is-error {
+      background: #fef2f2;
+      border-color: #fecaca;
+      color: #991b1b;
+    }
+
+    .wiz-btn-row {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .wiz-btn-primary {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #F68D26 0%, #2a6b94 100%);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: filter 0.2s, transform 0.2s;
+    }
+
+    .wiz-btn-primary:hover:not(:disabled) {
+      filter: brightness(1.07);
+      transform: translateY(-2px);
+    }
+
+    .wiz-btn-primary:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .wiz-btn-secondary {
+      background: transparent;
+      border: none;
+      color: #6b7280;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: underline;
+      padding: 4px;
+      text-align: center;
+    }
+
+    .wiz-reassure {
+      margin-top: 16px;
+      font-size: 0.78rem;
+      color: #9ca3af;
+      text-align: center;
+    }
+
+    /* Loading step */
+    .wiz-loading-icon {
+      font-size: 3rem;
+      margin-bottom: 16px;
+      animation: wiz-pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes wiz-pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.6; transform: scale(0.92); }
+    }
+
+    .wiz-progress-track {
+      width: 100%;
+      max-width: 340px;
+      height: 6px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 6px;
+      margin: 16px auto 0;
+      overflow: hidden;
+    }
+
+    .wiz-progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--green);
+      border-radius: 6px;
+      transition: width 0.15s linear;
+    }
+
+    .wiz-loading-fact {
+      font-size: 0.92rem;
+      color: rgba(255,255,255,0.75);
+      font-style: italic;
+      margin-top: 16px;
+      min-height: 2.4em;
+      animation: wizFadeIn 0.4s ease;
+    }
+
+    /* Offers step */
+    .wiz-offers-banner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 12px;
+      padding: 14px 20px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .wiz-offers-banner-label {
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: rgba(255,255,255,0.65);
+      margin-bottom: 2px;
+    }
+
+    .wiz-offers-banner-val {
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: #fff;
+      line-height: 1;
+    }
+
+    .wiz-offers-banner-sub {
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.7);
+    }
+
+    .wiz-offers-intro {
+      font-size: 0.88rem;
+      color: rgba(255,255,255,0.8);
+      margin-bottom: 16px;
+      line-height: 1.55;
+    }
+
+    .wiz-offers-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .wiz-pkg-card {
+      position: relative;
+      background: rgba(255,255,255,0.97);
+      border-radius: 16px;
+      padding: 22px 18px 18px;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+    }
+
+    .wiz-pkg-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+
+    .wiz-pkg-card--recommended {
+      border: 2px solid var(--green);
+      box-shadow: 0 0 0 4px rgba(25,195,125,0.15), var(--shadow-lg);
+      transform: scale(1.02);
+      z-index: 1;
+    }
+
+    .wiz-pkg-card--selected {
+      outline: 3px solid var(--blue);
+      outline-offset: 2px;
+    }
+
+    .wiz-pkg-ribbon {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, #2de49d 0%, #15b876 100%);
+      color: #042d14;
+      padding: 4px 14px;
+      border-radius: 999px;
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(25,195,125,0.35);
+    }
+
+    .wiz-pkg-badge {
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+      display: inline-block;
+    }
+
+    .wiz-pkg-badge--best { background: linear-gradient(135deg, #f68d26 0%, #2a6b94 100%); color: #fff; }
+    .wiz-pkg-badge--alt  { background: #e5e7eb; color: #374151; }
+
+    .wiz-pkg-install {
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--ink);
+      line-height: 1;
+      margin-bottom: 2px;
+    }
+
+    .wiz-pkg-install-label {
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .wiz-pkg-monthly {
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    }
+
+    .wiz-pkg-card--recommended .wiz-pkg-monthly {
+      background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+    }
+
+    .wiz-pkg-monthly-amt {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #0e6b40;
+      line-height: 1.1;
+    }
+
+    .wiz-pkg-monthly-lbl {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #166534;
+    }
+
+    .wiz-pkg-attrs {
+      list-style: none;
+      text-align: left;
+      margin-bottom: 10px;
+      flex: 1;
+    }
+
+    .wiz-pkg-attrs li {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 8px 0;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    .wiz-pkg-attrs li strong { color: var(--ink); font-weight: 700; }
+
+    .wiz-pkg-saving {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 8px;
+      padding: 8px 10px;
+      margin-bottom: 10px;
+      text-align: left;
+    }
+
+    .wiz-pkg-card--recommended .wiz-pkg-saving { border-color: var(--green); border-width: 2px; }
+
+    .wiz-pkg-saving-lbl { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #15803d; margin-bottom: 2px; }
+    .wiz-pkg-saving-val { font-size: 1.25rem; font-weight: 900; color: #16a34a; }
+    .wiz-pkg-saving-note { font-size: 0.65rem; color: #6b7280; margin-top: 2px; }
+
+    .wiz-pkg-select {
+      width: 100%;
+      padding: 11px;
+      border-radius: 10px;
+      border: none;
+      font-weight: 800;
+      font-size: 0.84rem;
+      cursor: pointer;
+      background: #f1f5f9;
+      color: #334155;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .wiz-pkg-select:hover,
+    .wiz-pkg-card--recommended .wiz-pkg-select {
+      background: linear-gradient(135deg, #2de49d 0%, #15b876 100%);
+      color: #042d14;
+    }
+
+    .wiz-error-banner {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 0.88rem;
+      margin-bottom: 16px;
+    }
+
+    .wiz-constraint-note {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.65);
+      margin-bottom: 12px;
+      padding: 8px 12px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 8px;
+    }
+
+    /* Confirm step */
+    /* ─── CONFIRM PANEL — conversion-optimised ───────── */
+    .wiz-confirm-card {
+      background: rgba(255,255,255,0.97);
+      border-radius: 20px;
+      padding: 36px 40px 32px;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.3);
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    /* Before/after savings hero */
+    /* Savings hero — estimate-first, certainty-focused */
+    .wiz-savings-hero {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+      border-radius: 16px;
+      padding: 26px 28px 22px;
+      margin-bottom: 22px;
+      text-align: center;
+    }
+
+    .wiz-savings-est-label {
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 8px;
+    }
+
+    .wiz-savings-est-amt {
+      font-size: clamp(2.6rem, 5vw, 3.6rem);
+      font-weight: 900;
+      color: var(--green);
+      line-height: 1;
+      letter-spacing: -0.03em;
+      margin-bottom: 6px;
+    }
+
+    .wiz-savings-est-sub {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 4px;
+    }
+
+    .wiz-savings-est-qualifier {
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.35);
+      font-style: italic;
+      margin-bottom: 16px;
+    }
+
+    /* Certainty bar inside savings hero */
+    .wiz-certainty-bar {
+      background: rgba(25,195,125,0.14);
+      border: 1px solid rgba(25,195,125,0.3);
+      border-radius: 10px;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .wiz-certainty-icon {
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .wiz-certainty-text {
+      font-size: 0.88rem;
+      font-weight: 800;
+      color: #86efac;
+      text-align: left;
+    }
+
+    .wiz-certainty-text span {
+      font-size: 1rem;
+      color: var(--green);
+    }
+
+    .wiz-certainty-sub {
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.45);
+      font-weight: 500;
+      width: 100%;
+      text-align: center;
+      margin-top: 4px;
+    }
+
+    /* Plan recap pill */
+    .wiz-plan-recap {
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 14px 18px;
+      margin-bottom: 18px;
+    }
+
+    .wiz-plan-recap-label {
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--blue);
+      margin-bottom: 10px;
+    }
+
+    .wiz-plan-recap-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 16px;
+    }
+
+    .wiz-plan-recap-item {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .wiz-plan-recap-item-label {
+      font-size: 0.7rem;
+      color: #94a3b8;
+      font-weight: 600;
+    }
+
+    .wiz-plan-recap-item-val {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    /* Urgency strip */
+    .wiz-urgency-strip {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin-bottom: 20px;
+      font-size: 0.85rem;
+      color: #92400e;
+      font-weight: 600;
+    }
+
+    .wiz-urgency-icon { font-size: 1rem; flex-shrink: 0; }
+
+    .wiz-urgency-strip strong { color: #78350f; }
+
+    /* Primary CTA block */
+    .wiz-confirm-cta-block {
+      margin-bottom: 16px;
+    }
+
+    .wiz-confirm-cta-block .wiz-btn-primary {
+      font-size: 1.1rem;
+      padding: 18px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #2de49d 0%, #15b876 100%);
+      color: #042d14;
+      box-shadow: 0 10px 30px rgba(25,195,125,0.45);
+      letter-spacing: -0.01em;
+    }
+
+    .wiz-confirm-cta-block .wiz-btn-primary:hover:not(:disabled) {
+      box-shadow: 0 14px 40px rgba(25,195,125,0.55);
+    }
+
+    .wiz-confirm-cta-sub {
+      text-align: center;
+      font-size: 0.8rem;
+      color: #64748b;
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+
+    /* Trust strip */
+    .wiz-trust-strip {
+      list-style: none;
+      display: grid;
+      gap: 8px;
+      margin-bottom: 18px;
+      padding: 16px 18px;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 12px;
+    }
+
+    .wiz-trust-strip li {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      font-size: 0.85rem;
+      color: #166534;
+      line-height: 1.4;
+    }
+
+    .wiz-trust-icon {
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--green);
+      color: #fff;
+      font-size: 0.62rem;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+    }
+
+    .wiz-trust-strip strong { color: #14532d; }
+
+    /* Social proof bar */
+    .wiz-social-proof {
+      text-align: center;
+      font-size: 0.82rem;
+      color: #6b7280;
+      margin-bottom: 16px;
+      padding: 10px;
+      border-top: 1px solid #f1f5f9;
+    }
+
+    .wiz-social-proof strong { color: var(--ink); }
+
+    /* Escape link */
+    .wiz-confirm-escape {
+      text-align: center;
+    }
+
+    .wiz-confirm-escape button {
+      background: none;
+      border: none;
+      font-size: 0.82rem;
+      color: #9ca3af;
+      cursor: pointer;
+      text-decoration: underline;
+      padding: 4px;
+    }
+
+    .wiz-confirm-escape button:hover { color: #6b7280; }
+
+    /* Next steps (collapsed under CTA) */
+    .wiz-next-steps-toggle {
+      font-size: 0.82rem;
+      color: #94a3b8;
+      text-align: center;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 4px;
+      margin: 0 auto 10px;
+      display: block;
+      text-decoration: underline;
+    }
+
+    .wiz-next-steps {
+      list-style: none;
+      margin: 0 0 16px;
+      display: none;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .wiz-next-steps.is-open {
+      display: grid;
+    }
+
+    .wiz-next-steps li {
+      display: flex;
+      gap: 12px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      align-items: flex-start;
+    }
+
+    .wiz-next-step-num {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #F68D26 0%, #2a6b94 100%);
+      color: #fff;
+      font-size: 0.68rem;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .wiz-chosen-summary { display: none; }
+    .wiz-chosen-list { display: none; }
+
+    /* CTA section (replaces the embedded assessment block on the landing page) */
+    .glass--calm {
+      background: rgba(25,195,125,0.06);
+      border-color: rgba(25,195,125,0.18);
+    }
+
+    .cta-callout {
+      color: rgba(255,255,255,0.7);
+      font-size: 0.82rem;
+      font-weight: 600;
+      font-style: italic;
+      margin-bottom: 12px;
+      letter-spacing: 0.01em;
+    }
+
+    .landing-cta-block {
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px 0 8px;
+    }
+
+    .landing-cta-block .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px 40px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #2de49d 0%, #15b876 100%);
+      color: #042d14;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 10px 30px rgba(25,195,125,0.4), 0 0 60px rgba(25,195,125,0.15);
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+      position: relative;
+    }
+
+    .landing-cta-block .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 36px rgba(25,195,125,0.5), 0 0 80px rgba(25,195,125,0.2);
+    }
+
+    .landing-cta-notes {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 18px;
+      margin-top: 14px;
+    }
+
+    .landing-cta-note {
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.75);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* ─── RESPONSIVE ─────────────────────────── */
+    @media (max-width: 1024px) {
+      .hero-split { grid-template-columns: 1fr; }
+      .hero-split::after { display: none; }
+      .hero-pane--chaos { border-bottom: 1px solid rgba(255,255,255,0.14); }
+      .hero-pane { min-height: 240px; }
+      .outcome-stack { grid-template-columns: 1fr; }
+      .steps-grid { grid-template-columns: repeat(2, 1fr); }
+      .compare-grid { grid-template-columns: 1fr; }
+      .econ-grid  { grid-template-columns: 1fr; }
+      .calc-bridge-grid { grid-template-columns: 1fr; }
+      .journey-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .journey-step::after { display: none !important; }
+      .timeline { grid-template-columns: repeat(2, 1fr); }
+      .timeline-step::after { display: none; }
+      .trust-strip { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 720px) {
+      html, body { overflow: auto; height: auto; }
+      .page {
+        height: auto;
+        overflow-y: auto;
+        scroll-snap-type: none;
+      }
+      .section {
+        scroll-snap-align: unset;
+        min-height: auto;
+        padding: 48px 16px 40px;
+      }
+      .section-dots { display: none; }
+      .scroll-hint { display: none; }
+      .glass { padding: 20px; }
+      .steps-grid { grid-template-columns: 1fr; }
+      .reassure-row { grid-template-columns: 1fr; }
+      .cta-grid { grid-template-columns: 1fr; }
+      .btn { width: 100%; }
+      .sim-offers-grid { grid-template-columns: 1fr; }
+      .journey-grid { grid-template-columns: 1fr; }
+      .controller-callout { flex-direction: column; }
+      .timeline { grid-template-columns: 1fr; }
+      .timeline-step::after { display: none; }
+      .trust-strip { grid-template-columns: 1fr; }
+      .hero-split { grid-template-columns: 1fr; }
+      .hero-split::after { display: none; }
+      .hero-pane { min-height: auto; padding: 24px 20px 20px; }
+      .hero-pane--chaos { border-bottom: 1px solid rgba(255,255,255,0.14); }
+      .mood-wave { height: 36px; }
+      .outcome-stack { grid-template-columns: 1fr; }
+      .compare-visual { height: 100px; }
+      .news-ticker { padding: 8px 0; }
+      .ticker-item { font-size: 0.68rem; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+
+    <!-- ── HERO ──────────────────────────────────────── -->
+    <section class="hero section" id="the-problem" data-section="0">
+      <div class="container">
+
+        <!-- Split-screen: two worlds -->
+        <div class="hero-split">
+          <div class="hero-pane hero-pane--chaos">
+            <span class="pane-eyebrow">Everyone else right now</span>
+            <p class="pane-title">That feeling when you're scared to open your energy bill.</p>
+            <ul class="pane-stats">
+              <li class="pane-stat"><span class="pane-stat-icon">▲</span> Bills climbing. No one is apologising.</li>
+              <li class="pane-stat"><span class="pane-stat-icon">▲</span> Wholesale prices: definitely not your call.</li>
+              <li class="pane-stat"><span class="pane-stat-icon">?</span> Next quarter: a total guessing game.</li>
+            </ul>
+            <div class="mood-wave is-chaos"></div>
+          </div>
+          <div class="hero-pane hero-pane--calm">
+            <span class="pane-eyebrow">You, with Reposit</span>
+            <p class="pane-title">That feeling when you genuinely don't care what the market did today.</p>
+            <ul class="pane-stats">
+              <li class="pane-stat"><span class="pane-stat-icon">✓</span> One fixed number. Boring. Beautiful.</li>
+              <li class="pane-stat"><span class="pane-stat-icon">✓</span> Market spikes? Not your problem.</li>
+              <li class="pane-stat"><span class="pane-stat-icon">✓</span> Budget with certainty, not crossed fingers.</li>
+            </ul>
+            <div class="mood-wave is-calm"></div>
+          </div>
+        </div>
+
+        <!-- Bridge: headline + CTA spanning full width -->
+        <div class="hero-bridge">
+          <h1>You can't control the market.<br>You can control your bill.</h1>
+          <p class="brand-promise">You and Reposit: Better together</p>
+          <p class="lead">
+            Tariffs, fuel prices, wholesale markets, the weather — none of it asks your permission
+            before showing up on your electricity bill. But your battery is already on the wall.
+            It just needs a promotion. Reposit connects it to the market, trades it around the clock,
+            and replaces your variable bill with one fixed monthly fee — set below what you pay today.
+          </p>
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="openWizard()">Get My Fixed Price</button>
+          </div>
+          <p class="hero-note">
+            60 seconds to connect. Personalised offer in ~15 minutes. No commitment until you choose.
+          </p>
+        </div>
+
+        <!-- Outcome tiles: horizontal row -->
+        <div class="outcome-stack" aria-label="Key outcomes">
+          <div class="outcome-tile">
+            <p class="outcome-tile-label">Variable bills</p>
+            <p class="outcome-tile-value">Gone</p>
+            <p class="outcome-tile-sub">Retailer charges, supply fees — all replaced.</p>
+          </div>
+          <div class="outcome-tile">
+            <p class="outcome-tile-label">What you pay instead</p>
+            <p class="outcome-tile-value">One fixed fee</p>
+            <p class="outcome-tile-sub">Below your current average. Every month.</p>
+          </div>
+          <div class="outcome-tile">
+            <p class="outcome-tile-label">Time to your offer</p>
+            <p class="outcome-tile-value">~15 min</p>
+            <p class="outcome-tile-sub">From consent to inbox. Genuinely.</p>
+          </div>
+        </div>
+
+        <!-- Social proof -->
+        <div class="social-proof">
+          <span class="social-proof-stars">★★★★★</span>
+          <span class="social-proof-text">Trusted by 2,000+ Australian households</span>
+        </div>
+
+      </div>
+      <div class="scroll-hint" onclick="scrollToSection(1)" aria-hidden="true">
+        <span>See how we stabilise cost</span>
+        <span class="scroll-hint-arrow">↓</span>
+      </div>
+    </section>
+
+    <!-- ── WHAT YOU GET ──────────────────────────────── -->
+    <section class="section" id="what-you-get" data-section="1">
+      <div class="container">
+        <div class="glass">
+          <h2>Two ways to live. Pick one.</h2>
+          <p class="lead">
+            You already bought a battery. Good instinct. But without market trading, you are still on
+            the same ride as everyone else — bills that move for reasons you cannot predict, budgets you
+            cannot trust, and a vague hope that next quarter will be kinder. It usually is not.
+          </p>
+
+          <div class="compare-grid">
+            <article class="card compare-card compare-card--chaos">
+              <div class="compare-visual" aria-hidden="true">
+                <span class="compare-visual-label">Bill roulette</span>
+                <div class="compare-visual-line is-chaos"></div>
+              </div>
+              <h3>Playing the market without meaning to</h3>
+              <ul>
+                <li>Every quarter is a spin of the wheel — you just find out when the bill arrives</li>
+                <li>Supply charges, wholesale spikes, seasonal surges — the house always wins</li>
+                <li>Winter triples the stakes. Nobody tells you until it is too late.</li>
+                <li>Budgeting? That is just gambling with a spreadsheet.</li>
+              </ul>
+            </article>
+
+            <article class="card compare-card compare-card--calm is-winner">
+              <div class="compare-visual" aria-hidden="true">
+                <span class="compare-visual-label">No more gambling</span>
+                <div class="compare-visual-line is-calm"></div>
+              </div>
+              <span class="winner-badge">With Reposit</span>
+              <h3>One number. Every month. The game is over.</h3>
+              <ul>
+                <li>One fixed monthly fee — set below your current average spend</li>
+                <li>Better together — we trade your battery around the clock and share the value back</li>
+                <li>Works through winter, cloudy weeks, and wholesale chaos alike</li>
+                <li>You know what you pay. Always. No more crossed fingers.</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </div>
+      <div class="scroll-hint" onclick="scrollToSection(2)" aria-hidden="true">
+        <span>See the numbers</span>
+        <span class="scroll-hint-arrow">↓</span>
+      </div>
+    </section>
+
+    <!-- ── THE NUMBERS ──────────────────────────────── -->
+    <section class="section" id="the-numbers" data-section="2">
+      <div class="container">
+        <div class="glass">
+          <p class="eyebrow">The pattern most bills follow</p>
+          <h2>Fine for months — then the bill you did not budget for.</h2>
+          <p class="lead">
+            That is not bad luck. It is what variable pricing looks like over a year: calmer stretches, then a run where costs jump — demand, weather, wholesale, take your pick. The orange bars are those months. The green line is Reposit: the same fee every month, so the shape of your year stops surprising you.
+          </p>
+
+          <div class="econ-grid">
+
+            <!-- Bar chart -->
+            <div class="chart-wrap">
+              <p class="chart-title">Indicative monthly bills — variable retail (bars) vs your fixed Reposit fee (line)</p>
+              <div class="bar-chart">
+                <!-- Reposit flat-fee dashed line at ~$149, shown at 48% from bottom (149/310 = 48%) -->
+                <div class="reposit-line">
+                  <span class="reposit-line-label">Reposit $149/mo</span>
+                </div>
+                <!-- Bars: height % = (value / 310) * 100 -->
+                <div class="bar-col">
+                  <div class="bar is-normal" style="height:35%"><span class="bar-val">$109</span></div>
+                  <span class="bar-label">Jan</span>
+                </div>
+                <div class="bar-col">
+                  <div class="bar is-normal" style="height:39%"><span class="bar-val">$120</span></div>
+                  <span class="bar-label">Feb</span>
+                </div>
+                <div class="bar-col">
+                  <div class="bar is-normal" style="height:42%"><span class="bar-val">$131</span></div>
+                  <span class="bar-label">Mar</span>
+                </div>
+                <div class="bar-col">
+                  <div class="bar is-normal" style="height:50%"><span class="bar-val">$155</span></div>
+                  <span class="bar-label">Apr</span>
+                </div>
+                <div class="bar-col">
+                  <div class="bar is-normal" style="height:61%"><span class="bar-val">$190</span></div>
+                  <span class="bar-label">May</span>
+                </div>
+                <div class="bar-col">
+                  <div class="bar is-winter" style="height:90%"><span class="bar-val">$280</span></div>
+                  <span class="bar-label">Jun</span>
+                </div>
+                <div class="bar-col" style="position:relative;">
+                  <span class="stress-label">Market stress</span>
+                  <div class="bar is-winter" style="height:100%"><span class="bar-val">$310</span></div>
+                  <span class="bar-label">Jul</span>
+                </div>
+                <div class="bar-col">
+                  <div class="bar is-winter" style="height:92%"><span class="bar-val">$285</span></div>
+                  <span class="bar-label">Aug</span>
+                </div>
+                <div class="bar-col">
+                  <div class="bar is-normal" style="height:55%"><span class="bar-val">$170</span></div>
+                  <span class="bar-label">Sep</span>
+                </div>
+                <div class="bar-col">
+                  <div class="bar is-normal" style="height:47%"><span class="bar-val">$145</span></div>
+                  <span class="bar-label">Oct</span>
+                </div>
+                <div class="bar-col">
+                  <div class="bar is-normal" style="height:40%"><span class="bar-val">$125</span></div>
+                  <span class="bar-label">Nov</span>
+                </div>
+                <div class="bar-col">
+                  <div class="bar is-normal" style="height:37%"><span class="bar-val">$114</span></div>
+                  <span class="bar-label">Dec</span>
+                </div>
+              </div>
+              <div class="chart-legend">
+                <span><span class="legend-dot" style="background:#2a6b94;"></span>Typical bill</span>
+                <span><span class="legend-dot" style="background:#f97316;"></span>Winter peak</span>
+                <span><span class="legend-dot" style="background:none; border:2px dashed #19c37d; border-radius:0;"></span>Reposit fee</span>
+              </div>
+            </div>
+
+            <!-- Summary tiles -->
+            <div class="econ-summary">
+              <div class="econ-tile tile-current">
+                <p class="econ-tile-label">Current Annual Cost</p>
+                <p class="econ-tile-value">~$2,134</p>
+                <p class="econ-tile-sub">Bills from $109 to $310 in a single year — the gap between calm months and peak months is what you feel at home.</p>
+              </div>
+              <div class="econ-tile tile-reposit">
+                <p class="econ-tile-label">With Reposit</p>
+                <p class="econ-tile-value">~$1,788</p>
+                <p class="econ-tile-sub">$149 flat every month — same fee when headlines are calm or chaotic. Supply charges included.</p>
+              </div>
+              <div class="econ-tile tile-saving">
+                <p class="econ-tile-label">Indicative Annual Saving</p>
+                <p class="econ-tile-value">~$346</p>
+                <p class="econ-tile-sub">Peace of mind in the same number: your household cost is not tied to the next wholesale spike.</p>
+              </div>
+            </div>
+
+          </div>
+          <p class="econ-disclaimer">* Indicative figures only. Based on a typical household with an existing battery system in south-east Australia. Markets and fuel-linked costs change; your personalised offer is calculated from your actual usage data and may differ.</p>
+        </div>
+      </div>
+      <div class="scroll-hint" onclick="scrollToSection(3)" aria-hidden="true">
+        <span>How it works</span>
+        <span class="scroll-hint-arrow">↓</span>
+      </div>
+    </section>
+
+    <!-- ── HOW IT WORKS ──────────────────────────────── -->
+    <section class="section" id="how-it-works" data-section="3">
+      <div class="container">
+        <div class="glass glass--calm">
+          <span class="trust-label">Next-gen VPP</span>
+          <p class="eyebrow">Fewer steps than making a coffee</p>
+          <h2>Here is the entire process.</h2>
+          <p class="lead">
+            You share your data. We do the thinking. You pick a plan. We handle the rest.
+          </p>
+
+          <div class="timeline">
+            <div class="timeline-step">
+              <div class="timeline-badge">1</div>
+              <p class="timeline-title">Connect your battery</p>
+              <p class="timeline-desc">Enter your battery app email. 60 seconds. Barely an inconvenience.</p>
+            </div>
+            <div class="timeline-step">
+              <div class="timeline-badge">2</div>
+              <p class="timeline-title">We do the maths</p>
+              <p class="timeline-desc">12 months of real usage, analysed automatically. You do nothing.</p>
+            </div>
+            <div class="timeline-step">
+              <div class="timeline-badge">3</div>
+              <p class="timeline-title">Pick your plan</p>
+              <p class="timeline-desc">Three options in your inbox within ~15 minutes. Choose the one you like.</p>
+            </div>
+            <div class="timeline-step">
+              <div class="timeline-badge">4</div>
+              <p class="timeline-title">We install, you relax</p>
+              <p class="timeline-desc">Small controller fitted to your battery. You do nothing. Ideally.</p>
+            </div>
+          </div>
+
+          <p class="timeline-reassurance">Your battery stays put. Your panels stay put. All paperwork handled. You can go back to ignoring your energy.</p>
+
+          <!-- Trust VPP strip -->
+          <div class="trust-strip">
+            <div class="trust-chip">
+              <strong>Better together</strong>
+              <span>We trade your battery in the market 24/7 and share the value back — so you end up better off with us than on your own.</span>
+            </div>
+            <div class="trust-chip">
+              <strong>Transparent by design.</strong>
+              <span>You chose your plan, you know your fee, you see what is happening. No surprises.</span>
+            </div>
+            <div class="trust-chip">
+              <strong>Your battery. Our optimisation.</strong>
+              <span>Your hardware stays exactly as it is. We add the intelligence that makes it pay for itself.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="scroll-hint" onclick="scrollToSection(4)" aria-hidden="true">
+        <span>Get my offer</span>
+        <span class="scroll-hint-arrow">↓</span>
+      </div>
+    </section>
+
+    <!-- ── GET STARTED — clean CTA block only ────────── -->
+    <section class="section" id="get-started" data-section="4">
+      <div class="container">
+        <div class="glass glass--calm">
+          <div class="landing-cta-block">
+            <p class="cta-callout">Better together. That is the Reposit promise.</p>
+            <p class="eyebrow">Free assessment — no commitment, no awkward phone calls</p>
+            <h2>Your personalised offer. In about 15 minutes.</h2>
+            <p class="lead" style="margin-bottom:28px;">
+              Connect your battery data. We crunch 12 months of your real usage, compare it against what the
+              volatile market would cost, and show you a fixed fee set below what you pay today. If the numbers
+              make sense, pick a plan. If not, no worries — you spent 60 seconds.
+            </p>
+            <button class="btn-primary" onclick="openWizard()">See What I'd Pay →</button>
+            <div class="landing-cta-notes">
+              <span class="landing-cta-note">✓ Free — zero commitment until you choose</span>
+              <span class="landing-cta-note">✓ Offer in your inbox within ~15 minutes</span>
+              <span class="landing-cta-note">✓ We handle install, paperwork, and everything boring</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Section progress dots -->
+  <nav class="section-dots" id="sectionDots" aria-label="Page sections">
+    <button class="section-dot is-active" data-target="0" aria-label="Why now">
+      <span class="section-dot-label">Why now</span>
+    </button>
+    <button class="section-dot" data-target="1" aria-label="What changes">
+      <span class="section-dot-label">What changes</span>
+    </button>
+    <button class="section-dot" data-target="2" aria-label="The numbers">
+      <span class="section-dot-label">The numbers</span>
+    </button>
+    <button class="section-dot" data-target="3" aria-label="How it works">
+      <span class="section-dot-label">How it works</span>
+    </button>
+    <button class="section-dot" data-target="4" aria-label="Get my offer">
+      <span class="section-dot-label">Get my offer</span>
+    </button>
+  </nav>
+
+  <!-- ════════════════════════════════════════════════
+       FULL-SCREEN ASSESSMENT WIZARD
+       Opens on top of the landing page when CTA clicked
+       ════════════════════════════════════════════════ -->
+  <div id="wizardOverlay" class="wizard-overlay" role="dialog" aria-modal="true" aria-label="Get your fixed price">
+
+    <!-- Wizard header -->
+    <header class="wizard-header">
+      <div class="wizard-logo">
+        <div class="wizard-logo-mark">⚡</div>
+        <div class="wizard-logo-stack">
+          <span class="wizard-logo-title">Reposit</span>
+          <span class="wizard-logo-promise">You and Reposit: Better together</span>
+        </div>
+      </div>
+      <button class="wizard-close" onclick="closeWizard()">← Back to overview</button>
+    </header>
+
+    <!-- Step progress bars -->
+    <div class="wizard-progress-bar" role="list" aria-label="Assessment steps">
+      <div class="wizard-prog-step is-active" id="wizProg1" role="listitem">
+        <div class="wizard-prog-bar"><div class="wizard-prog-fill" id="wizProgFill1"></div></div>
+        <span class="wizard-prog-label">Connect</span>
+      </div>
+      <div class="wizard-prog-step" id="wizProg2" role="listitem">
+        <div class="wizard-prog-bar"><div class="wizard-prog-fill" id="wizProgFill2"></div></div>
+        <span class="wizard-prog-label">Verify</span>
+      </div>
+      <div class="wizard-prog-step" id="wizProg3" role="listitem">
+        <div class="wizard-prog-bar"><div class="wizard-prog-fill" id="wizProgFill3"></div></div>
+        <span class="wizard-prog-label">Your offers</span>
+      </div>
+      <div class="wizard-prog-step" id="wizProg4" role="listitem">
+        <div class="wizard-prog-bar"><div class="wizard-prog-fill" id="wizProgFill4"></div></div>
+        <span class="wizard-prog-label">Confirm</span>
+      </div>
+    </div>
+
+    <div class="wizard-body">
+
+      <!-- ── STEP 1: Email ─────────────────────────── -->
+      <div class="wiz-step wiz-step--narrow is-active" id="wizStep1">
+        <div class="wiz-card">
+          <p class="wiz-eyebrow">Step 1 of 4 — Connect your battery</p>
+          <h2 class="wiz-title">Let's start with your battery app email</h2>
+          <p class="wiz-body-text">Use the same email you use for Solax or Sigenergy. We'll send a one-time code — once you enter it, we can read your usage securely and build your fixed-price offer. About a minute.</p>
+          <div id="wizEmailError" class="wiz-hint is-error" style="display:none;"></div>
+          <div class="wiz-field">
+            <label for="wizEmail">Battery app email</label>
+            <input type="email" id="wizEmail" placeholder="you@example.com" autocomplete="email">
+          </div>
+          <div class="wiz-btn-row">
+            <button class="wiz-btn-primary" id="wizSendCodeBtn">Email me the code</button>
+          </div>
+          <p class="wiz-reassure">🔒 Right now we only read your data to size your offer. When you go live, we trade your battery and share the value back — that is how Better together becomes a fixed fee you can plan around.</p>
+        </div>
+      </div>
+
+      <!-- ── STEP 2: Verify code ───────────────────── -->
+      <div class="wiz-step wiz-step--narrow" id="wizStep2">
+        <div class="wiz-card">
+          <p class="wiz-eyebrow">Step 2 of 4 — Quick verify</p>
+          <h2 class="wiz-title">Enter the code from your inbox</h2>
+          <p class="wiz-body-text" id="wizCodeSentNote">We have sent a 6-digit code to your email. Pop it in below to confirm consent — then we build your personalised plans.</p>
+          <div id="wizCodeError" class="wiz-hint is-error" style="display:none;"></div>
+          <div id="wizCodeSuccess" class="wiz-hint" style="display:none;">Code verified. Reading your energy usage…</div>
+          <div class="wiz-field">
+            <label for="wizCode">6-digit code</label>
+            <input type="text" id="wizCode" class="wiz-code-input" inputmode="numeric" maxlength="6" placeholder="· · · · · ·" autocomplete="one-time-code">
+          </div>
+          <div class="wiz-btn-row">
+            <button class="wiz-btn-primary" id="wizVerifyBtn">Verify and show my offers</button>
+            <button class="wiz-btn-secondary" id="wizResendBtn">Resend code or change email</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── STEP 3: Loading ───────────────────────── -->
+      <div class="wiz-step wiz-step--narrow" id="wizStep3">
+        <div class="wiz-card wiz-card--loading">
+          <div class="wiz-loading-icon" aria-hidden="true">⚡</div>
+          <h2 class="wiz-title">Crunching your numbers — almost there…</h2>
+          <div class="wiz-progress-track">
+            <div class="wiz-progress-fill" id="wizProgressFill"></div>
+          </div>
+          <p class="wiz-loading-fact" id="wizLoadingFact" aria-live="polite"></p>
+        </div>
+      </div>
+
+      <!-- ── STEP 4: Offers ────────────────────────── -->
+      <div class="wiz-step wiz-step--wide" id="wizStep4">
+        <div style="width:100%;">
+          <div id="wizOffersBanner" class="wiz-offers-banner" style="display:none;"></div>
+          <p class="wiz-offers-intro" id="wizOffersIntro"></p>
+          <div id="wizOffersErrorBanner" class="wiz-error-banner" style="display:none;"></div>
+          <p class="wiz-constraint-note" id="wizConstraintNote" style="display:none;"></p>
+          <div class="wiz-offers-grid" id="wizOffersGrid"></div>
+
+          <!-- Confirm panel — shown after a card is selected -->
+          <div id="wizConfirmPanel" style="display:none; margin-top:24px;">
+            <div class="wiz-confirm-card">
+
+              <!-- Eyebrow -->
+              <p class="wiz-eyebrow" style="margin-bottom:4px;">You and Reposit: Better together — your plan is ready</p>
+
+              <!-- Savings estimate hero -->
+              <div class="wiz-savings-hero" id="wizSavingsHero">
+                <div class="wiz-savings-est-label">Estimated annual saving</div>
+                <div class="wiz-savings-est-amt" id="wizSavingsAmt">—</div>
+                <div class="wiz-savings-est-sub">per year, based on your usage profile</div>
+                <div class="wiz-savings-est-qualifier">Best estimate — your actual saving depends on usage and market conditions</div>
+                <div class="wiz-certainty-bar">
+                  <span class="wiz-certainty-icon">✓</span>
+                  <span class="wiz-certainty-text">One fixed fee of <span id="wizCertaintyFee">—</span>/mo — same number every month while we trade your battery for you</span>
+                  <span class="wiz-certainty-sub">Set below your typical spend. We optimise in the market; you get predictability. That is Better together.</span>
+                </div>
+              </div>
+
+              <!-- Plan recap -->
+              <div class="wiz-plan-recap" id="wizPlanRecap">
+                <div class="wiz-plan-recap-label">Your selected plan</div>
+                <div class="wiz-plan-recap-grid" id="wizPlanRecapGrid"></div>
+              </div>
+
+              <!-- Urgency -->
+              <div class="wiz-urgency-strip">
+                <span class="wiz-urgency-icon">⏱</span>
+                <span>This offer is personalised to your home profile and <strong>held for 24 hours</strong>. After that we'd need to reassess.</span>
+              </div>
+
+              <!-- Trust signals -->
+              <ul class="wiz-trust-strip">
+                <li>
+                  <span class="wiz-trust-icon">✓</span>
+                  <span><strong>No payment today.</strong> We contact you within one business day to confirm details and book your installation.</span>
+                </li>
+                <li>
+                  <span class="wiz-trust-icon">✓</span>
+                  <span><strong>30-day satisfaction guarantee.</strong> Cancel before installation at no cost — no questions asked.</span>
+                </li>
+                <li>
+                  <span class="wiz-trust-icon">✓</span>
+                  <span><strong>Nothing changes on your existing setup.</strong> Your battery, inverter and solar panels stay exactly as they are.</span>
+                </li>
+              </ul>
+
+              <!-- Primary CTA -->
+              <div class="wiz-confirm-cta-block">
+                <button class="wiz-btn-primary" id="wizCompleteBtn" style="width:100%;">
+                  Confirm — lock in my fixed fee →
+                </button>
+                <p class="wiz-confirm-cta-sub">No payment today &nbsp;·&nbsp; We call within 1 business day &nbsp;·&nbsp; Cancel free before install</p>
+              </div>
+
+              <!-- Social proof -->
+              <div class="wiz-social-proof">
+                Joining <strong>2,000+ households</strong> who chose a fixed fee and let Reposit handle the market — Better together.
+              </div>
+
+              <!-- What happens next (collapsed) -->
+              <button class="wiz-next-steps-toggle" id="wizNextToggle" onclick="this.nextElementSibling.classList.toggle('is-open'); this.textContent = this.nextElementSibling.classList.contains('is-open') ? '▲ Hide what happens next' : '▼ What happens after I confirm?';">▼ What happens after I confirm?</button>
+              <ul class="wiz-next-steps" id="wizNextSteps">
+                <li><span class="wiz-next-step-num">1</span><span>We email you a full plan summary and contract within minutes.</span></li>
+                <li><span class="wiz-next-step-num">2</span><span>Our team calls you within one business day to book your installation slot.</span></li>
+                <li><span class="wiz-next-step-num">3</span><span>A certified installer fits the Reposit Controller onto your battery cabinet (~2 hours).</span></li>
+                <li><span class="wiz-next-step-num">4</span><span>You go live — Reposit trades your battery and your variable retailer bill is replaced by your fixed fee.</span></li>
+              </ul>
+
+              <!-- Escape -->
+              <div class="wiz-confirm-escape">
+                <button id="wizChangeBtn">Not right — let me choose a different plan</button>
+              </div>
+
+            </div>
+          </div>
+
+          <div style="text-align:center; margin-top:20px;" id="wizRestartRow">
+            <button class="wiz-btn-secondary" id="wizRestartBtn" style="color:rgba(255,255,255,0.6);">Start assessment again</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── STEP 5: Done ──────────────────────────── -->
+      <div class="wiz-step wiz-step--narrow" id="wizStep5">
+        <div class="wiz-card" style="text-align:center;">
+          <div style="font-size:3.5rem; margin-bottom:12px;">🎉</div>
+          <p class="wiz-eyebrow" style="justify-content:center; display:flex;">You're all set</p>
+          <h2 class="wiz-title" style="margin-bottom:6px;">Welcome — Better together starts here.</h2>
+          <p class="wiz-body-text" style="margin-bottom:20px;">
+            You have locked in your fixed fee path. Check your inbox for your plan summary — we will call within one business day to book installation and get you live.
+          </p>
+          <ul class="wiz-trust-strip" style="text-align:left; margin-bottom:20px;">
+            <li>
+              <span class="wiz-trust-icon">✓</span>
+              <span><strong>Check your inbox</strong> — plan summary and contract sent now.</span>
+            </li>
+            <li>
+              <span class="wiz-trust-icon">✓</span>
+              <span><strong>We call you</strong> within one business day to book installation.</span>
+            </li>
+            <li>
+              <span class="wiz-trust-icon">✓</span>
+              <span><strong>30-day guarantee</strong> — cancel before installation, no cost.</span>
+            </li>
+          </ul>
+          <div class="wiz-btn-row" style="max-width:320px; margin:0 auto;">
+            <button class="wiz-btn-primary" onclick="closeWizard()">Back to overview</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /wizard-body -->
+
+  </div><!-- /wizard-overlay -->
+
+  <!-- Manual energy input modal (inside wizard) -->
+  <div id="manualEnergyModal" class="energy-modal" role="dialog" aria-modal="true" aria-labelledby="manualEnergyTitle">
+    <div class="energy-modal-card">
+
+      <h4 id="manualEnergyTitle" class="energy-modal-title">We need your electricity bill</h4>
+      <p class="energy-modal-copy">We couldn't access your usage history automatically. Upload a recent electricity bill — we'll pull out the number we need to size your offer.</p>
+
+      <div id="manualEnergyError" class="energy-modal-error hidden" role="alert"></div>
+
+      <!-- Primary: bill upload -->
+      <div class="bill-upload-zone" id="billUploadZone">
+        <input type="file" id="billUploadInput" accept=".pdf,.jpg,.jpeg,.png" aria-label="Upload electricity bill">
+        <div class="bill-upload-icon">📄</div>
+        <div class="bill-upload-label">Drop your bill here or click to upload</div>
+        <div class="bill-upload-sub">PDF, JPG or PNG · Any recent electricity bill</div>
+        <div class="bill-upload-filename" id="billUploadFilename" style="display:none;"></div>
+      </div>
+
+      <!-- Where to find the number -->
+      <div class="bill-guide">
+        <strong>Where to find it on your bill:</strong>
+        <ul class="bill-guide-items">
+          <li>Look for <strong>"Total amount due"</strong> or <strong>"Total charges"</strong></li>
+          <li>Use a bill from the same quarter last year if possible</li>
+          <li>Your quarterly bill ÷ 3 gives a typical monthly figure</li>
+        </ul>
+      </div>
+
+      <div class="modal-or-divider">or enter it manually</div>
+
+      <!-- Fallback: manual entry -->
+      <div class="energy-modal-row">
+        <label for="manualAvgMonthly">Your average monthly electricity bill ($)</label>
+        <input type="number" id="manualAvgMonthly" min="0" step="1" placeholder="e.g. 178">
+      </div>
+      <div class="energy-modal-row">
+        <label for="manualDailyKwh">Typical daily energy use in kWh <span style="font-weight:400;color:#9ca3af;">— optional</span></label>
+        <input type="number" id="manualDailyKwh" min="0" step="0.1" placeholder="e.g. 8.2">
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:14px;">
+        <button type="button" class="wiz-btn-primary" id="manualEnergySaveBtn" style="flex:1;">Continue</button>
+        <button type="button" class="wiz-btn-secondary" id="manualEnergyCancelBtn">Cancel</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Offers API origin — set reposit_offer_api_origin at top of this template in HubSpot -->
+  <input type="hidden" id="simApiBase" name="reposit_offer_api_origin" value="{{ reposit_offer_api_origin }}" data-hubspot-api-base autocomplete="off">
+
+  <script>
+    /* ── Section pager ───────────────────────────────────────────── */
+    (function() {
+      var pager    = document.querySelector('.page');
+      var sections = Array.from(document.querySelectorAll('[data-section]'));
+      var dots     = Array.from(document.querySelectorAll('.section-dot'));
+
+      if (!pager || !sections.length) return;
+
+      function scrollToSection(idx) {
+        var target = sections[idx];
+        if (!target) return;
+        pager.scrollTo({ top: target.offsetTop, behavior: 'smooth' });
+      }
+      window.scrollToSection = scrollToSection;
+
+      function setActiveDot(idx) {
+        dots.forEach(function(d, i) { d.classList.toggle('is-active', i === idx); });
+      }
+
+      /* IntersectionObserver — tracks which section is most visible */
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            var idx = parseInt(entry.target.getAttribute('data-section'), 10);
+            setActiveDot(idx);
+          }
+        });
+      }, { root: pager, threshold: 0.4 });
+
+      sections.forEach(function(s) { observer.observe(s); });
+
+      /* Dot click */
+      dots.forEach(function(d) {
+        d.addEventListener('click', function() {
+          scrollToSection(parseInt(d.getAttribute('data-target'), 10));
+        });
+      });
+
+      /* Keyboard navigation */
+      document.addEventListener('keydown', function(e) {
+        if (document.getElementById('wizardOverlay').classList.contains('is-open')) return;
+        var active = dots.findIndex(function(d) { return d.classList.contains('is-active'); });
+        if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+          e.preventDefault();
+          scrollToSection(Math.min(active + 1, sections.length - 1));
+        } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+          e.preventDefault();
+          scrollToSection(Math.max(active - 1, 0));
+        }
+      });
+
+    }());
+  </script>
+
+  <script>
+    /* ── Wizard open/close (called from landing page CTAs) ─────────── */
+    function openWizard() {
+      var overlay = document.getElementById('wizardOverlay');
+      if (!overlay) return;
+      document.body.style.overflow = 'hidden';
+      document.body.classList.add('wizard-open');
+      overlay.classList.add('is-open');
+      overlay.focus();
+    }
+    function closeWizard() {
+      var overlay = document.getElementById('wizardOverlay');
+      if (!overlay) return;
+      document.body.style.overflow = '';
+      document.body.classList.remove('wizard-open');
+      overlay.classList.remove('is-open');
+    }
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeWizard();
+    });
+
+    (function () {
+      var SHARED_UTILITIES_STORAGE_KEY = 'reposit.utilities.snapshot.v1';
+      var API_PATHS = {
+        requestCode: '/api/consent/request-code',
+        verifyCode: '/api/consent/verify-code',
+        energyProfile: '/api/energy/profile',
+        topPackages: '/api/top-packages'
+      };
+      var assessmentState = {
+        email: '',
+        consentVerified: false,
+        consentFallback: false,
+        profile: null,
+        profileSource: ''
+      };
+      var lastPackagesData = null;
+      var usedSharedUtilitiesForLastRun = false;
+      var loadingFactTimer = null;
+      var LOADING_FACTS = [
+        'Reading your last 12 months — peaks, quiet spells, all of it…',
+        'Working out what variable bills are really costing you…',
+        'Turning that into fixed-fee options you can actually compare…',
+        'Choosing the three strongest fits for your home. Seconds left…'
+      ];
+
+      function escapeHtml(s) {
+        if (s == null) return '';
+        var d = document.createElement('div');
+        d.textContent = String(s);
+        return d.innerHTML;
+      }
+
+      function normalizeApiBase(raw) {
+        return String(raw || '').trim().replace(/\/$/, '');
+      }
+
+      function getApiBase() {
+        var baseEl = document.getElementById('simApiBase');
+        return normalizeApiBase(baseEl ? baseEl.value : '');
+      }
+
+      function loadSharedUtilitiesSnapshot() {
+        try {
+          var raw = localStorage.getItem(SHARED_UTILITIES_STORAGE_KEY);
+          if (!raw) return null;
+          var parsed = JSON.parse(raw);
+          if (!parsed || !parsed.utilities || typeof parsed.utilities !== 'object') return null;
+          return parsed;
+        } catch {
+          return null;
+        }
+      }
+
+      function monthlyFeeFromProfile(avgMonthlySpend) {
+        var n = Number(avgMonthlySpend);
+        if (!Number.isFinite(n) || n <= 0) return null;
+        return Math.round(n * 0.7);
+      }
+
+      function fmtMoney(n) {
+        var x = Math.round(Number(n));
+        if (!Number.isFinite(x)) x = 0;
+        return '$' + x.toLocaleString();
+      }
+
+      function demoYearOneSaving(avgMonthly, pkg) {
+        var annualRetail = Math.round(Number(avgMonthly) * 12);
+        if (!Number.isFinite(annualRetail)) annualRetail = 0;
+        var inst = pkg.installationCost ? Number(pkg.installationCost.value) : 0;
+        var fee = pkg.monthlyFee ? Number(pkg.monthlyFee.value) : 0;
+        if (!Number.isFinite(inst)) inst = 0;
+        if (!Number.isFinite(fee)) fee = 0;
+        return annualRetail - (inst + fee * 12);
+      }
+
+      function formatFairCapHtml(pkg, dailyKwh) {
+        var cell = pkg.fairUseCap;
+        if (!cell) return '—';
+        var v = cell.value;
+        if (dailyKwh > 0 && typeof v === 'number' && v > 0 && v < 20) {
+          return escapeHtml(String(v)) + '× <span class="sim-fair-sub">your typical daily use</span>';
+        }
+        return escapeHtml(cell.display != null ? String(cell.display) : String(v));
+      }
+
+      function apiJson(path, opts) {
+        var base = getApiBase();
+        if (!base) {
+          return Promise.reject(new Error('Set a valid API base URL before continuing.'));
+        }
+        var req = opts || {};
+        var headers = req.headers || {};
+        if (req.body && !headers['Content-Type']) headers['Content-Type'] = 'application/json';
+        return fetch(base + path, {
+          method: req.method || 'GET',
+          mode: 'cors',
+          headers: headers,
+          body: req.body ? JSON.stringify(req.body) : undefined
+        }).then(function (res) {
+          return res
+            .json()
+            .catch(function () {
+              return { ok: false, error: 'Response was not JSON', httpStatus: res.status };
+            })
+            .then(function (json) {
+              if (!res.ok || (json && json.ok === false)) {
+                var msg = (json && (json.error || json.message)) || ('Request failed (' + res.status + ')');
+                var err = new Error(msg);
+                err.httpStatus = res.status;
+                err.body = json;
+                err.path = path;
+                throw err;
+              }
+              return json;
+            });
+        });
+      }
+
+      function friendlyApiError(err, fallbackMsg) {
+        var status = err && err.httpStatus;
+        var path = err && err.path ? String(err.path) : '';
+        if (status === 404) {
+          if (path.indexOf(API_PATHS.requestCode) === 0 || path.indexOf(API_PATHS.verifyCode) === 0) {
+            return 'Consent endpoint not found on this API base URL. Continuing in manual consent mode.';
+          }
+          if (path.indexOf(API_PATHS.energyProfile) === 0) {
+            return 'Energy profile endpoint not found. Please enter your energy details manually.';
+          }
+          if (path.indexOf(API_PATHS.topPackages) === 0) {
+            return 'Offer endpoint not found. Check API base URL and ensure /api/top-packages is running.';
+          }
+        }
+        return (err && err.message) || fallbackMsg;
+      }
+
+      function numFromAny(obj, keys) {
+        for (var i = 0; i < keys.length; i++) {
+          var v = obj[keys[i]];
+          var n = Number(v);
+          if (Number.isFinite(n) && n >= 0) return n;
+        }
+        return null;
+      }
+
+      function parseEnergyProfile(resp) {
+        var src = (resp && (resp.profile || resp.data || resp)) || {};
+        var avgMonthly = numFromAny(src, [
+          'avgMonthlySpend',
+          'averageMonthlySpend',
+          'monthlySpend',
+          'avg_monthly_spend',
+          'average_monthly_spend'
+        ]);
+        var dailyKwh = numFromAny(src, [
+          'dailyKwh',
+          'avgDailyKwh',
+          'typicalDailyKwh',
+          'daily_kwh',
+          'avg_daily_kwh'
+        ]);
+        return {
+          avgMonthly: avgMonthly,
+          dailyKwh: Number.isFinite(dailyKwh) ? dailyKwh : 0
+        };
+      }
+
+      /* ── Wizard step navigation ──────────────────────── */
+      var currentWizStep = 1;
+
+      function showWizStep(n) {
+        currentWizStep = n;
+        for (var s = 1; s <= 5; s++) {
+          var el = document.getElementById('wizStep' + s);
+          if (el) el.classList.toggle('is-active', s === n);
+        }
+        // Update top progress bars (4 bars, steps map: 1→1, 2→2, 3→3, 4&5→4)
+        var progActive = n <= 4 ? n : 4;
+        for (var p = 1; p <= 4; p++) {
+          var prog = document.getElementById('wizProg' + p);
+          if (!prog) continue;
+          prog.classList.remove('is-active', 'is-done');
+          if (p < progActive) prog.classList.add('is-done');
+          if (p === progActive) prog.classList.add('is-active');
+        }
+      }
+
+      /* ── Loading animation ───────────────────────────── */
+      var loadingFactTimer = null;
+      var loadingProgressTimer = null;
+
+      function startLoading(onComplete) {
+        showWizStep(3);
+        var fill = document.getElementById('wizProgressFill');
+        var factEl = document.getElementById('wizLoadingFact');
+        var progress = 0;
+        var factIdx = 0;
+        var facts = LOADING_FACTS;
+
+        if (fill) fill.style.width = '0%';
+        if (factEl) factEl.textContent = facts[0];
+
+        clearInterval(loadingFactTimer);
+        clearInterval(loadingProgressTimer);
+
+        loadingFactTimer = setInterval(function() {
+          factIdx = (factIdx + 1) % facts.length;
+          if (factEl) {
+            factEl.style.animation = 'none';
+            factEl.offsetHeight; // reflow
+            factEl.style.animation = '';
+            factEl.textContent = facts[factIdx];
+          }
+        }, 2200);
+
+        loadingProgressTimer = setInterval(function() {
+          progress += (100 / (4500 / 80));
+          if (fill) fill.style.width = Math.min(progress, 95) + '%';
+          if (progress >= 100) {
+            clearInterval(loadingProgressTimer);
+            clearInterval(loadingFactTimer);
+            if (fill) fill.style.width = '100%';
+            setTimeout(onComplete, 300);
+          }
+        }, 80);
+      }
+
+      function stopLoading() {
+        clearInterval(loadingFactTimer);
+        clearInterval(loadingProgressTimer);
+      }
+
+      /* ── Profile helpers ─────────────────────────────── */
+      function getProfileSnapshot() {
+        var avg = assessmentState.profile && Number(assessmentState.profile.avgMonthly);
+        var daily = assessmentState.profile && Number(assessmentState.profile.dailyKwh);
+        if (!Number.isFinite(avg)) avg = 0;
+        if (!Number.isFinite(daily) || daily < 0) daily = 0;
+        return { avgMonthly: avg, annualRetail: Math.round(avg * 12), dailyKwh: daily };
+      }
+
+      /* ── Offer rendering ─────────────────────────────── */
+      function renderOffers(data) {
+        var grid = document.getElementById('wizOffersGrid');
+        var errBanner = document.getElementById('wizOffersErrorBanner');
+        var banner = document.getElementById('wizOffersBanner');
+        var intro = document.getElementById('wizOffersIntro');
+        var constraint = document.getElementById('wizConstraintNote');
+        if (!grid) return;
+
+        grid.innerHTML = '';
+        if (errBanner) errBanner.style.display = 'none';
+        var confirmPanel = document.getElementById('wizConfirmPanel');
+        if (confirmPanel) confirmPanel.style.display = 'none';
+
+        if (!data || !data.ok || !data.topPackages || !data.topPackages.length) {
+          if (errBanner) { errBanner.textContent = 'Unexpected API response — no packages returned.'; errBanner.style.display = 'block'; }
+          return;
+        }
+
+        var snap = getProfileSnapshot();
+        lastPackagesData = data;
+
+        // Banner
+        if (banner && snap.annualRetail > 0) {
+          banner.style.display = 'flex';
+          banner.innerHTML =
+            '<div><div class="wiz-offers-banner-label">Your estimated current annual spend</div>' +
+            '<div class="wiz-offers-banner-val">' + fmtMoney(snap.annualRetail) + ' <span style="font-size:1rem;font-weight:600;opacity:0.7;">/yr</span></div></div>' +
+            '<div><div class="wiz-offers-banner-sub">Based on your usage profile</div>' +
+            (snap.dailyKwh > 0 ? '<div class="wiz-offers-banner-sub">~' + snap.dailyKwh + ' kWh typical daily use</div>' : '') + '</div>';
+        }
+
+        if (intro) intro.textContent = 'Here are three plans shaped for your usage. Same promise on all of them: Better together — we trade your battery, you get a fixed monthly fee and shared value. Compare install cost, monthly fee, and indicative saving, then pick what feels right.';
+
+        var c = data.constraints && data.constraints.monthlyFee;
+        if (c && constraint) {
+          constraint.style.display = 'block';
+          constraint.textContent = 'All three options use ' + (c.display || '$' + c.value + '/mo') + ' as the fixed monthly fee — the other terms vary to maximise value for your profile.';
+        }
+
+        data.topPackages.forEach(function(row) {
+          var pkg = row.package || {};
+          var rec = row.rank === 1;
+          function disp(cell) { return cell ? (cell.display != null ? String(cell.display) : String(cell.value)) : '—'; }
+          var fairHtml = formatFairCapHtml(pkg, snap.dailyKwh);
+          var saving = demoYearOneSaving(snap.avgMonthly, pkg);
+          var savingBlock = Number.isFinite(saving) && saving >= 0
+            ? '<div class="wiz-pkg-saving-lbl">Indicative annual saving</div><div class="wiz-pkg-saving-val">' + fmtMoney(saving) + ' <span style="font-size:.8rem;font-weight:600;color:#15803d;">/yr</span></div><div class="wiz-pkg-saving-note">vs your stated current spend</div>'
+            : '<div class="wiz-pkg-saving-lbl">Year-one comparison</div><div class="wiz-pkg-saving-val" style="font-size:1rem;color:#64748b;">Higher upfront cost</div>';
+
+          var card = document.createElement('article');
+          card.className = 'wiz-pkg-card' + (rec ? ' wiz-pkg-card--recommended' : '');
+          card.setAttribute('data-offer-rank', String(row.rank));
+          card.innerHTML =
+            (rec ? '<div class="wiz-pkg-ribbon">Our pick for you</div>' : '') +
+            (rec ? '<div class="wiz-pkg-badge wiz-pkg-badge--best">Best match</div>' : '<div class="wiz-pkg-badge wiz-pkg-badge--alt">Alternative</div>') +
+            '<div class="wiz-pkg-install">' + escapeHtml(disp(pkg.installationCost)) + '</div>' +
+            '<div class="wiz-pkg-install-label">Installation cost</div>' +
+            '<div class="wiz-pkg-monthly"><div class="wiz-pkg-monthly-amt">' + escapeHtml(disp(pkg.monthlyFee)) + '</div><div class="wiz-pkg-monthly-lbl">Monthly fee</div></div>' +
+            '<ul class="wiz-pkg-attrs">' +
+            '<li><span>Sign-up incentive</span><strong>' + escapeHtml(disp(pkg.signupIncentive)) + '</strong></li>' +
+            '<li><span>FAIR use cap</span><strong>' + fairHtml + '</strong></li>' +
+            '<li><span>Contract term</span><strong>' + escapeHtml(disp(pkg.contractTerm)) + '</strong></li></ul>' +
+            '<div class="wiz-pkg-saving">' + savingBlock + '</div>' +
+            '<button type="button" class="wiz-pkg-select" data-rank="' + row.rank + '">Choose this plan</button>';
+          grid.appendChild(card);
+        });
+
+        // Card click → confirm panel
+        grid.addEventListener('click', function(e) {
+          var btn = e.target.closest && e.target.closest('.wiz-pkg-select');
+          if (!btn) return;
+          var rank = parseInt(btn.getAttribute('data-rank'), 10);
+          showConfirmPanel(rank);
+        });
+      }
+
+      function showConfirmPanel(rank) {
+        if (!lastPackagesData || !lastPackagesData.topPackages) return;
+        var row = null;
+        for (var i = 0; i < lastPackagesData.topPackages.length; i++) {
+          if (lastPackagesData.topPackages[i].rank === rank) { row = lastPackagesData.topPackages[i]; break; }
+        }
+        if (!row) return;
+        var pkg = row.package || {};
+        var snap = getProfileSnapshot();
+
+        /* Highlight selected offer card */
+        document.querySelectorAll('.wiz-pkg-card').forEach(function(c) {
+          c.classList.toggle('wiz-pkg-card--selected', parseInt(c.getAttribute('data-offer-rank'), 10) === rank);
+        });
+
+        function disp(cell) { return cell ? (cell.display != null ? String(cell.display) : String(cell.value)) : '—'; }
+
+        /* ── Savings hero ──────────────────────────────── */
+        var savedEl      = document.getElementById('wizSavingsAmt');
+        var certaintyFee = document.getElementById('wizCertaintyFee');
+        var saving       = demoYearOneSaving(snap.avgMonthly, pkg);
+        var hero         = document.getElementById('wizSavingsHero');
+
+        /* Populate the fixed fee certainty bar */
+        if (certaintyFee) certaintyFee.textContent = disp(pkg.monthlyFee) || '—';
+
+        if (Number.isFinite(saving) && saving > 0) {
+          if (savedEl) savedEl.textContent = '~' + fmtMoney(saving);
+          if (hero) hero.style.display = 'block';
+        } else {
+          /* No reliable saving estimate — show certainty-only message */
+          if (savedEl) savedEl.textContent = '';
+          var estLabel = hero && hero.querySelector('.wiz-savings-est-label');
+          var estSub   = hero && hero.querySelector('.wiz-savings-est-sub');
+          var estQual  = hero && hero.querySelector('.wiz-savings-est-qualifier');
+          if (estLabel) estLabel.textContent = 'Your fixed monthly fee';
+          if (savedEl)  savedEl.textContent  = disp(pkg.monthlyFee) || '—';
+          if (estSub)   estSub.textContent   = 'No variable retailer bill on top — just your fixed fee.';
+          if (estQual)  estQual.textContent  = 'Your fee is set below your average spend and does not follow wholesale spikes.';
+          if (hero) hero.style.display = 'block';
+        }
+
+        /* ── Plan recap grid ───────────────────────────── */
+        var recapGrid = document.getElementById('wizPlanRecapGrid');
+        if (recapGrid) {
+          var items = [
+            ['Installation cost', disp(pkg.installationCost)],
+            ['Monthly fee',       disp(pkg.monthlyFee)],
+            ['Sign-up incentive', disp(pkg.signupIncentive)],
+            ['Contract term',     disp(pkg.contractTerm)]
+          ];
+          recapGrid.innerHTML = items.map(function(item) {
+            return '<div class="wiz-plan-recap-item">' +
+              '<span class="wiz-plan-recap-item-label">' + escapeHtml(item[0]) + '</span>' +
+              '<span class="wiz-plan-recap-item-val">' + escapeHtml(item[1]) + '</span>' +
+              '</div>';
+          }).join('');
+        }
+
+        /* Reset next-steps toggle */
+        var nextSteps = document.getElementById('wizNextSteps');
+        var nextToggle = document.getElementById('wizNextToggle');
+        if (nextSteps) nextSteps.classList.remove('is-open');
+        if (nextToggle) nextToggle.textContent = '▼ What happens after I confirm?';
+
+        var panel = document.getElementById('wizConfirmPanel');
+        if (panel) { panel.style.display = 'block'; panel.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+
+        var restartRow = document.getElementById('wizRestartRow');
+        if (restartRow) restartRow.style.display = 'none';
+      }
+
+      function openManualModal(msg) {
+        var modal = document.getElementById('manualEnergyModal');
+        var err = document.getElementById('manualEnergyError');
+        if (!modal || !err) return;
+        if (msg) {
+          err.textContent = msg;
+          err.classList.remove('hidden');
+        } else {
+          err.textContent = '';
+          err.classList.add('hidden');
+        }
+        modal.classList.add('is-open');
+      }
+
+      function closeManualModal() {
+        var modal = document.getElementById('manualEnergyModal');
+        if (modal) modal.classList.remove('is-open');
+        /* Reset upload zone for next use */
+        var zone = document.getElementById('billUploadZone');
+        var fname = document.getElementById('billUploadFilename');
+        var inp = document.getElementById('billUploadInput');
+        if (zone) zone.classList.remove('is-selected', 'is-drag-over');
+        if (fname) { fname.style.display = 'none'; fname.textContent = ''; }
+        if (inp) inp.value = '';
+      }
+
+      function loadEnergyProfile() {
+        var readout = document.getElementById('simFeeReadout');
+        if (readout) readout.textContent = 'Fetching your profile from API...';
+        return apiJson(
+          API_PATHS.energyProfile + '?email=' + encodeURIComponent(String(assessmentState.email || '').trim()),
+          { method: 'GET' }
+        )
+          .then(function (json) {
+            var profile = parseEnergyProfile(json);
+            if (!Number.isFinite(profile.avgMonthly) || profile.avgMonthly <= 0) {
+              throw new Error('Profile fetched but missing monthly spend. Enter details manually.');
+            }
+            assessmentState.profile = profile;
+            assessmentState.profileSource = 'api';
+            updateFeeReadout();
+          })
+          .catch(function (err) {
+            assessmentState.profile = null;
+            assessmentState.profileSource = '';
+            updateFeeReadout();
+            openManualModal(friendlyApiError(err, 'Unable to load profile.'));
+          });
+      }
+
+      function requestOffers() {
+        if (!assessmentState.profile || !Number.isFinite(assessmentState.profile.avgMonthly)) {
+          openManualModal('Please add your monthly spend before building offers.');
+          return;
+        }
+        var fee = monthlyFeeFromProfile(assessmentState.profile.avgMonthly);
+        if (!Number.isFinite(fee)) {
+          openManualModal('Average monthly spend must be greater than zero.');
+          return;
+        }
+
+        /* fetch offers */
+        var shared = loadSharedUtilitiesSnapshot();
+        usedSharedUtilitiesForLastRun = Boolean(shared);
+        var req = shared
+          ? { method: 'POST', body: { monthlyFee: fee, utilities: shared.utilities } }
+          : { method: 'GET' };
+        var path = API_PATHS.topPackages + '?monthlyFee=' + encodeURIComponent(String(fee));
+
+        startLoading(function() {
+          apiJson(path, req)
+            .then(function(json) {
+              stopLoading();
+              showWizStep(4);
+              renderOffers(json);
+            })
+            .catch(function(err) {
+              stopLoading();
+              showWizStep(4);
+              var errBanner = document.getElementById('wizOffersErrorBanner');
+              if (errBanner) { errBanner.textContent = friendlyApiError(err, 'Offer API request failed.'); errBanner.style.display = 'block'; }
+            });
+        });
+      }
+
+      /* ── Step 1: Send code ───────────────────────────── */
+      var wizSendBtn = document.getElementById('wizSendCodeBtn');
+      if (wizSendBtn) {
+        wizSendBtn.addEventListener('click', function() {
+          var emailEl = document.getElementById('wizEmail');
+          var errEl = document.getElementById('wizEmailError');
+          var email = emailEl ? String(emailEl.value || '').trim() : '';
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            if (errEl) { errEl.textContent = 'Please enter a valid email address.'; errEl.style.display = 'block'; }
+            if (emailEl) emailEl.focus();
+            return;
+          }
+          if (errEl) errEl.style.display = 'none';
+          wizSendBtn.disabled = true;
+          wizSendBtn.textContent = 'Sending…';
+          apiJson(API_PATHS.requestCode, { method: 'POST', body: { email: email } })
+            .then(function() {
+              assessmentState.email = email;
+              assessmentState.consentFallback = false;
+              wizSendBtn.textContent = 'Code sent';
+              var note = document.getElementById('wizCodeSentNote');
+              if (note) note.textContent = 'We sent a 6-digit code to ' + email + '. Enter it below to confirm.';
+              showWizStep(2);
+            })
+            .catch(function(err) {
+              assessmentState.email = email;
+              wizSendBtn.disabled = false;
+              wizSendBtn.textContent = 'Send my verification code';
+              if (err && err.httpStatus === 404) {
+                assessmentState.consentFallback = true;
+                if (errEl) { errEl.textContent = 'Consent API not available. Enter any 6 digits to continue in manual mode.'; errEl.style.display = 'block'; }
+                showWizStep(2);
+                return;
+              }
+              if (errEl) { errEl.textContent = friendlyApiError(err, 'Could not send verification code.'); errEl.style.display = 'block'; }
+            });
+        });
+      }
+
+      /* ── Step 2: Verify code ─────────────────────────── */
+      var wizVerifyBtn = document.getElementById('wizVerifyBtn');
+      if (wizVerifyBtn) {
+        wizVerifyBtn.addEventListener('click', function() {
+          var codeEl = document.getElementById('wizCode');
+          var errEl = document.getElementById('wizCodeError');
+          var successEl = document.getElementById('wizCodeSuccess');
+          var code = codeEl ? String(codeEl.value || '').trim() : '';
+          var email = assessmentState.email;
+          if (!code) { if (codeEl) codeEl.focus(); return; }
+          if (errEl) errEl.style.display = 'none';
+          wizVerifyBtn.disabled = true;
+          wizVerifyBtn.textContent = 'Verifying…';
+
+          var proceed = function() {
+            assessmentState.consentVerified = true;
+            if (successEl) { successEl.style.display = 'block'; successEl.textContent = 'Code confirmed. Fetching your usage data…'; }
+            setTimeout(function() {
+              loadEnergyProfile().then(function() { requestOffers(); }).catch(function() { requestOffers(); });
+            }, 800);
+          };
+
+          if (assessmentState.consentFallback) {
+            if (!/^[0-9]{4,10}$/.test(code)) {
+              wizVerifyBtn.disabled = false;
+              wizVerifyBtn.textContent = 'Confirm & get my offer';
+              if (errEl) { errEl.textContent = 'Enter a valid code to continue.'; errEl.style.display = 'block'; }
+              return;
+            }
+            proceed();
+            return;
+          }
+
+          apiJson(API_PATHS.verifyCode, { method: 'POST', body: { email: email, code: code } })
+            .then(function() { proceed(); })
+            .catch(function(err) {
+              wizVerifyBtn.disabled = false;
+              wizVerifyBtn.textContent = 'Confirm & get my offer';
+              if (errEl) { errEl.textContent = friendlyApiError(err, 'Code verification failed. Try again.'); errEl.style.display = 'block'; }
+            });
+        });
+      }
+
+      /* ── Resend / change email ───────────────────────── */
+      var wizResendBtn = document.getElementById('wizResendBtn');
+      if (wizResendBtn) {
+        wizResendBtn.addEventListener('click', function() {
+          var wizSendBtnFresh = document.getElementById('wizSendCodeBtn');
+          if (wizSendBtnFresh) { wizSendBtnFresh.disabled = false; wizSendBtnFresh.textContent = 'Send my verification code'; }
+          var errEl = document.getElementById('wizEmailError');
+          if (errEl) errEl.style.display = 'none';
+          showWizStep(1);
+        });
+      }
+
+      /* ── Confirm & complete ──────────────────────────── */
+      var wizCompleteBtn = document.getElementById('wizCompleteBtn');
+      if (wizCompleteBtn) {
+        wizCompleteBtn.addEventListener('click', function() {
+          showWizStep(5);
+        });
+      }
+
+      var wizChangeBtn = document.getElementById('wizChangeBtn');
+      if (wizChangeBtn) {
+        wizChangeBtn.addEventListener('click', function() {
+          var panel = document.getElementById('wizConfirmPanel');
+          if (panel) panel.style.display = 'none';
+          var restartRow = document.getElementById('wizRestartRow');
+          if (restartRow) restartRow.style.display = 'block';
+          document.querySelectorAll('.wiz-pkg-card').forEach(function(c) { c.classList.remove('wiz-pkg-card--selected'); });
+        });
+      }
+
+      /* ── Restart ─────────────────────────────────────── */
+      var wizRestartBtn = document.getElementById('wizRestartBtn');
+      if (wizRestartBtn) {
+        wizRestartBtn.addEventListener('click', function() {
+          stopLoading();
+          assessmentState = { email: '', consentVerified: false, consentFallback: false, profile: null, profileSource: '' };
+          var fields = ['wizEmail', 'wizCode', 'manualAvgMonthly', 'manualDailyKwh'];
+          fields.forEach(function(id) { var el = document.getElementById(id); if (el) el.value = ''; });
+          var sendBtn = document.getElementById('wizSendCodeBtn');
+          if (sendBtn) { sendBtn.disabled = false; sendBtn.textContent = 'Send my verification code'; }
+          var verBtn = document.getElementById('wizVerifyBtn');
+          if (verBtn) { verBtn.disabled = false; verBtn.textContent = 'Confirm & get my offer'; }
+          ['wizEmailError','wizCodeError'].forEach(function(id) { var el = document.getElementById(id); if (el) el.style.display = 'none'; });
+          ['wizCodeSuccess'].forEach(function(id) { var el = document.getElementById(id); if (el) el.style.display = 'none'; });
+          closeManualModal();
+          showWizStep(1);
+          var grid = document.getElementById('wizOffersGrid');
+          if (grid) grid.innerHTML = '';
+          var banner = document.getElementById('wizOffersBanner');
+          if (banner) banner.style.display = 'none';
+          lastPackagesData = null;
+        });
+      }
+
+      /* ── Bill upload zone ─────────────────────────────── */
+      var billInput    = document.getElementById('billUploadInput');
+      var billZone     = document.getElementById('billUploadZone');
+      var billFilename = document.getElementById('billUploadFilename');
+
+      if (billInput && billZone) {
+        billInput.addEventListener('change', function() {
+          var file = billInput.files && billInput.files[0];
+          if (!file) return;
+          billZone.classList.add('is-selected');
+          if (billFilename) {
+            billFilename.textContent = '✓ ' + file.name;
+            billFilename.style.display = 'block';
+          }
+          /* In production: POST file to bill-parsing service.
+             For now: acknowledge and prompt manual entry to confirm total. */
+          var errEl = document.getElementById('manualEnergyError');
+          if (errEl) {
+            errEl.className = 'energy-modal-error';
+            errEl.style.background = '#f0fdf4';
+            errEl.style.borderColor = '#bbf7d0';
+            errEl.style.color = '#166534';
+            errEl.textContent = 'Bill uploaded. Please confirm the total monthly amount below so we can calculate your offer.';
+            errEl.classList.remove('hidden');
+          }
+          var avgEl = document.getElementById('manualAvgMonthly');
+          if (avgEl) avgEl.focus();
+        });
+
+        billZone.addEventListener('dragover', function(e) { e.preventDefault(); billZone.classList.add('is-drag-over'); });
+        billZone.addEventListener('dragleave', function()  { billZone.classList.remove('is-drag-over'); });
+        billZone.addEventListener('drop', function(e) {
+          e.preventDefault();
+          billZone.classList.remove('is-drag-over');
+          if (e.dataTransfer && e.dataTransfer.files.length) {
+            billInput.files = e.dataTransfer.files;
+            billInput.dispatchEvent(new Event('change'));
+          }
+        });
+      }
+
+      /* ── Manual energy modal — Continue ─────────────── */
+      var manualSave = document.getElementById('manualEnergySaveBtn');
+      if (manualSave) {
+        manualSave.addEventListener('click', function() {
+          var avgEl = document.getElementById('manualAvgMonthly');
+          var kEl   = document.getElementById('manualDailyKwh');
+          var errEl = document.getElementById('manualEnergyError');
+          var avg   = Number(avgEl ? avgEl.value : '');
+          var k     = Number(kEl ? kEl.value : '');
+          if (!Number.isFinite(avg) || avg <= 0) {
+            if (errEl) {
+              errEl.removeAttribute('style');
+              errEl.className = 'energy-modal-error';
+              errEl.textContent = 'Please enter your monthly electricity spend so we can size your offer.';
+              errEl.classList.remove('hidden');
+            }
+            if (avgEl) avgEl.focus();
+            return;
+          }
+          assessmentState.profile = { avgMonthly: avg, dailyKwh: Number.isFinite(k) && k > 0 ? k : 0 };
+          assessmentState.profileSource = billInput && billInput.files && billInput.files[0] ? 'bill upload' : 'manual input';
+          closeManualModal();
+          requestOffers();
+        });
+      }
+
+      var manualCancel = document.getElementById('manualEnergyCancelBtn');
+      if (manualCancel) manualCancel.addEventListener('click', closeManualModal);
+
+    }());
+  </script>
+
+  <!-- ── FIXED NEWS TICKER (inside body, before standard_footer_includes) ─── -->
+  <div class="news-ticker" aria-hidden="true">
+    <div class="ticker-track">
+      <span class="ticker-item"><span class="ticker-dot"></span>Trade tariffs escalate across key markets</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Winter energy bills forecast to rise 30–40%</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Cost of living index hits five-year high</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Oil supply fears drive fresh price swings</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Central bank holds rates amid uncertainty</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Extreme weather events strain power grids</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Wholesale electricity spot price surges overnight</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Global supply chain disruptions continue</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Household budgets squeezed by rising essentials</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Geopolitical tensions rattle commodity markets</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Currency volatility adds pressure to import costs</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Analysts warn of prolonged economic uncertainty</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Trade tariffs escalate across key markets</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Winter energy bills forecast to rise 30–40%</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Cost of living index hits five-year high</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Oil supply fears drive fresh price swings</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Central bank holds rates amid uncertainty</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Extreme weather events strain power grids</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Wholesale electricity spot price surges overnight</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Global supply chain disruptions continue</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Household budgets squeezed by rising essentials</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Geopolitical tensions rattle commodity markets</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Currency volatility adds pressure to import costs</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Analysts warn of prolonged economic uncertainty</span>
+    </div>
+  </div>
+
+  {{ standard_footer_includes }}
+
+</body>
+</html>
