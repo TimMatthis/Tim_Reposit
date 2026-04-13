@@ -1,0 +1,505 @@
+/* Optisizer fleet net_cost summary */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --color-bg: #0f1117;
+  --color-surface: #1a1d27;
+  --color-border: #2c3050;
+  --color-primary: #4f8ef7;
+  --color-text: #e2e8f0;
+  --color-text-muted: #8892a4;
+  --color-success: #2a9d8f;
+  --color-error: #e63946;
+  --radius: 10px;
+  --gap: 1.25rem;
+  --max-width: 960px;
+}
+
+html { font-size: 16px; }
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  line-height: 1.55;
+  min-height: 100vh;
+}
+
+.page-wrap {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--gap) 1rem 3rem;
+}
+
+.demographics-callout {
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 1rem 1.15rem 1.1rem;
+  margin-bottom: 1.5rem;
+  background: var(--color-surface);
+}
+
+.demographics-callout-title {
+  font-size: 1.1rem;
+  margin: 0 0 0.5rem;
+}
+
+.demographics-callout-summary {
+  margin: 0 0 0.65rem;
+  line-height: 1.5;
+  color: var(--color-text);
+  font-size: 0.92rem;
+}
+
+.demographics-callout-steps {
+  margin: 0 0 0.75rem 1.1rem;
+  padding: 0;
+  line-height: 1.45;
+  font-size: 0.88rem;
+  color: var(--color-text-muted);
+}
+
+.demographics-callout-dl {
+  margin: 0 0 0.75rem;
+  display: grid;
+  grid-template-columns: minmax(7rem, auto) 1fr;
+  gap: 0.25rem 0.75rem;
+  font-size: 0.86rem;
+}
+
+.demographics-callout-dl dt {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.demographics-callout-dl dd {
+  margin: 0;
+  word-break: break-word;
+}
+
+.demographics-callout-api,
+.demographics-callout-csv {
+  margin: 0 0 0.5rem;
+  font-size: 0.84rem;
+  line-height: 1.45;
+  color: var(--color-text-muted);
+}
+
+.demographics-callout-code {
+  margin: 0 0 0.65rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background: #12151e;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
+
+.demographics-callout .btn-download {
+  margin-top: 0.25rem;
+}
+
+.site-header {
+  padding-bottom: var(--gap);
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: var(--gap);
+}
+
+.site-header h1 {
+  font-size: 1.35rem;
+  font-weight: 600;
+}
+
+.site-header p {
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+  margin-top: 0.35rem;
+}
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--gap);
+  margin-bottom: var(--gap);
+}
+
+.card h2 {
+  font-size: 1.05rem;
+  margin-bottom: 0.75rem;
+}
+
+.btn-primary {
+  display: inline-block;
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.65rem 1.25rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.btn-primary:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.btn-primary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.btn-download {
+  background: #12151e;
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 0.45rem 0.8rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.btn-download:hover {
+  border-color: var(--color-primary);
+}
+
+.progress-track {
+  height: 10px;
+  background: #0a0c12;
+  border-radius: 6px;
+  overflow: hidden;
+  margin: 0.75rem 0 0.5rem;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-primary-dim, #2a4a8a), var(--color-primary));
+  width: 0%;
+  transition: width 0.2s ease;
+}
+
+.progress-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.file-log {
+  margin-top: var(--gap);
+  max-height: 220px;
+  overflow-y: auto;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: #12151e;
+  font-size: 0.8rem;
+}
+
+.decile-log {
+  max-height: 360px;
+}
+
+.file-log table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.file-log th,
+.file-log td {
+  padding: 0.35rem 0.5rem;
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.file-log th {
+  position: sticky;
+  top: 0;
+  background: #161a26;
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.file-log tr:last-child td {
+  border-bottom: none;
+}
+
+.mono {
+  font-family: ui-monospace, monospace;
+  font-size: 0.88em;
+}
+
+.file-log .mono {
+  font-size: 0.72rem;
+}
+
+.file-log .num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.file-log .err {
+  color: var(--color-error);
+}
+
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: var(--gap);
+}
+
+.stat {
+  background: #12151e;
+  border-radius: 8px;
+  padding: 0.75rem;
+  border: 1px solid var(--color-border);
+}
+
+.stat .label {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.stat .value {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin-top: 0.25rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.chart-wrap {
+  position: relative;
+  height: min(70vh, 520px);
+  margin-top: 0.5rem;
+}
+
+.chart-wrap.chart-wrap--tall {
+  height: auto;
+  min-height: 400px;
+  max-height: 85vh;
+}
+
+.chart-scroll {
+  overflow: auto;
+  max-height: 85vh;
+}
+
+.chart-actions {
+  margin-top: 0.5rem;
+}
+
+.chart-actions--footer {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+}
+
+/* Logical chunks for PDF export (one html2canvas capture per block; new page between blocks). */
+#panel-results > .pdf-block {
+  margin-bottom: 1.5rem;
+}
+
+#panel-results > .pdf-block:last-child {
+  margin-bottom: 0;
+}
+
+.pdf-block-caption {
+  font-weight: 500;
+  color: var(--color-text);
+  margin-bottom: 0.35rem;
+  margin-top: 0;
+}
+
+.segment-legend-heading {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  color: var(--color-text);
+}
+
+.segment-legend {
+  margin: 0 0 0.5rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: #12151e;
+}
+
+.segment-legend-term {
+  font-family: ui-monospace, monospace;
+  font-size: 0.85rem;
+  color: var(--color-primary);
+  margin-top: 0.65rem;
+}
+
+.segment-legend-term:first-child {
+  margin-top: 0;
+}
+
+.segment-legend-def {
+  margin: 0.25rem 0 0;
+  padding: 0;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: var(--color-text-muted);
+}
+
+.status-line {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  margin-top: 0.5rem;
+}
+
+.status-line--error {
+  color: var(--color-error);
+}
+
+.hidden {
+  display: none !important;
+}
+
+.site-footer {
+  margin-top: 2rem;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+/*
+ * Light “report” skin for PDF rasterisation only.
+ * html2canvas onclone adds .pdf-capture-surface to each captured .pdf-block root (not used in live UI).
+ */
+.pdf-capture-surface {
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif !important;
+  -webkit-font-smoothing: antialiased !important;
+  text-rendering: optimizeLegibility;
+  background: #f8fafc !important;
+  color: #1e293b !important;
+  padding: 20px 22px 24px !important;
+  border-radius: 14px !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 6px 28px rgba(15, 23, 42, 0.07) !important;
+}
+
+.pdf-capture-surface h2 {
+  color: #0f172a !important;
+  font-size: 1.05rem !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em !important;
+  margin-top: 0 !important;
+  margin-bottom: 0.65rem !important;
+  padding-bottom: 0.4rem !important;
+  border-bottom: 3px solid #3b82f6 !important;
+}
+
+.pdf-capture-surface h2 span {
+  color: #64748b !important;
+  font-weight: 500 !important;
+}
+
+.pdf-capture-surface h3 {
+  color: #0f172a !important;
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  margin-top: 0.75rem !important;
+}
+
+.pdf-capture-surface .status-line,
+.pdf-capture-surface .pdf-block-caption {
+  color: #475569 !important;
+  font-size: 0.88rem !important;
+  line-height: 1.5 !important;
+}
+
+.pdf-capture-surface .results-grid {
+  gap: 0.65rem !important;
+  margin-bottom: 0.75rem !important;
+}
+
+.pdf-capture-surface .stat {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 10px !important;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04) !important;
+}
+
+.pdf-capture-surface .stat .label {
+  color: #64748b !important;
+  letter-spacing: 0.06em !important;
+}
+
+.pdf-capture-surface .stat .value {
+  color: #0f172a !important;
+}
+
+.pdf-capture-surface .chart-wrap {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  padding: 10px !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.8) !important;
+}
+
+.pdf-capture-surface .chart-scroll {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  padding: 8px !important;
+}
+
+.pdf-capture-surface .file-log {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 10px !important;
+}
+
+.pdf-capture-surface .file-log th {
+  background: #f1f5f9 !important;
+  color: #475569 !important;
+  font-weight: 600 !important;
+}
+
+.pdf-capture-surface .file-log td {
+  color: #1e293b !important;
+  border-bottom-color: #e2e8f0 !important;
+}
+
+.pdf-capture-surface .file-log .num {
+  color: #0f172a !important;
+}
+
+.pdf-capture-surface .file-log .mono {
+  color: #334155 !important;
+}
+
+.pdf-capture-surface .file-log .err {
+  color: #b91c1c !important;
+}
+
+.pdf-capture-surface .segment-legend {
+  background: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+.pdf-capture-surface .segment-legend-term {
+  color: #1d4ed8 !important;
+}
+
+.pdf-capture-surface .segment-legend-def {
+  color: #475569 !important;
+}
+
+.pdf-capture-surface .mono {
+  color: #334155 !important;
+}

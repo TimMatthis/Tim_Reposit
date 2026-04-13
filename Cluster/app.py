@@ -14,14 +14,17 @@ import cluster_analysis as ca
 import pandas as pd
 
 from cluster_analysis import (
+    cluster_predictor,
     compute_metrics,
     export_mapping,
     find_optimal_k,
     load_average_daily_profiles,
     minmax_scale_rows,
+    postcode_cluster_analysis,
     run_kshape,
     visualise,
 )
+from enrichment import enrich_sites
 from flask import (
     Flask,
     Response,
@@ -68,6 +71,7 @@ def run_analysis_job(
     figure_path: Path,
     mapping_path: Path,
     auto_detect: bool = False,
+    abs_csv_path: Path | None = None,
 ) -> None:
     try:
         _set(job_id, progress=5, message="Scanning CSV for distinct sites…")
@@ -83,11 +87,24 @@ def run_analysis_job(
             n_rows = None
             _set(job_id, progress=10, message="Loading data…")
 
-        _set(job_id, progress=15, message="Loading and aggregating daily profiles…")
-        home_ids, profiles = load_average_daily_profiles(str(csv_path))
+        # Enrich sites with address-derived and optional ABS features.
+        _set(job_id, progress=12, message="Enriching sites with address and postcode features…")
+        try:
+            enriched_df = enrich_sites(
+                str(csv_path),
+                abs_csv_path=str(abs_csv_path) if abs_csv_path else None,
+            )
+        except Exception as enrich_exc:
+            print(f"      Enrichment failed (non-fatal): {enrich_exc}")
+            enriched_df = None
 
-        _set(job_id, progress=25, message="Applying Min-Max scaling…")
-        scaled = minmax_scale_rows(profiles)
+        _set(job_id, progress=15, message="Loading and aggregating seasonal daily profiles…")
+        home_ids, profiles, postcode_map = load_average_daily_profiles(str(csv_path))
+
+        # KShape z-normalises internally so MinMax pre-scaling is not needed for
+        # clustering. We retain a MinMax-scaled copy only for the visualisation,
+        # where [0,1] traces are easier to compare across clusters.
+        scaled_for_viz = minmax_scale_rows(profiles)
 
         sweep_results = None
 
@@ -97,22 +114,46 @@ def run_analysis_job(
                 _set(job_id, progress=pct, message=f"Sweep: testing k={k} of {k_max}…")
 
             _set(job_id, progress=30, message="Auto-detecting optimal cluster count…")
-            n_clusters, sweep_results = find_optimal_k(scaled, k_min=2, k_max=10, progress_cb=sweep_cb)
+            n_clusters, sweep_results = find_optimal_k(profiles, k_min=2, k_max=10, progress_cb=sweep_cb)
 
         _set(job_id, progress=65, message=f"Running KShape clustering (k={n_clusters}) — this may take a minute…")
         ca.N_CLUSTERS = n_clusters
-        model, labels = run_kshape(scaled)
+        model, labels = run_kshape(profiles)
 
         _set(job_id, progress=80, message="Computing quality metrics…")
-        metrics = compute_metrics(scaled, labels, model)
+        metrics = compute_metrics(profiles, labels, model)
 
         _set(job_id, progress=88, message="Generating cluster visualisation…")
-        visualise(scaled, model, labels, str(figure_path))
+        visualise(scaled_for_viz, model, labels, str(figure_path))
 
         _set(job_id, progress=96, message="Saving results…")
-        export_mapping(home_ids, labels, str(mapping_path))
+        export_mapping(home_ids, labels, str(mapping_path), postcode_map=postcode_map)
 
         cluster_counts = {k: int((labels == k).sum()) for k in range(n_clusters)}
+
+        # Postcode analysis — only if Postcode data was present in the CSV.
+        postcode_result = None
+        if postcode_map:
+            _set(job_id, progress=97, message="Analysing postcode distribution across clusters…")
+            heatmap_path = OUTPUT_DIR / f"{job_id}_postcode_heatmap.png"
+            try:
+                postcode_result = postcode_cluster_analysis(
+                    home_ids, labels, postcode_map, str(heatmap_path)
+                )
+            except Exception as pc_exc:
+                print(f"      Postcode analysis skipped: {pc_exc}")
+
+        # Cluster predictor — only if enrichment data is available.
+        predictor_result = None
+        if enriched_df is not None and not enriched_df.empty:
+            _set(job_id, progress=99, message="Training cluster predictor on site features…")
+            importance_path = OUTPUT_DIR / f"{job_id}_feature_importance.png"
+            try:
+                predictor_result = cluster_predictor(
+                    enriched_df, home_ids, labels, str(importance_path)
+                )
+            except Exception as pred_exc:
+                print(f"      Cluster predictor skipped: {pred_exc}")
 
         _set(
             job_id,
@@ -129,6 +170,8 @@ def run_analysis_job(
                 "cluster_counts": cluster_counts,
                 "metrics":        metrics,
                 "sweep":          sweep_results,
+                "postcode":       postcode_result,
+                "predictor":      predictor_result,
             },
         )
 
@@ -150,6 +193,7 @@ def index():
 @app.route("/run", methods=["POST"])
 def run():
     file        = request.files.get("csv_file")
+    abs_file    = request.files.get("abs_csv_file")
     n_clusters  = int(request.form.get("n_clusters", 5))
     auto_detect = request.form.get("auto_detect") == "1"
 
@@ -169,12 +213,18 @@ def run():
 
     file.save(csv_path)
 
+    # Save optional ABS enrichment CSV if supplied.
+    abs_csv_path = None
+    if abs_file and abs_file.filename and allowed_file(abs_file.filename):
+        abs_csv_path = UPLOAD_DIR / f"{job_id}_abs_enrichment.csv"
+        abs_file.save(abs_csv_path)
+
     with _jobs_lock:
         _jobs[job_id] = {"status": "running", "progress": 0, "message": "Starting…", "result": None}
 
     thread = threading.Thread(
         target=run_analysis_job,
-        args=(job_id, csv_path, n_clusters, figure_path, mapping_path, auto_detect),
+        args=(job_id, csv_path, n_clusters, figure_path, mapping_path, auto_detect, abs_csv_path),
         daemon=True,
     )
     thread.start()
@@ -245,6 +295,8 @@ def results_page(job_id: str):
         cluster_counts=r["cluster_counts"],
         metrics=r["metrics"],
         sweep=r.get("sweep"),
+        postcode=r.get("postcode"),
+        predictor=r.get("predictor"),
     )
 
 

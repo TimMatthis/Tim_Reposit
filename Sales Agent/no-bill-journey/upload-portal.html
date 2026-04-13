@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Step 3 — Upload &amp; photo check | No-Bill™</title>
+  <!-- Optional: set a fixed API origin for this page (empty = use script defaults + session). -->
+  <meta name="reposit-no-bill-api" content="">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/no-bill-journey.css">
+</head>
+<body class="nb-page">
+  <a class="nb-skip" href="#main">Skip to content</a>
+  <div class="nb-wrap">
+    <header class="nb-nav">
+      <a href="index.html">← Hub</a>
+      <ul class="nb-steps" aria-label="Funnel steps">
+        <li><a href="index.html">Hub</a></li>
+        <li><a href="lead-instant-quote.html">1 · Lead</a></li>
+        <li><a href="gatekeeper.html">2 · Gatekeeper</a></li>
+        <li class="nb-steps__current">3 · Upload</li>
+      </ul>
+    </header>
+
+    <main id="main">
+      <article class="nb-card">
+        <p class="nb-eyebrow">Step 3 · Barrier</p>
+        <h1 class="nb-title">Uploads &amp; photo check</h1>
+        <p class="nb-lede">
+          Bills and PDFs stay on whatever CMS or storage you use. <strong>Photo checking</strong> calls the small Node utility API (vision + prompt in the repo). If you open this page from a static server on <strong>port 8080</strong>, that server does not implement <code>/api</code> — point the field below at the utility server (usually <strong>port 3847</strong>) and run <strong>Test connection</strong>.
+        </p>
+
+        <section class="nb-api-strip" aria-labelledby="nb-api-heading">
+          <h2 class="nb-api-heading" id="nb-api-heading">API for photo check</h2>
+          <p class="nb-api-hint">
+            Analyze requests go to <code>…/api/no-bill/analyze-photos</code>.
+            <span class="nb-api-hint-break">Resolve URL query overrides: <code>?api=http://127.0.0.1:3847</code> or <code>?utilityPort=3847</code>.</span>
+          </p>
+          <label class="nb-upload-field" for="nb-api-base">Utility API base (no trailing slash)</label>
+          <input type="text" id="nb-api-base" class="nb-api-input" inputmode="url" placeholder="http://127.0.0.1:3847" autocomplete="off" spellcheck="false">
+          <p class="nb-api-resolved">Will call: <strong id="nb-api-resolved">—</strong></p>
+          <div class="nb-api-actions">
+            <button type="button" class="nb-btn nb-btn--secondary" id="nb-api-default">Fill default for this host</button>
+            <button type="button" class="nb-btn nb-btn--primary" id="nb-api-test">Test connection</button>
+          </div>
+          <p class="nb-api-status" id="nb-api-status" role="status"></p>
+        </section>
+
+        <ol class="nb-steps-list">
+          <li class="nb-steps-list__item">
+            <h2 class="nb-title nb-title--sm">Bills</h2>
+            <p class="nb-note nb-note--below-title">Last four quarters or annual summary (PDF). Wire to HubSpot or your store.</p>
+            <div class="nb-upload-zone nb-upload-zone--compact" role="region" aria-label="Bill upload placeholder">
+              Bill / PDF upload placeholder
+            </div>
+          </li>
+          <li class="nb-steps-list__item">
+            <h2 class="nb-title nb-title--sm">Site photos</h2>
+            <p class="nb-note nb-note--below-title">JPG, PNG, or WebP — up to 8 files. Images are resized in the browser before upload.</p>
+            <div class="nb-upload-zone nb-upload-zone--compact" role="region" aria-label="Photo upload">
+              <input type="file" id="nb-photo-input" class="nb-file-input" accept="image/jpeg,image/png,image/webp" multiple>
+              <div class="nb-photo-toolbar">
+                <button type="button" class="nb-btn nb-btn--primary" id="nb-analyze-photos">Run photo check</button>
+              </div>
+              <p class="nb-photo-status" id="nb-photo-status" role="status"></p>
+            </div>
+          </li>
+          <li class="nb-steps-list__item">
+            <h2 class="nb-title nb-title--sm">Result</h2>
+            <div class="nb-analysis-root" id="nb-analysis-root" aria-live="polite"></div>
+          </li>
+        </ol>
+
+        <div class="nb-actions">
+          <button type="button" class="nb-btn nb-btn--primary" id="nb-submit-design" disabled aria-disabled="true">Submit for design queue</button>
+          <a class="nb-btn nb-btn--secondary" href="index.html">Journey hub</a>
+        </div>
+
+        <details class="nb-details">
+          <summary>Technical notes</summary>
+          <p class="nb-note">Vision prompt: <code>utility_api/noBillPhotoPrompt.js</code>. Start API: <code>cd utility_api &amp;&amp; node server.js</code>. Optional: serve everything from that server on 3847 so the base URL can be same-origin (empty path). <code>OPENAI_API_KEY</code> enables live model output; without it, the API returns structured mock JSON.</p>
+        </details>
+      </article>
+    </main>
+
+    <p class="nb-footer"><a href="index.html">Journey hub</a></p>
+  </div>
+  <script src="upload-portal.js" defer></script>
+</body>
+</html>

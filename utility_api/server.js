@@ -13,8 +13,77 @@
 
 const fs = require('fs');
 const http = require('http');
+const net = require('net');
 const path = require('path');
+const { spawn } = require('child_process');
 const { URL } = require('url');
+const { analyzeSitePhotos } = require('./noBillPhotoAnalyze');
+
+const CLUSTER_DIR  = path.resolve(__dirname, '../Cluster');
+const CLUSTER_PORT = 5000;
+
+const OPTISIZER_DIR  = path.resolve(__dirname, '../Optisizer data/calculator');
+const OPTISIZER_PORT = 5010;
+
+const NEM_WEATHER_DIR  = path.resolve(__dirname, '../nem_weather_price_ml');
+const NEM_WEATHER_PORT = 5020;
+
+// Track the spawned Flask process so we don't start duplicates.
+let clusterProc = null;
+let optisizerProc = null;
+let nemWeatherProc = null;
+
+function isPortOpen(port) {
+  return new Promise(resolve => {
+    const sock = new net.Socket();
+    sock.setTimeout(600);
+    sock.on('connect', () => { sock.destroy(); resolve(true); });
+    sock.on('error',   () => { sock.destroy(); resolve(false); });
+    sock.on('timeout', () => { sock.destroy(); resolve(false); });
+    sock.connect(port, '127.0.0.1');
+  });
+}
+
+function startCluster() {
+  // Already running (process handle still alive or port already open).
+  if (clusterProc && !clusterProc.exitCode && clusterProc.exitCode !== 0) {
+    return { started: false, message: 'Process handle already exists.' };
+  }
+  clusterProc = spawn('python3', ['app.py'], {
+    cwd: CLUSTER_DIR,
+    detached: false,
+    stdio: 'ignore',
+  });
+  clusterProc.on('exit', () => { clusterProc = null; });
+  return { started: true, message: 'Flask server starting…' };
+}
+
+function startOptisizer() {
+  if (optisizerProc && !optisizerProc.exitCode && optisizerProc.exitCode !== 0) {
+    return { started: false, message: 'Process handle already exists.' };
+  }
+  optisizerProc = spawn('python3', ['app.py'], {
+    cwd: OPTISIZER_DIR,
+    detached: false,
+    stdio: 'ignore',
+  });
+  optisizerProc.on('exit', () => { optisizerProc = null; });
+  return { started: true, message: 'Flask server starting…' };
+}
+
+function startNemWeather() {
+  if (nemWeatherProc && !nemWeatherProc.exitCode && nemWeatherProc.exitCode !== 0) {
+    return { started: false, message: 'Process handle already exists.' };
+  }
+  nemWeatherProc = spawn('python3', ['app.py'], {
+    cwd: NEM_WEATHER_DIR,
+    detached: false,
+    stdio: 'ignore',
+    env: { ...process.env, PORT: String(NEM_WEATHER_PORT) },
+  });
+  nemWeatherProc.on('exit', () => { nemWeatherProc = null; });
+  return { started: true, message: 'Flask server starting…' };
+}
 
 const PORT = process.env.PORT || 3847;
 const ATTR_ORDER = [
@@ -194,7 +263,10 @@ function readJsonBody(req, maxBytes = 524288) {
     let raw = '';
     req.on('data', chunk => {
       raw += chunk;
-      if (raw.length > maxBytes) reject(new Error('Request body too large'));
+      if (raw.length > maxBytes) {
+        reject(new Error('Request body too large'));
+        req.destroy();
+      }
     });
     req.on('end', () => {
       if (!raw.trim()) {
@@ -209,6 +281,62 @@ function readJsonBody(req, maxBytes = 524288) {
     });
     req.on('error', reject);
   });
+}
+
+const ALLOWED_PHOTO_MIMES = new Set(['image/jpeg', 'image/png', 'image/webp']);
+const MAX_PHOTO_IMAGES = 8;
+const MAX_PHOTO_JSON_BYTES = 22 * 1024 * 1024;
+
+function validatePhotoPayload(body) {
+  const images = body?.images;
+  if (!Array.isArray(images) || images.length === 0) {
+    throw new Error('images must be a non-empty array');
+  }
+  if (images.length > MAX_PHOTO_IMAGES) {
+    throw new Error(`At most ${MAX_PHOTO_IMAGES} images per request`);
+  }
+  const out = [];
+  for (let i = 0; i < images.length; i++) {
+    const row = images[i];
+    const mime = typeof row?.mime === 'string' ? row.mime.trim().toLowerCase() : '';
+    const dataBase64 = typeof row?.dataBase64 === 'string' ? row.dataBase64.trim() : '';
+    if (!ALLOWED_PHOTO_MIMES.has(mime)) {
+      throw new Error(`Image ${i + 1}: mime must be image/jpeg, image/png, or image/webp`);
+    }
+    if (!dataBase64) {
+      throw new Error(`Image ${i + 1}: dataBase64 is required`);
+    }
+    if (dataBase64.length > 6 * 1024 * 1024) {
+      throw new Error(`Image ${i + 1}: payload too large (resize before upload)`);
+    }
+    out.push({ mime, dataBase64 });
+  }
+  return out;
+}
+
+function handleNoBillAnalyzePhotos(req, res) {
+  if (req.method !== 'POST') {
+    sendJson(res, 405, { ok: false, error: 'Method not allowed' });
+    return;
+  }
+  readJsonBody(req, MAX_PHOTO_JSON_BYTES)
+    .then(async body => {
+      const images = validatePhotoPayload(body);
+      const apiKey = process.env.OPENAI_API_KEY || '';
+      const result = await analyzeSitePhotos(images, apiKey);
+      if (!result.ok) {
+        sendJson(res, 502, { ok: false, error: result.error || 'Analysis failed' });
+        return;
+      }
+      sendJson(res, 200, {
+        ok: true,
+        mock: Boolean(result.mock),
+        analysis: result.analysis,
+        rawText: result.rawText,
+        promptRef: 'utility_api/noBillPhotoPrompt.js',
+      });
+    })
+    .catch(e => sendJson(res, 400, { ok: false, error: e.message || String(e) }));
 }
 
 function sendJson(res, status, obj) {
@@ -271,6 +399,48 @@ function handleTopPackages(method, url, req, res) {
   sendJson(res, 405, { ok: false, error: 'Method not allowed' });
 }
 
+// Serve static files from the workspace root so the landing page works
+// at http://localhost:3847/ without file:// CORS issues.
+const STATIC_ROOT = path.resolve(__dirname, '..');
+const MIME_TYPES = {
+  '.html': 'text/html',
+  '.css':  'text/css',
+  '.js':   'application/javascript',
+  '.json': 'application/json',
+  '.png':  'image/png',
+  '.jpg':  'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.gif':  'image/gif',
+  '.svg':  'image/svg+xml',
+  '.ico':  'image/x-icon',
+  '.csv':  'text/csv',
+  '.md':   'text/markdown',
+  '.txt':  'text/plain',
+};
+
+function serveStatic(urlPath, res) {
+  let filePath = path.join(STATIC_ROOT, decodeURIComponent(urlPath));
+  if (filePath.endsWith('/') || filePath === STATIC_ROOT) {
+    filePath = path.join(filePath, 'index.html');
+  }
+  const resolved = path.resolve(filePath);
+  if (!resolved.startsWith(STATIC_ROOT)) {
+    sendJson(res, 403, { ok: false, error: 'Forbidden' });
+    return;
+  }
+
+  fs.stat(resolved, (err, stats) => {
+    if (err || !stats.isFile()) {
+      sendJson(res, 404, { ok: false, error: 'Not found' });
+      return;
+    }
+    const ext = path.extname(resolved).toLowerCase();
+    const mime = MIME_TYPES[ext] || 'application/octet-stream';
+    res.writeHead(200, { 'Content-Type': mime });
+    fs.createReadStream(resolved).pipe(res);
+  });
+}
+
 const server = http.createServer((req, res) => {
   let url;
   try {
@@ -295,6 +465,10 @@ const server = http.createServer((req, res) => {
     sendJson(res, 200, {
       ok: true,
       service: 'utility-top-packages',
+      /** Hub uses this to avoid calling /api/optisizer/* on pre–Optisizer utility_api builds (those return 404). */
+      optisizerLauncher: true,
+      /** Hub uses this for NEM + BOM Flask explorer (port 5020). */
+      nemWeatherLauncher: true,
       monthlyFee: {
         mode: 'anyIntegerDollars',
         partWorth: 'piecewiseLinearInterpolatedBetweenConjointLevels'
@@ -305,6 +479,63 @@ const server = http.createServer((req, res) => {
 
   if (url.pathname === '/api/top-packages') {
     handleTopPackages(req.method, url, req, res);
+    return;
+  }
+
+  if (url.pathname === '/api/cluster/start' && req.method === 'POST') {
+    isPortOpen(CLUSTER_PORT).then(already => {
+      if (already) {
+        sendJson(res, 200, { ok: true, status: 'already_running' });
+      } else {
+        const result = startCluster();
+        sendJson(res, 200, { ok: true, status: 'starting', ...result });
+      }
+    });
+    return;
+  }
+
+  if (url.pathname === '/api/cluster/status') {
+    isPortOpen(CLUSTER_PORT).then(open => {
+      sendJson(res, 200, { ok: true, running: open });
+    });
+    return;
+  }
+
+  if (url.pathname === '/api/optisizer/start' && req.method === 'POST') {
+    isPortOpen(OPTISIZER_PORT).then(already => {
+      if (already) {
+        sendJson(res, 200, { ok: true, status: 'already_running' });
+      } else {
+        const result = startOptisizer();
+        sendJson(res, 200, { ok: true, status: 'starting', ...result });
+      }
+    });
+    return;
+  }
+
+  if (url.pathname === '/api/optisizer/status') {
+    isPortOpen(OPTISIZER_PORT).then(open => {
+      sendJson(res, 200, { ok: true, running: open });
+    });
+    return;
+  }
+
+  if (url.pathname === '/api/nem-weather/start' && req.method === 'POST') {
+    isPortOpen(NEM_WEATHER_PORT).then(already => {
+      if (already) {
+        sendJson(res, 200, { ok: true, status: 'already_running' });
+      } else {
+        const result = startNemWeather();
+        sendJson(res, 200, { ok: true, status: 'starting', ...result });
+      }
+    });
+    return;
+  }
+
+  if (url.pathname === '/api/nem-weather/status') {
+    isPortOpen(NEM_WEATHER_PORT).then(open => {
+      sendJson(res, 200, { ok: true, running: open });
+    });
     return;
   }
 
@@ -324,12 +555,39 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  if (url.pathname === '/api/no-bill/health' && req.method === 'GET') {
+    sendJson(res, 200, {
+      ok: true,
+      route: 'no-bill',
+      openaiConfigured: Boolean(process.env.OPENAI_API_KEY && String(process.env.OPENAI_API_KEY).trim()),
+    });
+    return;
+  }
+
+  if (url.pathname === '/api/no-bill/analyze-photos') {
+    handleNoBillAnalyzePhotos(req, res);
+    return;
+  }
+
+  // Fall through: serve static files from workspace root
+  if (req.method === 'GET') {
+    serveStatic(url.pathname, res);
+    return;
+  }
+
   sendJson(res, 404, { ok: false, error: 'Not found' });
 });
 
 server.listen(PORT, () => {
-  console.log(`Utility top-packages API → http://localhost:${PORT}`);
-  console.log(`monthlyFee: any integer $/mo (interpolated). GET /api/health to verify policy.`);
-  console.log(`GET  /api/top-packages?monthlyFee=93`);
-  console.log(`POST /api/top-packages  {"monthlyFee":93}`);
+  console.log(`\nProject Hub → http://localhost:${PORT}`);
+  console.log(`API         → http://localhost:${PORT}/api/health`);
+  console.log(`Cluster     → http://localhost:${PORT}/api/cluster/status`);
+  console.log(`Optisizer   → http://localhost:${PORT}/api/optisizer/status`);
+  console.log(`NEM weather → http://localhost:${PORT}/api/nem-weather/status`);
+  console.log(`No-Bill AI  → GET  http://localhost:${PORT}/api/no-bill/health`);
+  console.log(`            → POST http://localhost:${PORT}/api/no-bill/analyze-photos`);
+  if (!process.env.OPENAI_API_KEY) {
+    console.log('            → OPENAI_API_KEY not set — photo analysis returns mock JSON');
+  }
+  console.log();
 });

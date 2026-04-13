@@ -61,7 +61,14 @@ def _set_time_resolution(interval_minutes: int) -> None:
     Update global time resolution metadata used for profile shape and chart labels.
     """
     global INTERVAL_MINUTES, INTERVALS_PER_DAY, TIME_LABELS
-    INTERVAL_MINUTES = int(interval_minutes)
+    interval_minutes = int(interval_minutes)
+    if interval_minutes <= 0:
+        raise ValueError(
+            f"interval_minutes must be a positive integer, got {interval_minutes}. "
+            "Check that your timekey column contains valid timestamps with a supported cadence "
+            "(e.g. 30-minute or 5-minute intervals)."
+        )
+    INTERVAL_MINUTES = interval_minutes
     INTERVALS_PER_DAY = int(24 * 60 / INTERVAL_MINUTES)
     TIME_LABELS = _build_time_labels(INTERVAL_MINUTES)
 
@@ -93,29 +100,70 @@ def load_data(csv_path: str) -> tuple[pd.Series, pd.DataFrame]:
     return home_ids, readings
 
 
-def load_average_daily_profiles(csv_path: str) -> tuple[pd.Series, np.ndarray]:
+def load_average_daily_profiles(
+    csv_path: str,
+    min_days_per_season: int = 14,
+) -> tuple[pd.Series, np.ndarray, dict]:
     """
-    Fast path for large wide CSV files:
-      - load numeric interval columns as float32
-      - reshape to (homes, days, 288)
-      - average across days
+    Load long-format CSV and compute separate summer and winter average daily
+    profiles for each site.
+
+    Southern Hemisphere seasons
+    ---------------------------
+    Summer : October – March  (months 10, 11, 12, 1, 2, 3)
+    Winter : April – September  (months 4, 5, 6, 7, 8, 9)
+
+    Each site produces up to two profiles.  A site-season pair is excluded when
+    it has fewer than ``min_days_per_season`` distinct calendar days of data, to
+    avoid noisy short-window averages.
+
+    Profile identifiers use the format  ``SiteUID__summer`` / ``SiteUID__winter``
+    so that downstream code can always recover the originating site by splitting
+    on the last ``__``.
 
     Returns
     -------
-    home_ids : pd.Series
-    profiles : np.ndarray  shape (n_homes, 288), dtype float32
+    home_ids    : pd.Series  — one entry per site-season profile
+    profiles    : np.ndarray  shape (n_profiles, INTERVALS_PER_DAY), float32
+    postcode_map: dict  (SiteUID__season) -> Postcode string
     """
     header = pd.read_csv(csv_path, nrows=0)
     long_format_cols = {"SiteUID", "timekey", "Consumption_kWh"}
+    has_postcode = "Postcode" in header.columns
 
     if long_format_cols.issubset(set(header.columns)):
         print(f"[1/5] Loading long-format data from '{csv_path}' …")
-        df = pd.read_csv(csv_path, usecols=["SiteUID", "timekey", "Consumption_kWh"])
+        load_cols = ["SiteUID", "timekey", "Consumption_kWh"]
+        if has_postcode:
+            load_cols.append("Postcode")
+        df = pd.read_csv(csv_path, usecols=load_cols)
         df["Consumption_kWh"] = pd.to_numeric(df["Consumption_kWh"], errors="coerce")
         df = df.dropna(subset=["SiteUID", "timekey", "Consumption_kWh"])
 
         # Infer cadence from unique timestamps in the file.
-        unique_timekeys = np.sort(df["timekey"].astype(np.int64).unique())
+        # Support both Unix epoch integers and human-readable datetime strings.
+        sample = df["timekey"].iloc[0]
+        try:
+            int(sample)
+            timekey_is_epoch = True
+        except (ValueError, TypeError):
+            timekey_is_epoch = False
+
+        if timekey_is_epoch:
+            epoch_series = df["timekey"].astype(np.int64)
+            dt = pd.to_datetime(epoch_series, unit="s")
+        else:
+            dt = pd.to_datetime(df["timekey"], utc=True)
+            # Explicit seconds-since-epoch — avoids pandas version differences
+            # with astype(np.int64) on tz-aware series (returns nanoseconds in
+            # some versions but may behave differently in pandas 2.x).
+            epoch_series = (
+                (dt - pd.Timestamp("1970-01-01", tz="UTC"))
+                .dt.total_seconds()
+                .astype(np.int64)
+            )
+
+        unique_timekeys = np.sort(epoch_series.unique())
         if len(unique_timekeys) < 2:
             raise ValueError("Not enough timestamp values in 'timekey' to infer interval cadence.")
 
@@ -132,28 +180,86 @@ def load_average_daily_profiles(csv_path: str) -> tuple[pd.Series, np.ndarray]:
             f"({INTERVAL_MINUTES}-minute cadence)."
         )
 
-        dt = pd.to_datetime(df["timekey"], unit="s")
+        # ── Season assignment (Southern Hemisphere) ───────────────────────
+        month = dt.dt.month
+        df["season"] = month.map(
+            lambda m: "summer" if m in (10, 11, 12, 1, 2, 3) else "winter"
+        )
+
+        # ── Time-slot within the day ──────────────────────────────────────
         slot = (dt.dt.hour * 60 + dt.dt.minute) // INTERVAL_MINUTES
         df["slot"] = slot.astype(np.int32)
 
+        # ── Filter sparse site-season pairs ──────────────────────────────
+        df["_date"] = dt.dt.date
+        day_counts = df.groupby(["SiteUID", "season"])["_date"].nunique()
+        valid_pairs = (
+            day_counts[day_counts >= min_days_per_season]
+            .reset_index()[["SiteUID", "season"]]
+        )
+        n_sites_total = df["SiteUID"].nunique()
+        df = df.merge(valid_pairs, on=["SiteUID", "season"])
+        n_profiles_kept = len(valid_pairs)
+        n_profiles_max = n_sites_total * 2
+        if n_profiles_kept < n_profiles_max:
+            print(
+                f"      {n_profiles_max - n_profiles_kept} site-season profiles excluded "
+                f"(<{min_days_per_season} days of data)."
+            )
+
+        # ── Average by (site, season, slot) ──────────────────────────────
         grouped = (
-            df.groupby(["SiteUID", "slot"], sort=True)["Consumption_kWh"]
+            df.groupby(["SiteUID", "season", "slot"], sort=True)["Consumption_kWh"]
             .mean()
             .unstack("slot")
             .reindex(columns=range(INTERVALS_PER_DAY))
         )
+        # grouped.index is a MultiIndex (SiteUID, season).
 
-        home_ids = pd.Series(grouped.index.astype(str), name="home_id").reset_index(drop=True)
+        # ── Postcode map keyed by "SiteUID__season" ───────────────────────
+        postcode_map: dict = {}
+        if has_postcode:
+            pc_lookup = (
+                df[["SiteUID", "Postcode"]]
+                .drop_duplicates(subset="SiteUID")
+                .set_index("SiteUID")["Postcode"]
+                .astype(str)
+            )
+            postcode_map = {
+                f"{site}__{season}": pc_lookup.get(site, "Unknown")
+                for site, season in grouped.index
+            }
+            n_sites_with_pc = len(pc_lookup)
+            print(
+                f"      Postcode column detected — "
+                f"{n_sites_with_pc} site→postcode mappings loaded."
+            )
+
+        # ── Flatten MultiIndex → "SiteUID__season" strings ───────────────
+        grouped.index = [
+            f"{site}__{season}" for site, season in grouped.index
+        ]
+        home_ids = pd.Series(
+            grouped.index.astype(str), name="home_id"
+        ).reset_index(drop=True)
         profiles = grouped.to_numpy(dtype=np.float32, copy=False)
 
-        print(f"      {len(home_ids)} homes loaded from long-format rows.")
+        n_unique_sites = df["SiteUID"].nunique()
+        print(
+            f"      {n_unique_sites} sites → {len(home_ids)} seasonal profiles "
+            f"({len(home_ids) / max(n_unique_sites, 1):.1f} seasons/site avg)."
+        )
         print(f"      Profiles shape: {profiles.shape}")
-        return home_ids, np.nan_to_num(profiles, nan=0.0).astype(np.float32, copy=False)
+        return (
+            home_ids,
+            np.nan_to_num(profiles, nan=0.0).astype(np.float32, copy=False),
+            postcode_map,
+        )
 
     # Fallback: existing wide matrix format (one row per home).
     home_ids, readings = load_data(csv_path)
     profiles = compute_average_daily_profile(readings)
-    return home_ids, profiles
+    return home_ids, profiles, {}
 
 
 # ---------------------------------------------------------------------------
@@ -295,7 +401,7 @@ def find_optimal_k(
         if n_unique < 2:
             sil = -1.0
         else:
-            sil = float(silhouette_score(scaled_profiles, labels, metric="euclidean"))
+            sil = float(silhouette_score(scaled_profiles, labels, metric="correlation"))
 
         entry = {
             "k": k,
@@ -319,9 +425,11 @@ def compute_metrics(scaled_profiles: np.ndarray, labels: np.ndarray, model: KSha
     """
     Return a dict of clustering quality scores for the chosen k.
 
-    Silhouette and Davies-Bouldin are computed on the flat (euclidean) profiles,
-    which is a standard and fast approximation when the cluster count is already
-    fixed. Inertia comes directly from the fitted KShape model.
+    Silhouette is computed with correlation distance (1 − Pearson r), which
+    matches KShape's shape-based internal measure and gives more accurate scores
+    than Euclidean distance for time-series clusters. Davies-Bouldin uses
+    Euclidean (sklearn default). Inertia comes directly from the fitted KShape
+    model.
 
     Interpretation guide
     --------------------
@@ -340,7 +448,7 @@ def compute_metrics(scaled_profiles: np.ndarray, labels: np.ndarray, model: KSha
         silhouette_score(
             scaled_profiles,
             labels,
-            metric="euclidean",
+            metric="correlation",
             sample_size=min(len(labels), 200),
             random_state=RANDOM_SEED,
         )
@@ -348,7 +456,7 @@ def compute_metrics(scaled_profiles: np.ndarray, labels: np.ndarray, model: KSha
     db   = float(davies_bouldin_score(scaled_profiles, labels))
     ine  = float(model.inertia_)
 
-    sample_scores = silhouette_samples(scaled_profiles, labels, metric="euclidean")
+    sample_scores = silhouette_samples(scaled_profiles, labels, metric="correlation")
     per_cluster: dict[int, dict] = {}
     for k in range(n_clusters):
         mask = labels == k
@@ -578,13 +686,434 @@ def visualise(
 # Step 6 – Export cluster mapping
 # ---------------------------------------------------------------------------
 
-def export_mapping(home_ids: pd.Series, labels: np.ndarray, output_path: str) -> None:
+def export_mapping(
+    home_ids: pd.Series,
+    labels: np.ndarray,
+    output_path: str,
+    postcode_map: dict | None = None,
+) -> None:
     mapping = pd.DataFrame({
         "home_id": home_ids,
         "cluster_id": labels,
     })
+
+    # When seasonal profiling is active, home_id has the form "SiteUID__season".
+    # Split into separate columns so the CSV is easy to filter by season.
+    if mapping["home_id"].str.contains("__", regex=False).any():
+        split = mapping["home_id"].str.rsplit("__", n=1)
+        mapping.insert(1, "site_uid", split.str[0])
+        mapping.insert(2, "season",   split.str[1])
+
+    if postcode_map:
+        mapping["Postcode"] = mapping["home_id"].map(postcode_map).fillna("Unknown")
+
     mapping.to_csv(output_path, index=False)
     print(f"      Mapping saved → '{output_path}'")
+
+
+# ---------------------------------------------------------------------------
+# Step 7 – Postcode distribution analysis
+# ---------------------------------------------------------------------------
+
+def postcode_cluster_analysis(
+    home_ids: pd.Series,
+    labels: np.ndarray,
+    postcode_map: dict,
+    heatmap_path: str,
+    min_homes: int = 3,
+) -> dict:
+    """
+    Analyse whether postcode is a proxy for energy usage cluster.
+
+    Builds a contingency table (postcode × cluster), runs a chi-squared test
+    to check if the association is statistically significant, and saves a
+    normalised heatmap PNG showing the % of each postcode's homes per cluster.
+
+    Parameters
+    ----------
+    home_ids      : pd.Series of SiteUIDs in the same order as labels
+    labels        : cluster label per home (np.ndarray)
+    postcode_map  : dict  SiteUID -> Postcode string
+    heatmap_path  : path to write the heatmap PNG
+    min_homes     : postcodes with fewer homes are merged into 'Other'
+
+    Returns
+    -------
+    dict with keys:
+        chi2, p_value, dof, interpretation,
+        top_postcodes_per_cluster, n_postcodes, heatmap_file,
+        contingency_rows  (list of dicts for template rendering)
+    """
+    from scipy.stats import chi2_contingency
+
+    print("[6/6] Running postcode distribution analysis …")
+
+    mapping = pd.DataFrame({"home_id": home_ids.astype(str), "cluster_id": labels})
+    mapping["Postcode"] = mapping["home_id"].map(postcode_map).fillna("Unknown").astype(str)
+
+    # Merge rare postcodes into 'Other' to reduce noise.
+    counts_per_postcode = mapping["Postcode"].value_counts()
+    rare = counts_per_postcode[counts_per_postcode < min_homes].index
+    mapping.loc[mapping["Postcode"].isin(rare), "Postcode"] = "Other"
+
+    n_clusters = int(labels.max()) + 1
+    cluster_cols = list(range(n_clusters))
+
+    contingency = (
+        mapping.groupby(["Postcode", "cluster_id"])
+        .size()
+        .unstack(fill_value=0)
+        .reindex(columns=cluster_cols, fill_value=0)
+    )
+
+    # Sort postcodes by total homes descending; keep 'Other' at the bottom.
+    contingency["_total"] = contingency.sum(axis=1)
+    other_row = contingency.loc[["Other"]] if "Other" in contingency.index else None
+    contingency = contingency[contingency.index != "Other"].sort_values("_total", ascending=False)
+    if other_row is not None:
+        contingency = pd.concat([contingency, other_row])
+    contingency = contingency.drop(columns=["_total"])
+
+    # Row-normalised table: % of each postcode's homes per cluster.
+    row_totals = contingency.sum(axis=1).replace(0, 1)
+    normalised = contingency.div(row_totals, axis=0) * 100
+
+    # Chi-squared test on raw counts (exclude 'Other' to keep it clean).
+    test_table = contingency[contingency.index != "Other"]
+    if test_table.shape[0] >= 2 and test_table.shape[1] >= 2:
+        chi2, p_value, dof, _ = chi2_contingency(test_table.values)
+        chi2 = round(float(chi2), 4)
+        p_value = float(p_value)
+        if p_value < 0.001:
+            interpretation = "Very strong evidence — postcode is a meaningful proxy for energy usage pattern."
+        elif p_value < 0.01:
+            interpretation = "Strong evidence — postcode correlates significantly with usage cluster."
+        elif p_value < 0.05:
+            interpretation = "Moderate evidence — some postcode–cluster association exists."
+        else:
+            interpretation = "Weak evidence — postcode does not appear to predict usage pattern in this dataset."
+    else:
+        chi2, p_value, dof = None, None, None
+        interpretation = "Not enough postcodes to run statistical test."
+
+    # Top 5 postcodes per cluster by concentration (row-normalised %).
+    top_postcodes_per_cluster: dict[int, list[dict]] = {}
+    for col in cluster_cols:
+        col_series = normalised[col].drop("Other", errors="ignore")
+        top = col_series.nlargest(5)
+        top_postcodes_per_cluster[col] = [
+            {"postcode": pc, "pct": round(float(pct), 1)}
+            for pc, pct in top.items()
+        ]
+
+    # Heatmap PNG.
+    _save_postcode_heatmap(normalised, heatmap_path, n_clusters)
+
+    # Rows for template table rendering.
+    contingency_rows = []
+    for postcode, row in normalised.iterrows():
+        raw_counts = contingency.loc[postcode]
+        contingency_rows.append({
+            "postcode": postcode,
+            "total": int(raw_counts.sum()),
+            "cluster_pcts": [round(float(row.get(c, 0)), 1) for c in cluster_cols],
+            "dominant_cluster": int(row.idxmax()),
+        })
+
+    print(f"      {len(contingency)} postcodes analysed.")
+    if p_value is not None:
+        print(f"      Chi-squared p-value: {p_value:.4f} — {interpretation}")
+
+    return {
+        "chi2": chi2,
+        "p_value": round(p_value, 6) if p_value is not None else None,
+        "dof": int(dof) if dof is not None else None,
+        "interpretation": interpretation,
+        "top_postcodes_per_cluster": top_postcodes_per_cluster,
+        "n_postcodes": len(contingency),
+        "heatmap_file": Path(heatmap_path).name,
+        "contingency_rows": contingency_rows,
+        "n_clusters": n_clusters,
+    }
+
+
+def _save_postcode_heatmap(normalised: "pd.DataFrame", output_path: str, n_clusters: int) -> None:
+    """Save a dark-themed heatmap of postcode × cluster (row-normalised %)."""
+    n_postcodes = len(normalised)
+    fig_height = max(4, min(n_postcodes * 0.4 + 1, 28))
+    fig, ax = plt.subplots(figsize=(max(6, n_clusters * 1.5), fig_height))
+    fig.patch.set_facecolor("#0f1117")
+    ax.set_facecolor("#13151f")
+
+    data = normalised.values
+    im = ax.imshow(data, aspect="auto", cmap="YlOrRd", vmin=0, vmax=100)
+
+    ax.set_xticks(range(n_clusters))
+    ax.set_xticklabels([f"Cluster {c}" for c in range(n_clusters)], color="white", fontsize=9)
+    ax.set_yticks(range(n_postcodes))
+    ax.set_yticklabels(normalised.index.tolist(), color="white", fontsize=8)
+    ax.tick_params(colors="white")
+
+    for spine in ax.spines.values():
+        spine.set_edgecolor("#333")
+
+    # Annotate cells with % value.
+    for i in range(n_postcodes):
+        for j in range(n_clusters):
+            val = data[i, j]
+            text_color = "black" if val > 55 else "white"
+            ax.text(j, i, f"{val:.0f}%", ha="center", va="center",
+                    color=text_color, fontsize=7)
+
+    cbar = fig.colorbar(im, ax=ax, fraction=0.03, pad=0.02)
+    cbar.ax.yaxis.set_tick_params(color="white")
+    cbar.ax.set_ylabel("% of postcode homes", color="white", fontsize=8)
+    plt.setp(cbar.ax.yaxis.get_ticklabels(), color="white")
+
+    ax.set_title("Postcode × Cluster Distribution (% of postcode's homes per cluster)",
+                 color="white", fontsize=10, pad=10)
+    ax.set_xlabel("Cluster", color="white", fontsize=9)
+    ax.set_ylabel("Postcode", color="white", fontsize=9)
+
+    plt.tight_layout()
+    fig.savefig(output_path, dpi=130, bbox_inches="tight", facecolor=fig.get_facecolor())
+    plt.close(fig)
+    print(f"      Heatmap saved → '{output_path}'")
+
+
+# ---------------------------------------------------------------------------
+# Step 8 – Cluster predictor (Random Forest on enriched site features)
+# ---------------------------------------------------------------------------
+
+def cluster_predictor(
+    enriched_df: "pd.DataFrame",
+    home_ids: pd.Series,
+    labels: np.ndarray,
+    importance_path: str,
+) -> dict:
+    """
+    Train a Random Forest classifier to predict cluster membership from
+    site-level metadata features derived by enrichment.py.
+
+    Returns a dict with feature importances, accuracy metrics, and the
+    path to a saved feature importance bar chart.
+
+    Parameters
+    ----------
+    enriched_df     : DataFrame indexed by SiteUID with feature columns
+    home_ids        : pd.Series of SiteUIDs (same order as labels)
+    labels          : cluster label per home (np.ndarray)
+    importance_path : file path to write the importance bar chart PNG
+
+    Returns
+    -------
+    dict with keys:
+        accuracy, n_used, n_dropped, feature_importances (list of dicts),
+        per_cluster_accuracy (dict), top_feature, top_feature_importance,
+        interpretation, importance_file
+    """
+    from sklearn.ensemble import RandomForestClassifier
+    from sklearn.model_selection import cross_val_score
+    from sklearn.preprocessing import LabelEncoder
+
+    print("[7/7] Training cluster predictor …")
+
+    if enriched_df is None or enriched_df.empty:
+        print("      No enrichment data available — predictor skipped.")
+        return {}
+
+    # Build feature matrix by joining enriched features to cluster labels.
+    # When seasonal profiling is active, home_ids have the form "SiteUID__season".
+    # Strip the suffix so we can join against enriched_df (indexed by bare SiteUID).
+    raw_ids = home_ids.astype(str)
+    if raw_ids.str.contains("__", regex=False).any():
+        site_ids = raw_ids.str.rsplit("__", n=1).str[0]
+    else:
+        site_ids = raw_ids
+
+    label_df = pd.DataFrame({
+        "home_id": site_ids.values,
+        "cluster_id": labels,
+    }).set_index("home_id")
+
+    merged = label_df.join(enriched_df, how="inner")
+    if merged.empty:
+        print("      No SiteUID overlap between enrichment and cluster labels — predictor skipped.")
+        return {}
+
+    # Select numeric features only; drop climate_label (string) and cols with
+    # too many missing values (>50%).
+    feature_cols = [
+        c for c in enriched_df.columns
+        if c != "climate_label"
+        and pd.api.types.is_numeric_dtype(enriched_df[c])
+        and enriched_df[c].notna().mean() > 0.5
+    ]
+
+    if not feature_cols:
+        print("      No usable numeric features for predictor.")
+        return {}
+
+    X = merged[feature_cols].copy()
+    y = merged["cluster_id"].values
+
+    # Impute missing values with column medians.
+    for col in X.columns:
+        if X[col].isna().any():
+            X[col] = X[col].fillna(X[col].median())
+
+    n_used = len(X)
+    n_dropped = len(merged) - n_used
+    print(f"      Features: {feature_cols}")
+    print(f"      Training on {n_used} sites ({n_dropped} dropped due to missing data).")
+
+    if n_used < 10:
+        print("      Too few sites for predictor — skipped.")
+        return {}
+
+    rf = RandomForestClassifier(
+        n_estimators=200,
+        class_weight="balanced",
+        random_state=RANDOM_SEED,
+        n_jobs=-1,
+    )
+
+    # Cross-validated accuracy (5-fold, or fewer if small dataset).
+    n_folds = min(5, n_used // max(len(np.unique(y)), 2))
+    n_folds = max(n_folds, 2)
+    cv_scores = cross_val_score(rf, X.values, y, cv=n_folds, scoring="accuracy")
+    accuracy = float(np.mean(cv_scores))
+
+    # Fit on full data for importances and per-cluster metrics.
+    rf.fit(X.values, y)
+    importances = rf.feature_importances_
+
+    # Per-cluster accuracy via in-sample predictions (indicative only).
+    y_pred = rf.predict(X.values)
+    n_clusters = len(np.unique(y))
+    per_cluster_accuracy: dict[int, float] = {}
+    for k in range(n_clusters):
+        mask = y == k
+        if mask.sum() > 0:
+            per_cluster_accuracy[k] = round(float((y_pred[mask] == k).mean()), 3)
+
+    # Feature importance table.
+    importance_list = sorted(
+        [{"feature": f, "importance": round(float(imp), 4)}
+         for f, imp in zip(feature_cols, importances)],
+        key=lambda x: x["importance"],
+        reverse=True,
+    )
+    top_feature = importance_list[0]["feature"] if importance_list else "N/A"
+    top_importance = importance_list[0]["importance"] if importance_list else 0.0
+
+    # Plain-English interpretation.
+    if accuracy >= 0.70:
+        interp = (
+            f"Strong predictability ({accuracy:.0%} accuracy): site metadata alone "
+            f"explains most cluster membership. '{_feature_label(top_feature)}' "
+            f"is the dominant factor ({top_importance:.0%} of model weight)."
+        )
+    elif accuracy >= 0.50:
+        interp = (
+            f"Moderate predictability ({accuracy:.0%} accuracy): metadata captures "
+            f"some cluster signal. '{_feature_label(top_feature)}' contributes most "
+            f"({top_importance:.0%}) but behavioural factors likely matter more."
+        )
+    else:
+        interp = (
+            f"Weak predictability ({accuracy:.0%} accuracy): cluster membership is "
+            f"driven more by occupant behaviour than site characteristics. "
+            f"Consider adding occupancy or tariff data."
+        )
+
+    print(f"      Cross-validated accuracy: {accuracy:.2%}")
+    print(f"      Top feature: {top_feature} ({top_importance:.2%})")
+    print(f"      {interp}")
+
+    _save_importance_chart(importance_list, importance_path, accuracy)
+
+    return {
+        "accuracy": round(accuracy, 4),
+        "accuracy_pct": round(accuracy * 100, 1),
+        "n_used": n_used,
+        "n_dropped": n_dropped,
+        "n_folds": n_folds,
+        "feature_importances": importance_list,
+        "per_cluster_accuracy": per_cluster_accuracy,
+        "top_feature": _feature_label(top_feature),
+        "top_feature_importance": round(top_importance * 100, 1),
+        "interpretation": interp,
+        "importance_file": Path(importance_path).name,
+    }
+
+
+def _feature_label(feature: str) -> str:
+    """Return a human-readable label for a feature column name."""
+    labels = {
+        "Solar_kW":                   "Solar system size (kW)",
+        "Battery_kWh":                "Battery capacity (kWh)",
+        "is_apartment":               "Dwelling type (apartment vs house)",
+        "climate_zone":               "Climate zone",
+        "median_household_income":    "Median household income (weekly $)",
+        "avg_household_size":         "Average household size",
+        "avg_persons_per_bedroom":    "Average persons per bedroom",
+        "median_weekly_rent":         "Median weekly rent ($)",
+        "pct_65_plus":                "% aged 65+ (retirement age)",
+        "pct_not_in_labour_force":    "% not in labour force (home during day)",
+        "pct_part_time_employed":     "% employed part-time (partially home)",
+        "pct_university_educated":    "% with university degree (WFH proxy)",
+        "seifa_score":                "Area socioeconomic index (SEIFA)",
+        "pct_dwellings_house":        "% separate houses in postcode",
+        "pct_wfh":                    "% working from home in postcode",
+        "median_income":              "Median household income",
+    }
+    return labels.get(feature, feature)
+
+
+def _save_importance_chart(
+    importance_list: list[dict],
+    output_path: str,
+    accuracy: float,
+) -> None:
+    """Save a dark-themed horizontal bar chart of feature importances."""
+    if not importance_list:
+        return
+
+    features = [_feature_label(d["feature"]) for d in reversed(importance_list)]
+    values = [d["importance"] for d in reversed(importance_list)]
+
+    fig, ax = plt.subplots(figsize=(8, max(3, len(features) * 0.55 + 1.2)))
+    fig.patch.set_facecolor("#0f1117")
+    ax.set_facecolor("#13151f")
+
+    colors = ["#FF4D6D" if v == max(values) else "#74B3CE" for v in values]
+    bars = ax.barh(features, values, color=colors, height=0.6, zorder=2)
+
+    for bar, val in zip(bars, values):
+        ax.text(
+            val + 0.005, bar.get_y() + bar.get_height() / 2,
+            f"{val:.1%}", va="center", ha="left", color="white", fontsize=8,
+        )
+
+    ax.set_xlim(0, max(values) * 1.25)
+    ax.set_xlabel("Feature importance", color="white", fontsize=9)
+    ax.tick_params(colors="white")
+    ax.xaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: f"{x:.0%}"))
+    for spine in ax.spines.values():
+        spine.set_edgecolor("#333")
+    ax.grid(axis="x", color="#2a2d3e", zorder=1)
+
+    ax.set_title(
+        f"What predicts cluster membership?\n"
+        f"Cross-validated accuracy: {accuracy:.0%}",
+        color="white", fontsize=10, pad=10,
+    )
+
+    plt.tight_layout()
+    fig.savefig(output_path, dpi=130, bbox_inches="tight", facecolor=fig.get_facecolor())
+    plt.close(fig)
+    print(f"      Feature importance chart saved → '{output_path}'")
 
 
 # ---------------------------------------------------------------------------

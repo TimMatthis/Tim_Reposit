@@ -209,6 +209,25 @@ body {
   font-size: 0.9rem;
 }
 
+.file-drop--optional {
+  padding: 1.25rem 1.5rem;
+  border-style: dashed;
+  opacity: 0.8;
+}
+
+.file-drop--optional:hover {
+  opacity: 1;
+}
+
+.hint-link {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.hint-link:hover {
+  text-decoration: underline;
+}
+
 /* Stepper */
 .stepper {
   display: flex;
@@ -766,6 +785,86 @@ body {
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50%       { opacity: 0.4; }
+}
+
+/* ---- Postcode analysis ----------------------------------- */
+.postcode-stat-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.postcode-interpretation {
+  background: #1a1d2e;
+  border-left: 3px solid var(--color-primary);
+  padding: 0.75rem 1rem;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  color: #d0d4e8;
+  margin-bottom: 1rem;
+}
+
+.plot-caption {
+  font-size: 0.8rem;
+  color: #888;
+  margin-top: 0.5rem;
+  text-align: center;
+}
+
+.section-sub-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 0.75rem;
+}
+
+.card-sub {
+  font-size: 0.85rem;
+  color: #888;
+  margin-top: -0.25rem;
+  margin-bottom: 1rem;
+}
+
+.cluster-top-postcodes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.top-postcode-card {
+  background: #1a1d2e;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  min-width: 180px;
+  flex: 1 1 180px;
+}
+
+.top-postcode-cluster-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 0.4rem;
+}
+
+.table-scroll-wrap {
+  overflow-x: auto;
+}
+
+/* ---- Feature importance inline bar ----------------------- */
+.importance-bar-wrap {
+  background: #1a1d2e;
+  border-radius: 3px;
+  height: 10px;
+  width: 100%;
+  min-width: 80px;
+}
+
+.importance-bar {
+  background: var(--color-primary);
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease;
 }
 
 /* ---- Back link ------------------------------------------- */

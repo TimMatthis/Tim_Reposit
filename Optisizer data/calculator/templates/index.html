@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Optisizer fleet — net_cost summary</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+</head>
+<body>
+  <div class="page-wrap">
+    <aside class="demographics-callout" aria-label="Demographic augmentation notes">
+      <h2 class="demographics-callout-title">{{ demographic_doc.title }}</h2>
+      <p class="demographics-callout-summary">{{ demographic_doc.summary }}</p>
+      <ol class="demographics-callout-steps">
+        {% for step in demographic_doc.steps %}
+        <li>{{ step }}</li>
+        {% endfor %}
+      </ol>
+      <dl class="demographics-callout-dl">
+        <dt>Join variable</dt>
+        <dd><code class="mono">{{ demographic_doc.join_key }}</code></dd>
+        <dt>Bridge file</dt>
+        <dd><code class="mono">{{ demographic_doc.bridge_path }}</code></dd>
+        <dt>ABS loader</dt>
+        <dd><code class="mono">{{ demographic_doc.abs_source }}</code></dd>
+        <dt>Census columns added to each home (when matched)</dt>
+        <dd><code class="mono">{{ demographic_doc.census_column_names | join(', ') }}</code></dd>
+      </dl>
+      <p class="demographics-callout-api">
+        The SSE <span class="mono">complete</span> event includes <span class="mono">census.documentation</span> (same as this box),
+        <span class="mono">fleet_dataframe.columns</span> (flat table column order, matches <code class="mono">pandas.DataFrame</code> built server-side),
+        and per-home census fields on each item in <span class="mono">houses</span> for downstream notebooks.
+      </p>
+      <pre class="demographics-callout-code" aria-label="Pandas example">{{ demographic_doc.pandas_example }}</pre>
+      <p class="demographics-callout-csv">
+        After a run, download a CSV that starts with these notes as <span class="mono">#</span> lines, then the header row, then one row per home
+        (suitable for <span class="mono">pd.read_csv(..., comment=&quot;#&quot;)</span>).
+      </p>
+      <button type="button" class="btn-download" id="btn-download-fleet-csv" disabled>Download fleet table (CSV)</button>
+    </aside>
+
+    <header class="site-header">
+      <h1>Optisizer fleet summary</h1>
+      <p>
+        Each home is <code class="mono">catan_results/&lt;id&gt;/optimisation_intervals.csv</code>.
+        Sums use the <strong>net_cost</strong> column only. Data root: <span class="mono">{{ data_root }}</span>
+        (<strong>{{ n_files }}</strong> files detected).
+      </p>
+    </header>
+
+    <section class="card" id="panel-run">
+      <h2>Run</h2>
+      <p class="status-line">Process every file and stream progress below.</p>
+      <button type="button" class="btn-primary" id="btn-run">Run analysis</button>
+      <p class="status-line hidden status-line--error" id="run-error"></p>
+    </section>
+
+    <section class="card hidden" id="panel-progress">
+      <h2>Progress</h2>
+      <div class="progress-track">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+      <div class="progress-meta">
+        <span id="progress-count">0 / 0</span>
+        <span id="progress-pct">0%</span>
+      </div>
+      <p class="status-line" id="progress-current"></p>
+
+      <div class="file-log">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>House ID</th>
+              <th class="num">Rows</th>
+              <th class="num">Gross cost</th>
+              <th class="num">Gross revenue</th>
+              <th class="num">Net margin</th>
+              <th class="num">% rev</th>
+              <th class="num">% act</th>
+            </tr>
+          </thead>
+          <tbody id="file-log-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card hidden" id="panel-results">
+      <div class="pdf-block">
+        <h2>Fleet averages <span style="font-weight:400;color:var(--color-text-muted)">(mean per home)</span></h2>
+        <div class="results-grid" id="fleet-stats"></div>
+        <div class="chart-actions pdf-hide">
+          <button type="button" class="btn-download" id="btn-download-all">Download all charts (PNG)</button>
+          <button type="button" class="btn-download" id="btn-download-pdf">Export full analysis (PDF)</button>
+        </div>
+      </div>
+
+      <div class="pdf-block">
+        <h2 style="margin-top:1rem">System size vs profitability profile</h2>
+        <div class="results-grid" id="size-stats"></div>
+        <p class="status-line">Bubble plot: x = inferred solar size, y = profitability, bubble size = inferred battery size (max SoC).</p>
+        <div class="chart-wrap">
+          <canvas id="chart-bubble"></canvas>
+        </div>
+        <div class="chart-actions pdf-hide">
+          <button type="button" class="btn-download" id="btn-download-bubble">Download chart (PNG)</button>
+        </div>
+      </div>
+
+      <div class="pdf-block">
+        <h2 style="margin-top:1rem">Calendar period and fleet time distribution</h2>
+        <div class="results-grid" id="time-stats"></div>
+        <p class="status-line">Bars show number of 5-minute rows captured each month; line shows active homes in that month.</p>
+        <div class="chart-wrap">
+          <canvas id="chart-time"></canvas>
+        </div>
+        <div class="chart-actions pdf-hide">
+          <button type="button" class="btn-download" id="btn-download-time">Download chart (PNG)</button>
+        </div>
+      </div>
+
+      <div class="pdf-block">
+        <h2 style="margin-top:1rem">Top predictors of profitability</h2>
+        <p class="status-line">Ranked by absolute correlation with net margin and profitability decile.</p>
+        <div class="chart-wrap">
+          <canvas id="chart-predictors"></canvas>
+        </div>
+        <div class="chart-actions pdf-hide">
+          <button type="button" class="btn-download" id="btn-download-predictors">Download chart (PNG)</button>
+        </div>
+      </div>
+
+      <div class="pdf-block">
+        <p class="status-line pdf-block-caption">Predictor detail — correlation with net margin and profitability decile.</p>
+        <div class="file-log decile-log">
+          <table>
+            <thead>
+              <tr>
+                <th>Feature</th>
+                <th class="num">Sample</th>
+                <th class="num">Corr net margin</th>
+                <th class="num">Corr decile</th>
+              </tr>
+            </thead>
+            <tbody id="predictor-log-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="pdf-block">
+        <h2 style="margin-top:1rem">Behavior segments vs profitability</h2>
+        <p class="status-line">
+          Homes are grouped with k-means from load, grid, battery, and tariff-shape features. Labels
+          <span class="mono">S1</span>&ndash;<span class="mono">S4</span> are then ordered by average net margin in
+          <em>this</em> fleet (S1 = weakest typical outcome, S4 = strongest). Plain-language notes follow the table.
+        </p>
+        <div class="chart-wrap">
+          <canvas id="chart-segments"></canvas>
+        </div>
+        <div class="chart-actions pdf-hide">
+          <button type="button" class="btn-download" id="btn-download-segments">Download chart (PNG)</button>
+        </div>
+      </div>
+
+      <div class="pdf-block">
+        <p class="status-line pdf-block-caption">Segment averages and plain-English notes.</p>
+        <div class="file-log decile-log">
+          <table>
+            <thead>
+              <tr>
+                <th>Segment</th>
+                <th class="num">Homes</th>
+                <th class="num">Avg revenue</th>
+                <th class="num">Avg cost</th>
+                <th class="num">Avg net margin</th>
+                <th class="num">Total net margin</th>
+                <th class="num">Avg % revenue</th>
+                <th class="num">Avg % activity</th>
+                <th class="num">Avg max solar</th>
+                <th class="num">Avg max SoC</th>
+                <th class="num">Avg export active %</th>
+                <th class="num">Avg battery active %</th>
+              </tr>
+            </thead>
+            <tbody id="segment-log-body"></tbody>
+          </table>
+        </div>
+        <h3 class="segment-legend-heading hidden" id="segment-legend-heading">What each segment means (plain English)</h3>
+        <dl class="segment-legend" id="segment-legend"></dl>
+      </div>
+
+      <div class="pdf-block">
+        <h2 style="margin-top:1rem">Fleet profitability by house</h2>
+        <p class="status-line">Positive net margin = credits exceeded charges over the period.</p>
+        <div class="chart-scroll">
+          <div class="chart-wrap chart-wrap--tall">
+            <canvas id="chart-net"></canvas>
+          </div>
+        </div>
+        <div class="chart-actions pdf-hide">
+          <button type="button" class="btn-download" id="btn-download-net">Download chart (PNG)</button>
+        </div>
+      </div>
+
+      <div class="pdf-block">
+        <h2 style="margin-top:1rem">Decile profile (by profitability)</h2>
+        <p class="status-line">D1 = lowest profitability homes, D10 = highest profitability homes.</p>
+        <div class="chart-wrap">
+          <canvas id="chart-decile"></canvas>
+        </div>
+        <div class="chart-actions pdf-hide">
+          <button type="button" class="btn-download" id="btn-download-decile">Download chart (PNG)</button>
+        </div>
+      </div>
+
+      <div class="pdf-block">
+        <p class="status-line pdf-block-caption">Decile summary table.</p>
+        <div class="file-log decile-log">
+          <table>
+            <thead>
+              <tr>
+                <th>Decile</th>
+                <th class="num">Homes</th>
+                <th class="num">Avg cost</th>
+                <th class="num">Avg revenue</th>
+                <th class="num">Avg net margin</th>
+                <th class="num">Min net</th>
+                <th class="num">Max net</th>
+                <th class="num">Avg % activity</th>
+                <th class="num">Avg max solar (kW)</th>
+                <th class="num">Avg max SoC (kWh)</th>
+              </tr>
+            </thead>
+            <tbody id="decile-log-body"></tbody>
+          </table>
+        </div>
+        <div class="chart-actions chart-actions--footer pdf-hide">
+          <button type="button" class="btn-download" id="btn-download-pdf-end">Export full analysis (PDF)</button>
+        </div>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      Flask · Server-Sent Events · Chart.js · Port 5010
+    </footer>
+  </div>
+
+  <script>
+    const fmtMoney = (n) =>
+      n == null || Number.isNaN(n)
+        ? "—"
+        : n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const fmtPct = (n) =>
+      n == null || Number.isNaN(n) ? "—" : n.toFixed(2) + "%";
+    const fmtNum = (n, d = 3) =>
+      n == null || Number.isNaN(n) ? "—" : Number(n).toFixed(d);
+
+    const btnRun = document.getElementById("btn-run");
+    const panelProgress = document.getElementById("panel-progress");
+    const panelResults = document.getElementById("panel-results");
+    const progressFill = document.getElementById("progress-fill");
+    const progressCount = document.getElementById("progress-count");
+    const progressPct = document.getElementById("progress-pct");
+    const progressCurrent = document.getElementById("progress-current");
+    const fileLogBody = document.getElementById("file-log-body");
+    const decileLogBody = document.getElementById("decile-log-body");
+    const predictorLogBody = document.getElementById("predictor-log-body");
+    const segmentLogBody = document.getElementById("segment-log-body");
+    const segmentLegend = document.getElementById("segment-legend");
+    const segmentLegendHeading = document.getElementById("segment-legend-heading");
+    const fleetStats = document.getElementById("fleet-stats");
+    const sizeStats = document.getElementById("size-stats");
+    const timeStats = document.getElementById("time-stats");
+    const runError = document.getElementById("run-error");
+    const btnDownloadAll = document.getElementById("btn-download-all");
+    const btnDownloadPdf = document.getElementById("btn-download-pdf");
+    const btnDownloadPdfEnd = document.getElementById("btn-download-pdf-end");
+    const btnDownloadNet = document.getElementById("btn-download-net");
+    const btnDownloadBubble = document.getElementById("btn-download-bubble");
+    const btnDownloadTime = document.getElementById("btn-download-time");
+    const btnDownloadPredictors = document.getElementById("btn-download-predictors");
+    const btnDownloadSegments = document.getElementById("btn-download-segments");
+    const btnDownloadDecile = document.getElementById("btn-download-decile");
+    const btnDownloadFleetCsv = document.getElementById("btn-download-fleet-csv");
+    let lastFleetHouses = null;
+    let lastFleetCensus = null;
+    let lastFleetDfMeta = null;
+    let chartInstance = null;
+    let bubbleChartInstance = null;
+    let timeChartInstance = null;
+    let predictorChartInstance = null;
+    let segmentChartInstance = null;
+    let decileChartInstance = null;
+
+    function downloadChart(canvasId, filename) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+      const url = canvas.toDataURL("image/png");
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    function csvEscapeCell(val) {
+      if (val == null || val === undefined) return "";
+      const s = typeof val === "object" ? JSON.stringify(val) : String(val);
+      if (/[",\r\n]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
+      return s;
+    }
+
+    function buildFleetCsvText() {
+      if (!lastFleetHouses || !lastFleetHouses.length) return "";
+      const doc = (lastFleetCensus && lastFleetCensus.documentation) || {};
+      const lines = [];
+      lines.push(`# ${doc.title || "Demographic augmentation"}`);
+      String(doc.summary || "")
+        .split(/\n/)
+        .forEach((ln) => {
+          const t = ln.trim();
+          if (t) lines.push(`# ${t}`);
+        });
+      (doc.steps || []).forEach((step, i) => lines.push(`# ${i + 1}. ${step}`));
+      if (doc.join_key) lines.push(`# Join variable: ${doc.join_key}`);
+      if (doc.bridge_path) lines.push(`# Bridge file: ${doc.bridge_path}`);
+      if (doc.abs_source) lines.push(`# ABS source: ${doc.abs_source}`);
+      if (doc.census_column_names && doc.census_column_names.length) {
+        lines.push(`# Census columns when matched: ${doc.census_column_names.join(", ")}`);
+      }
+      lines.push("# ---");
+      if (doc.pandas_example) {
+        doc.pandas_example.split("\n").forEach((ln) => lines.push(`# ${ln}`));
+      }
+      lines.push("# --- tabular data (use e.g. pd.read_csv(..., comment='#')) ---");
+      const cols =
+        lastFleetDfMeta && lastFleetDfMeta.columns && lastFleetDfMeta.columns.length
+          ? lastFleetDfMeta.columns
+          : null;
+      const keys =
+        cols ||
+        (() => {
+          const s = new Set();
+          lastFleetHouses.forEach((h) => {
+            if (h && typeof h === "object") Object.keys(h).forEach((k) => s.add(k));
+          });
+          return Array.from(s).sort();
+        })();
+      lines.push(keys.join(","));
+      lastFleetHouses.forEach((h) => {
+        const row = keys.map((k) => csvEscapeCell(h[k]));
+        lines.push(row.join(","));
+      });
+      return lines.join("\n");
+    }
+
+    function downloadFleetCsv() {
+      const text = buildFleetCsvText();
+      if (!text) return;
+      const blob = new Blob([text], { type: "text/csv;charset=utf-8" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `optisizer-fleet-${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(a.href);
+    }
+
+    function pdfExportButtons() {
+      return [btnDownloadPdf, btnDownloadPdfEnd].filter((b) => b);
+    }
+
+    const PDF_EXPORT_TICK = "#475569";
+    const PDF_EXPORT_TITLE = "#334155";
+    const PDF_EXPORT_GRID = "rgba(148, 163, 184, 0.42)";
+
+    function allFleetCharts() {
+      return [
+        chartInstance,
+        bubbleChartInstance,
+        timeChartInstance,
+        predictorChartInstance,
+        segmentChartInstance,
+        decileChartInstance,
+      ].filter(Boolean);
+    }
+
+    function patchChartsForPdfExport() {
+      allFleetCharts().forEach((ch) => {
+        const opts = ch.options;
+        if (!opts) return;
+        ch._pdfExportBackup = { scales: {}, legendColor: undefined };
+        if (opts.scales) {
+          Object.keys(opts.scales).forEach((id) => {
+            const sc = opts.scales[id];
+            if (!sc) return;
+            ch._pdfExportBackup.scales[id] = {
+              tick: sc.ticks && sc.ticks.color,
+              title: sc.title && sc.title.color,
+              grid: sc.grid && sc.grid.color,
+            };
+            if (sc.ticks) sc.ticks.color = PDF_EXPORT_TICK;
+            if (sc.title) sc.title.color = PDF_EXPORT_TITLE;
+            if (sc.grid && sc.grid.color !== undefined) sc.grid.color = PDF_EXPORT_GRID;
+          });
+        }
+        const lbl = opts.plugins && opts.plugins.legend && opts.plugins.legend.labels;
+        if (lbl && lbl.color !== undefined) {
+          ch._pdfExportBackup.legendColor = lbl.color;
+          lbl.color = PDF_EXPORT_TICK;
+        }
+        ch.update("none");
+      });
+    }
+
+    function unpatchChartsForPdfExport() {
+      allFleetCharts().forEach((ch) => {
+        const b = ch._pdfExportBackup;
+        if (!b) return;
+        const opts = ch.options;
+        if (b.scales && opts.scales) {
+          Object.keys(b.scales).forEach((id) => {
+            const snap = b.scales[id];
+            const sc = opts.scales[id];
+            if (!sc || !snap) return;
+            if (snap.tick !== undefined && sc.ticks) sc.ticks.color = snap.tick;
+            if (snap.title !== undefined && sc.title) sc.title.color = snap.title;
+            if (snap.grid !== undefined && sc.grid) sc.grid.color = snap.grid;
+          });
+        }
+        if (b.legendColor !== undefined && opts.plugins && opts.plugins.legend && opts.plugins.legend.labels) {
+          opts.plugins.legend.labels.color = b.legendColor;
+        }
+        delete ch._pdfExportBackup;
+        ch.update("none");
+      });
+    }
+
+    function pdfIgnoreDownloadUi(node) {
+      return (
+        node.classList &&
+        typeof node.classList.contains === "function" &&
+        node.classList.contains("pdf-hide")
+      );
+    }
+
+    function appendCanvasSlicesToPdf(pdf, canvas, margin, usableWidth, usableHeight, pageCounter) {
+      const pxPerPt = canvas.width / usableWidth;
+      const sliceHeightPx = Math.max(1, Math.floor(usableHeight * pxPerPt));
+      let yPx = 0;
+      while (yPx < canvas.height) {
+        const currentSlicePx = Math.min(sliceHeightPx, canvas.height - yPx);
+        const slice = document.createElement("canvas");
+        slice.width = canvas.width;
+        slice.height = currentSlicePx;
+        const ctx = slice.getContext("2d");
+        ctx.drawImage(
+          canvas,
+          0,
+          yPx,
+          canvas.width,
+          currentSlicePx,
+          0,
+          0,
+          canvas.width,
+          currentSlicePx
+        );
+        const imgData = slice.toDataURL("image/png");
+        if (pageCounter.n > 0) {
+          pdf.addPage();
+        }
+        pageCounter.n += 1;
+        const renderedHeight = currentSlicePx / pxPerPt;
+        pdf.addImage(imgData, "PNG", margin, margin, usableWidth, renderedHeight);
+        yPx += currentSlicePx;
+      }
+    }
+
+    async function exportResultsToPdf() {
+      const target = document.getElementById("panel-results");
+      if (!target || target.classList.contains("hidden")) return;
+      if (!window.jspdf || !window.html2canvas) return;
+
+      const pdfBtns = pdfExportButtons();
+      const originalLabels = pdfBtns.map((b) => b.textContent);
+      pdfBtns.forEach((b) => {
+        b.disabled = true;
+        b.textContent = "Building PDF…";
+      });
+      try {
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF("p", "pt", "a4");
+        if (typeof pdf.setProperties === "function") {
+          pdf.setProperties({ title: "Optisizer fleet analysis", subject: "Fleet summary export" });
+        }
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+        const margin = 30;
+        const usableWidth = pageWidth - margin * 2;
+        const usableHeight = pageHeight - margin * 2;
+
+        const pageCounter = { n: 0 };
+        const blocks = target.querySelectorAll(":scope > .pdf-block");
+
+        async function captureBlock(el) {
+          return window.html2canvas(el, {
+            backgroundColor: "#f8fafc",
+            scale: 2.35,
+            useCORS: true,
+            letterRendering: true,
+            windowWidth: Math.max(el.scrollWidth, el.offsetWidth),
+            ignoreElements: pdfIgnoreDownloadUi,
+            onclone(_clonedDoc, clonedEl) {
+              if (clonedEl) clonedEl.classList.add("pdf-capture-surface");
+            },
+          });
+        }
+
+        let pdfChartsPatched = false;
+        try {
+          patchChartsForPdfExport();
+          pdfChartsPatched = true;
+          await new Promise((r) => setTimeout(r, 100));
+
+          if (blocks.length > 0) {
+            for (const block of blocks) {
+              if (block.offsetHeight < 2) {
+                continue;
+              }
+              const canvas = await captureBlock(block);
+              appendCanvasSlicesToPdf(pdf, canvas, margin, usableWidth, usableHeight, pageCounter);
+            }
+          } else {
+            const canvas = await captureBlock(target);
+            appendCanvasSlicesToPdf(pdf, canvas, margin, usableWidth, usableHeight, pageCounter);
+          }
+
+          const stamp = new Date().toISOString().slice(0, 10);
+          pdf.save(`optisizer-analysis-${stamp}.pdf`);
+        } finally {
+          if (pdfChartsPatched) unpatchChartsForPdfExport();
+        }
+      } catch (e) {
+        runError.textContent = "Could not generate PDF export. Please try again.";
+        runError.classList.remove("hidden");
+      } finally {
+        pdfBtns.forEach((b, i) => {
+          b.disabled = false;
+          b.textContent = originalLabels[i];
+        });
+      }
+    }
+
+    function addLogRow(i, h) {
+      const tr = document.createElement("tr");
+      if (!h.ok) {
+        tr.innerHTML =
+          `<td class="num">${i}</td>` +
+          `<td colspan="7" class="err mono">${escapeHtml(h.house_id)} — ${escapeHtml(h.error || "Error")}</td>`;
+        fileLogBody.appendChild(tr);
+        return;
+      }
+      tr.innerHTML =
+        `<td class="num">${i}</td>` +
+        `<td class="mono" title="${escapeHtml(h.path)}">${escapeHtml(h.house_id.slice(0, 8))}…</td>` +
+        `<td class="num">${h.n_rows.toLocaleString()}</td>` +
+        `<td class="num">${fmtMoney(h.gross_cost)}</td>` +
+        `<td class="num">${fmtMoney(h.gross_revenue)}</td>` +
+        `<td class="num">${fmtMoney(h.net_margin)}</td>` +
+        `<td class="num">${fmtPct(h.margin_pct_revenue)}</td>` +
+        `<td class="num">${fmtPct(h.margin_pct_activity)}</td>`;
+      fileLogBody.appendChild(tr);
+    }
+
+    function escapeHtml(s) {
+      const d = document.createElement("div");
+      d.textContent = s;
+      return d.innerHTML;
+    }
+
+    function renderFleet(f, census) {
+      const cards = [
+        ["Homes (ok)", f.n_homes],
+        ["Avg gross cost", fmtMoney(f.avg_gross_cost)],
+        ["Avg gross revenue", fmtMoney(f.avg_gross_revenue)],
+        ["Avg net margin", fmtMoney(f.avg_net_margin)],
+        ["Avg margin % (on revenue)", fmtPct(f.avg_margin_pct_revenue)],
+        ["Avg margin % (on activity)", fmtPct(f.avg_margin_pct_activity)],
+      ];
+      if (census && census.bridge_mapping_count > 0) {
+        const matched = census.homes_abs_matched != null ? census.homes_abs_matched : 0;
+        const bridged = census.homes_with_bridge != null ? census.homes_with_bridge : 0;
+        const absOk = census.abs_loaded ? "yes" : "no";
+        cards.push(["Census bridge rows", census.bridge_mapping_count]);
+        cards.push(["Homes with postcode bridge", bridged]);
+        cards.push(["Homes ABS POA matched", matched]);
+        cards.push(["ABS tables loaded", absOk]);
+      }
+      fleetStats.innerHTML = cards
+        .map(
+          ([label, val]) =>
+            `<div class="stat"><div class="label">${escapeHtml(label)}</div><div class="value">${val}</div></div>`
+        )
+        .join("");
+    }
+
+    function renderSizeProfile(s) {
+      const cards = [
+        ["Avg max solar (kW)", fmtMoney(s.avg_max_solar_kw)],
+        ["Avg max battery SoC (kWh)", fmtMoney(s.avg_max_battery_soc_kwh)],
+        ["Avg max charge (kW)", fmtMoney(s.avg_max_battery_charge_kw)],
+        ["Avg max discharge (kW)", fmtMoney(s.avg_max_battery_discharge_kw)],
+        ["Corr net vs solar", s.corr_net_vs_max_solar_kw == null ? "—" : s.corr_net_vs_max_solar_kw.toFixed(3)],
+        ["Corr net vs battery", s.corr_net_vs_max_battery_soc_kwh == null ? "—" : s.corr_net_vs_max_battery_soc_kwh.toFixed(3)],
+      ];
+      sizeStats.innerHTML = cards
+        .map(
+          ([label, val]) =>
+            `<div class="stat"><div class="label">${escapeHtml(label)}</div><div class="value">${val}</div></div>`
+        )
+        .join("");
+    }
+
+    function renderTimeProfile(tp) {
+      const months = tp.months || [];
+      const cards = [
+        ["Period start", tp.period_start || "—"],
+        ["Period end", tp.period_end || "—"],
+        ["Months represented", months.length],
+        ["Total rows (all homes)", (months.reduce((acc, m) => acc + (m.rows || 0), 0)).toLocaleString()],
+      ];
+      timeStats.innerHTML = cards
+        .map(
+          ([label, val]) =>
+            `<div class="stat"><div class="label">${escapeHtml(String(label))}</div><div class="value">${escapeHtml(String(val))}</div></div>`
+        )
+        .join("");
+
+      const labels = months.map((m) => m.month);
+      const rowsData = months.map((m) => m.rows);
+      const homesData = months.map((m) => m.active_homes);
+
+      const el = document.getElementById("chart-time");
+      if (timeChartInstance) timeChartInstance.destroy();
+      timeChartInstance = new Chart(el, {
+        data: {
+          labels,
+          datasets: [
+            {
+              type: "bar",
+              label: "Rows",
+              data: rowsData,
+              yAxisID: "yRows",
+              backgroundColor: "rgba(79, 142, 247, 0.55)",
+              borderColor: "rgba(79, 142, 247, 0.9)",
+              borderWidth: 1,
+            },
+            {
+              type: "line",
+              label: "Active homes",
+              data: homesData,
+              yAxisID: "yHomes",
+              borderColor: "rgba(233, 196, 106, 0.95)",
+              backgroundColor: "rgba(233, 196, 106, 0.45)",
+              tension: 0.2,
+              pointRadius: 2,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: true, labels: { color: "#8892a4" } },
+          },
+          scales: {
+            x: {
+              title: { display: true, text: "Month", color: "#8892a4" },
+              ticks: { color: "#8892a4" },
+              grid: { color: "rgba(44,48,80,0.25)" },
+            },
+            yRows: {
+              position: "left",
+              title: { display: true, text: "Rows (5-minute intervals)", color: "#8892a4" },
+              ticks: { color: "#8892a4" },
+              grid: { color: "rgba(44,48,80,0.35)" },
+            },
+            yHomes: {
+              position: "right",
+              title: { display: true, text: "Active homes", color: "#8892a4" },
+              ticks: { color: "#8892a4" },
+              grid: { drawOnChartArea: false },
+            },
+          },
+        },
+      });
+    }
+
+    function renderBubbleChart(houses) {
+      const ok = houses.filter((h) => h.ok !== false);
+      const socVals = ok.map((h) => h.max_battery_soc_kwh || 0);
+      const maxSoc = Math.max(...socVals, 1);
+      const bubbleData = ok.map((h) => ({
+        x: h.max_solar_kw,
+        y: h.net_margin,
+        r: 4 + ((h.max_battery_soc_kwh || 0) / maxSoc) * 16,
+        houseId: h.house_id,
+        batterySoc: h.max_battery_soc_kwh,
+      }));
+
+      const el = document.getElementById("chart-bubble");
+      if (bubbleChartInstance) bubbleChartInstance.destroy();
+      bubbleChartInstance = new Chart(el, {
+        type: "bubble",
+        data: {
+          datasets: [
+            {
+              label: "Homes",
+              data: bubbleData,
+              backgroundColor: bubbleData.map((p) =>
+                p.y >= 0 ? "rgba(42, 157, 143, 0.5)" : "rgba(230, 57, 70, 0.5)"
+              ),
+              borderColor: bubbleData.map((p) =>
+                p.y >= 0 ? "rgba(42, 157, 143, 0.9)" : "rgba(230, 57, 70, 0.9)"
+              ),
+              borderWidth: 1,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                title: (items) => items[0].raw.houseId,
+                label: (ctx) =>
+                  `Solar max: ${fmtMoney(ctx.raw.x)} kW | Net: ${fmtMoney(ctx.raw.y)} | Battery max SoC: ${fmtMoney(ctx.raw.batterySoc)} kWh`,
+              },
+            },
+          },
+          scales: {
+            x: {
+              title: { display: true, text: "Inferred system size (max solar kW)", color: "#8892a4" },
+              ticks: { color: "#8892a4" },
+              grid: { color: "rgba(44,48,80,0.35)" },
+            },
+            y: {
+              title: { display: true, text: "Profitability ($ net margin)", color: "#8892a4" },
+              ticks: { color: "#8892a4" },
+              grid: { color: "rgba(44,48,80,0.35)" },
+            },
+          },
+        },
+      });
+    }
+
+    function renderChart(houses) {
+      const ok = houses.filter((h) => h.ok !== false);
+      const labels = ok.map((h) => h.house_id.slice(0, 10));
+      const data = ok.map((h) => h.net_margin);
+      const el = document.getElementById("chart-net");
+      const parent = el.parentElement;
+      parent.style.height = "420px";
+
+      if (chartInstance) chartInstance.destroy();
+      chartInstance = new Chart(el, {
+        type: "bar",
+        data: {
+          labels,
+          datasets: [
+            {
+              label: "Net margin ($)",
+              data,
+              backgroundColor: data.map((v) =>
+                v >= 0 ? "rgba(42, 157, 143, 0.75)" : "rgba(230, 57, 70, 0.75)"
+              ),
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                title: (items) => {
+                  const i = items[0].dataIndex;
+                  return ok[i].house_id;
+                },
+                label: (ctx) => "Net margin: " + fmtMoney(ctx.raw),
+              },
+            },
+          },
+          scales: {
+            x: {
+              title: { display: true, text: "Fleet (houses)", color: "#8892a4" },
+              ticks: { color: "#8892a4", maxRotation: 90, minRotation: 60 },
+              grid: { color: "rgba(44,48,80,0.5)" },
+            },
+            y: {
+              title: { display: true, text: "Profitability ($ net margin)", color: "#8892a4" },
+              ticks: { color: "#8892a4", font: { size: 10 } },
+              grid: { color: "rgba(44,48,80,0.35)" },
+            },
+          },
+        },
+      });
+    }
+
+    function renderDecileTable(deciles) {
+      decileLogBody.innerHTML = "";
+      deciles.forEach((d) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML =
+          `<td>${escapeHtml(d.label)}</td>` +
+          `<td class="num">${d.n_homes}</td>` +
+          `<td class="num">${fmtMoney(d.avg_gross_cost)}</td>` +
+          `<td class="num">${fmtMoney(d.avg_gross_revenue)}</td>` +
+          `<td class="num">${fmtMoney(d.avg_net_margin)}</td>` +
+          `<td class="num">${fmtMoney(d.min_net_margin)}</td>` +
+          `<td class="num">${fmtMoney(d.max_net_margin)}</td>` +
+          `<td class="num">${fmtPct(d.avg_margin_pct_activity)}</td>` +
+          `<td class="num">${fmtMoney(d.avg_max_solar_kw)}</td>` +
+          `<td class="num">${fmtMoney(d.avg_max_battery_soc_kwh)}</td>`;
+        decileLogBody.appendChild(tr);
+      });
+    }
+
+    function renderDecileChart(deciles) {
+      const labels = deciles.map((d) => d.label);
+      const data = deciles.map((d) => d.avg_net_margin);
+      const el = document.getElementById("chart-decile");
+
+      if (decileChartInstance) decileChartInstance.destroy();
+      decileChartInstance = new Chart(el, {
+        type: "bar",
+        data: {
+          labels,
+          datasets: [
+            {
+              label: "Avg net margin by decile ($)",
+              data,
+              backgroundColor: data.map((v) =>
+                v >= 0 ? "rgba(42, 157, 143, 0.75)" : "rgba(230, 57, 70, 0.75)"
+              ),
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: {
+              title: { display: true, text: "Profitability deciles", color: "#8892a4" },
+              ticks: { color: "#8892a4" },
+              grid: { color: "rgba(44,48,80,0.5)" },
+            },
+            y: {
+              title: { display: true, text: "Avg profitability ($ net margin)", color: "#8892a4" },
+              ticks: { color: "#8892a4", font: { size: 10 } },
+              grid: { color: "rgba(44,48,80,0.35)" },
+            },
+          },
+        },
+      });
+    }
+
+    function renderPredictorTable(rows) {
+      predictorLogBody.innerHTML = "";
+      rows.forEach((r) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML =
+          `<td>${escapeHtml(r.label || r.feature)}</td>` +
+          `<td class="num">${r.sample_size}</td>` +
+          `<td class="num">${fmtNum(r.corr_net_margin, 4)}</td>` +
+          `<td class="num">${fmtNum(r.corr_profit_decile, 4)}</td>`;
+        predictorLogBody.appendChild(tr);
+      });
+    }
+
+    function renderPredictorChart(rows) {
+      const top = rows.slice(0, 10);
+      const labels = top.map((r) => r.label);
+      const values = top.map((r) => Math.abs(r.corr_net_margin || 0));
+      const el = document.getElementById("chart-predictors");
+      if (predictorChartInstance) predictorChartInstance.destroy();
+      predictorChartInstance = new Chart(el, {
+        type: "bar",
+        data: {
+          labels,
+          datasets: [{ label: "|Corr with net margin|", data: values, backgroundColor: "rgba(79, 142, 247, 0.7)" }],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { color: "#8892a4", maxRotation: 60, minRotation: 45 }, grid: { color: "rgba(44,48,80,0.2)" } },
+            y: { ticks: { color: "#8892a4" }, title: { display: true, text: "Absolute correlation", color: "#8892a4" }, grid: { color: "rgba(44,48,80,0.3)" } },
+          },
+        },
+      });
+    }
+
+    function renderSegmentLegend(segments) {
+      if (!segmentLegend) return;
+      segmentLegend.innerHTML = "";
+      if (!segments || !segments.length) {
+        if (segmentLegendHeading) segmentLegendHeading.classList.add("hidden");
+        return;
+      }
+      if (segmentLegendHeading) segmentLegendHeading.classList.remove("hidden");
+      segments.forEach((s) => {
+        const lab = s.label || "S" + s.segment_id;
+        const text = s.plain_english || "";
+        const dt = document.createElement("dt");
+        dt.className = "segment-legend-term";
+        dt.textContent = lab;
+        const dd = document.createElement("dd");
+        dd.className = "segment-legend-def";
+        dd.textContent = text;
+        segmentLegend.appendChild(dt);
+        segmentLegend.appendChild(dd);
+      });
+    }
+
+    function renderSegmentTable(segments) {
+      segmentLogBody.innerHTML = "";
+      segments.forEach((s) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML =
+          `<td>${escapeHtml(s.label || ("S" + s.segment_id))}</td>` +
+          `<td class="num">${s.n_homes}</td>` +
+          `<td class="num">${fmtMoney(s.avg_gross_revenue)}</td>` +
+          `<td class="num">${fmtMoney(s.avg_gross_cost)}</td>` +
+          `<td class="num">${fmtMoney(s.avg_net_margin)}</td>` +
+          `<td class="num">${fmtMoney(s.total_net_margin)}</td>` +
+          `<td class="num">${fmtPct(s.avg_margin_pct_revenue)}</td>` +
+          `<td class="num">${fmtPct(s.avg_margin_pct_activity)}</td>` +
+          `<td class="num">${fmtNum(s.avg_max_solar_kw, 2)}</td>` +
+          `<td class="num">${fmtNum(s.avg_max_battery_soc_kwh, 2)}</td>` +
+          `<td class="num">${fmtPct(s.avg_export_active_pct)}</td>` +
+          `<td class="num">${fmtPct(s.avg_battery_active_pct)}</td>`;
+        segmentLogBody.appendChild(tr);
+      });
+    }
+
+    function renderSegmentChart(segments) {
+      const labels = segments.map((s) => s.label || ("S" + s.segment_id));
+      const rev = segments.map((s) => s.avg_gross_revenue);
+      const cost = segments.map((s) => s.avg_gross_cost);
+      const net = segments.map((s) => s.avg_net_margin);
+      const marginPct = segments.map((s) => s.avg_margin_pct_revenue);
+      const el = document.getElementById("chart-segments");
+      if (segmentChartInstance) segmentChartInstance.destroy();
+      segmentChartInstance = new Chart(el, {
+        data: {
+          labels,
+          datasets: [
+            {
+              type: "bar",
+              label: "Avg gross revenue",
+              data: rev,
+              backgroundColor: "rgba(42, 157, 143, 0.65)",
+            },
+            {
+              type: "bar",
+              label: "Avg gross cost",
+              data: cost,
+              backgroundColor: "rgba(230, 57, 70, 0.65)",
+            },
+            {
+              type: "bar",
+              label: "Avg net margin",
+              data: net,
+              backgroundColor: net.map((v) => (v >= 0 ? "rgba(79, 142, 247, 0.8)" : "rgba(168, 85, 247, 0.8)")),
+            },
+            {
+              type: "line",
+              label: "Avg margin % on revenue",
+              data: marginPct,
+              yAxisID: "yPct",
+              borderColor: "rgba(233, 196, 106, 0.95)",
+              backgroundColor: "rgba(233, 196, 106, 0.35)",
+              tension: 0.2,
+              pointRadius: 2,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { color: "#8892a4" }, title: { display: true, text: "Behavior segment", color: "#8892a4" }, grid: { color: "rgba(44,48,80,0.2)" } },
+            y: { ticks: { color: "#8892a4" }, title: { display: true, text: "Average $ per home", color: "#8892a4" }, grid: { color: "rgba(44,48,80,0.3)" } },
+            yPct: {
+              position: "right",
+              ticks: { color: "#8892a4", callback: (v) => `${v}%` },
+              title: { display: true, text: "Avg margin % (revenue)", color: "#8892a4" },
+              grid: { drawOnChartArea: false },
+            },
+          },
+        },
+      });
+    }
+
+    btnRun.addEventListener("click", () => {
+      runError.classList.add("hidden");
+      runError.textContent = "";
+      btnRun.disabled = true;
+      lastFleetHouses = null;
+      lastFleetCensus = null;
+      lastFleetDfMeta = null;
+      if (btnDownloadFleetCsv) btnDownloadFleetCsv.disabled = true;
+      fileLogBody.innerHTML = "";
+      decileLogBody.innerHTML = "";
+      predictorLogBody.innerHTML = "";
+      segmentLogBody.innerHTML = "";
+      if (segmentLegend) segmentLegend.innerHTML = "";
+      if (segmentLegendHeading) segmentLegendHeading.classList.add("hidden");
+      panelProgress.classList.remove("hidden");
+      panelResults.classList.add("hidden");
+      sizeStats.innerHTML = "";
+      timeStats.innerHTML = "";
+      progressFill.style.width = "0%";
+      progressCount.textContent = "0 / 0";
+      progressPct.textContent = "0%";
+      progressCurrent.textContent = "Connecting…";
+
+      const source = new EventSource("{{ url_for('api_stream') }}");
+
+      source.onmessage = (event) => {
+        const msg = JSON.parse(event.data);
+
+        if (msg.type === "error") {
+          source.close();
+          runError.textContent = msg.message || "Error";
+          runError.classList.remove("hidden");
+          progressCurrent.textContent = "";
+          btnRun.disabled = false;
+          return;
+        }
+
+        if (msg.type === "start") {
+          progressCount.textContent = `0 / ${msg.total}`;
+          progressCurrent.textContent = "Processing…";
+          return;
+        }
+
+        if (msg.type === "progress") {
+          const pct = Math.round((msg.current / msg.total) * 100);
+          progressFill.style.width = pct + "%";
+          progressCount.textContent = `${msg.current} / ${msg.total}`;
+          progressPct.textContent = pct + "%";
+          progressCurrent.textContent = msg.house && msg.house.path ? msg.house.path : "";
+          addLogRow(msg.current, msg.house);
+          const log = document.querySelector(".file-log");
+          log.scrollTop = log.scrollHeight;
+          return;
+        }
+
+        if (msg.type === "complete") {
+          source.close();
+          progressFill.style.width = "100%";
+          progressPct.textContent = "100%";
+          progressCurrent.textContent = "Done.";
+          renderFleet(msg.fleet, msg.census || {});
+          renderSizeProfile(msg.size_profile || {});
+          renderTimeProfile(msg.time_profile || { months: [] });
+          renderBubbleChart(msg.houses);
+          renderChart(msg.houses);
+          renderDecileChart(msg.deciles || []);
+          renderDecileTable(msg.deciles || []);
+          renderPredictorChart((msg.predictors && msg.predictors.rows) || []);
+          renderPredictorTable((msg.predictors && msg.predictors.rows) || []);
+          renderSegmentChart((msg.segments && msg.segments.segments) || []);
+          renderSegmentTable((msg.segments && msg.segments.segments) || []);
+          renderSegmentLegend((msg.segments && msg.segments.segments) || []);
+          lastFleetHouses = msg.houses || [];
+          lastFleetCensus = msg.census || {};
+          lastFleetDfMeta = msg.fleet_dataframe || null;
+          if (btnDownloadFleetCsv) btnDownloadFleetCsv.disabled = false;
+          panelResults.classList.remove("hidden");
+          btnRun.disabled = false;
+        }
+      };
+
+      source.onerror = () => {
+        source.close();
+        progressCurrent.textContent = "";
+        runError.textContent = "Connection lost (timeout or server stopped).";
+        runError.classList.remove("hidden");
+        btnRun.disabled = false;
+      };
+    });
+
+    btnDownloadNet.addEventListener("click", () => {
+      downloadChart("chart-net", "fleet-profitability-by-house.png");
+    });
+
+    btnDownloadBubble.addEventListener("click", () => {
+      downloadChart("chart-bubble", "system-size-vs-profitability-bubble.png");
+    });
+
+    btnDownloadTime.addEventListener("click", () => {
+      downloadChart("chart-time", "fleet-time-distribution.png");
+    });
+
+    btnDownloadPredictors.addEventListener("click", () => {
+      downloadChart("chart-predictors", "profitability-predictor-ranking.png");
+    });
+
+    btnDownloadSegments.addEventListener("click", () => {
+      downloadChart("chart-segments", "behavior-segments-profitability.png");
+    });
+
+    btnDownloadDecile.addEventListener("click", () => {
+      downloadChart("chart-decile", "decile-profitability-profile.png");
+    });
+
+    btnDownloadAll.addEventListener("click", () => {
+      const items = [
+        ["chart-bubble", "system-size-vs-profitability-bubble.png"],
+        ["chart-time", "fleet-time-distribution.png"],
+        ["chart-predictors", "profitability-predictor-ranking.png"],
+        ["chart-segments", "behavior-segments-profitability.png"],
+        ["chart-net", "fleet-profitability-by-house.png"],
+        ["chart-decile", "decile-profitability-profile.png"],
+      ];
+      items.forEach(([id, file], i) => {
+        setTimeout(() => downloadChart(id, file), i * 220);
+      });
+    });
+
+    btnDownloadPdf.addEventListener("click", () => {
+      exportResultsToPdf();
+    });
+    if (btnDownloadPdfEnd) {
+      btnDownloadPdfEnd.addEventListener("click", () => {
+        exportResultsToPdf();
+      });
+    }
+    if (btnDownloadFleetCsv) {
+      btnDownloadFleetCsv.addEventListener("click", () => {
+        downloadFleetCsv();
+      });
+    }
+  </script>
+</body>
+</html>

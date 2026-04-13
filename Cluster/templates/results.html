@@ -201,6 +201,184 @@
         </div>
       </section>
 
+      {% if predictor %}
+      <section class="card">
+        <h2 class="card-title">What Predicts Cluster Membership?</h2>
+        <p class="card-sub">Random Forest classifier trained on site metadata — measures how well area and hardware explain usage pattern</p>
+
+        <div class="postcode-stat-row">
+          <div class="summary-stat">
+            <span class="summary-value">{{ predictor.accuracy_pct }}%</span>
+            <span class="summary-label">Cross-validated accuracy</span>
+          </div>
+          <div class="summary-stat">
+            <span class="summary-value">{{ predictor.n_used }}</span>
+            <span class="summary-label">Sites used in model</span>
+          </div>
+          <div class="summary-stat">
+            <span class="summary-value">{{ predictor.top_feature }}</span>
+            <span class="summary-label">Top predictor ({{ predictor.top_feature_importance }}% weight)</span>
+          </div>
+        </div>
+
+        <div class="postcode-interpretation">
+          {{ predictor.interpretation }}
+        </div>
+
+        <div class="plot-wrap" style="margin-top:1.5rem;">
+          <img
+            src="{{ url_for('serve_output', filename=predictor.importance_file) }}"
+            alt="Feature Importance Chart"
+            class="plot-thumb"
+            style="max-width:100%;border-radius:8px;"
+          />
+          <p class="plot-caption">
+            Feature importance = how much each variable reduces prediction error.
+            Higher = stronger predictor of cluster membership.
+          </p>
+        </div>
+
+        {% if predictor.per_cluster_accuracy %}
+        <h3 class="section-sub-title" style="margin-top:2rem;">Per-Cluster Predictability</h3>
+        <table class="cluster-table">
+          <thead>
+            <tr><th>Cluster</th><th>In-sample accuracy</th><th>Interpretation</th></tr>
+          </thead>
+          <tbody>
+            {% for k, acc in predictor.per_cluster_accuracy.items() %}
+            <tr>
+              <td>Cluster {{ k }}</td>
+              <td>{{ (acc * 100) | round(1) }}%</td>
+              <td>
+                {% if acc >= 0.8 %}Highly distinctive pattern
+                {% elif acc >= 0.6 %}Reasonably distinctive
+                {% elif acc >= 0.4 %}Moderate overlap with other clusters
+                {% else %}Hard to distinguish from metadata alone{% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% endif %}
+
+        {% if predictor.feature_importances %}
+        <h3 class="section-sub-title" style="margin-top:2rem;">Feature Importance Breakdown</h3>
+        <table class="cluster-table">
+          <thead>
+            <tr><th>Feature</th><th>Importance</th><th>Relative weight</th></tr>
+          </thead>
+          <tbody>
+            {% for item in predictor.feature_importances %}
+            <tr>
+              <td>{{ item.feature }}</td>
+              <td>{{ (item.importance * 100) | round(1) }}%</td>
+              <td>
+                <div class="importance-bar-wrap">
+                  <div class="importance-bar" style="width:{{ (item.importance / predictor.feature_importances[0].importance * 100) | round(0) }}%"></div>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% endif %}
+      </section>
+      {% endif %}
+
+      {% if postcode %}
+      <section class="card">
+        <h2 class="card-title">Postcode Distribution Analysis</h2>
+        <p class="card-sub">Does area predict energy usage pattern?</p>
+
+        <div class="postcode-stat-row">
+          <div class="summary-stat">
+            <span class="summary-value">{{ postcode.n_postcodes }}</span>
+            <span class="summary-label">Postcodes analysed</span>
+          </div>
+          {% if postcode.p_value is not none %}
+          <div class="summary-stat">
+            <span class="summary-value">{{ "%.4f"|format(postcode.p_value) }}</span>
+            <span class="summary-label">Chi-squared p-value</span>
+          </div>
+          <div class="summary-stat">
+            <span class="summary-value">{{ postcode.dof }}</span>
+            <span class="summary-label">Degrees of freedom</span>
+          </div>
+          {% endif %}
+        </div>
+
+        {% if postcode.interpretation %}
+        <div class="postcode-interpretation">
+          {{ postcode.interpretation }}
+        </div>
+        {% endif %}
+
+        <div class="plot-wrap" style="margin-top:1.5rem;">
+          <img
+            src="{{ url_for('serve_output', filename=postcode.heatmap_file) }}"
+            alt="Postcode × Cluster Heatmap"
+            class="plot-thumb"
+            style="max-width:100%;border-radius:8px;cursor:pointer;"
+            id="postcode-heatmap-thumb"
+          />
+          <p class="plot-caption">
+            Each cell shows the % of homes from that postcode that fell into each cluster.
+            A postcode with a strong colour in one column is a reliable proxy for that usage pattern.
+          </p>
+        </div>
+
+        <h3 class="section-sub-title" style="margin-top:2rem;">Top Postcodes per Cluster</h3>
+        <div class="cluster-top-postcodes">
+          {% for cluster_id, top_list in postcode.top_postcodes_per_cluster.items() %}
+          <div class="top-postcode-card">
+            <div class="top-postcode-cluster-label">Cluster {{ cluster_id }}</div>
+            <table class="cluster-table" style="margin-top:0.5rem;">
+              <thead>
+                <tr><th>Postcode</th><th>% in this cluster</th></tr>
+              </thead>
+              <tbody>
+                {% for item in top_list %}
+                <tr>
+                  <td>{{ item.postcode }}</td>
+                  <td>{{ item.pct }}%</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% endfor %}
+        </div>
+
+        <h3 class="section-sub-title" style="margin-top:2rem;">Full Postcode Breakdown</h3>
+        <div class="table-scroll-wrap">
+          <table class="cluster-table">
+            <thead>
+              <tr>
+                <th>Postcode</th>
+                <th>Total Homes</th>
+                <th>Dominant Cluster</th>
+                {% for c in range(postcode.n_clusters) %}
+                <th>Cluster {{ c }} %</th>
+                {% endfor %}
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in postcode.contingency_rows %}
+              <tr>
+                <td>{{ row.postcode }}</td>
+                <td>{{ row.total }}</td>
+                <td>{{ row.dominant_cluster }}</td>
+                {% for pct in row.cluster_pcts %}
+                <td>{{ pct }}%</td>
+                {% endfor %}
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </section>
+      {% endif %}
+
       <div class="back-link-wrap">
         <a href="{{ url_for('index') }}" class="back-link">&#8592; Run another analysis</a>
       </div>

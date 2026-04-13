@@ -1,0 +1,28 @@
+# Bureau of Meteorology — anonymous FTP daily climate tables (IDCKWCDEA0).
+# See https://www.bom.gov.au/other/copyright.shtml
+# Each NEM region maps to a reference station (airport AMO where available).
+stations:
+  NSW:
+    ftp_state: nsw
+    ftp_site: sydney_airport_amo
+    file_prefix: sydney_airport_amo
+  QLD:
+    ftp_state: qld
+    ftp_site: brisbane_aero
+    file_prefix: brisbane_aero
+  SA:
+    ftp_state: sa
+    ftp_site: adelaide_airport
+    file_prefix: adelaide_airport
+  TAS:
+    ftp_state: tas
+    ftp_site: hobart_airport
+    file_prefix: hobart_airport
+  VIC:
+    ftp_state: vic
+    ftp_site: melbourne_airport
+    file_prefix: melbourne_airport
+
+ftp:
+  host: ftp.bom.gov.au
+  remote_root: anon/gen/clim_data/IDCKWCDEA0/tables

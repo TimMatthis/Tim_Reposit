@@ -46,6 +46,29 @@
             </div>
           </div>
 
+          <div class="field-group">
+            <label for="abs_csv_file" class="field-label">
+              ABS Postcode Enrichment CSV
+              <span class="field-hint">
+                Optional — enables "What predicts cluster?" analysis.
+                Download the <strong>2021 Census Postal Areas datapack</strong> from
+                <a href="https://www.abs.gov.au/census/find-census-data/datapacks" target="_blank" rel="noopener" class="hint-link">abs.gov.au</a>
+                and export a CSV with columns:
+                <code>POA_CODE_2021</code>, <code>Median_tot_hhd_inc_weekly</code>,
+                <code>Dwellings_Separate_house_Percentage</code>,
+                <code>Employed_worked_from_home_Percentage</code>,
+                <code>SEIFA_IRSD_Score</code>.
+              </span>
+            </label>
+            <div class="file-drop file-drop--optional" id="abs-file-drop">
+              <input type="file" name="abs_csv_file" id="abs_csv_file" accept=".csv" class="file-input" />
+              <div class="file-drop-inner">
+                <span class="file-drop-icon">&#128202;</span>
+                <span class="file-drop-text" id="abs-drop-text">Optional: drag &amp; drop ABS CSV, or <u>browse</u></span>
+              </div>
+            </div>
+          </div>
+
           <div class="field-group field-group--inline">
             <label class="field-label toggle-label">
               <input type="checkbox" name="auto_detect" id="auto_detect" value="1" />
@@ -90,13 +113,22 @@
   </div>
 
   <script>
-    // File drop label update
+    // File drop label update — main CSV
     const input = document.getElementById('csv_file');
     const dropText = document.getElementById('file-drop-text');
     input.addEventListener('change', () => {
       dropText.textContent = input.files[0]
         ? input.files[0].name
         : 'Drag & drop your CSV here, or browse';
+    });
+
+    // File drop label update — ABS CSV
+    const absInput = document.getElementById('abs_csv_file');
+    const absDropText = document.getElementById('abs-drop-text');
+    absInput.addEventListener('change', () => {
+      absDropText.textContent = absInput.files[0]
+        ? absInput.files[0].name
+        : 'Optional: drag & drop ABS CSV, or browse';
     });
 
     // Stepper buttons

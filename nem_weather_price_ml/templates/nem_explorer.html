@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NEM prices &amp; BOM weather · Reposit hub</title>
+  <meta name="description" content="Daily NEM average RRP with Bureau of Meteorology station temperatures." />
+  <link rel="stylesheet" href="{{ url_for('hub_style') }}" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@{{ chart_js_version }}/dist/chart.umd.min.js" defer></script>
+  <script src="{{ url_for('static', filename='js/nem_explorer.js') }}" defer></script>
+</head>
+<body>
+
+  <header class="header">
+    <p class="header-eyebrow">www_playground · Analytics</p>
+    <h1>NEM <span>prices &amp; BOM weather</span></h1>
+    <p class="header-sub">
+      Daily average RRP from your exports, joined to BOM reference-station temperatures.
+      Data comes from <code>data/processed/features_daily.parquet</code>.
+    </p>
+  </header>
+
+  <main>
+    <div class="card-links nem-explorer-back">
+      <a class="link-item" id="hub-back-link" href="{{ hub_index_url }}">
+        <span class="link-item-label">← Tim's Reposit Project Hub</span>
+        <span class="link-item-arrow">→</span>
+      </a>
+    </div>
+
+    <div id="nem-error" class="card nem-error-banner">
+      <div class="card-title-wrap">
+        <div class="card-title">Could not load data</div>
+        <div class="card-desc" id="nem-error-msg"></div>
+      </div>
+    </div>
+
+    <div id="nem-main" class="grid nem-explorer-grid">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title-wrap">
+            <div class="card-title">Region</div>
+            <div class="card-desc">NEM region (BOM station mapping is in <code>nem_weather_price_ml/config/bom_stations.yaml</code>).</div>
+          </div>
+        </div>
+        <div class="card-links">
+          <label class="card-desc nem-select-label" for="nem-region">Select region</label>
+          <select id="nem-region" class="link-item"></select>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title-wrap">
+            <div class="card-title">Summary</div>
+            <div class="card-desc" id="nem-summary">Loading…</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card nem-card-span">
+        <div class="card-head">
+          <div class="card-title-wrap">
+            <div class="card-title">Average RRP ($/MWh)</div>
+            <div class="card-desc">Daily time series for the selected region.</div>
+          </div>
+        </div>
+        <div class="nem-chart-wrap">
+          <canvas id="chart-rrp" aria-label="RRP chart"></canvas>
+        </div>
+      </div>
+
+      <div class="card nem-card-span">
+        <div class="card-head">
+          <div class="card-title-wrap">
+            <div class="card-title">BOM daily max temperature (°C)</div>
+            <div class="card-desc">Same calendar dates as the price row.</div>
+          </div>
+        </div>
+        <div class="nem-chart-wrap">
+          <canvas id="chart-tmax" aria-label="Temperature chart"></canvas>
+        </div>
+      </div>
+
+      <div class="card nem-card-span">
+        <div class="card-head">
+          <div class="card-title-wrap">
+            <div class="card-title">Tmax vs RRP</div>
+            <div class="card-desc">Scatter of same-day max temperature and average RRP.</div>
+          </div>
+        </div>
+        <div class="nem-chart-wrap nem-chart-wrap--scatter">
+          <canvas id="chart-scatter" aria-label="Scatter chart"></canvas>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    BOM data © Commonwealth of Australia ·
+    <a class="link-item nem-footer-inline" href="http://www.bom.gov.au/other/copyright.shtml" target="_blank" rel="noopener">Copyright</a>
+  </footer>
+
+</body>
+</html>

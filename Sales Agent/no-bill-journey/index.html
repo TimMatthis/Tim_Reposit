@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>No-Bill™ journey — Assignment selling (hub)</title>
+  <meta name="description" content="Self-selection funnel: lead form → assignment gatekeeper → upload → quote. Hub for Reposit No-Bill templates.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/no-bill-journey.css">
+</head>
+<body class="nb-page">
+  <a class="nb-skip" href="#main">Skip to content</a>
+  <div class="nb-wrap nb-wrap--wide">
+    <header class="nb-nav">
+      <a href="index.html">No-Bill™ journey</a>
+      <ul class="nb-steps" aria-label="Funnel steps">
+        <li class="nb-steps__current">Hub</li>
+        <li><a href="lead-instant-quote.html">1 · Lead</a></li>
+        <li><a href="gatekeeper.html">2 · Gatekeeper</a></li>
+        <li><a href="upload-portal.html">3 · Upload</a></li>
+      </ul>
+    </header>
+
+    <main id="main">
+      <article class="nb-card">
+        <p class="nb-eyebrow">Assignment selling</p>
+        <h1 class="nb-title">No-Bill™ self-selection funnel</h1>
+        <p class="nb-lede">
+          These pages mirror your team’s recommended flow: the custom quote is the reward after homework (video, fair use, uploads), not the opening offer. Use them as standalone HTML for review, or port sections into HubSpot (see <code>Template_request-a-quote.html</code> / CVP landing templates).
+        </p>
+
+        <table class="nb-funnel-table">
+          <thead>
+            <tr>
+              <th>Step</th>
+              <th>Page / asset</th>
+              <th>Assignment</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>1 · Lead in</strong></td>
+              <td><a href="lead-instant-quote.html">Instant quote / rough range</a></td>
+              <td>Basic contact + indicative range only.</td>
+            </tr>
+            <tr>
+              <td><strong>2 · Gatekeeper</strong></td>
+              <td><a href="gatekeeper.html">Before bill upload</a></td>
+              <td>3‑min fit video + Fair Use + acknowledgement checkbox; upload CTA locked until checked.</td>
+            </tr>
+            <tr>
+              <td><strong>3 · Barrier</strong></td>
+              <td><a href="upload-portal.html">Bill &amp; photos portal</a></td>
+              <td>Site photos → <code>POST /api/no-bill/analyze-photos</code> (vision + prompt in <code>utility_api/noBillPhotoPrompt.js</code>). Design-queue button unlocks when AI returns <code>ready</code>.</td>
+            </tr>
+            <tr>
+              <td><strong>Email</strong></td>
+              <td><a href="email-autoresponder.html">Auto-responder (HTML)</a></td>
+              <td>“Action required” — video + Fair Use + button to portal.</td>
+            </tr>
+            <tr>
+              <td><strong>Email</strong></td>
+              <td><a href="email-negative-reverse.html">Negative reverse (HTML)</a></td>
+              <td>“Should I close your file?” — stops the chase.</td>
+            </tr>
+            <tr>
+              <td><strong>Sales</strong></td>
+              <td><a href="video-proposal-script.html">Video proposal script</a></td>
+              <td>Loom-style follow-up for low-call leads; reply “Ready” to book verification.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="nb-divider"></div>
+        <p class="nb-note">
+          Replace placeholder video URLs, HubSpot form embeds, and policy links before production. Big 5 themes for the fit video: control of the system, equipment choices, true cost vs sticker price, fair use, and what the $0 guarantee actually requires.
+        </p>
+      </article>
+    </main>
+
+    <p class="nb-footer">Reposit Power — internal / staging templates · <a href="../Template_request-a-quote.html">HubSpot quote template</a></p>
+  </div>
+</body>
+</html>

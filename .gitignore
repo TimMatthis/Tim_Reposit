@@ -18,3 +18,16 @@ Thumbs.db
 # Uploads / outputs (runtime generated)
 Cluster/uploads/
 Cluster/outputs/
+
+# BOM FTP cache (regenerable)
+data/raw/weather/bom/
+
+# Hub server log (start-hub.sh)
+.hub-server.log
+
+# Optisizer: large optimisation outputs and regenerable caches
+Optisizer data/catan_results/
+Optisizer data/calculator/.summary_cache/
+
+# Census bulk downloads (large)
+Cluster/*.zip
