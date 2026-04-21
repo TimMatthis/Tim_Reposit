@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Optisizer fleet — net_cost summary</title>
+  <title>Optisizer fleet — catan_results &amp; catan_no_vic</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
@@ -11,8 +11,55 @@
 </head>
 <body>
   <div class="page-wrap">
+    <section class="page-overview card" aria-label="Page overview">
+      <h2 class="page-overview-title">Overview</h2>
+      <p class="page-overview-lead">
+        This page streams a Catan export set through the server, then lays out fleet-level charts and tables.
+        Everything below starts <strong>collapsed</strong>: use the <strong>section menu</strong> to jump to a block (it opens the target for you), or open any row heading on the page.
+        After a run, <strong>Export full analysis (PDF)</strong> inside results opens sections automatically for capture.
+      </p>
+      <ul class="page-overview-list">
+        <li><strong>Demographic augmentation</strong> — how census fields attach to homes and CSV notes.</li>
+        <li><strong>About the data</strong> — paths, <code class="mono">net_cost</code> rule, and detected folder counts.</li>
+        <li><strong>Run</strong> — choose <code class="mono">catan_results</code> or <code class="mono">catan_no_vic</code> and start analysis.</li>
+        <li><strong>Progress</strong> — per-file log while the run is in flight.</li>
+        <li><strong>Results</strong> — fleet averages, per-house chart, decile profile, model vs reality, system size, predictors, loss dive, segments, calendar &amp; timing, and PNG/PDF export.</li>
+      </ul>
+    </section>
+
+    <nav class="page-section-nav card" aria-label="Jump to section">
+      <p class="page-section-nav__label">Section menu</p>
+      <div class="page-section-nav__chips">
+        <button type="button" class="page-section-nav__chip" data-section-nav="section-demographics">Demographics</button>
+        <button type="button" class="page-section-nav__chip" data-section-nav="section-about-data">About the data</button>
+        <button type="button" class="page-section-nav__chip" data-section-nav="section-run">Run</button>
+        <button type="button" class="page-section-nav__chip" data-section-nav="section-progress">Progress</button>
+        <details class="page-section-nav__megamenu">
+          <summary class="page-section-nav__megamenu-summary">Results…</summary>
+          <div class="page-section-nav__megamenu-panel" role="group" aria-label="Result subsections">
+            <button type="button" class="page-section-nav__menu-item" data-section-nav="section-fleet-averages">Fleet averages</button>
+            <button type="button" class="page-section-nav__menu-item" data-section-nav="panel-model-vs-reality">Model vs reality</button>
+            <button type="button" class="page-section-nav__menu-item" data-section-nav="section-fleet-by-house">Fleet profitability by house</button>
+            <button type="button" class="page-section-nav__menu-item" data-section-nav="section-decile-chart">Decile profile (chart)</button>
+            <button type="button" class="page-section-nav__menu-item" data-section-nav="section-decile-table">Decile profile (table)</button>
+            <button type="button" class="page-section-nav__menu-item" data-section-nav="section-system-bubble">System size vs profitability</button>
+            <button type="button" class="page-section-nav__menu-item" data-section-nav="section-predictors-chart">Top predictors</button>
+            <button type="button" class="page-section-nav__menu-item" data-section-nav="section-predictors-table">Predictor detail (table)</button>
+            <button type="button" class="page-section-nav__menu-item" data-section-nav="section-loss-dive">Loss-making homes</button>
+            <button type="button" class="page-section-nav__menu-item" data-section-nav="section-segments-chart">Behavior segments (chart)</button>
+            <button type="button" class="page-section-nav__menu-item" data-section-nav="section-segments-notes">Behavior segments (notes)</button>
+            <button type="button" class="page-section-nav__menu-item" data-section-nav="section-calendar-time">Calendar &amp; time distribution</button>
+            <button type="button" class="page-section-nav__menu-item" data-section-nav="section-timing-costs">When costs &amp; credits occur</button>
+          </div>
+        </details>
+      </div>
+    </nav>
+
+    <details class="collapsible-section card demographics-callout-wrap" id="section-demographics">
+      <summary class="collapsible-section__summary">{{ demographic_doc.title }}</summary>
+      <div class="collapsible-section__body">
     <aside class="demographics-callout" aria-label="Demographic augmentation notes">
-      <h2 class="demographics-callout-title">{{ demographic_doc.title }}</h2>
+      <h2 class="demographics-callout-title demographics-callout-title--in-aside">{{ demographic_doc.title }}</h2>
       <p class="demographics-callout-summary">{{ demographic_doc.summary }}</p>
       <ol class="demographics-callout-steps">
         {% for step in demographic_doc.steps %}
@@ -41,25 +88,84 @@
       </p>
       <button type="button" class="btn-download" id="btn-download-fleet-csv" disabled>Download fleet table (CSV)</button>
     </aside>
+      </div>
+    </details>
 
     <header class="site-header">
-      <h1>Optisizer fleet summary</h1>
-      <p>
-        Each home is <code class="mono">catan_results/&lt;id&gt;/optimisation_intervals.csv</code>.
-        Sums use the <strong>net_cost</strong> column only. Data root: <span class="mono">{{ data_root }}</span>
-        (<strong>{{ n_files }}</strong> files detected).
+      <p class="site-nav-extra">
+        <a href="{{ url_for('fleet_prices_page') }}">Fleet import/export prices</a>
+        · <a href="{{ url_for('fleet_headline_margin_page') }}">Headline margin &amp; implied fee</a>
+        · <a href="{{ url_for('solax_quote_page') }}">Usage CSV quote</a>
+        · <a href="{{ url_for('calibrated_prediction_page') }}">Calibrated prediction</a>
       </p>
+      <h1>Optisizer fleet summary</h1>
+      <details class="collapsible-section collapsible-section--in-header" id="section-about-data">
+        <summary class="collapsible-section__summary">About the data &amp; detected folders</summary>
+        <div class="collapsible-section__body">
+      <p>
+        Two Catan export sets live under <code class="mono">Optisizer data/</code>:
+        <strong>catan_results</strong> (full fleet) and <strong>catan_no_vic</strong> (homes with VIC removed for this export).
+        Each home is <code class="mono">&lt;export-set&gt;/&lt;house id&gt;/optimisation_intervals.csv</code>.
+        Sums use the <strong>net_cost</strong> column only. Choose a set below before <strong>Run analysis</strong>.
+      </p>
+      <ul class="catan-source-summary" aria-label="Detected Catan export folders">
+        {% for s in catan_sources %}
+        <li>
+          <span class="mono">{{ s.path }}</span> — <strong>{{ s.n_files }}</strong> file{% if s.n_files != 1 %}s{% endif %}
+          {% if not s.exists %}<span class="catan-source-missing">(folder missing)</span>{% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+      {% if vic_blocklist.active %}
+      <p class="status-line vic-blocklist-note">
+        Excluding <strong>{{ vic_blocklist.n_uids }}</strong> site(s) listed in
+        <code class="mono">{{ vic_blocklist.file }}</code> from both Catan scans (folder UUID must match each row).
+      </p>
+      {% endif %}
+        </div>
+      </details>
     </header>
 
     <section class="card" id="panel-run">
-      <h2>Run</h2>
-      <p class="status-line">Process every file and stream progress below.</p>
+      <details class="collapsible-section collapsible-section--in-card" id="section-run">
+        <summary class="collapsible-section__summary">Run</summary>
+        <div class="collapsible-section__body">
+      <fieldset class="catan-source-fieldset">
+        <legend class="catan-source-legend">Catan export set (catan_results vs catan_no_vic)</legend>
+        {% for s in catan_sources %}
+        <label class="catan-source-option">
+          <input
+            type="radio"
+            name="catan_source"
+            value="{{ s.id }}"
+            data-n-files="{{ s.n_files }}"
+            {% if s.id == default_source %}checked{% endif %}
+            {% if s.n_files == 0 %}disabled{% endif %}
+          />
+          <span class="catan-source-option-text">{{ s.label }} — <code class="mono">{{ s.path }}</code> ({{ s.n_files }} files)</span>
+        </label>
+        {% endfor %}
+      </fieldset>
+      <fieldset class="catan-source-fieldset">
+        <legend class="catan-source-legend">MSC valuation input</legend>
+        <p class="status-line">
+          MSC DMO time-of-use pricing uses equal import/export rates per interval:
+          <code class="mono">4pm-8pm = $0.45/kWh</code>,
+          <code class="mono">10am-2pm = $0.12/kWh</code>,
+          <code class="mono">all other times = $0.37/kWh</code>.
+        </p>
+      </fieldset>
+      <p class="status-line">Process every file in the selected set and stream progress below.</p>
       <button type="button" class="btn-primary" id="btn-run">Run analysis</button>
       <p class="status-line hidden status-line--error" id="run-error"></p>
+        </div>
+      </details>
     </section>
 
     <section class="card hidden" id="panel-progress">
-      <h2>Progress</h2>
+      <details class="collapsible-section collapsible-section--in-card" id="section-progress">
+        <summary class="collapsible-section__summary">Progress</summary>
+        <div class="collapsible-section__body">
       <div class="progress-track">
         <div class="progress-fill" id="progress-fill"></div>
       </div>
@@ -78,26 +184,305 @@
               <th class="num">Rows</th>
               <th class="num">Gross cost</th>
               <th class="num">Gross revenue</th>
-              <th class="num">Net margin</th>
+              <th class="num">Activity %</th>
               <th class="num">% rev</th>
-              <th class="num">% act</th>
+              <th class="num">Net margin</th>
+              <th class="num" title="Optional: retail / no trade-back counterfactual from CSV column">No-trade net $</th>
+              <th class="num" title="Activity margin % on no-trade counterfactual">No-trade act. %</th>
             </tr>
           </thead>
           <tbody id="file-log-body"></tbody>
         </table>
       </div>
+        </div>
+      </details>
     </section>
 
     <section class="card hidden" id="panel-results">
+      <p id="results-dataset-badge" class="dataset-badge hidden" aria-live="polite"></p>
+            <details class="collapsible-section" id="section-fleet-averages">
+        <summary class="collapsible-section__summary">Fleet averages <span class="collapsible-section__hint">(mean per home)</span></summary>
+        <div class="collapsible-section__body">
       <div class="pdf-block">
         <h2>Fleet averages <span style="font-weight:400;color:var(--color-text-muted)">(mean per home)</span></h2>
+        <p class="status-line activity-margin-explainer">
+          <strong>Activity margin</strong> = net margin ÷ (gross charges + gross credits) × 100.
+          It measures the share of <em>all money flowing through the meter</em> that the home retains as profit (or loses).
+          This is the default margin reported throughout the page; "% rev." (÷ revenue only) appears in some tables for comparison.
+          <strong>No-trade</strong> columns appear when interval CSVs include a retail-without-trade-back counterfactual (see API schema); batch comparisons can add the same story under <code class="mono">retail_without_trade</code> in the batch JSON.
+        </p>
         <div class="results-grid" id="fleet-stats"></div>
         <div class="chart-actions pdf-hide">
           <button type="button" class="btn-download" id="btn-download-all">Download all charts (PNG)</button>
           <button type="button" class="btn-download" id="btn-download-pdf">Export full analysis (PDF)</button>
         </div>
       </div>
+        </div>
+      </details>
 
+      <details class="collapsible-section hidden" id="panel-model-vs-reality">
+        <summary class="collapsible-section__summary">Model vs reality</summary>
+        <div class="collapsible-section__body">
+      <div class="pdf-block">
+        <h2 style="margin-top:1rem">Model vs reality</h2>
+        <p class="status-line" id="pred-deep-lead">
+          Quantified gap between what the optimiser predicted and what actually showed up on bills.
+          Delivery rate, pricing haircut, and conditions that drive the gap.
+        </p>
+        <p class="status-line activity-margin-explainer">
+          Dollar profits below use negated batch <code class="mono">net_energy_cost</code> (positive = profit).
+          <strong>Activity margin</strong> % in the tables further down = net margin ÷ (grid charges + feed-in credits) × 100 — the default margin basis on this page (share of all dollar flow retained).
+        </p>
+
+        <div class="results-grid results-grid--highlight" id="pred-haircut-stats"></div>
+
+        <ul class="pred-deep-narrative" id="pred-deep-narrative" aria-label="Plain-language summary"></ul>
+        <div class="results-grid" id="pred-deep-stats"></div>
+
+        <h3 class="fleet-prices-subhead">Batch match summary</h3>
+        <ul class="batch-comparison-stats" id="batch-comparison-stats" aria-label="Batch comparison summary counts"></ul>
+        <p class="status-line comparison-tech-note" id="comparison-chart-note"></p>
+
+        <h3 class="fleet-prices-subhead">Home drill-down (Actual vs MSC detail)</h3>
+        <div class="home-drilldown-controls">
+          <label for="home-drilldown-select">Select home UID</label>
+          <select id="home-drilldown-select" aria-label="Select home for scenario drill-down">
+            <option value="">Choose a home</option>
+          </select>
+        </div>
+        <p class="status-line" id="home-drilldown-note">
+          Choose a home to compare scenario totals: import/export kWh, weighted prices, and net energy outcomes.
+        </p>
+        <div class="results-grid" id="home-drilldown-stats"></div>
+
+        <h3 class="fleet-prices-subhead">If the model predicts $X, what do actuals look like?</h3>
+        <p class="status-line" id="pred-bands-lead">Homes grouped into equal-count bands by simulated profit. Table shows the actual-outcome range within each band.</p>
+        <div class="file-log decile-log">
+          <table>
+            <thead>
+              <tr>
+                <th>Predicted range</th>
+                <th class="num">Homes</th>
+                <th class="num">Mean predicted ($)</th>
+                <th class="num">Mean actual ($)</th>
+                <th class="num">Mean no-trade ($)</th>
+                <th class="num">Mean MSC ($)</th>
+                <th class="num">Median actual ($)</th>
+                <th class="num">p25–p75 actual ($)</th>
+                <th class="num">Delivery %</th>
+                <th class="num">% flip to loss</th>
+              </tr>
+            </thead>
+            <tbody id="pred-bands-body"></tbody>
+          </table>
+        </div>
+
+        <h3 class="fleet-prices-subhead">Simulated vs actual profit — quadrant view</h3>
+        <p class="status-line">
+          Each bubble is one matched home. <strong>X</strong> = simulated profit ($), <strong>Y</strong> = actual (billed) profit ($).
+          When the batch file includes a <strong>retail without trade-back</strong> counterfactual, tooltips also show that dollar outcome (without Reposit trading).
+          The grey diagonal is <em>y = x</em> (perfect prediction); points below it mean reality was worse than the model.
+          The zero lines split the chart into four quadrants: <strong class="q-winner">Winners</strong> (both positive),
+          <strong class="q-always-loss">Always loses</strong> (both negative),
+          <strong class="q-model-optimism">Model optimism</strong> (sim profit, actual loss), and
+          <strong class="q-surprise">Surprise winners</strong> (sim loss, actual profit — typically empty).
+          Bubble area scales with battery × solar.
+        </p>
+        <p class="status-line" id="quadrant-summary-stats" aria-live="polite"></p>
+        <div class="chart-wrap chart-wrap--tall">
+          <canvas id="chart-quadrant-sim-vs-actual"></canvas>
+        </div>
+
+        <h3 class="fleet-prices-subhead">Does system size sharpen the picture?</h3>
+        <p class="status-line">Accuracy broken down by battery capacity and solar size. Delivery % = actual / simulated × 100.</p>
+        <div class="prediction-deep-chart-pair">
+          <div class="chart-wrap chart-wrap--tall">
+            <canvas id="chart-pred-by-battery"></canvas>
+          </div>
+          <div class="chart-wrap chart-wrap--tall">
+            <canvas id="chart-pred-by-solar"></canvas>
+          </div>
+        </div>
+        <div class="file-log decile-log">
+          <table>
+            <thead>
+              <tr>
+                <th>Battery band (kWh)</th>
+                <th class="num">Homes</th>
+                <th class="num">Mean sim ($)</th>
+                <th class="num">Mean actual ($)</th>
+                <th class="num">Median delivery %</th>
+                <th class="num">p25–p75 delivery %</th>
+                <th class="num">% flip to loss</th>
+              </tr>
+            </thead>
+            <tbody id="pred-battery-body"></tbody>
+          </table>
+        </div>
+
+        <h3 class="fleet-prices-subhead">Activity margin gap by system-size decile</h3>
+        <p class="status-line" id="margin-delta-size-lead">
+          <strong>Activity margin</strong> = net margin ÷ (charges + credits) × 100 — the share of all dollar flows the home retains.
+          Ten equal-count groups by configured battery × solar (batch <code class="mono">system_config</code>). Bars compare billed outcomes to
+          <strong>simulated</strong> margin and, when the batch file includes it, to <strong>retail without trade-back</strong> (no Reposit trading).
+          Negative = billed margin below that baseline.
+        </p>
+        <p class="status-line" id="margin-delta-size-summary" aria-live="polite"></p>
+        <div class="chart-wrap chart-wrap--tall">
+          <canvas id="chart-margin-delta-size-decile"></canvas>
+        </div>
+        <div class="file-log decile-log">
+          <table>
+            <thead>
+              <tr>
+                <th>Decile</th>
+                <th class="num">Homes</th>
+                <th class="num">Avg batt. (kWh)</th>
+                <th class="num">Avg solar (kW)</th>
+                <th class="num">Mean sim activity margin %</th>
+                <th class="num">Mean actual activity margin %</th>
+                <th class="num">Mean no-trade act. %</th>
+                <th class="num">Mean MSC act. %</th>
+                <th class="num">Mean Δ (pp)</th>
+                <th class="num">Median Δ (pp)</th>
+                <th class="num">Mean Δ act−no-trade (pp)</th>
+                <th class="num">Median Δ act−no-trade (pp)</th>
+                <th class="num">Mean Δ act−MSC (pp)</th>
+                <th class="num">Median Δ act−MSC (pp)</th>
+              </tr>
+            </thead>
+            <tbody id="margin-delta-size-body"></tbody>
+          </table>
+        </div>
+
+        <h3 class="fleet-prices-subhead">What drives the gap? Optimism predictor correlations</h3>
+        <p class="status-line">Features correlated with delivery rate (actual/sim). Positive = higher value of the feature means better capture.</p>
+        <div class="file-log decile-log">
+          <table>
+            <thead>
+              <tr>
+                <th>Feature</th>
+                <th class="num">Correlation with delivery rate</th>
+                <th class="num">Homes</th>
+              </tr>
+            </thead>
+            <tbody id="pred-optimism-predictors-body"></tbody>
+          </table>
+        </div>
+
+        <div class="prediction-deep-chart-pair">
+          <div class="chart-wrap chart-wrap--tall">
+            <canvas id="chart-pred-hist"></canvas>
+          </div>
+        </div>
+
+        <h3 class="fleet-prices-subhead">Largest model optimism (simulated profit minus actual)</h3>
+        <div class="file-log decile-log">
+          <table>
+            <thead>
+              <tr>
+                <th>House</th>
+                <th class="num">Sim profit ($)</th>
+                <th class="num">Actual ($)</th>
+                <th class="num">No-trade ($)</th>
+                <th class="num">MSC ($)</th>
+                <th class="num">Reposit uplift ($)</th>
+                <th class="num">Savings vs MSC ($)</th>
+                <th class="num">Optimism ($)</th>
+              </tr>
+            </thead>
+            <tbody id="pred-deep-worst-body"></tbody>
+          </table>
+        </div>
+        <div class="chart-actions pdf-hide">
+          <button type="button" class="btn-download" id="btn-download-quadrant">Download quadrant chart (PNG)</button>
+          <button type="button" class="btn-download" id="btn-download-pred-battery">Download battery breakdown (PNG)</button>
+          <button type="button" class="btn-download" id="btn-download-pred-solar">Download solar breakdown (PNG)</button>
+          <button type="button" class="btn-download" id="btn-download-margin-delta-size-decile">Download margin Δ by size decile (PNG)</button>
+          <button type="button" class="btn-download" id="btn-download-pred-hist">Download optimism histogram (PNG)</button>
+        </div>
+      </div>
+        </div>
+      </details>
+
+      <details class="collapsible-section" id="section-fleet-by-house">
+        <summary class="collapsible-section__summary">Fleet profitability by house</summary>
+        <div class="collapsible-section__body">
+      <div class="pdf-block">
+        <h2 style="margin-top:1rem">Fleet profitability by house</h2>
+        <p class="status-line">
+          Houses left to right: worst to best by net margin ($). Yellow line = <strong>activity margin</strong> % (left axis): net margin ÷ (gross charges + gross credits) × 100 — the default margin basis on this page. Bars = net margin in dollars (right axis).
+          Positive net margin = credits exceeded charges over the period.
+        </p>
+        <p class="status-line chart-copy-hint" id="chart-net-copy-feedback" aria-live="polite">
+          Click a bar or the line above a column to copy that home’s full UID to the clipboard.
+        </p>
+        <div class="chart-scroll">
+          <div class="chart-wrap chart-wrap--tall">
+            <canvas id="chart-net"></canvas>
+          </div>
+        </div>
+        <div class="chart-actions pdf-hide">
+          <button type="button" class="btn-download" id="btn-download-net">Download chart (PNG)</button>
+        </div>
+      </div>
+        </div>
+      </details>
+
+      <details class="collapsible-section" id="section-decile-chart">
+        <summary class="collapsible-section__summary">Decile profile (by profitability)</summary>
+        <div class="collapsible-section__body">
+      <div class="pdf-block">
+        <h2 style="margin-top:1rem">Decile profile (by profitability)</h2>
+        <p class="status-line activity-margin-explainer">
+          D1 = lowest profitability homes, D10 = highest (by net margin $). Bars = mean <strong>activity margin</strong> % per decile: net margin ÷ (charges + credits) × 100 (same default basis as fleet averages).
+        </p>
+        <div class="chart-wrap">
+          <canvas id="chart-decile"></canvas>
+        </div>
+        <div class="chart-actions pdf-hide">
+          <button type="button" class="btn-download" id="btn-download-decile">Download chart (PNG)</button>
+        </div>
+      </div>
+        </div>
+      </details>
+
+      <details class="collapsible-section" id="section-decile-table">
+        <summary class="collapsible-section__summary">Decile profile — summary table</summary>
+        <div class="collapsible-section__body">
+      <div class="pdf-block">
+        <p class="status-line pdf-block-caption">Decile summary table.</p>
+        <div class="file-log decile-log">
+          <table>
+            <thead>
+              <tr>
+                <th>Decile</th>
+                <th class="num">Homes</th>
+                <th class="num">Avg cost</th>
+                <th class="num">Avg revenue</th>
+                <th class="num" title="Mean of each home’s activity margin: net ÷ (gross charges + gross credits) × 100">Avg activity margin %</th>
+                <th class="num">Avg net margin</th>
+                <th class="num">Avg no-trade net $</th>
+                <th class="num">Avg no-trade act. %</th>
+                <th class="num">Min net</th>
+                <th class="num">Max net</th>
+                <th class="num">Avg max solar (kW)</th>
+                <th class="num">Avg max SoC (kWh)</th>
+              </tr>
+            </thead>
+            <tbody id="decile-log-body"></tbody>
+          </table>
+        </div>
+        <div class="chart-actions chart-actions--footer pdf-hide">
+          <button type="button" class="btn-download" id="btn-download-pdf-end">Export full analysis (PDF)</button>
+        </div>
+      </div>
+        </div>
+      </details>
+
+      <details class="collapsible-section" id="section-system-bubble">
+        <summary class="collapsible-section__summary">System size vs profitability profile</summary>
+        <div class="collapsible-section__body">
       <div class="pdf-block">
         <h2 style="margin-top:1rem">System size vs profitability profile</h2>
         <div class="results-grid" id="size-stats"></div>
@@ -109,19 +494,12 @@
           <button type="button" class="btn-download" id="btn-download-bubble">Download chart (PNG)</button>
         </div>
       </div>
-
-      <div class="pdf-block">
-        <h2 style="margin-top:1rem">Calendar period and fleet time distribution</h2>
-        <div class="results-grid" id="time-stats"></div>
-        <p class="status-line">Bars show number of 5-minute rows captured each month; line shows active homes in that month.</p>
-        <div class="chart-wrap">
-          <canvas id="chart-time"></canvas>
         </div>
-        <div class="chart-actions pdf-hide">
-          <button type="button" class="btn-download" id="btn-download-time">Download chart (PNG)</button>
-        </div>
-      </div>
+      </details>
 
+      <details class="collapsible-section" id="section-predictors-chart">
+        <summary class="collapsible-section__summary">Top predictors of profitability</summary>
+        <div class="collapsible-section__body">
       <div class="pdf-block">
         <h2 style="margin-top:1rem">Top predictors of profitability</h2>
         <p class="status-line">Ranked by absolute correlation with net margin and profitability decile.</p>
@@ -132,7 +510,12 @@
           <button type="button" class="btn-download" id="btn-download-predictors">Download chart (PNG)</button>
         </div>
       </div>
+        </div>
+      </details>
 
+      <details class="collapsible-section" id="section-predictors-table">
+        <summary class="collapsible-section__summary">Predictor detail (correlation table)</summary>
+        <div class="collapsible-section__body">
       <div class="pdf-block">
         <p class="status-line pdf-block-caption">Predictor detail — correlation with net margin and profitability decile.</p>
         <div class="file-log decile-log">
@@ -149,13 +532,121 @@
           </table>
         </div>
       </div>
+        </div>
+      </details>
 
+      <details class="collapsible-section" id="section-loss-dive">
+        <summary class="collapsible-section__summary">Loss-making homes — deep dive</summary>
+        <div class="collapsible-section__body">
+      <div class="pdf-block" id="panel-loss-dive">
+        <h2 style="margin-top:1rem">Loss-making homes — deep dive</h2>
+        <p class="status-line" id="loss-dive-lead"></p>
+        <div id="loss-dive-no-loss" class="hidden">
+          <p class="status-line">Every home has activity margin ≥ 0 for this period, so there is no loss cohort to contrast.</p>
+        </div>
+        <div id="loss-dive-detail" class="hidden">
+          <div class="results-grid" id="loss-dive-summary"></div>
+          <ul class="loss-dive-narrative" id="loss-dive-narrative" aria-label="Summary of loss drivers"></ul>
+          <div class="loss-dive-charts">
+            <div class="chart-wrap">
+              <canvas id="chart-loss-money"></canvas>
+            </div>
+            <div class="chart-wrap">
+              <canvas id="chart-loss-energy"></canvas>
+            </div>
+            <div class="chart-wrap">
+              <canvas id="chart-loss-predictors"></canvas>
+            </div>
+            <div class="chart-wrap">
+              <canvas id="chart-loss-segments"></canvas>
+            </div>
+          </div>
+          <div class="chart-actions pdf-hide">
+            <button type="button" class="btn-download" id="btn-download-loss-money">Loss vs profit — $ chart (PNG)</button>
+            <button type="button" class="btn-download" id="btn-download-loss-energy">Loss vs profit — energy (PNG)</button>
+            <button type="button" class="btn-download" id="btn-download-loss-predictors">Loss cohort predictors (PNG)</button>
+            <button type="button" class="btn-download" id="btn-download-loss-segments">Loss cohort segments (PNG)</button>
+          </div>
+          <p class="status-line pdf-block-caption">Loss vs profitable homes — same period, mean per home (where both cohorts exist).</p>
+          <div class="file-log decile-log">
+            <table>
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th class="num">Loss homes (mean)</th>
+                  <th class="num">Profitable homes (mean)</th>
+                  <th class="num">Loss vs profit</th>
+                </tr>
+              </thead>
+              <tbody id="loss-compare-body"></tbody>
+            </table>
+          </div>
+          <p class="status-line pdf-block-caption">
+            Share of loss-making homes that sit on the &ldquo;wrong&rdquo; side of the fleet median on each axis (high charges, weak credits, heavy imports, etc.). Homes can match several rows.
+          </p>
+          <div class="file-log decile-log">
+            <table>
+              <thead>
+                <tr>
+                  <th>Pattern (vs fleet median)</th>
+                  <th class="num">Loss homes</th>
+                  <th class="num">% of loss homes</th>
+                </tr>
+              </thead>
+              <tbody id="loss-drivers-body"></tbody>
+            </table>
+          </div>
+          <p class="status-line pdf-block-caption">
+            Correlations within the loss cohort only: which behaviours line up with <em>deeper</em> losses (more negative net margin)?
+          </p>
+          <div class="file-log decile-log">
+            <table>
+              <thead>
+                <tr>
+                  <th>Feature</th>
+                  <th class="num">Sample</th>
+                  <th class="num">Corr net margin</th>
+                </tr>
+              </thead>
+              <tbody id="loss-predictor-log-body"></tbody>
+            </table>
+          </div>
+          <p class="status-line pdf-block-caption">Worst homes by net margin (up to 80).</p>
+          <div class="file-log decile-log">
+            <table>
+              <thead>
+                <tr>
+                  <th>House</th>
+                  <th>Segment</th>
+                  <th class="num">Net margin</th>
+                  <th class="num">Activity margin %</th>
+                  <th class="num">Gross cost</th>
+                  <th class="num">Gross rev.</th>
+                  <th class="num">Avg spread</th>
+                  <th class="num">Import kWh</th>
+                  <th class="num">Export kWh</th>
+                  <th class="num">Imp. price</th>
+                  <th class="num">Exp. price</th>
+                </tr>
+              </thead>
+              <tbody id="loss-worst-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+        </div>
+      </details>
+
+      <details class="collapsible-section" id="section-segments-chart">
+        <summary class="collapsible-section__summary">Behavior segments vs profitability</summary>
+        <div class="collapsible-section__body">
       <div class="pdf-block">
         <h2 style="margin-top:1rem">Behavior segments vs profitability</h2>
         <p class="status-line">
           Homes are grouped with k-means from load, grid, battery, and tariff-shape features. Labels
           <span class="mono">S1</span>&ndash;<span class="mono">S4</span> are then ordered by average net margin in
           <em>this</em> fleet (S1 = weakest typical outcome, S4 = strongest). Plain-language notes follow the table.
+          The yellow line is <strong>activity margin</strong> % (portfolio-level): segment total net ÷ segment total (charges + credits) × 100 — the default margin basis on this page.
         </p>
         <div class="chart-wrap">
           <canvas id="chart-segments"></canvas>
@@ -164,9 +655,17 @@
           <button type="button" class="btn-download" id="btn-download-segments">Download chart (PNG)</button>
         </div>
       </div>
+        </div>
+      </details>
 
+      <details class="collapsible-section" id="section-segments-notes">
+        <summary class="collapsible-section__summary">Behavior segments — tables &amp; plain-English notes</summary>
+        <div class="collapsible-section__body">
       <div class="pdf-block">
-        <p class="status-line pdf-block-caption">Segment averages and plain-English notes.</p>
+        <p class="status-line pdf-block-caption">
+          Segment averages and plain-English notes. <strong>Activity margin %</strong> = net margin ÷ (charges + credits).
+          “NM % rev.” divides by revenue only, for comparison.
+        </p>
         <div class="file-log decile-log">
           <table>
             <thead>
@@ -175,10 +674,12 @@
                 <th class="num">Homes</th>
                 <th class="num">Avg revenue</th>
                 <th class="num">Avg cost</th>
+                <th class="num" title="Segment total net margin ÷ segment total (gross revenue + gross cost) × 100">NM % activity (portfolio)</th>
+                <th class="num" title="Segment total net margin ÷ segment total gross revenue × 100">NM % rev. (portfolio)</th>
+                <th class="num" title="Average of each home’s net margin ÷ gross revenue × 100">Avg NM % rev. (homes)</th>
+                <th class="num" title="Average of each home’s net margin ÷ (revenue + cost) × 100">Avg activity margin % (homes)</th>
                 <th class="num">Avg net margin</th>
                 <th class="num">Total net margin</th>
-                <th class="num">Avg % revenue</th>
-                <th class="num">Avg % activity</th>
                 <th class="num">Avg max solar</th>
                 <th class="num">Avg max SoC</th>
                 <th class="num">Avg export active %</th>
@@ -191,55 +692,83 @@
         <h3 class="segment-legend-heading hidden" id="segment-legend-heading">What each segment means (plain English)</h3>
         <dl class="segment-legend" id="segment-legend"></dl>
       </div>
+        </div>
+      </details>
 
+      <details class="collapsible-section" id="section-calendar-time">
+        <summary class="collapsible-section__summary">Calendar period and fleet time distribution</summary>
+        <div class="collapsible-section__body">
       <div class="pdf-block">
-        <h2 style="margin-top:1rem">Fleet profitability by house</h2>
-        <p class="status-line">Positive net margin = credits exceeded charges over the period.</p>
-        <div class="chart-scroll">
-          <div class="chart-wrap chart-wrap--tall">
-            <canvas id="chart-net"></canvas>
+        <h2 style="margin-top:1rem">Calendar period and fleet time distribution</h2>
+        <div class="results-grid" id="time-stats"></div>
+        <p class="status-line">Bars show number of 5-minute rows captured each month; line shows active homes in that month.</p>
+        <div class="chart-wrap">
+          <canvas id="chart-time"></canvas>
+        </div>
+        <div class="chart-actions pdf-hide">
+          <button type="button" class="btn-download" id="btn-download-time">Download chart (PNG)</button>
+        </div>
+      </div>
+        </div>
+      </details>
+
+      <details class="collapsible-section" id="section-timing-costs">
+        <summary class="collapsible-section__summary">When costs and credits occur (pooled cohorts)</summary>
+        <div class="collapsible-section__body">
+      <div class="pdf-block">
+        <h2 style="margin-top:1rem">When costs and credits occur (pooled cohorts)</h2>
+        <p class="status-line">
+          Every 5-minute row: positive <code class="mono">net_cost</code> adds to <strong>grid charges</strong> (red); negative rows add to <strong>feed-in credits</strong> (teal).
+          <strong>By hour</strong> uses the timestamp’s clock hour. <strong>By 5-minute time</strong> pools into 288 wall-clock bins (00:00 … 23:55). <strong>By month</strong> uses <span class="mono">YYYY-MM</span>. Values are summed across all homes in each cohort; tooltips include each point’s share of that cohort’s total charges or credits.
+        </p>
+        <h3 class="timing-cohort-heading">Loss-making homes (net margin &lt; 0)</h3>
+        <div class="loss-dive-charts">
+          <div class="chart-wrap">
+            <canvas id="chart-timing-hour-loss"></canvas>
+          </div>
+          <div class="chart-wrap">
+            <canvas id="chart-timing-month-loss"></canvas>
+          </div>
+        </div>
+        <h3 class="timing-cohort-heading">Profitable homes (net margin ≥ 0)</h3>
+        <div class="loss-dive-charts">
+          <div class="chart-wrap">
+            <canvas id="chart-timing-hour-profit"></canvas>
+          </div>
+          <div class="chart-wrap">
+            <canvas id="chart-timing-month-profit"></canvas>
+          </div>
+        </div>
+        <h3 class="timing-cohort-heading">By 5-minute clock time (aggregate day profile)</h3>
+        <p class="status-line">
+          288 bins from each row’s wall-clock time (same dollar rules as the hourly charts). Wider chart below scrolls horizontally on small screens.
+        </p>
+        <div class="loss-dive-charts">
+          <div class="chart-wrap chart-wrap--tall chart-wrap--hscroll">
+            <div class="chart-canvas-host--timing-slot">
+              <canvas id="chart-timing-slot-loss"></canvas>
+            </div>
+          </div>
+          <div class="chart-wrap chart-wrap--tall chart-wrap--hscroll">
+            <div class="chart-canvas-host--timing-slot">
+              <canvas id="chart-timing-slot-profit"></canvas>
+            </div>
           </div>
         </div>
         <div class="chart-actions pdf-hide">
-          <button type="button" class="btn-download" id="btn-download-net">Download chart (PNG)</button>
+          <button type="button" class="btn-download" id="btn-download-timing-hour-loss">Timing hour — loss (PNG)</button>
+          <button type="button" class="btn-download" id="btn-download-timing-month-loss">Timing month — loss (PNG)</button>
+          <button type="button" class="btn-download" id="btn-download-timing-hour-profit">Timing hour — profit (PNG)</button>
+          <button type="button" class="btn-download" id="btn-download-timing-month-profit">Timing month — profit (PNG)</button>
+          <button type="button" class="btn-download" id="btn-download-timing-slot-loss">Timing 5-min — loss (PNG)</button>
+          <button type="button" class="btn-download" id="btn-download-timing-slot-profit">Timing 5-min — profit (PNG)</button>
         </div>
       </div>
+        </div>
+      </details>
 
-      <div class="pdf-block">
-        <h2 style="margin-top:1rem">Decile profile (by profitability)</h2>
-        <p class="status-line">D1 = lowest profitability homes, D10 = highest profitability homes.</p>
-        <div class="chart-wrap">
-          <canvas id="chart-decile"></canvas>
-        </div>
-        <div class="chart-actions pdf-hide">
-          <button type="button" class="btn-download" id="btn-download-decile">Download chart (PNG)</button>
-        </div>
-      </div>
-
-      <div class="pdf-block">
-        <p class="status-line pdf-block-caption">Decile summary table.</p>
-        <div class="file-log decile-log">
-          <table>
-            <thead>
-              <tr>
-                <th>Decile</th>
-                <th class="num">Homes</th>
-                <th class="num">Avg cost</th>
-                <th class="num">Avg revenue</th>
-                <th class="num">Avg net margin</th>
-                <th class="num">Min net</th>
-                <th class="num">Max net</th>
-                <th class="num">Avg % activity</th>
-                <th class="num">Avg max solar (kW)</th>
-                <th class="num">Avg max SoC (kWh)</th>
-              </tr>
-            </thead>
-            <tbody id="decile-log-body"></tbody>
-          </table>
-        </div>
-        <div class="chart-actions chart-actions--footer pdf-hide">
-          <button type="button" class="btn-download" id="btn-download-pdf-end">Export full analysis (PDF)</button>
-        </div>
+      <div class="chart-actions chart-actions--footer pdf-hide">
+        <button type="button" class="btn-download" id="btn-download-pdf-end">Export full analysis (PDF)</button>
       </div>
     </section>
 
@@ -253,14 +782,68 @@
       n == null || Number.isNaN(n)
         ? "—"
         : n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const gainLossWord = (n) =>
+      n == null || Number.isNaN(n) ? "—" : (n > 0 ? "gain" : (n < 0 ? "loss" : "neutral"));
+    const fmtMoneyWithGainLoss = (n) =>
+      n == null || Number.isNaN(n) ? "—" : `${fmtMoney(n)} (${gainLossWord(n)})`;
     const fmtPct = (n) =>
       n == null || Number.isNaN(n) ? "—" : n.toFixed(2) + "%";
     const fmtNum = (n, d = 3) =>
       n == null || Number.isNaN(n) ? "—" : Number(n).toFixed(d);
+    const fmtKwh = (n) =>
+      n == null || Number.isNaN(n)
+        ? "—"
+        : Number(n).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 1 });
+
+    async function copyTextToClipboard(text) {
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(text);
+          return true;
+        }
+      } catch (e) {
+        /* non-secure context or denied — try fallback */
+      }
+      try {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.setAttribute("readonly", "");
+        ta.style.position = "fixed";
+        ta.style.left = "-9999px";
+        document.body.appendChild(ta);
+        ta.select();
+        const ok = document.execCommand("copy");
+        document.body.removeChild(ta);
+        return ok;
+      } catch (e2) {
+        return false;
+      }
+    }
 
     const btnRun = document.getElementById("btn-run");
     const panelProgress = document.getElementById("panel-progress");
     const panelResults = document.getElementById("panel-results");
+    (function initPageSectionNavMenu() {
+      const nav = document.querySelector(".page-section-nav");
+      if (!nav) return;
+      nav.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-section-nav]");
+        if (!btn || !nav.contains(btn)) return;
+        e.preventDefault();
+        const id = btn.getAttribute("data-section-nav");
+        const det = document.getElementById(id);
+        if (!det || det.tagName !== "DETAILS") return;
+        if (panelResults && panelResults.classList.contains("hidden") && det.closest("#panel-results")) {
+          return;
+        }
+        det.open = true;
+        const mega = btn.closest(".page-section-nav__megamenu");
+        if (mega) mega.open = false;
+        requestAnimationFrame(() => {
+          det.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      });
+    })();
     const progressFill = document.getElementById("progress-fill");
     const progressCount = document.getElementById("progress-count");
     const progressPct = document.getElementById("progress-pct");
@@ -285,15 +868,43 @@
     const btnDownloadSegments = document.getElementById("btn-download-segments");
     const btnDownloadDecile = document.getElementById("btn-download-decile");
     const btnDownloadFleetCsv = document.getElementById("btn-download-fleet-csv");
+    const homeDrilldownSelect = document.getElementById("home-drilldown-select");
+    const homeDrilldownStats = document.getElementById("home-drilldown-stats");
+    const homeDrilldownNote = document.getElementById("home-drilldown-note");
+    const API_STREAM_BASE = "{{ url_for('api_stream') }}";
+    const API_BATCH_COMPARISON = "{{ url_for('api_batch_comparison') }}";
+    const API_PREDICTION_ACCURACY = "{{ url_for('api_prediction_accuracy') }}";
+    let batchComparisonByUid = null;
     let lastFleetHouses = null;
     let lastFleetCensus = null;
     let lastFleetDfMeta = null;
+    let lastFleetDiscovery = null;
+    let lastFleetSourceId = "{{ default_source }}";
+    let lastFleetSourceLabel = "";
+    let lastFleetSourcePath = "";
+    const resultsDatasetBadge = document.getElementById("results-dataset-badge");
     let chartInstance = null;
+    let chartPredHistInstance = null;
+    let chartPredByBatteryInstance = null;
+    let chartPredBySolarInstance = null;
+    let chartMarginDeltaSizeDecileInstance = null;
+    let chartQuadrantInstance = null;
     let bubbleChartInstance = null;
     let timeChartInstance = null;
     let predictorChartInstance = null;
     let segmentChartInstance = null;
     let decileChartInstance = null;
+    let lossCostChartInstance = null;
+    let lossEnergyChartInstance = null;
+    let lossPredChartInstance = null;
+    let lossSegChartInstance = null;
+    let lastLossDiveActive = false;
+    let timingHourLossChartInstance = null;
+    let timingMonthLossChartInstance = null;
+    let timingHourProfitChartInstance = null;
+    let timingMonthProfitChartInstance = null;
+    let timingSlotLossChartInstance = null;
+    let timingSlotProfitChartInstance = null;
 
     function downloadChart(canvasId, filename) {
       const canvas = document.getElementById(canvasId);
@@ -314,10 +925,40 @@
       return s;
     }
 
+    function selectedCatanSource() {
+      const el = document.querySelector('input[name="catan_source"]:checked');
+      return el ? el.value : "{{ default_source }}";
+    }
+
+    function nFilesForSelectedSource() {
+      const el = document.querySelector('input[name="catan_source"]:checked');
+      if (!el) return 0;
+      const n = parseInt(el.getAttribute("data-n-files") || "0", 10);
+      return Number.isFinite(n) ? n : 0;
+    }
+
+    function syncRunButtonForSource() {
+      btnRun.disabled = nFilesForSelectedSource() <= 0;
+    }
+
+    document.querySelectorAll('input[name="catan_source"]').forEach((inp) => {
+      inp.addEventListener("change", syncRunButtonForSource);
+    });
+    syncRunButtonForSource();
+
     function buildFleetCsvText() {
       if (!lastFleetHouses || !lastFleetHouses.length) return "";
       const doc = (lastFleetCensus && lastFleetCensus.documentation) || {};
       const lines = [];
+      lines.push(`# Catan export set: ${lastFleetSourceId} (${lastFleetSourceLabel || ""})`);
+      if (lastFleetSourcePath) {
+        lines.push(`# Catan export path: ${lastFleetSourcePath}`);
+      }
+      if (lastFleetDiscovery && lastFleetDiscovery.vic_blocklist_uids > 0) {
+        lines.push(
+          `# VIC blocklist: ${lastFleetDiscovery.vic_blocklist_file || "n/a"} (${lastFleetDiscovery.vic_blocklist_uids} uids, ${lastFleetDiscovery.skipped_vic_blocklist} homes skipped)`
+        );
+      }
       lines.push(`# ${doc.title || "Demographic augmentation"}`);
       String(doc.summary || "")
         .split(/\n/)
@@ -364,7 +1005,7 @@
       const blob = new Blob([text], { type: "text/csv;charset=utf-8" });
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
-      a.download = `optisizer-fleet-${new Date().toISOString().slice(0, 10)}.csv`;
+      a.download = `optisizer-fleet-${lastFleetSourceId}-${new Date().toISOString().slice(0, 10)}.csv`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -387,6 +1028,21 @@
         predictorChartInstance,
         segmentChartInstance,
         decileChartInstance,
+        lossCostChartInstance,
+        lossEnergyChartInstance,
+        lossPredChartInstance,
+        lossSegChartInstance,
+        timingHourLossChartInstance,
+        timingMonthLossChartInstance,
+        timingHourProfitChartInstance,
+        timingMonthProfitChartInstance,
+        timingSlotLossChartInstance,
+        timingSlotProfitChartInstance,
+        chartPredHistInstance,
+        chartPredByBatteryInstance,
+        chartPredBySolarInstance,
+        chartMarginDeltaSizeDecileInstance,
+        chartQuadrantInstance,
       ].filter(Boolean);
     }
 
@@ -492,6 +1148,11 @@
         b.disabled = true;
         b.textContent = "Building PDF…";
       });
+      const detailsEls = Array.from(target.querySelectorAll("details.collapsible-section"));
+      const detailsWasOpen = detailsEls.map((d) => d.open);
+      detailsEls.forEach((d) => {
+        d.open = true;
+      });
       try {
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF("p", "pt", "a4");
@@ -505,7 +1166,7 @@
         const usableHeight = pageHeight - margin * 2;
 
         const pageCounter = { n: 0 };
-        const blocks = target.querySelectorAll(":scope > .pdf-block");
+        const blocks = target.querySelectorAll(".pdf-block");
 
         async function captureBlock(el) {
           return window.html2canvas(el, {
@@ -516,7 +1177,14 @@
             windowWidth: Math.max(el.scrollWidth, el.offsetWidth),
             ignoreElements: pdfIgnoreDownloadUi,
             onclone(_clonedDoc, clonedEl) {
-              if (clonedEl) clonedEl.classList.add("pdf-capture-surface");
+              if (clonedEl) {
+                clonedEl.classList.add("pdf-capture-surface");
+                const h2First = clonedEl.querySelector("h2:first-of-type");
+                if (h2First) {
+                  h2First.style.removeProperty("display");
+                  h2First.style.display = "block";
+                }
+              }
             },
           });
         }
@@ -549,9 +1217,1095 @@
         runError.textContent = "Could not generate PDF export. Please try again.";
         runError.classList.remove("hidden");
       } finally {
+        detailsEls.forEach((d, i) => {
+          d.open = detailsWasOpen[i];
+        });
         pdfBtns.forEach((b, i) => {
           b.disabled = false;
           b.textContent = originalLabels[i];
+        });
+      }
+    }
+
+    async function loadBatchComparison() {
+      try {
+        const r = await fetch(API_BATCH_COMPARISON);
+        const j = await r.json();
+        if (j.loaded && j.uids && typeof j.uids === "object") {
+          batchComparisonByUid = j.uids;
+        } else {
+          batchComparisonByUid = null;
+        }
+      } catch (e) {
+        batchComparisonByUid = null;
+      }
+    }
+
+    const BATCH_NO_TRADE_KEYS = [
+      "retail_without_trade",
+      "no_trade",
+      "without_reposit",
+      "retail_only",
+      "counterfactual_retail_no_trade",
+    ];
+    const BATCH_MSC_KEYS = [
+      "msc_counterfactual",
+      "msc",
+      "counterfactual_msc",
+      "counterfactual_msc_mode",
+    ];
+
+    function comparisonPairForHouse(houseId) {
+      if (!batchComparisonByUid || !houseId) return null;
+      const rec = batchComparisonByUid[houseId];
+      if (!rec || rec.error) return null;
+      const opt = rec.optimised;
+      const act = rec.actual;
+      if (!opt || !act) return null;
+      const sim = opt.net_energy_cost;
+      const bill = act.net_energy_cost;
+      if (sim == null || bill == null) return null;
+      const out = { sim: Number(sim), act: Number(bill), delta: Number(bill) - Number(sim) };
+      for (let i = 0; i < BATCH_NO_TRADE_KEYS.length; i++) {
+        const blk = rec[BATCH_NO_TRADE_KEYS[i]];
+        if (blk && blk.net_energy_cost != null && blk.net_energy_cost !== "") {
+          out.nt = Number(blk.net_energy_cost);
+          break;
+        }
+      }
+      for (let i = 0; i < BATCH_MSC_KEYS.length; i++) {
+        const blk = rec[BATCH_MSC_KEYS[i]];
+        if (blk && blk.net_energy_cost != null && blk.net_energy_cost !== "") {
+          out.msc = Number(blk.net_energy_cost);
+          out.savingsVsMsc = Number(out.act) - Number(out.msc);
+          break;
+        }
+      }
+      return out;
+    }
+
+    function mscSideForRecord(rec) {
+      if (!rec) return null;
+      for (let i = 0; i < BATCH_MSC_KEYS.length; i++) {
+        const blk = rec[BATCH_MSC_KEYS[i]];
+        if (blk && typeof blk === "object") return blk;
+      }
+      return null;
+    }
+
+    function toFiniteNumber(v) {
+      const n = Number(v);
+      return Number.isFinite(n) ? n : null;
+    }
+
+    function energySideSnapshot(side) {
+      if (!side || typeof side !== "object") return null;
+      let importKwh = toFiniteNumber(side.total_grid_import_kwh);
+      let exportKwh = toFiniteNumber(side.total_grid_export_kwh);
+      const grossImport = toFiniteNumber(side.gross_import_cost);
+      const grossExport = toFiniteNumber(side.gross_export_revenue);
+      const importVwap = toFiniteNumber(side.import_vwap);
+      const exportVwap = toFiniteNumber(side.export_vwap);
+      if (importKwh == null && grossImport != null && importVwap != null && importVwap > 0) {
+        importKwh = grossImport / importVwap;
+      }
+      if (exportKwh == null && grossExport != null && exportVwap != null && exportVwap > 0) {
+        exportKwh = grossExport / exportVwap;
+      }
+      let netEnergyCost = toFiniteNumber(side.net_energy_cost);
+      if (netEnergyCost == null && grossImport != null && grossExport != null) {
+        netEnergyCost = grossImport - grossExport;
+      }
+      return {
+        importKwh,
+        exportKwh,
+        grossImport,
+        grossExport,
+        importVwap,
+        exportVwap,
+        netEnergyCost,
+        profit: netEnergyCost == null ? null : -netEnergyCost,
+      };
+    }
+
+    function renderHomeDrilldownStatsForUid(uid) {
+      if (!homeDrilldownStats || !homeDrilldownNote) return;
+      if (!batchComparisonByUid || !uid) {
+        homeDrilldownStats.innerHTML = "";
+        homeDrilldownNote.textContent = "Choose a home to compare scenario totals: import/export kWh, weighted prices, and net energy outcomes.";
+        return;
+      }
+      const rec = batchComparisonByUid[uid];
+      if (!rec || rec.error) {
+        homeDrilldownStats.innerHTML = "";
+        homeDrilldownNote.textContent = "No batch comparison record found for this home.";
+        return;
+      }
+      const act = energySideSnapshot(rec.actual);
+      const msc = energySideSnapshot(mscSideForRecord(rec));
+      if (!act || !msc) {
+        homeDrilldownStats.innerHTML = "";
+        homeDrilldownNote.textContent = "This home does not have complete Actual and MSC scenario fields.";
+        return;
+      }
+      const savingsVsMsc = (act.profit != null && msc.profit != null) ? (act.profit - msc.profit) : null;
+      const cards = [
+        ["Home UID", uid],
+        ["Actual import kWh", fmtKwh(act.importKwh)],
+        ["MSC import kWh", fmtKwh(msc.importKwh)],
+        ["Import kWh delta (Actual − MSC)", (act.importKwh == null || msc.importKwh == null) ? "—" : fmtKwh(act.importKwh - msc.importKwh)],
+        ["Actual weighted import $/kWh", fmtNum(act.importVwap, 4)],
+        ["MSC weighted import $/kWh", fmtNum(msc.importVwap, 4)],
+        ["Actual weighted export $/kWh", fmtNum(act.exportVwap, 4)],
+        ["MSC weighted export $/kWh", fmtNum(msc.exportVwap, 4)],
+        ["Actual net energy cost $", fmtMoney(act.netEnergyCost)],
+        ["MSC net energy cost $", fmtMoney(msc.netEnergyCost)],
+        ["Customer savings vs MSC $ (Actual profit − MSC profit)", fmtMoneyWithGainLoss(savingsVsMsc)],
+      ];
+      homeDrilldownStats.innerHTML = cards
+        .map(([label, val]) => `<div class="stat"><div class="label">${escapeHtml(String(label))}</div><div class="value">${escapeHtml(String(val))}</div></div>`)
+        .join("");
+      const address = rec.address ? `Address: ${rec.address}. ` : "";
+      homeDrilldownNote.textContent = address + "Per-home values compare billed Actual against MSC counterfactual for this same UID.";
+    }
+
+    function renderHomeDrilldownSelector(houses) {
+      if (!homeDrilldownSelect) return;
+      const okHouses = (houses || []).filter((h) => h && h.ok !== false);
+      const matched = okHouses
+        .map((h) => h.house_id)
+        .filter((uid) => uid && comparisonPairForHouse(uid))
+        .sort();
+      const current = homeDrilldownSelect.value;
+      homeDrilldownSelect.innerHTML = `<option value="">Choose a home</option>` +
+        matched.map((uid) => `<option value="${escapeHtml(uid)}">${escapeHtml(uid)}</option>`).join("");
+      if (current && matched.includes(current)) {
+        homeDrilldownSelect.value = current;
+      } else if (matched.length) {
+        homeDrilldownSelect.value = matched[0];
+      }
+      renderHomeDrilldownStatsForUid(homeDrilldownSelect.value);
+    }
+
+    function drawMiniSimActual(canvas, sim, act) {
+      if (!canvas || !canvas.getContext) return;
+      const ctx = canvas.getContext("2d");
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
+      const m = Math.max(Math.abs(sim), Math.abs(act), 1e-9);
+      const pad = 3;
+      const labH = 9;
+      const barTop = pad + labH;
+      const barMaxH = h - barTop - pad;
+      const bw = (w - pad * 3) / 2;
+      const simH = (Math.abs(sim) / m) * barMaxH;
+      const actH = (Math.abs(act) / m) * barMaxH;
+      ctx.font = "8px system-ui,sans-serif";
+      ctx.fillStyle = "#8892a4";
+      ctx.fillText("Sim", pad, pad + 7);
+      ctx.fillText("Bill", pad + bw + pad, pad + 7);
+      ctx.fillStyle = "rgba(69, 123, 157, 0.88)";
+      ctx.fillRect(pad, barTop + barMaxH - simH, bw - 2, simH);
+      ctx.fillStyle = "rgba(230, 57, 70, 0.88)";
+      ctx.fillRect(pad * 2 + bw, barTop + barMaxH - actH, bw - 2, actH);
+    }
+
+    function appendCompareRowAfterMain(mainTr, houseId) {
+      const cmp = comparisonPairForHouse(houseId);
+      if (!cmp) return;
+      if (mainTr.nextElementSibling && mainTr.nextElementSibling.classList.contains("file-log-compare-row")) return;
+      const tr2 = document.createElement("tr");
+      tr2.className = "file-log-compare-row";
+      tr2.dataset.houseId = houseId;
+      tr2.innerHTML =
+        `<td class="num"></td>` +
+        `<td colspan="9" class="file-log-compare-cell">` +
+        `<span class="file-log-compare-bars"><canvas width="118" height="38" aria-hidden="true"></canvas></span>` +
+        `<span class="file-log-compare-text mono">Sim ${fmtMoney(cmp.sim)} · Bill ${fmtMoney(cmp.act)}` +
+        (cmp.nt != null ? ` · No-trade ${fmtMoney(cmp.nt)}` : "") +
+        (cmp.msc != null ? ` · MSC ${fmtMoney(cmp.msc)} · Savings vs MSC ${fmtMoneyWithGainLoss(cmp.savingsVsMsc)}` : "") +
+        ` · Δ ${fmtMoney(cmp.delta)}</span>` +
+        `</td>`;
+      mainTr.insertAdjacentElement("afterend", tr2);
+      const cv = tr2.querySelector("canvas");
+      requestAnimationFrame(() => drawMiniSimActual(cv, cmp.sim, cmp.act));
+    }
+
+    function patchFileLogComparisonRows() {
+      document.querySelectorAll("tr.file-log-main-row").forEach((tr) => {
+        const uid = tr.dataset.houseId;
+        if (uid) appendCompareRowAfterMain(tr, uid);
+      });
+    }
+
+    if (homeDrilldownSelect) {
+      homeDrilldownSelect.addEventListener("change", () => {
+        renderHomeDrilldownStatsForUid(homeDrilldownSelect.value);
+      });
+    }
+
+    function computeBatchComparisonLayStats(pairs) {
+      const EPS = 1e-4;
+      const n = pairs.length;
+      let within5 = 0;
+      let within10 = 0;
+      let within20 = 0;
+      let within30 = 0;
+      let within50 = 0;
+      let beatSim = 0;
+      let worseThanSim = 0;
+      let tie = 0;
+      const beatExamples = [];
+      const relPcts = [];
+      for (const p of pairs) {
+        const sim = p.sim;
+        const act = p.act;
+        const gap = Math.abs(act - sim);
+        if (gap < EPS) {
+          tie++;
+          within5++;
+          within10++;
+          within20++;
+          within30++;
+          within50++;
+          relPcts.push(0);
+          continue;
+        }
+        if (act < sim - EPS) {
+          beatSim++;
+          if (beatExamples.length < 10) beatExamples.push(p.house_id);
+        } else {
+          worseThanSim++;
+        }
+        const denom = Math.max(Math.abs(sim), 1);
+        const relPct = (gap / denom) * 100;
+        relPcts.push(relPct);
+        if (relPct <= 5) within5++;
+        if (relPct <= 10) within10++;
+        if (relPct <= 20) within20++;
+        if (relPct <= 30) within30++;
+        if (relPct <= 50) within50++;
+      }
+      const furtherThan20 = n - within20;
+      const furtherThan50 = n - within50;
+      return {
+        n,
+        within5,
+        within10,
+        within20,
+        within30,
+        within50,
+        furtherThan20,
+        furtherThan50,
+        beatSim,
+        worseThanSim,
+        tie,
+        beatExamples,
+        relPcts,
+      };
+    }
+
+    function renderSimVsActualChart(houses) {
+      const panel = document.getElementById("panel-model-vs-reality");
+      const note = document.getElementById("comparison-chart-note");
+      const statsEl = document.getElementById("batch-comparison-stats");
+      if (!panel) return;
+      const ok = houses
+        .filter((h) => h.ok !== false)
+        .sort((a, b) => (a.net_margin ?? 0) - (b.net_margin ?? 0));
+      const pairs = [];
+      let nMatch = 0;
+      ok.forEach((h) => {
+        const p = comparisonPairForHouse(h.house_id);
+        if (p) {
+          nMatch++;
+          pairs.push({ sim: p.sim, act: p.act, delta: p.delta, house_id: h.house_id });
+        }
+      });
+      if (statsEl) statsEl.innerHTML = "";
+      if (!batchComparisonByUid || nMatch === 0) {
+        panel.classList.add("hidden");
+        if (note) {
+          note.innerHTML = batchComparisonByUid
+            ? "Batch file loaded but no homes in this run matched a UID with both simulated and billed numbers."
+            : "Batch comparison file missing or failed to load.";
+        }
+        return;
+      }
+      const st = computeBatchComparisonLayStats(pairs);
+      panel.classList.remove("hidden");
+      if (statsEl) {
+        const beatLine =
+          st.beatSim === 0
+            ? "<li><strong>No homes</strong> had actual bills <strong>better</strong> than the simulation &mdash; every real outcome was the same or worse than the model.</li>"
+            : "<li><strong>" + st.beatSim + "</strong> of <strong>" + st.n + "</strong> homes had actual bills <strong>better</strong> than the simulation (real life beat the forecast).</li>";
+        const ex =
+          st.beatSim > 0 && st.beatExamples.length
+            ? "<li class=\"batch-comparison-stats-examples\">Beat-model examples: " + st.beatExamples
+                .map((u) => "<code class=\"mono\">" + escapeHtml(u.slice(0, 12)) + "&hellip;</code>")
+                .join(", ") + "</li>"
+            : "";
+        statsEl.innerHTML =
+          "<li><strong>" + st.n + "</strong> of <strong>" + ok.length + "</strong> homes matched to both a simulated and a billed number.</li>" +
+          "<li><strong>" + st.within5 + "</strong> within <strong>5%</strong> &middot; <strong>" + st.within10 + "</strong> within <strong>10%</strong> &middot; <strong>" + st.within20 + "</strong> within <strong>20%</strong> &middot; <strong>" + st.within50 + "</strong> within <strong>50%</strong> &middot; <strong>" + st.furtherThan50 + "</strong> more than 50% off.</li>" +
+          beatLine +
+          (st.worseThanSim > 0
+            ? "<li><strong>" + st.worseThanSim + "</strong> home(s) had bills <strong>worse</strong> than the model predicted (the simulation was too optimistic).</li>"
+            : "") +
+          (st.tie > 0 ? "<li><strong>" + st.tie + "</strong> home(s) essentially <strong>tied</strong> the model.</li>" : "") +
+          ex;
+      }
+      if (note) {
+        note.innerHTML =
+          "Negated <code class=\"mono\">net_energy_cost</code> from the batch file so positive = profit. See the <strong>quadrant chart</strong> in this section for sim vs actual by home. When present, <code class=\"mono\">retail_without_trade</code> (or aliases) is the retail no-trade-back counterfactual and <code class=\"mono\">msc_counterfactual</code> is the MSC baseline used for savings estimates.";
+      }
+    }
+
+    /**
+     * Weighted cohort summary for activity margin (sim vs billed from batch), all size deciles.
+     * Explains “capture” vs sim+ / act− sign flip in plain language.
+     */
+    function buildMarginDeltaSizeFleetSummary(deciles) {
+      const el = document.getElementById("margin-delta-size-summary");
+      if (!el) return;
+      const filled = (deciles || []).filter((b) => b.n_homes > 0);
+      if (!filled.length) {
+        el.innerHTML = "";
+        return;
+      }
+      let n = 0;
+      let wSim = 0;
+      let wAct = 0;
+      filled.forEach((b) => {
+        const ni = b.n_homes;
+        n += ni;
+        wSim += ni * (Number(b.mean_margin_sim_pct) || 0);
+        wAct += ni * (Number(b.mean_margin_act_pct) || 0);
+      });
+      const avgSim = wSim / n;
+      const avgAct = wAct / n;
+      const gap = avgAct - avgSim;
+      const parts = [];
+      parts.push(
+        "Across <strong>" +
+          n +
+          "</strong> matched homes (size deciles weighted by home count), the <strong>weighted mean simulated</strong> activity margin is <strong>" +
+          avgSim.toFixed(1) +
+          "%</strong> and the <strong>weighted mean actual (billed)</strong> activity margin is <strong>" +
+          avgAct.toFixed(1) +
+          "%</strong> (both are net ÷ (grid charges + feed-in credits) from the batch file)."
+      );
+
+      if (avgSim > 0.05 && avgAct >= 0) {
+        const ratio = (avgAct / avgSim) * 100;
+        parts.push(
+          " In that regime, billed outcomes sit at about <strong>" +
+            ratio.toFixed(0) +
+            "%</strong> of the simulated headline margin level (actual ÷ simulated × 100): think of it as retaining roughly that share of the model’s margin <em>percentage</em>, not a separate ‘dollars captured’ figure."
+        );
+      } else if (avgSim > 0.05 && avgAct < 0) {
+        parts.push(
+          " Here the cohort’s <strong>average actual margin is negative</strong> while the model’s average is still <strong>positive</strong>. Saying we ‘captured X% of activity margin’ would mislead: margin has <strong>crossed zero</strong> — bills imply a <strong>loss</strong> on the activity basis where the simulation predicted <strong>profit</strong>."
+        );
+        parts.push(
+          " <strong>Example using these averages:</strong> about <strong>+" +
+            avgSim.toFixed(1) +
+            "%</strong> (simulated) vs <strong>" +
+            avgAct.toFixed(1) +
+            "%</strong> (billed) is <strong>" +
+            Math.abs(gap).toFixed(1) +
+            "</strong> percentage points lower, with the billed side <strong>below zero</strong> — not a proportional trim of a positive margin, but a <strong>sign flip</strong> on the activity basis. Pricing needs to allow for that risk, not only a haircut on positive margin."
+        );
+      } else {
+        parts.push(
+          " With simulated activity margin not clearly positive on average for this cohort, a single ‘capture % vs simulation’ is easy to misread — rely on the decile bars and table to see where gaps concentrate."
+        );
+      }
+      let wNt = 0;
+      let nNtW = 0;
+      filled.forEach((b) => {
+        if (b.mean_margin_nt_pct != null && !Number.isNaN(Number(b.mean_margin_nt_pct))) {
+          const ni = b.n_homes;
+          wNt += ni * Number(b.mean_margin_nt_pct);
+          nNtW += ni;
+        }
+      });
+      if (nNtW > 0) {
+        const avgNt = wNt / nNtW;
+        parts.push(
+          " Where the batch includes <strong>retail without trade-back</strong>, the same decile-weighted mean for that baseline is <strong>" +
+            avgNt.toFixed(1) +
+            "%</strong> activity margin vs <strong>" +
+            avgAct.toFixed(1) +
+            "%</strong> billed — about <strong>" +
+            (avgAct - avgNt).toFixed(1) +
+            "</strong> points of uplift vs that no-trade baseline (per-home availability varies by decile; see table)."
+        );
+      }
+      let wMsc = 0;
+      let nMscW = 0;
+      filled.forEach((b) => {
+        if (b.mean_margin_msc_pct != null && !Number.isNaN(Number(b.mean_margin_msc_pct))) {
+          const ni = b.n_homes;
+          wMsc += ni * Number(b.mean_margin_msc_pct);
+          nMscW += ni;
+        }
+      });
+      if (nMscW > 0) {
+        const avgMsc = wMsc / nMscW;
+        parts.push(
+          " Against the MSC counterfactual, the decile-weighted mean is <strong>" +
+            avgMsc.toFixed(1) +
+            "%</strong> activity margin vs <strong>" +
+            avgAct.toFixed(1) +
+            "%</strong> billed — about <strong>" +
+            (avgAct - avgMsc).toFixed(1) +
+            "</strong> points difference."
+        );
+      }
+      el.innerHTML = parts.join("");
+    }
+
+    async function renderPredictionDeepDiveFetch(sourceId) {
+      const panel = document.getElementById("panel-model-vs-reality");
+      if (!panel) return;
+      [chartPredHistInstance,
+       chartPredByBatteryInstance, chartPredBySolarInstance,
+       chartMarginDeltaSizeDecileInstance,
+       chartQuadrantInstance].forEach((c) => {
+        if (c) c.destroy();
+      });
+      chartPredHistInstance = null;
+      chartPredByBatteryInstance = null;
+      chartPredBySolarInstance = null;
+      chartMarginDeltaSizeDecileInstance = null;
+      chartQuadrantInstance = null;
+      try {
+        const parts = sourceId ? ["source=" + encodeURIComponent(sourceId)] : [];
+        const q = parts.length ? "?" + parts.join("&") : "";
+        const r = await fetch(API_PREDICTION_ACCURACY + q);
+        const d = await r.json();
+        renderPredictionDeepDive(d);
+      } catch (e) {
+        panel.classList.add("hidden");
+      }
+    }
+
+    function renderPredictionDeepDive(d) {
+      const panel = document.getElementById("panel-model-vs-reality");
+      const lead = document.getElementById("pred-deep-lead");
+      const narEl = document.getElementById("pred-deep-narrative");
+      const statsEl = document.getElementById("pred-deep-stats");
+      const haircutEl = document.getElementById("pred-haircut-stats");
+      const worstBody = document.getElementById("pred-deep-worst-body");
+      const bandsBody = document.getElementById("pred-bands-body");
+      const battBody = document.getElementById("pred-battery-body");
+      const marginDeltaBody = document.getElementById("margin-delta-size-body");
+      const marginDeltaSummaryEl = document.getElementById("margin-delta-size-summary");
+      const optPredBody = document.getElementById("pred-optimism-predictors-body");
+      if (!panel) return;
+      if (!d || !d.loaded || !d.n_homes) {
+        [chartMarginDeltaSizeDecileInstance, chartQuadrantInstance].forEach((c) => {
+          if (c) c.destroy();
+        });
+        chartMarginDeltaSizeDecileInstance = null;
+        chartQuadrantInstance = null;
+        [narEl, statsEl, haircutEl, worstBody, bandsBody, battBody, marginDeltaBody, marginDeltaSummaryEl, optPredBody].forEach((el) => { if (el) el.innerHTML = ""; });
+        return;
+      }
+      panel.classList.remove("hidden");
+
+      if (lead) {
+        const scope = d.restricted_to_export_set
+          ? " Scoped to " + (d.data_source_label || d.data_source || "export set") + "."
+          : "";
+        const ntN = (d.summary && d.summary.n_homes_with_retail_without_trade) || 0;
+        const mscN = (d.summary && d.summary.n_homes_with_msc_counterfactual) || 0;
+        const mscCfg = d.msc_config || {};
+        const mscMode = mscCfg.mode || "";
+        const pPeak = mscCfg.price_peak_per_kwh != null ? Number(mscCfg.price_peak_per_kwh) : null;
+        const pMidday = mscCfg.price_midday_per_kwh != null ? Number(mscCfg.price_midday_per_kwh) : null;
+        const pShoulder = mscCfg.price_shoulder_per_kwh != null ? Number(mscCfg.price_shoulder_per_kwh) : null;
+        lead.textContent =
+          "Quantified gap between what the optimiser predicted and what actually showed up on bills." +
+          (ntN > 0
+            ? " A third scenario — retail tariffs without Reposit trade-back — is in the batch file for "
+              + ntN
+              + " homes (compare: no trade vs billed vs simulated)."
+            : "") +
+          (mscN > 0
+            ? " MSC counterfactual baseline is available for " + mscN + " homes"
+              + (mscMode ? " using " + mscMode + "." : ".")
+              + (
+                pPeak != null && pMidday != null && pShoulder != null
+                  ? " DMO TOU pricing: 4-8pm " + fmtMoney(pPeak) + "/kWh, 10am-2pm " + fmtMoney(pMidday) + "/kWh, all other times " + fmtMoney(pShoulder) + "/kWh."
+                  : ""
+              )
+            : "") +
+          scope;
+      }
+
+      /* --- Pricing haircut headline cards --- */
+      const hc = d.pricing_haircut || {};
+      if (haircutEl) {
+        if (hc.available) {
+          const m = hc.fleet_multiplier;
+          const headlineVal = m < 0
+            ? "Model predicts profit, median home loses money"
+            : (m * 100).toFixed(0) + "% of predicted value delivered";
+          const hcCards = [
+            ["Fleet median outcome", headlineVal],
+            ["Median delivery rate", (m * 100).toFixed(1) + "%"],
+            ["Confidence band (p25\u2013p75)", (hc.fleet_p25_mult * 100).toFixed(1) + "% to " + (hc.fleet_p75_mult * 100).toFixed(1) + "%"],
+          ];
+          (hc.by_battery || []).forEach((seg) => {
+            hcCards.push([
+              "Battery " + seg.label,
+              (seg.multiplier * 100).toFixed(1) + "% delivery, " + seg.pct_flip_to_loss + "% flip to loss"
+            ]);
+          });
+          haircutEl.innerHTML = hcCards
+            .map(([label, val]) =>
+              `<div class="stat stat--highlight"><div class="label">${escapeHtml(label)}</div><div class="value">${escapeHtml(String(val))}</div></div>`
+            )
+            .join("");
+        } else {
+          haircutEl.innerHTML = "";
+        }
+      }
+
+      if (narEl) {
+        narEl.innerHTML = "";
+        (d.narrative || []).forEach((line) => {
+          const li = document.createElement("li");
+          li.textContent = line;
+          narEl.appendChild(li);
+        });
+      }
+
+      const s = d.summary || {};
+      const dr = d.delivery_rate || {};
+      const sf = d.sign_flip || {};
+      if (statsEl) {
+        const cards = [
+          ["Homes analysed", String(d.n_homes)],
+          ["Median delivery rate", dr.median_delivery_pct != null ? dr.median_delivery_pct + "%" : "\u2014"],
+          ["p25 / p75 delivery", dr.p25_delivery_pct != null ? dr.p25_delivery_pct + "% / " + dr.p75_delivery_pct + "%" : "\u2014"],
+          ["Predicted profit \u2192 actual loss", sf.n_flip_to_loss != null ? sf.n_flip_to_loss + " of " + sf.n_eligible + " (" + sf.pct_flip_to_loss + "%)" : "\u2014"],
+          ["Mean optimism $", fmtMoney(s.mean_optimism_sim_minus_actual_usd)],
+          ["Correlation (sim vs actual)", s.correlation_sim_vs_actual_profit == null ? "\u2014" : String(s.correlation_sim_vs_actual_profit)],
+          ["MAE $", fmtMoney(s.mae_usd)],
+          ["RMSE $", fmtMoney(s.rmse_usd)],
+        ];
+        const ntN2 = s.n_homes_with_retail_without_trade || 0;
+        if (ntN2 > 0) {
+          cards.push(["Homes with no-trade batch block", String(ntN2)]);
+          cards.push(["Mean no-trade profit $", fmtMoney(s.mean_retail_without_trade_profit_usd)]);
+          cards.push(["Mean Reposit uplift (bill − no-trade) $", fmtMoney(s.mean_reposit_uplift_actual_minus_without_usd)]);
+          cards.push(["Mean (sim − no-trade) $", fmtMoney(s.mean_simulated_minus_without_usd)]);
+        }
+        const mscN2 = s.n_homes_with_msc_counterfactual || 0;
+        if (mscN2 > 0) {
+          cards.push(["Homes with MSC counterfactual", String(mscN2)]);
+          cards.push([
+            "Mean MSC baseline profit $ (counterfactual MSC-mode profit; positive = net benefit, negative = net cost)",
+            fmtMoney(s.mean_msc_counterfactual_profit_usd),
+          ]);
+          cards.push([
+            "Mean customer savings vs MSC $ (actual billed profit − MSC baseline profit; gain/loss vs MSC)",
+            fmtMoneyWithGainLoss(s.mean_customer_savings_vs_msc_usd),
+          ]);
+          cards.push([
+            "Median customer savings vs MSC $ (50th percentile of actual billed profit − MSC baseline profit)",
+            fmtMoneyWithGainLoss(s.median_customer_savings_vs_msc_usd),
+          ]);
+        }
+        const checks = d.scenario_checksums || {};
+        const actChecks = checks.actual || {};
+        const mscChecks = checks.msc || {};
+        if (actChecks.total_import_kwh != null && mscChecks.total_import_kwh != null) {
+          if (checks.n_homes_with_both_scenarios != null) {
+            cards.push([
+              "Scenario check sum — homes with both Actual and MSC energy sides",
+              String(checks.n_homes_with_both_scenarios),
+            ]);
+          }
+          cards.push([
+            "Scenario check sum — total kWh purchased (grid import): Actual vs MSC",
+            `${fmtKwh(actChecks.total_import_kwh)} vs ${fmtKwh(mscChecks.total_import_kwh)}`,
+          ]);
+          cards.push([
+            "Scenario check sum — weighted avg import price $/kWh: Actual vs MSC",
+            `${fmtNum(actChecks.weighted_avg_import_price_per_kwh, 4)} vs ${fmtNum(mscChecks.weighted_avg_import_price_per_kwh, 4)}`,
+          ]);
+          cards.push([
+            "Scenario check sum — weighted avg export price $/kWh: Actual vs MSC",
+            `${fmtNum(actChecks.weighted_avg_export_price_per_kwh, 4)} vs ${fmtNum(mscChecks.weighted_avg_export_price_per_kwh, 4)}`,
+          ]);
+          cards.push([
+            "Scenario check sum — total gross import cost $: Actual vs MSC",
+            `${fmtMoney(actChecks.total_gross_import_cost_usd)} vs ${fmtMoney(mscChecks.total_gross_import_cost_usd)}`,
+          ]);
+          cards.push([
+            "Scenario check sum — total grid export kWh: Actual vs MSC",
+            `${fmtKwh(actChecks.total_export_kwh)} vs ${fmtKwh(mscChecks.total_export_kwh)}`,
+          ]);
+        }
+        statsEl.innerHTML = cards
+          .map(
+            ([label, val]) =>
+              `<div class="stat"><div class="label">${escapeHtml(label)}</div><div class="value">${escapeHtml(String(val))}</div></div>`
+          )
+          .join("");
+      }
+
+      /* --- Update bands lead with key finding --- */
+      const bandsLead = document.getElementById("pred-bands-lead");
+      if (bandsLead && dr.median_delivery_pct != null) {
+        bandsLead.textContent =
+          "The median home delivers " + dr.median_delivery_pct.toFixed(1) + "% of the predicted value. " +
+          "Homes grouped into equal-count bands by simulated profit below.";
+      }
+
+      /* --- Prediction bands table --- */
+      const bands = d.prediction_bands || [];
+      if (bandsBody) {
+        bandsBody.innerHTML = "";
+        bands.forEach((b) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML =
+            `<td>${escapeHtml(b.label)}</td>` +
+            `<td class="num">${b.n}</td>` +
+            `<td class="num">${fmtMoney(b.mean_sim)}</td>` +
+            `<td class="num">${fmtMoney(b.mean_actual)}</td>` +
+            `<td class="num">${b.mean_retail_without_trade != null ? fmtMoney(b.mean_retail_without_trade) : "—"}</td>` +
+            `<td class="num">${b.mean_msc_counterfactual != null ? fmtMoney(b.mean_msc_counterfactual) : "—"}</td>` +
+            `<td class="num">${fmtMoney(b.median_actual)}</td>` +
+            `<td class="num">${fmtMoney(b.p25_actual)} – ${fmtMoney(b.p75_actual)}</td>` +
+            `<td class="num">${b.median_delivery_pct}%</td>` +
+            `<td class="num">${b.pct_loss}%</td>`;
+          bandsBody.appendChild(tr);
+        });
+      }
+
+      /* --- Quadrant scatter: sim vs actual profit, 4 populations --- */
+      const scatter = d.scatter || [];
+      const elQuad = document.getElementById("chart-quadrant-sim-vs-actual");
+      const quadSummaryEl = document.getElementById("quadrant-summary-stats");
+      if (chartQuadrantInstance) {
+        chartQuadrantInstance.destroy();
+        chartQuadrantInstance = null;
+      }
+      if (elQuad && scatter.length) {
+        const wrap = elQuad.parentElement;
+        if (wrap) wrap.style.height = "480px";
+        function qRadius(p) {
+          const a = Math.sqrt(Math.max(0, p.battery_kwh) * Math.max(0, p.solar_kw));
+          return Math.min(20, Math.max(4, 3 + a * 0.3));
+        }
+        const Q_WINNER = "rgba(42, 157, 143, 0.65)";
+        const Q_ALWAYS  = "rgba(230, 57, 70, 0.65)";
+        const Q_OPTIM   = "rgba(255, 159, 28, 0.72)";
+        const Q_SURPRISE = "rgba(136, 146, 164, 0.55)";
+        function qColor(p) {
+          if (p.x >= 0 && p.y >= 0) return Q_WINNER;
+          if (p.x < 0 && p.y < 0) return Q_ALWAYS;
+          if (p.x >= 0 && p.y < 0) return Q_OPTIM;
+          return Q_SURPRISE;
+        }
+        function qLabel(p) {
+          if (p.x >= 0 && p.y >= 0) return "Winners";
+          if (p.x < 0 && p.y < 0) return "Always loses";
+          if (p.x >= 0 && p.y < 0) return "Model optimism";
+          return "Surprise winners";
+        }
+        const qMap = { "Winners": [], "Always loses": [], "Model optimism": [], "Surprise winners": [] };
+        scatter.forEach((p) => {
+          const lbl = qLabel(p);
+          qMap[lbl].push({
+            x: p.x,
+            y: p.y,
+            r: qRadius(p),
+            uid: p.house_id,
+            batt: p.battery_kwh,
+            solar: p.solar_kw,
+            nt: p.nt_profit,
+            msc: p.msc_profit,
+            savingsMsc: p.customer_savings_vs_msc_usd,
+          });
+        });
+        const dsOrder = [
+          { key: "Winners", color: Q_WINNER, border: "rgba(42,157,143,0.92)" },
+          { key: "Always loses", color: Q_ALWAYS, border: "rgba(230,57,70,0.92)" },
+          { key: "Model optimism", color: Q_OPTIM, border: "rgba(255,159,28,0.92)" },
+          { key: "Surprise winners", color: Q_SURPRISE, border: "rgba(136,146,164,0.88)" },
+        ];
+        const datasets = dsOrder.map((ds) => ({
+          label: ds.key + " (" + qMap[ds.key].length + ")",
+          data: qMap[ds.key],
+          backgroundColor: ds.color,
+          borderColor: ds.border,
+          borderWidth: 1,
+        }));
+        let absMax = 200;
+        scatter.forEach((p) => {
+          absMax = Math.max(absMax, Math.abs(p.x), Math.abs(p.y));
+        });
+        absMax = absMax * 1.08;
+        const quadrantPlugin = {
+          id: "quadrantLines",
+          beforeDatasetsDraw(chart) {
+            const { ctx, scales: { x, y } } = chart;
+            const x0 = x.getPixelForValue(0);
+            const y0 = y.getPixelForValue(0);
+            ctx.save();
+            ctx.strokeStyle = "rgba(136,146,164,0.25)";
+            ctx.lineWidth = 1;
+            ctx.setLineDash([6, 4]);
+            ctx.beginPath();
+            ctx.moveTo(x0, chart.chartArea.top);
+            ctx.lineTo(x0, chart.chartArea.bottom);
+            ctx.moveTo(chart.chartArea.left, y0);
+            ctx.lineTo(chart.chartArea.right, y0);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            const xMin = x.getPixelForValue(x.min);
+            const xMax = x.getPixelForValue(x.max);
+            const yMin = y.getPixelForValue(y.min);
+            const yMax = y.getPixelForValue(y.max);
+            ctx.strokeStyle = "rgba(136,146,164,0.18)";
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(xMin, yMin);
+            ctx.lineTo(xMax, yMax);
+            ctx.stroke();
+            ctx.font = "11px system-ui, sans-serif";
+            ctx.fillStyle = "rgba(136,146,164,0.42)";
+            ctx.textAlign = "center";
+            const mxR = (x0 + chart.chartArea.right) / 2;
+            const mxL = (chart.chartArea.left + x0) / 2;
+            const myT = (chart.chartArea.top + y0) / 2;
+            const myB = (y0 + chart.chartArea.bottom) / 2;
+            ctx.fillText("Winners", mxR, myT + 8);
+            ctx.fillText("Always loses", mxL, myB - 4);
+            ctx.fillText("Model optimism", mxR, myB - 4);
+            ctx.fillText("Surprise winners", mxL, myT + 8);
+            ctx.restore();
+          },
+        };
+        chartQuadrantInstance = new Chart(elQuad, {
+          type: "bubble",
+          data: { datasets },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { labels: { color: "#8892a4", font: { size: 11 } } },
+              title: {
+                display: true,
+                text: "Simulated vs actual profit — four quadrants",
+                color: "#8892a4",
+                font: { size: 13 },
+              },
+              tooltip: {
+                callbacks: {
+                  label: (ctx) => {
+                    const r = ctx.raw;
+                    if (!r) return "";
+                    const lines = [
+                      (r.uid || "").slice(0, 12) + "…",
+                      "Sim: " + fmtMoney(r.x) + "  Actual: " + fmtMoney(r.y),
+                      "Δ: " + fmtMoney(r.y - r.x),
+                      "Battery: " + fmtNum(r.batt, 1) + " kWh  Solar: " + fmtNum(r.solar, 1) + " kW",
+                    ];
+                    if (r.nt != null && !Number.isNaN(r.nt)) {
+                      lines.splice(3, 0, "No-trade (retail) profit: " + fmtMoney(r.nt));
+                      lines.splice(4, 0, "Reposit uplift (actual − no-trade): " + fmtMoney(r.y - r.nt));
+                    }
+                    if (r.msc != null && !Number.isNaN(r.msc)) {
+                      lines.push("MSC baseline profit: " + fmtMoney(r.msc));
+                      lines.push("Customer savings vs MSC: " + fmtMoneyWithGainLoss(r.savingsMsc));
+                    }
+                    return lines;
+                  },
+                },
+              },
+            },
+            scales: {
+              x: {
+                min: -absMax,
+                max: absMax,
+                title: { display: true, text: "Simulated profit ($)", color: "#8892a4" },
+                ticks: { color: "#8892a4" },
+                grid: { color: "rgba(44,48,80,0.25)" },
+              },
+              y: {
+                min: -absMax,
+                max: absMax,
+                title: { display: true, text: "Actual (billed) profit ($)", color: "#8892a4" },
+                ticks: { color: "#8892a4" },
+                grid: { color: "rgba(44,48,80,0.25)" },
+              },
+            },
+          },
+          plugins: [quadrantPlugin],
+        });
+        if (quadSummaryEl) {
+          const parts = dsOrder.map((ds) => "<strong>" + qMap[ds.key].length + "</strong> " + ds.key.toLowerCase());
+          quadSummaryEl.innerHTML = scatter.length + " matched homes: " + parts.join(" · ") + ".";
+        }
+      }
+
+      /* --- System size breakdown charts --- */
+      function renderSizeBreakdownChart(canvasId, segments, sizeLabel, unit) {
+        const el = document.getElementById(canvasId);
+        if (!el || !segments || !segments.length) return null;
+        return new Chart(el, {
+          type: "bar",
+          data: {
+            labels: segments.map((s) => s.label + " " + unit),
+            datasets: [
+              {
+                label: "Median delivery %",
+                data: segments.map((s) => s.median_delivery_pct),
+                backgroundColor: "rgba(69, 123, 157, 0.75)",
+                yAxisID: "y",
+              },
+              {
+                label: "% flip to loss",
+                data: segments.map((s) => s.pct_flip_to_loss),
+                backgroundColor: "rgba(230, 57, 70, 0.65)",
+                yAxisID: "y",
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              title: { display: true, text: "Prediction accuracy by " + sizeLabel, color: "#8892a4", font: { size: 13 } },
+              legend: { labels: { color: "#8892a4", font: { size: 10 } } },
+            },
+            scales: {
+              x: { ticks: { color: "#8892a4", font: { size: 9 } }, grid: { color: "rgba(44,48,80,0.2)" } },
+              y: {
+                title: { display: true, text: "%", color: "#8892a4" },
+                ticks: { color: "#8892a4" },
+                grid: { color: "rgba(44,48,80,0.3)" },
+              },
+            },
+          },
+        });
+      }
+      chartPredByBatteryInstance = renderSizeBreakdownChart("chart-pred-by-battery", d.by_battery_kwh, "battery capacity", "kWh");
+      chartPredBySolarInstance = renderSizeBreakdownChart("chart-pred-by-solar", d.by_solar_kw, "solar array size", "kW");
+
+      /* --- Battery breakdown table --- */
+      const byBatt = d.by_battery_kwh || [];
+      if (battBody) {
+        battBody.innerHTML = "";
+        byBatt.forEach((seg) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML =
+            `<td>${escapeHtml(seg.label)} kWh</td>` +
+            `<td class="num">${seg.n}</td>` +
+            `<td class="num">${fmtMoney(seg.mean_sim)}</td>` +
+            `<td class="num">${fmtMoney(seg.mean_actual)}</td>` +
+            `<td class="num">${seg.median_delivery_pct}%</td>` +
+            `<td class="num">${seg.p25_delivery_pct}% – ${seg.p75_delivery_pct}%</td>` +
+            `<td class="num">${seg.pct_flip_to_loss}%</td>`;
+          battBody.appendChild(tr);
+        });
+      }
+
+      /* --- Activity margin Δ by system-size decile (batch economics) --- */
+      const mdd = d.margin_delta_by_size_decile || [];
+      const elMarginDec = document.getElementById("chart-margin-delta-size-decile");
+      if (chartMarginDeltaSizeDecileInstance) {
+        chartMarginDeltaSizeDecileInstance.destroy();
+        chartMarginDeltaSizeDecileInstance = null;
+      }
+      if (marginDeltaBody) marginDeltaBody.innerHTML = "";
+      const mddFilled = mdd.filter((b) => b.n_homes > 0);
+      buildMarginDeltaSizeFleetSummary(mddFilled);
+      if (elMarginDec && mddFilled.length) {
+        const labels = mddFilled.map((b) => b.label);
+        const means = mddFilled.map((b) => b.mean_delta_margin_pp);
+        const meansActNt = mddFilled.map((b) => b.mean_delta_act_vs_nt_pp);
+        const meansActMsc = mddFilled.map((b) => b.mean_delta_act_vs_msc_pp);
+        const hasNtMargin = meansActNt.some((v) => v != null && !Number.isNaN(v));
+        const hasMscMargin = meansActMsc.some((v) => v != null && !Number.isNaN(v));
+        const parentMd = elMarginDec.parentElement;
+        if (parentMd) parentMd.style.height = "380px";
+        const ds = [
+          {
+            label: "Mean Δ activity margin (actual − sim), pp",
+            data: means,
+            backgroundColor: means.map((v) =>
+              v == null || Number.isNaN(v)
+                ? "rgba(136, 146, 164, 0.5)"
+                : v >= 0
+                  ? "rgba(42, 157, 143, 0.78)"
+                  : "rgba(230, 57, 70, 0.75)"
+            ),
+          },
+        ];
+        if (hasNtMargin) {
+          ds.push({
+            label: "Mean Δ activity margin (actual − no-trade), pp",
+            data: meansActNt.map((v) => (v == null || Number.isNaN(v) ? null : v)),
+            backgroundColor: meansActNt.map((v) =>
+              v == null || Number.isNaN(v)
+                ? "rgba(136, 146, 164, 0.35)"
+                : v >= 0
+                  ? "rgba(69, 123, 157, 0.65)"
+                  : "rgba(168, 85, 247, 0.65)"
+            ),
+          });
+        }
+        if (hasMscMargin) {
+          ds.push({
+            label: "Mean Δ activity margin (actual − MSC), pp",
+            data: meansActMsc.map((v) => (v == null || Number.isNaN(v) ? null : v)),
+            backgroundColor: meansActMsc.map((v) =>
+              v == null || Number.isNaN(v)
+                ? "rgba(136, 146, 164, 0.35)"
+                : v >= 0
+                  ? "rgba(99, 102, 241, 0.65)"
+                  : "rgba(244, 114, 182, 0.65)"
+            ),
+          });
+        }
+        chartMarginDeltaSizeDecileInstance = new Chart(elMarginDec, {
+          type: "bar",
+          data: {
+            labels,
+            datasets: ds,
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { labels: { color: "#8892a4", font: { size: 11 } } },
+              title: {
+                display: true,
+                text: hasNtMargin
+                  ? "Activity margin gaps by system-size rank: vs model and optional no-trade/MSC baselines"
+                  : "How much worse (or better) is billed activity margin vs the model, by system-size rank?",
+                color: "#8892a4",
+                font: { size: 13 },
+              },
+            },
+            scales: {
+              x: {
+                title: { display: true, text: "System-size decile (SD1 = smallest battery×solar score)", color: "#8892a4" },
+                ticks: { color: "#8892a4" },
+                grid: { color: "rgba(44,48,80,0.25)" },
+              },
+              y: {
+                title: {
+                  display: true,
+                  text: hasNtMargin
+                    ? "Percentage points (Δ margin %)"
+                    : "Percentage points (actual % − simulated %)",
+                  color: "#8892a4",
+                },
+                ticks: { color: "#8892a4" },
+                grid: { color: "rgba(44,48,80,0.3)" },
+              },
+            },
+          },
+        });
+        if (marginDeltaBody) {
+          mddFilled.forEach((b) => {
+            const tr = document.createElement("tr");
+            tr.innerHTML =
+              `<td>${escapeHtml(b.label)}</td>` +
+              `<td class="num">${b.n_homes}</td>` +
+              `<td class="num">${b.avg_battery_kwh != null ? b.avg_battery_kwh.toFixed(2) : "—"}</td>` +
+              `<td class="num">${b.avg_solar_kw != null ? b.avg_solar_kw.toFixed(2) : "—"}</td>` +
+              `<td class="num">${b.mean_margin_sim_pct != null ? b.mean_margin_sim_pct.toFixed(2) + "%" : "—"}</td>` +
+              `<td class="num">${b.mean_margin_act_pct != null ? b.mean_margin_act_pct.toFixed(2) + "%" : "—"}</td>` +
+              `<td class="num">${b.mean_margin_nt_pct != null ? b.mean_margin_nt_pct.toFixed(2) + "%" : "—"}</td>` +
+              `<td class="num">${b.mean_margin_msc_pct != null ? b.mean_margin_msc_pct.toFixed(2) + "%" : "—"}</td>` +
+              `<td class="num">${b.mean_delta_margin_pp != null ? b.mean_delta_margin_pp.toFixed(2) : "—"}</td>` +
+              `<td class="num">${b.median_delta_margin_pp != null ? b.median_delta_margin_pp.toFixed(2) : "—"}</td>` +
+              `<td class="num">${b.mean_delta_act_vs_nt_pp != null ? b.mean_delta_act_vs_nt_pp.toFixed(2) : "—"}</td>` +
+              `<td class="num">${b.median_delta_act_vs_nt_pp != null ? b.median_delta_act_vs_nt_pp.toFixed(2) : "—"}</td>` +
+              `<td class="num">${b.mean_delta_act_vs_msc_pp != null ? b.mean_delta_act_vs_msc_pp.toFixed(2) : "—"}</td>` +
+              `<td class="num">${b.median_delta_act_vs_msc_pp != null ? b.median_delta_act_vs_msc_pp.toFixed(2) : "—"}</td>`;
+            marginDeltaBody.appendChild(tr);
+          });
+        }
+      }
+
+      /* --- Optimism predictor correlations table --- */
+      const optPreds = d.optimism_predictors || [];
+      if (optPredBody) {
+        optPredBody.innerHTML = "";
+        optPreds.forEach((p) => {
+          const tr = document.createElement("tr");
+          const absCorr = Math.abs(p.corr);
+          const corrClass = absCorr >= 0.3 ? " style=\"font-weight:600\"" : "";
+          tr.innerHTML =
+            `<td>${escapeHtml(p.label)}</td>` +
+            `<td class="num"${corrClass}>${p.corr > 0 ? "+" : ""}${p.corr.toFixed(4)}</td>` +
+            `<td class="num">${p.n}</td>`;
+          optPredBody.appendChild(tr);
+        });
+      }
+
+      /* --- Worst optimism table --- */
+      if (worstBody) {
+        worstBody.innerHTML = "";
+        (d.worst_optimism || []).slice(0, 40).forEach((row) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML =
+            `<td><code class="mono">${escapeHtml((row.house_id || "").slice(0, 12))}…</code></td>` +
+            `<td class="num">${escapeHtml(fmtMoney(row.sim_profit))}</td>` +
+            `<td class="num">${escapeHtml(fmtMoney(row.act_profit))}</td>` +
+            `<td class="num">${row.nt_profit != null ? escapeHtml(fmtMoney(row.nt_profit)) : "—"}</td>` +
+            `<td class="num">${row.msc_profit != null ? escapeHtml(fmtMoney(row.msc_profit)) : "—"}</td>` +
+            `<td class="num">${row.reposit_uplift_usd != null ? escapeHtml(fmtMoney(row.reposit_uplift_usd)) : "—"}</td>` +
+            `<td class="num">${row.customer_savings_vs_msc_usd != null ? escapeHtml(fmtMoneyWithGainLoss(row.customer_savings_vs_msc_usd)) : "—"}</td>` +
+            `<td class="num">${escapeHtml(fmtMoney(row.optimism_usd))}</td>`;
+          worstBody.appendChild(tr);
+        });
+      }
+
+      /* --- Optimism histogram --- */
+      const oh = d.optimism_histogram || {};
+      const hLabels = oh.labels || [];
+      const hCounts = oh.counts || [];
+      const elH = document.getElementById("chart-pred-hist");
+      if (elH && hLabels.length) {
+        chartPredHistInstance = new Chart(elH, {
+          type: "bar",
+          data: {
+            labels: hLabels,
+            datasets: [
+              {
+                label: "Homes",
+                data: hCounts,
+                backgroundColor: hCounts.map((_, i) =>
+                  i >= hLabels.length - 3 ? "rgba(230, 57, 70, 0.72)" : "rgba(69, 123, 157, 0.72)"
+                ),
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              title: { display: true, text: "Distribution of model optimism (sim − actual), $", color: "#8892a4", font: { size: 13 } },
+              legend: { display: false },
+            },
+            scales: {
+              x: { ticks: { color: "#8892a4", maxRotation: 55, minRotation: 45, font: { size: 9 } }, title: { display: true, text: "Optimism bin ($)", color: "#8892a4" }, grid: { color: "rgba(44,48,80,0.2)" } },
+              y: { ticks: { color: "#8892a4" }, title: { display: true, text: "Homes", color: "#8892a4" }, grid: { color: "rgba(44,48,80,0.3)" } },
+            },
+          },
         });
       }
     }
@@ -561,20 +2315,25 @@
       if (!h.ok) {
         tr.innerHTML =
           `<td class="num">${i}</td>` +
-          `<td colspan="7" class="err mono">${escapeHtml(h.house_id)} — ${escapeHtml(h.error || "Error")}</td>`;
+          `<td colspan="9" class="err mono">${escapeHtml(h.house_id)} — ${escapeHtml(h.error || "Error")}</td>`;
         fileLogBody.appendChild(tr);
         return;
       }
+      tr.classList.add("file-log-main-row");
+      tr.dataset.houseId = h.house_id;
       tr.innerHTML =
         `<td class="num">${i}</td>` +
         `<td class="mono" title="${escapeHtml(h.path)}">${escapeHtml(h.house_id.slice(0, 8))}…</td>` +
         `<td class="num">${h.n_rows.toLocaleString()}</td>` +
         `<td class="num">${fmtMoney(h.gross_cost)}</td>` +
         `<td class="num">${fmtMoney(h.gross_revenue)}</td>` +
-        `<td class="num">${fmtMoney(h.net_margin)}</td>` +
+        `<td class="num">${fmtPct(h.margin_pct_activity)}</td>` +
         `<td class="num">${fmtPct(h.margin_pct_revenue)}</td>` +
-        `<td class="num">${fmtPct(h.margin_pct_activity)}</td>`;
+        `<td class="num">${fmtMoney(h.net_margin)}</td>` +
+        `<td class="num">${h.net_margin_no_trade != null ? fmtMoney(h.net_margin_no_trade) : "—"}</td>` +
+        `<td class="num">${h.margin_pct_activity_no_trade != null ? fmtPct(h.margin_pct_activity_no_trade) : "—"}</td>`;
       fileLogBody.appendChild(tr);
+      appendCompareRowAfterMain(tr, h.house_id);
     }
 
     function escapeHtml(s) {
@@ -588,10 +2347,17 @@
         ["Homes (ok)", f.n_homes],
         ["Avg gross cost", fmtMoney(f.avg_gross_cost)],
         ["Avg gross revenue", fmtMoney(f.avg_gross_revenue)],
+        ["Avg activity margin %", fmtPct(f.avg_margin_pct_activity)],
         ["Avg net margin", fmtMoney(f.avg_net_margin)],
-        ["Avg margin % (on revenue)", fmtPct(f.avg_margin_pct_revenue)],
-        ["Avg margin % (on activity)", fmtPct(f.avg_margin_pct_activity)],
+        ["Avg margin % (÷ rev)", fmtPct(f.avg_margin_pct_revenue)],
       ];
+      if (f.avg_net_margin_no_trade != null) {
+        if (f.n_homes_with_retail_without_trade_csv != null) {
+          cards.push(["Homes with no-trade CSV column", String(f.n_homes_with_retail_without_trade_csv)]);
+        }
+        cards.push(["Avg no-trade net $", fmtMoney(f.avg_net_margin_no_trade)]);
+        cards.push(["Avg no-trade activity margin %", fmtPct(f.avg_margin_pct_activity_no_trade)]);
+      }
       if (census && census.bridge_mapping_count > 0) {
         const matched = census.homes_abs_matched != null ? census.homes_abs_matched : 0;
         const bridged = census.homes_with_bridge != null ? census.homes_with_bridge : 0;
@@ -701,6 +2467,249 @@
       });
     }
 
+    function renderTradeTiming(tt) {
+      [
+        timingHourLossChartInstance,
+        timingMonthLossChartInstance,
+        timingHourProfitChartInstance,
+        timingMonthProfitChartInstance,
+        timingSlotLossChartInstance,
+        timingSlotProfitChartInstance,
+      ].forEach((c) => {
+        if (c) c.destroy();
+      });
+      timingHourLossChartInstance = null;
+      timingMonthLossChartInstance = null;
+      timingHourProfitChartInstance = null;
+      timingMonthProfitChartInstance = null;
+      timingSlotLossChartInstance = null;
+      timingSlotProfitChartInstance = null;
+      if (!tt) return;
+
+      function buildHourChart(canvasId, cohort, titleSuffix) {
+        const cohortObj = cohort || {};
+        const by = cohortObj.by_hour;
+        const nh = cohortObj.n_homes != null ? cohortObj.n_homes : 0;
+        if (!by || !by.length) return null;
+        const el = document.getElementById(canvasId);
+        if (!el) return null;
+        const labels = by.map((b) => String(b.hour));
+        const costs = by.map((b) => b.gross_cost || 0);
+        const revs = by.map((b) => b.gross_revenue || 0);
+        return new Chart(el, {
+          type: "bar",
+          data: {
+            labels,
+            datasets: [
+              { label: "Grid charges ($)", data: costs, backgroundColor: "rgba(230, 57, 70, 0.72)" },
+              { label: "Feed-in credits ($)", data: revs, backgroundColor: "rgba(42, 157, 143, 0.72)" },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              title: {
+                display: true,
+                text: "By hour of day — " + titleSuffix + " (" + nh + " homes)",
+                color: "#8892a4",
+                font: { size: 12 },
+              },
+              legend: { labels: { color: "#8892a4", font: { size: 10 } } },
+              tooltip: {
+                callbacks: {
+                  afterBody: (items) => {
+                    const i = items[0].dataIndex;
+                    const row = by[i];
+                    if (!row) return [];
+                    const lines = [];
+                    if (row.gross_cost_share_pct != null) {
+                      lines.push("Share of cohort charges in this hour: " + fmtNum(row.gross_cost_share_pct, 2) + "%");
+                    }
+                    if (row.gross_revenue_share_pct != null) {
+                      lines.push("Share of cohort credits in this hour: " + fmtNum(row.gross_revenue_share_pct, 2) + "%");
+                    }
+                    return lines;
+                  },
+                },
+              },
+            },
+            scales: {
+              x: {
+                ticks: { color: "#8892a4", maxRotation: 0 },
+                title: { display: true, text: "Hour (clock from CSV timestamp)", color: "#8892a4" },
+                grid: { color: "rgba(44,48,80,0.2)" },
+              },
+              y: {
+                ticks: { color: "#8892a4" },
+                title: { display: true, text: "Pooled $ (all intervals)", color: "#8892a4" },
+                grid: { color: "rgba(44,48,80,0.3)" },
+              },
+            },
+          },
+        });
+      }
+
+      function buildSlotChart(canvasId, cohort, titleSuffix) {
+        const cohortObj = cohort || {};
+        const by = cohortObj.by_slot;
+        const nh = cohortObj.n_homes != null ? cohortObj.n_homes : 0;
+        if (!by || !by.length) return null;
+        const el = document.getElementById(canvasId);
+        if (!el) return null;
+        const labels = by.map((b) => b.time);
+        const costs = by.map((b) => b.gross_cost || 0);
+        const revs = by.map((b) => b.gross_revenue || 0);
+        return new Chart(el, {
+          type: "line",
+          data: {
+            labels,
+            datasets: [
+              {
+                label: "Grid charges ($)",
+                data: costs,
+                borderColor: "rgba(230, 57, 70, 0.9)",
+                backgroundColor: "rgba(230, 57, 70, 0.08)",
+                tension: 0.12,
+                pointRadius: 0,
+                pointHoverRadius: 3,
+                spanGaps: false,
+              },
+              {
+                label: "Feed-in credits ($)",
+                data: revs,
+                borderColor: "rgba(42, 157, 143, 0.9)",
+                backgroundColor: "rgba(42, 157, 143, 0.08)",
+                tension: 0.12,
+                pointRadius: 0,
+                pointHoverRadius: 3,
+                spanGaps: false,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: "index", intersect: false },
+            plugins: {
+              title: {
+                display: true,
+                text: "By 5-minute clock time — " + titleSuffix + " (" + nh + " homes)",
+                color: "#8892a4",
+                font: { size: 12 },
+              },
+              legend: { labels: { color: "#8892a4", font: { size: 10 } } },
+              tooltip: {
+                callbacks: {
+                  afterBody: (items) => {
+                    const i = items[0].dataIndex;
+                    const row = by[i];
+                    if (!row) return [];
+                    const lines = [];
+                    if (row.gross_cost_share_pct != null) {
+                      lines.push("Share of cohort charges in this slot: " + fmtNum(row.gross_cost_share_pct, 2) + "%");
+                    }
+                    if (row.gross_revenue_share_pct != null) {
+                      lines.push("Share of cohort credits in this slot: " + fmtNum(row.gross_revenue_share_pct, 2) + "%");
+                    }
+                    return lines;
+                  },
+                },
+              },
+            },
+            scales: {
+              x: {
+                ticks: {
+                  color: "#8892a4",
+                  maxRotation: 45,
+                  autoSkip: true,
+                  maxTicksLimit: 24,
+                },
+                title: { display: true, text: "Time of day (HH:MM, 5-min bins)", color: "#8892a4" },
+                grid: { color: "rgba(44,48,80,0.2)" },
+              },
+              y: {
+                ticks: { color: "#8892a4" },
+                title: { display: true, text: "Pooled $ (all intervals)", color: "#8892a4" },
+                grid: { color: "rgba(44,48,80,0.3)" },
+              },
+            },
+          },
+        });
+      }
+
+      function buildMonthChart(canvasId, cohort, titleSuffix) {
+        const cohortObj = cohort || {};
+        const bm = cohortObj.by_month;
+        const nh = cohortObj.n_homes != null ? cohortObj.n_homes : 0;
+        if (!bm || !bm.length) return null;
+        const el = document.getElementById(canvasId);
+        if (!el) return null;
+        const labels = bm.map((b) => b.month);
+        const costs = bm.map((b) => b.gross_cost || 0);
+        const revs = bm.map((b) => b.gross_revenue || 0);
+        return new Chart(el, {
+          type: "bar",
+          data: {
+            labels,
+            datasets: [
+              { label: "Grid charges ($)", data: costs, backgroundColor: "rgba(230, 57, 70, 0.65)" },
+              { label: "Feed-in credits ($)", data: revs, backgroundColor: "rgba(42, 157, 143, 0.65)" },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              title: {
+                display: true,
+                text: "By calendar month — " + titleSuffix + " (" + nh + " homes)",
+                color: "#8892a4",
+                font: { size: 12 },
+              },
+              legend: { labels: { color: "#8892a4", font: { size: 10 } } },
+              tooltip: {
+                callbacks: {
+                  afterBody: (items) => {
+                    const i = items[0].dataIndex;
+                    const row = bm[i];
+                    if (!row) return [];
+                    const lines = [];
+                    if (row.gross_cost_share_pct != null) {
+                      lines.push("Share of cohort charges in this month: " + fmtNum(row.gross_cost_share_pct, 2) + "%");
+                    }
+                    if (row.gross_revenue_share_pct != null) {
+                      lines.push("Share of cohort credits in this month: " + fmtNum(row.gross_revenue_share_pct, 2) + "%");
+                    }
+                    return lines;
+                  },
+                },
+              },
+            },
+            scales: {
+              x: {
+                ticks: { color: "#8892a4", maxRotation: 45, minRotation: 0 },
+                title: { display: true, text: "Month (YYYY-MM)", color: "#8892a4" },
+                grid: { color: "rgba(44,48,80,0.2)" },
+              },
+              y: {
+                ticks: { color: "#8892a4" },
+                title: { display: true, text: "Pooled $ (all intervals)", color: "#8892a4" },
+                grid: { color: "rgba(44,48,80,0.3)" },
+              },
+            },
+          },
+        });
+      }
+
+      timingHourLossChartInstance = buildHourChart("chart-timing-hour-loss", tt.loss_makers, "loss-making cohort");
+      timingMonthLossChartInstance = buildMonthChart("chart-timing-month-loss", tt.loss_makers, "loss-making cohort");
+      timingHourProfitChartInstance = buildHourChart("chart-timing-hour-profit", tt.profitable, "profitable cohort");
+      timingMonthProfitChartInstance = buildMonthChart("chart-timing-month-profit", tt.profitable, "profitable cohort");
+      timingSlotLossChartInstance = buildSlotChart("chart-timing-slot-loss", tt.loss_makers, "loss-making cohort");
+      timingSlotProfitChartInstance = buildSlotChart("chart-timing-slot-profit", tt.profitable, "profitable cohort");
+    }
+
     function renderBubbleChart(houses) {
       const ok = houses.filter((h) => h.ok !== false);
       const socVals = ok.map((h) => h.max_battery_soc_kwh || 0);
@@ -711,6 +2720,8 @@
         r: 4 + ((h.max_battery_soc_kwh || 0) / maxSoc) * 16,
         houseId: h.house_id,
         batterySoc: h.max_battery_soc_kwh,
+        marginPctRev: h.margin_pct_revenue,
+        marginPctAct: h.margin_pct_activity,
       }));
 
       const el = document.getElementById("chart-bubble");
@@ -740,8 +2751,16 @@
             tooltip: {
               callbacks: {
                 title: (items) => items[0].raw.houseId,
-                label: (ctx) =>
-                  `Solar max: ${fmtMoney(ctx.raw.x)} kW | Net: ${fmtMoney(ctx.raw.y)} | Battery max SoC: ${fmtMoney(ctx.raw.batterySoc)} kWh`,
+                label: (ctx) => {
+                  const d = ctx.raw;
+                  const parts = [];
+                  if (d.marginPctAct != null) parts.push("Activity margin %: " + fmtPct(d.marginPctAct));
+                  if (d.marginPctRev != null) parts.push("Margin % (÷ rev): " + fmtPct(d.marginPctRev));
+                  parts.push("Net margin: " + fmtMoney(d.y));
+                  parts.push("Solar max: " + fmtMoney(d.x) + " kW");
+                  parts.push("Battery max SoC: " + fmtMoney(d.batterySoc) + " kWh");
+                  return parts;
+                },
               },
             },
           },
@@ -762,23 +2781,46 @@
     }
 
     function renderChart(houses) {
-      const ok = houses.filter((h) => h.ok !== false);
+      const chartNetCopyHint =
+        "Click a bar or the line above a column to copy that home’s full UID to the clipboard.";
+      const fbInit = document.getElementById("chart-net-copy-feedback");
+      if (fbInit) fbInit.textContent = chartNetCopyHint;
+      const ok = houses
+        .filter((h) => h.ok !== false)
+        .sort((a, b) => (a.net_margin ?? 0) - (b.net_margin ?? 0));
       const labels = ok.map((h) => h.house_id.slice(0, 10));
-      const data = ok.map((h) => h.net_margin);
+      const dataNet = ok.map((h) => h.net_margin);
+      const dataPctAct = ok.map((h) => (h.margin_pct_activity != null ? h.margin_pct_activity : null));
       const el = document.getElementById("chart-net");
       const parent = el.parentElement;
       parent.style.height = "420px";
 
       if (chartInstance) chartInstance.destroy();
       chartInstance = new Chart(el, {
-        type: "bar",
         data: {
           labels,
           datasets: [
             {
+              type: "line",
+              label: "Activity margin %",
+              data: dataPctAct,
+              yAxisID: "yPct",
+              order: 1,
+              borderColor: "rgba(233, 196, 106, 0.95)",
+              backgroundColor: "rgba(233, 196, 106, 0.2)",
+              borderWidth: 1.5,
+              tension: 0.15,
+              pointRadius: 0,
+              pointHoverRadius: 3,
+              spanGaps: false,
+            },
+            {
+              type: "bar",
               label: "Net margin ($)",
-              data,
-              backgroundColor: data.map((v) =>
+              data: dataNet,
+              yAxisID: "y",
+              order: 2,
+              backgroundColor: dataNet.map((v) =>
                 v >= 0 ? "rgba(42, 157, 143, 0.75)" : "rgba(230, 57, 70, 0.75)"
               ),
             },
@@ -787,13 +2829,30 @@
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          interaction: { mode: "index", intersect: false },
           plugins: {
-            legend: { display: false },
+            legend: {
+              display: true,
+              labels: { color: "#8892a4", boxWidth: 12, font: { size: 11 } },
+            },
             tooltip: {
+              filter: (item) => item.datasetIndex === 1,
               callbacks: {
                 title: (items) => {
                   const i = items[0].dataIndex;
                   return ok[i].house_id;
+                },
+                beforeBody: (items) => {
+                  const i = items[0].dataIndex;
+                  const h = ok[i];
+                  const lines = [];
+                  if (h.margin_pct_activity != null) {
+                    lines.push("Activity margin %: " + fmtPct(h.margin_pct_activity));
+                  }
+                  if (h.margin_pct_revenue != null) {
+                    lines.push("Margin % (÷ rev): " + fmtPct(h.margin_pct_revenue));
+                  }
+                  return lines;
                 },
                 label: (ctx) => "Net margin: " + fmtMoney(ctx.raw),
               },
@@ -805,11 +2864,42 @@
               ticks: { color: "#8892a4", maxRotation: 90, minRotation: 60 },
               grid: { color: "rgba(44,48,80,0.5)" },
             },
-            y: {
-              title: { display: true, text: "Profitability ($ net margin)", color: "#8892a4" },
-              ticks: { color: "#8892a4", font: { size: 10 } },
-              grid: { color: "rgba(44,48,80,0.35)" },
+            yPct: {
+              position: "left",
+              title: {
+                display: true,
+                text: "Activity margin % (net ÷ [charges + credits])",
+                color: "#8892a4",
+              },
+              ticks: {
+                color: "#8892a4",
+                font: { size: 10 },
+                callback: (v) => `${v}%`,
+              },
+              grid: { color: "rgba(44,48,80,0.2)" },
             },
+            y: {
+              position: "right",
+              title: { display: true, text: "Net margin ($)", color: "#8892a4" },
+              ticks: { color: "#8892a4", font: { size: 10 } },
+              grid: { drawOnChartArea: false },
+            },
+          },
+          onClick: async (evt, elements) => {
+            if (!elements || !elements.length) return;
+            const i = elements[0].index;
+            if (i == null || i < 0 || i >= ok.length) return;
+            const uid = ok[i].house_id;
+            if (!uid) return;
+            const copied = await copyTextToClipboard(uid);
+            const fb = document.getElementById("chart-net-copy-feedback");
+            if (!fb) return;
+            fb.textContent = copied ? "Copied UID: " + uid : "Copy blocked — UID: " + uid + " (select manually)";
+            if (copied) {
+              window.setTimeout(() => {
+                if (fb.textContent.startsWith("Copied UID:")) fb.textContent = chartNetCopyHint;
+              }, 2800);
+            }
           },
         },
       });
@@ -824,10 +2914,12 @@
           `<td class="num">${d.n_homes}</td>` +
           `<td class="num">${fmtMoney(d.avg_gross_cost)}</td>` +
           `<td class="num">${fmtMoney(d.avg_gross_revenue)}</td>` +
+          `<td class="num">${fmtPct(d.avg_margin_pct_activity)}</td>` +
           `<td class="num">${fmtMoney(d.avg_net_margin)}</td>` +
+          `<td class="num">${d.avg_net_margin_no_trade != null ? fmtMoney(d.avg_net_margin_no_trade) : "—"}</td>` +
+          `<td class="num">${d.avg_margin_pct_activity_no_trade != null ? fmtPct(d.avg_margin_pct_activity_no_trade) : "—"}</td>` +
           `<td class="num">${fmtMoney(d.min_net_margin)}</td>` +
           `<td class="num">${fmtMoney(d.max_net_margin)}</td>` +
-          `<td class="num">${fmtPct(d.avg_margin_pct_activity)}</td>` +
           `<td class="num">${fmtMoney(d.avg_max_solar_kw)}</td>` +
           `<td class="num">${fmtMoney(d.avg_max_battery_soc_kwh)}</td>`;
         decileLogBody.appendChild(tr);
@@ -836,7 +2928,9 @@
 
     function renderDecileChart(deciles) {
       const labels = deciles.map((d) => d.label);
-      const data = deciles.map((d) => d.avg_net_margin);
+      const data = deciles.map((d) =>
+        d.avg_margin_pct_activity != null ? d.avg_margin_pct_activity : null
+      );
       const el = document.getElementById("chart-decile");
 
       if (decileChartInstance) decileChartInstance.destroy();
@@ -846,10 +2940,10 @@
           labels,
           datasets: [
             {
-              label: "Avg net margin by decile ($)",
+              label: "Mean activity margin % by decile",
               data,
               backgroundColor: data.map((v) =>
-                v >= 0 ? "rgba(42, 157, 143, 0.75)" : "rgba(230, 57, 70, 0.75)"
+                v == null ? "rgba(136,146,164,0.35)" : v >= 0 ? "rgba(42, 157, 143, 0.75)" : "rgba(230, 57, 70, 0.75)"
               ),
             },
           ],
@@ -860,13 +2954,21 @@
           plugins: { legend: { display: false } },
           scales: {
             x: {
-              title: { display: true, text: "Profitability deciles", color: "#8892a4" },
+              title: { display: true, text: "Profitability deciles (by $ net margin)", color: "#8892a4" },
               ticks: { color: "#8892a4" },
               grid: { color: "rgba(44,48,80,0.5)" },
             },
             y: {
-              title: { display: true, text: "Avg profitability ($ net margin)", color: "#8892a4" },
-              ticks: { color: "#8892a4", font: { size: 10 } },
+              title: {
+                display: true,
+                text: "Mean activity margin % (net ÷ [charges + credits])",
+                color: "#8892a4",
+              },
+              ticks: {
+                color: "#8892a4",
+                font: { size: 10 },
+                callback: (v) => `${v}%`,
+              },
               grid: { color: "rgba(44,48,80,0.35)" },
             },
           },
@@ -942,10 +3044,12 @@
           `<td class="num">${s.n_homes}</td>` +
           `<td class="num">${fmtMoney(s.avg_gross_revenue)}</td>` +
           `<td class="num">${fmtMoney(s.avg_gross_cost)}</td>` +
-          `<td class="num">${fmtMoney(s.avg_net_margin)}</td>` +
-          `<td class="num">${fmtMoney(s.total_net_margin)}</td>` +
+          `<td class="num">${fmtPct(s.segment_net_margin_pct_activity)}</td>` +
+          `<td class="num">${fmtPct(s.segment_net_margin_pct_revenue)}</td>` +
           `<td class="num">${fmtPct(s.avg_margin_pct_revenue)}</td>` +
           `<td class="num">${fmtPct(s.avg_margin_pct_activity)}</td>` +
+          `<td class="num">${fmtMoney(s.avg_net_margin)}</td>` +
+          `<td class="num">${fmtMoney(s.total_net_margin)}</td>` +
           `<td class="num">${fmtNum(s.avg_max_solar_kw, 2)}</td>` +
           `<td class="num">${fmtNum(s.avg_max_battery_soc_kwh, 2)}</td>` +
           `<td class="num">${fmtPct(s.avg_export_active_pct)}</td>` +
@@ -959,7 +3063,9 @@
       const rev = segments.map((s) => s.avg_gross_revenue);
       const cost = segments.map((s) => s.avg_gross_cost);
       const net = segments.map((s) => s.avg_net_margin);
-      const marginPct = segments.map((s) => s.avg_margin_pct_revenue);
+      const marginPct = segments.map(
+        (s) => s.segment_net_margin_pct_activity ?? s.avg_margin_pct_activity ?? null
+      );
       const el = document.getElementById("chart-segments");
       if (segmentChartInstance) segmentChartInstance.destroy();
       segmentChartInstance = new Chart(el, {
@@ -967,32 +3073,36 @@
           labels,
           datasets: [
             {
+              type: "line",
+              label: "Activity margin % (portfolio)",
+              data: marginPct,
+              yAxisID: "yPct",
+              order: 10,
+              borderColor: "rgba(233, 196, 106, 0.95)",
+              backgroundColor: "rgba(233, 196, 106, 0.35)",
+              tension: 0.2,
+              pointRadius: 2,
+            },
+            {
               type: "bar",
               label: "Avg gross revenue",
               data: rev,
+              order: 1,
               backgroundColor: "rgba(42, 157, 143, 0.65)",
             },
             {
               type: "bar",
               label: "Avg gross cost",
               data: cost,
+              order: 2,
               backgroundColor: "rgba(230, 57, 70, 0.65)",
             },
             {
               type: "bar",
               label: "Avg net margin",
               data: net,
+              order: 3,
               backgroundColor: net.map((v) => (v >= 0 ? "rgba(79, 142, 247, 0.8)" : "rgba(168, 85, 247, 0.8)")),
-            },
-            {
-              type: "line",
-              label: "Avg margin % on revenue",
-              data: marginPct,
-              yAxisID: "yPct",
-              borderColor: "rgba(233, 196, 106, 0.95)",
-              backgroundColor: "rgba(233, 196, 106, 0.35)",
-              tension: 0.2,
-              pointRadius: 2,
             },
           ],
         },
@@ -1006,12 +3116,330 @@
             yPct: {
               position: "right",
               ticks: { color: "#8892a4", callback: (v) => `${v}%` },
-              title: { display: true, text: "Avg margin % (revenue)", color: "#8892a4" },
+              title: {
+                display: true,
+                text: "Activity margin % (net ÷ [charges + credits])",
+                color: "#8892a4",
+              },
               grid: { drawOnChartArea: false },
             },
           },
         },
       });
+    }
+
+    function compareRow(d, key) {
+      return (d.compare || []).find((r) => r.key === key) || null;
+    }
+
+    function renderLossDeepDive(d) {
+      const lead = document.getElementById("loss-dive-lead");
+      const noLoss = document.getElementById("loss-dive-no-loss");
+      const detail = document.getElementById("loss-dive-detail");
+      if (!lead || !noLoss || !detail) return;
+
+      [lossCostChartInstance, lossEnergyChartInstance, lossPredChartInstance, lossSegChartInstance].forEach((ch) => {
+        if (ch) ch.destroy();
+      });
+      lossCostChartInstance = null;
+      lossEnergyChartInstance = null;
+      lossPredChartInstance = null;
+      lossSegChartInstance = null;
+      lastLossDiveActive = false;
+
+      if (!d || d.empty || !d.n_loss) {
+        lead.textContent =
+          d && d.n_fleet != null
+            ? `All ${d.n_fleet} homes have net margin ≥ 0 for this period — there is no loss cohort to profile.`
+            : "";
+        noLoss.classList.remove("hidden");
+        detail.classList.add("hidden");
+        return;
+      }
+
+      lastLossDiveActive = true;
+      noLoss.classList.add("hidden");
+      detail.classList.remove("hidden");
+      const hasProfit = (d.n_profit || 0) > 0;
+      lead.textContent = `${d.n_loss} of ${d.n_fleet} homes (${fmtNum(
+        d.pct_fleet_loss,
+        2
+      )}%) have negative net margin. Contrasts use mean per home; the profitable cohort has ${d.n_profit} homes.`;
+
+      const sumEl = document.getElementById("loss-dive-summary");
+      if (sumEl) {
+        const cards = [
+          ["Loss homes (count)", d.n_loss],
+          ["Profitable homes (count)", d.n_profit],
+          ["Pool net margin — loss homes only ($)", fmtMoney(d.sum_net_margin_loss)],
+          ["Avg net margin — loss homes ($)", fmtMoney(d.avg_net_margin_loss)],
+          ["Avg net margin — profitable homes ($)", fmtMoney(d.avg_net_margin_profit)],
+        ];
+        sumEl.innerHTML = cards
+          .map(
+            ([label, val]) =>
+              `<div class="stat"><div class="label">${escapeHtml(String(label))}</div><div class="value">${val}</div></div>`
+          )
+          .join("");
+      }
+
+      const nar = document.getElementById("loss-dive-narrative");
+      if (nar) {
+        nar.innerHTML = (d.narrative || [])
+          .map((t) => `<li>${escapeHtml(String(t))}</li>`)
+          .join("");
+      }
+
+      const fmtCompareVal = (key, v) => {
+        if (v == null || Number.isNaN(v)) return "—";
+        if (key === "gross_cost" || key === "gross_revenue") return fmtMoney(v);
+        if (String(key).endsWith("_pct")) return fmtPct(v);
+        if (String(key).includes("ratio")) return fmtNum(v, 3);
+        if (String(key).includes("price") || key === "avg_price_spread") return fmtNum(v, 4);
+        return fmtNum(v, 2);
+      };
+
+      const cmpBody = document.getElementById("loss-compare-body");
+      if (cmpBody) {
+        cmpBody.innerHTML = "";
+        (d.compare || []).forEach((row) => {
+          const tr = document.createElement("tr");
+          const vs =
+            row.pct_vs_profit == null
+              ? hasProfit
+                ? "—"
+                : "— (no profitable cohort)"
+              : (row.pct_vs_profit >= 0 ? "+" : "") + fmtNum(row.pct_vs_profit, 1) + "%";
+          tr.innerHTML =
+            `<td>${escapeHtml(row.label || row.key)}</td>` +
+            `<td class="num">${fmtCompareVal(row.key, row.loss_mean)}</td>` +
+            `<td class="num">${fmtCompareVal(row.key, row.profit_mean)}</td>` +
+            `<td class="num">${vs}</td>`;
+          cmpBody.appendChild(tr);
+        });
+      }
+
+      const drvBody = document.getElementById("loss-drivers-body");
+      if (drvBody) {
+        drvBody.innerHTML = "";
+        (d.drivers || []).forEach((row) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML =
+            `<td>${escapeHtml(row.label || row.id)}</td>` +
+            `<td class="num">${row.count}</td>` +
+            `<td class="num">${fmtNum(row.pct_of_loss, 1)}%</td>`;
+          drvBody.appendChild(tr);
+        });
+      }
+
+      const lpRows = (d.loss_predictors && d.loss_predictors.rows) || [];
+      const lpBody = document.getElementById("loss-predictor-log-body");
+      if (lpBody) {
+        lpBody.innerHTML = "";
+        lpRows.forEach((r) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML =
+            `<td>${escapeHtml(r.label || r.feature)}</td>` +
+            `<td class="num">${r.sample_size}</td>` +
+            `<td class="num">${fmtNum(r.corr_net_margin, 4)}</td>`;
+          lpBody.appendChild(tr);
+        });
+      }
+
+      const rGC = compareRow(d, "gross_cost");
+      const rGR = compareRow(d, "gross_revenue");
+      const rTI = compareRow(d, "total_import_kwh");
+      const rTE = compareRow(d, "total_export_kwh");
+
+      const elM = document.getElementById("chart-loss-money");
+      if (elM && rGC && rGR) {
+        const lm = [rGC.loss_mean, rGR.loss_mean];
+        const pm = [rGC.profit_mean, rGR.profit_mean];
+        const datasets = [
+          {
+            label: "Loss homes (mean)",
+            data: lm.map((v) => (v == null ? 0 : Number(v))),
+            backgroundColor: "rgba(230, 57, 70, 0.78)",
+          },
+        ];
+        if (hasProfit) {
+          datasets.push({
+            label: "Profitable homes (mean)",
+            data: pm.map((v) => (v == null ? 0 : Number(v))),
+            backgroundColor: "rgba(42, 157, 143, 0.78)",
+          });
+        }
+        lossCostChartInstance = new Chart(elM, {
+          type: "bar",
+          data: {
+            labels: ["Gross cost", "Gross revenue"],
+            datasets,
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { labels: { color: "#8892a4", font: { size: 11 } } },
+              title: { display: true, text: "Money-side means ($)", color: "#8892a4", font: { size: 13 } },
+            },
+            scales: {
+              x: { ticks: { color: "#8892a4" }, grid: { color: "rgba(44,48,80,0.25)" } },
+              y: {
+                ticks: { color: "#8892a4" },
+                title: { display: true, text: "Dollars", color: "#8892a4" },
+                grid: { color: "rgba(44,48,80,0.3)" },
+              },
+            },
+          },
+        });
+      }
+
+      const elE = document.getElementById("chart-loss-energy");
+      if (elE && rTI && rTE) {
+        const toMwh = (v) => (v == null ? 0 : Number(v) / 1000.0);
+        const datasets = [
+          {
+            label: "Loss homes (mean MWh)",
+            data: [toMwh(rTI.loss_mean), toMwh(rTE.loss_mean)],
+            backgroundColor: "rgba(79, 142, 247, 0.75)",
+          },
+        ];
+        if (hasProfit) {
+          datasets.push({
+            label: "Profitable homes (mean MWh)",
+            data: [toMwh(rTI.profit_mean), toMwh(rTE.profit_mean)],
+            backgroundColor: "rgba(168, 85, 247, 0.65)",
+          });
+        }
+        lossEnergyChartInstance = new Chart(elE, {
+          type: "bar",
+          data: {
+            labels: ["Total grid import", "Total grid export"],
+            datasets,
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { labels: { color: "#8892a4", font: { size: 11 } } },
+              title: { display: true, text: "Energy-side means (MWh)", color: "#8892a4", font: { size: 13 } },
+            },
+            scales: {
+              x: { ticks: { color: "#8892a4" }, grid: { color: "rgba(44,48,80,0.25)" } },
+              y: {
+                ticks: { color: "#8892a4" },
+                title: { display: true, text: "MWh (mean per home)", color: "#8892a4" },
+                grid: { color: "rgba(44,48,80,0.3)" },
+              },
+            },
+          },
+        });
+      }
+
+      const elP = document.getElementById("chart-loss-predictors");
+      if (elP && lpRows.length) {
+        const top = lpRows.slice(0, 12);
+        const labels = top.map((r) => r.label || r.feature);
+        const values = top.map((r) => Math.abs(r.corr_net_margin || 0));
+        lossPredChartInstance = new Chart(elP, {
+          type: "bar",
+          data: {
+            labels,
+            datasets: [
+              {
+                label: "|Corr with net margin| (loss cohort)",
+                data: values,
+                backgroundColor: "rgba(230, 57, 70, 0.72)",
+              },
+            ],
+          },
+          options: {
+            indexAxis: "y",
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              title: {
+                display: true,
+                text: "Within loss homes: |correlation| with net margin",
+                color: "#8892a4",
+                font: { size: 12 },
+              },
+            },
+            scales: {
+              x: {
+                ticks: { color: "#8892a4" },
+                title: { display: true, text: "Absolute correlation", color: "#8892a4" },
+                grid: { color: "rgba(44,48,80,0.3)" },
+              },
+              y: { ticks: { color: "#8892a4", font: { size: 10 } }, grid: { color: "rgba(44,48,80,0.2)" } },
+            },
+          },
+        });
+      }
+
+      const elS = document.getElementById("chart-loss-segments");
+      const mix = d.segment_mix || [];
+      if (elS && mix.length) {
+        const palette = [
+          "rgba(230, 57, 70, 0.85)",
+          "rgba(233, 196, 106, 0.88)",
+          "rgba(42, 157, 143, 0.85)",
+          "rgba(79, 142, 247, 0.85)",
+          "rgba(168, 85, 247, 0.85)",
+          "rgba(129, 140, 248, 0.85)",
+        ];
+        lossSegChartInstance = new Chart(elS, {
+          type: "doughnut",
+          data: {
+            labels: mix.map((x) => x.segment),
+            datasets: [
+              {
+                data: mix.map((x) => x.count),
+                backgroundColor: mix.map((_, i) => palette[i % palette.length]),
+                borderColor: "rgba(15,17,23,0.9)",
+                borderWidth: 1,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              title: {
+                display: true,
+                text: "Loss homes by behaviour segment",
+                color: "#8892a4",
+                font: { size: 12 },
+              },
+              legend: { position: "bottom", labels: { color: "#8892a4", font: { size: 10 } } },
+            },
+          },
+        });
+      }
+
+      const worstBody = document.getElementById("loss-worst-body");
+      if (worstBody) {
+        worstBody.innerHTML = "";
+        (d.worst_homes || []).forEach((h) => {
+          const tr = document.createElement("tr");
+          const hid = h.house_id || "";
+          const short = hid.length > 12 ? hid.slice(0, 12) + "…" : hid;
+          tr.innerHTML =
+            `<td class="mono" title="${escapeHtml(hid)}">${escapeHtml(short)}</td>` +
+            `<td>${escapeHtml(h.segment_label != null ? String(h.segment_label) : "—")}</td>` +
+            `<td class="num">${fmtMoney(h.net_margin)}</td>` +
+            `<td class="num">${fmtPct(h.margin_pct_activity)}</td>` +
+            `<td class="num">${fmtMoney(h.gross_cost)}</td>` +
+            `<td class="num">${fmtMoney(h.gross_revenue)}</td>` +
+            `<td class="num">${fmtMoney(h.avg_price_spread)}</td>` +
+            `<td class="num">${fmtNum(h.total_import_kwh, 0)}</td>` +
+            `<td class="num">${fmtNum(h.total_export_kwh, 0)}</td>` +
+            `<td class="num">${fmtNum(h.avg_import_price, 4)}</td>` +
+            `<td class="num">${fmtNum(h.avg_export_price, 4)}</td>`;
+          worstBody.appendChild(tr);
+        });
+      }
     }
 
     btnRun.addEventListener("click", () => {
@@ -1021,6 +3449,70 @@
       lastFleetHouses = null;
       lastFleetCensus = null;
       lastFleetDfMeta = null;
+      lastFleetDiscovery = null;
+      lastFleetSourceLabel = "";
+      lastFleetSourcePath = "";
+      lastLossDiveActive = false;
+      [lossCostChartInstance, lossEnergyChartInstance, lossPredChartInstance, lossSegChartInstance].forEach((ch) => {
+        if (ch) ch.destroy();
+      });
+      lossCostChartInstance = null;
+      lossEnergyChartInstance = null;
+      lossPredChartInstance = null;
+      lossSegChartInstance = null;
+      [
+        timingHourLossChartInstance,
+        timingMonthLossChartInstance,
+        timingHourProfitChartInstance,
+        timingMonthProfitChartInstance,
+        timingSlotLossChartInstance,
+        timingSlotProfitChartInstance,
+      ].forEach((ch) => {
+        if (ch) ch.destroy();
+      });
+      timingHourLossChartInstance = null;
+      timingMonthLossChartInstance = null;
+      timingHourProfitChartInstance = null;
+      timingMonthProfitChartInstance = null;
+      timingSlotLossChartInstance = null;
+      timingSlotProfitChartInstance = null;
+      [chartPredHistInstance,
+       chartPredByBatteryInstance, chartPredBySolarInstance,
+       chartMarginDeltaSizeDecileInstance,
+       chartQuadrantInstance].forEach(
+        (c) => {
+          if (c) c.destroy();
+        }
+      );
+      chartPredHistInstance = null;
+      chartPredByBatteryInstance = null;
+      chartPredBySolarInstance = null;
+      chartMarginDeltaSizeDecileInstance = null;
+      chartQuadrantInstance = null;
+      const panelModelVsReality = document.getElementById("panel-model-vs-reality");
+      if (panelModelVsReality) panelModelVsReality.classList.add("hidden");
+      const lossCompareBody = document.getElementById("loss-compare-body");
+      const lossDriversBody = document.getElementById("loss-drivers-body");
+      const lossWorstBody = document.getElementById("loss-worst-body");
+      const lossPredBody = document.getElementById("loss-predictor-log-body");
+      const lossSummary = document.getElementById("loss-dive-summary");
+      const lossNarrative = document.getElementById("loss-dive-narrative");
+      if (lossCompareBody) lossCompareBody.innerHTML = "";
+      if (lossDriversBody) lossDriversBody.innerHTML = "";
+      if (lossWorstBody) lossWorstBody.innerHTML = "";
+      if (lossPredBody) lossPredBody.innerHTML = "";
+      if (lossSummary) lossSummary.innerHTML = "";
+      if (lossNarrative) lossNarrative.innerHTML = "";
+      const lossLead = document.getElementById("loss-dive-lead");
+      const lossNo = document.getElementById("loss-dive-no-loss");
+      const lossDet = document.getElementById("loss-dive-detail");
+      if (lossLead) lossLead.textContent = "";
+      if (lossNo) lossNo.classList.add("hidden");
+      if (lossDet) lossDet.classList.add("hidden");
+      if (resultsDatasetBadge) {
+        resultsDatasetBadge.classList.add("hidden");
+        resultsDatasetBadge.textContent = "";
+      }
       if (btnDownloadFleetCsv) btnDownloadFleetCsv.disabled = true;
       fileLogBody.innerHTML = "";
       decileLogBody.innerHTML = "";
@@ -1037,7 +3529,15 @@
       progressPct.textContent = "0%";
       progressCurrent.textContent = "Connecting…";
 
-      const source = new EventSource("{{ url_for('api_stream') }}");
+      if (nFilesForSelectedSource() <= 0) {
+        runError.textContent = "No CSV files for the selected export set.";
+        runError.classList.remove("hidden");
+        btnRun.disabled = false;
+        return;
+      }
+
+      const streamUrl = `${API_STREAM_BASE}?source=${encodeURIComponent(selectedCatanSource())}`;
+      const source = new EventSource(streamUrl);
 
       source.onmessage = (event) => {
         const msg = JSON.parse(event.data);
@@ -1053,7 +3553,15 @@
 
         if (msg.type === "start") {
           progressCount.textContent = `0 / ${msg.total}`;
-          progressCurrent.textContent = "Processing…";
+          const d = msg.discovery || {};
+          const lbl = msg.data_source_label || "";
+          const pth = msg.data_source_path || "";
+          let sub = lbl ? `Processing ${msg.total} homes — ${lbl}` : "Processing…";
+          if (pth) sub += ` (${pth})`;
+          if (d.skipped_vic_blocklist > 0) {
+            sub += ` · ${d.skipped_vic_blocklist} skipped (VIC SITES blocklist)`;
+          }
+          progressCurrent.textContent = sub;
           return;
         }
 
@@ -1077,8 +3585,18 @@
           renderFleet(msg.fleet, msg.census || {});
           renderSizeProfile(msg.size_profile || {});
           renderTimeProfile(msg.time_profile || { months: [] });
+          renderTradeTiming(msg.trade_timing || null);
           renderBubbleChart(msg.houses);
           renderChart(msg.houses);
+          document.querySelectorAll("tr.file-log-compare-row").forEach((r) => r.remove());
+          const sourceForApis = msg.data_source || selectedCatanSource();
+          void (async () => {
+            await loadBatchComparison();
+            patchFileLogComparisonRows();
+            renderHomeDrilldownSelector(msg.houses);
+            renderSimVsActualChart(msg.houses);
+            await renderPredictionDeepDiveFetch(sourceForApis);
+          })();
           renderDecileChart(msg.deciles || []);
           renderDecileTable(msg.deciles || []);
           renderPredictorChart((msg.predictors && msg.predictors.rows) || []);
@@ -1086,9 +3604,20 @@
           renderSegmentChart((msg.segments && msg.segments.segments) || []);
           renderSegmentTable((msg.segments && msg.segments.segments) || []);
           renderSegmentLegend((msg.segments && msg.segments.segments) || []);
+          renderLossDeepDive(msg.loss_dive || {});
           lastFleetHouses = msg.houses || [];
           lastFleetCensus = msg.census || {};
           lastFleetDfMeta = msg.fleet_dataframe || null;
+          lastFleetSourceId = msg.data_source || selectedCatanSource();
+          lastFleetSourceLabel = msg.data_source_label || "";
+          lastFleetSourcePath = msg.data_source_path || "";
+          lastFleetDiscovery = msg.discovery || null;
+          if (resultsDatasetBadge) {
+            const lbl = msg.data_source_label || msg.data_source || "";
+            const pth = msg.data_source_path || "";
+            resultsDatasetBadge.textContent = pth ? `Results: ${lbl} · ${pth}` : `Results: ${lbl}`;
+            resultsDatasetBadge.classList.remove("hidden");
+          }
           if (btnDownloadFleetCsv) btnDownloadFleetCsv.disabled = false;
           panelResults.classList.remove("hidden");
           btnRun.disabled = false;
@@ -1108,6 +3637,37 @@
       downloadChart("chart-net", "fleet-profitability-by-house.png");
     });
 
+    const btnDownloadQuadrant = document.getElementById("btn-download-quadrant");
+    if (btnDownloadQuadrant) {
+      btnDownloadQuadrant.addEventListener("click", () => {
+        downloadChart("chart-quadrant-sim-vs-actual", "quadrant-sim-vs-actual-profit.png");
+      });
+    }
+    const btnDownloadPredHist = document.getElementById("btn-download-pred-hist");
+    if (btnDownloadPredHist) {
+      btnDownloadPredHist.addEventListener("click", () => {
+        downloadChart("chart-pred-hist", "prediction-optimism-histogram.png");
+      });
+    }
+    const btnDownloadPredBattery = document.getElementById("btn-download-pred-battery");
+    if (btnDownloadPredBattery) {
+      btnDownloadPredBattery.addEventListener("click", () => {
+        downloadChart("chart-pred-by-battery", "accuracy-by-battery.png");
+      });
+    }
+    const btnDownloadPredSolar = document.getElementById("btn-download-pred-solar");
+    if (btnDownloadPredSolar) {
+      btnDownloadPredSolar.addEventListener("click", () => {
+        downloadChart("chart-pred-by-solar", "accuracy-by-solar.png");
+      });
+    }
+    const btnDownloadMarginDeltaSize = document.getElementById("btn-download-margin-delta-size-decile");
+    if (btnDownloadMarginDeltaSize) {
+      btnDownloadMarginDeltaSize.addEventListener("click", () => {
+        downloadChart("chart-margin-delta-size-decile", "margin-delta-by-system-size-decile.png");
+      });
+    }
+
     btnDownloadBubble.addEventListener("click", () => {
       downloadChart("chart-bubble", "system-size-vs-profitability-bubble.png");
     });
@@ -1115,6 +3675,43 @@
     btnDownloadTime.addEventListener("click", () => {
       downloadChart("chart-time", "fleet-time-distribution.png");
     });
+
+    const btnTimingHourLoss = document.getElementById("btn-download-timing-hour-loss");
+    if (btnTimingHourLoss) {
+      btnTimingHourLoss.addEventListener("click", () =>
+        downloadChart("chart-timing-hour-loss", "trade-timing-hour-loss-cohort.png")
+      );
+    }
+    const btnTimingMonthLoss = document.getElementById("btn-download-timing-month-loss");
+    if (btnTimingMonthLoss) {
+      btnTimingMonthLoss.addEventListener("click", () =>
+        downloadChart("chart-timing-month-loss", "trade-timing-month-loss-cohort.png")
+      );
+    }
+    const btnTimingHourProfit = document.getElementById("btn-download-timing-hour-profit");
+    if (btnTimingHourProfit) {
+      btnTimingHourProfit.addEventListener("click", () =>
+        downloadChart("chart-timing-hour-profit", "trade-timing-hour-profit-cohort.png")
+      );
+    }
+    const btnTimingMonthProfit = document.getElementById("btn-download-timing-month-profit");
+    if (btnTimingMonthProfit) {
+      btnTimingMonthProfit.addEventListener("click", () =>
+        downloadChart("chart-timing-month-profit", "trade-timing-month-profit-cohort.png")
+      );
+    }
+    const btnTimingSlotLoss = document.getElementById("btn-download-timing-slot-loss");
+    if (btnTimingSlotLoss) {
+      btnTimingSlotLoss.addEventListener("click", () =>
+        downloadChart("chart-timing-slot-loss", "trade-timing-5min-loss-cohort.png")
+      );
+    }
+    const btnTimingSlotProfit = document.getElementById("btn-download-timing-slot-profit");
+    if (btnTimingSlotProfit) {
+      btnTimingSlotProfit.addEventListener("click", () =>
+        downloadChart("chart-timing-slot-profit", "trade-timing-5min-profit-cohort.png")
+      );
+    }
 
     btnDownloadPredictors.addEventListener("click", () => {
       downloadChart("chart-predictors", "profitability-predictor-ranking.png");
@@ -1128,15 +3725,49 @@
       downloadChart("chart-decile", "decile-profitability-profile.png");
     });
 
+    const btnLossMoney = document.getElementById("btn-download-loss-money");
+    if (btnLossMoney) {
+      btnLossMoney.addEventListener("click", () => downloadChart("chart-loss-money", "loss-vs-profit-money.png"));
+    }
+    const btnLossEnergy = document.getElementById("btn-download-loss-energy");
+    if (btnLossEnergy) {
+      btnLossEnergy.addEventListener("click", () => downloadChart("chart-loss-energy", "loss-vs-profit-energy.png"));
+    }
+    const btnLossPred = document.getElementById("btn-download-loss-predictors");
+    if (btnLossPred) {
+      btnLossPred.addEventListener("click", () => downloadChart("chart-loss-predictors", "loss-cohort-predictors.png"));
+    }
+    const btnLossSeg = document.getElementById("btn-download-loss-segments");
+    if (btnLossSeg) {
+      btnLossSeg.addEventListener("click", () => downloadChart("chart-loss-segments", "loss-cohort-segments.png"));
+    }
+
     btnDownloadAll.addEventListener("click", () => {
       const items = [
-        ["chart-bubble", "system-size-vs-profitability-bubble.png"],
-        ["chart-time", "fleet-time-distribution.png"],
-        ["chart-predictors", "profitability-predictor-ranking.png"],
-        ["chart-segments", "behavior-segments-profitability.png"],
         ["chart-net", "fleet-profitability-by-house.png"],
         ["chart-decile", "decile-profitability-profile.png"],
+        ["chart-quadrant-sim-vs-actual", "quadrant-sim-vs-actual-profit.png"],
+        ["chart-pred-by-battery", "accuracy-by-battery.png"],
+        ["chart-pred-by-solar", "accuracy-by-solar.png"],
+        ["chart-margin-delta-size-decile", "margin-delta-by-system-size-decile.png"],
+        ["chart-pred-hist", "prediction-optimism-histogram.png"],
+        ["chart-bubble", "system-size-vs-profitability-bubble.png"],
+        ["chart-predictors", "profitability-predictor-ranking.png"],
+        ["chart-segments", "behavior-segments-profitability.png"],
+        ["chart-time", "fleet-time-distribution.png"],
+        ["chart-timing-hour-loss", "trade-timing-hour-loss-cohort.png"],
+        ["chart-timing-month-loss", "trade-timing-month-loss-cohort.png"],
+        ["chart-timing-hour-profit", "trade-timing-hour-profit-cohort.png"],
+        ["chart-timing-month-profit", "trade-timing-month-profit-cohort.png"],
+        ["chart-timing-slot-loss", "trade-timing-5min-loss-cohort.png"],
+        ["chart-timing-slot-profit", "trade-timing-5min-profit-cohort.png"],
       ];
+      if (lastLossDiveActive) {
+        items.push(["chart-loss-money", "loss-vs-profit-money.png"]);
+        items.push(["chart-loss-energy", "loss-vs-profit-energy.png"]);
+        items.push(["chart-loss-predictors", "loss-cohort-predictors.png"]);
+        items.push(["chart-loss-segments", "loss-cohort-segments.png"]);
+      }
       items.forEach(([id, file], i) => {
         setTimeout(() => downloadChart(id, file), i * 220);
       });
@@ -1155,6 +3786,8 @@
         downloadFleetCsv();
       });
     }
+
+    loadBatchComparison();
   </script>
 </body>
 </html>
