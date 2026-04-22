@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solax / usage quote — implied monthly fee</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+  <div class="page-wrap">
+    <header class="site-header">
+      <p class="site-nav-extra">
+        <a href="{{ url_for('index') }}">← Fleet summary</a>
+        · <a href="{{ url_for('calibrated_prediction_page') }}">Calibrated prediction</a>
+        · <a href="{{ url_for('fleet_headline_margin_page') }}">Headline margin &amp; fee</a>
+      </p>
+      <h1>Usage CSV → implied monthly fee</h1>
+      <p>
+        Upload either an <strong>optimiser</strong> <code class="mono">optimisation_intervals.csv</code> (recommended: run the optimiser on a profile built from up to a year of Solax data),
+        or a <strong>flexible</strong> usage CSV (timestamp + <code class="mono">net_cost</code> or import/export energy and prices).
+        We summarise the file like the fleet tool, apply the fleet <strong>delivery haircut</strong> from batch comparison data,
+        then compute the <strong>implied monthly fee</strong> to reach your target headline margin (default 25% on the activity basis).
+      </p>
+      <p class="status-line">
+        Schema reference: <a href="{{ url_for('api_solax_quote_schema') }}"><code class="mono">/api/solax-quote/schema</code></a> (JSON).
+      </p>
+    </header>
+
+    <section class="card" id="panel-solax-quote">
+      <h2>Upload</h2>
+      <form id="form-solax-quote" class="headline-margin-form">
+        <p>
+          <label class="headline-margin-label">
+            CSV file
+            <input type="file" name="file" id="sq-file" accept=".csv,text/csv" required />
+          </label>
+        </p>
+        <fieldset class="catan-source-fieldset headline-basis-fieldset">
+          <legend class="catan-source-legend">Row format</legend>
+          <label class="catan-source-option">
+            <input type="radio" name="format" value="optimiser" checked />
+            <span class="catan-source-option-text">Optimiser export — same columns as fleet <code class="mono">optimisation_intervals.csv</code> (must include <code class="mono">net_cost</code>)</span>
+          </label>
+          <label class="catan-source-option">
+            <input type="radio" name="format" value="flexible" />
+            <span class="catan-source-option-text">Flexible usage — timestamp + energy/prices (see schema); grid-only <code class="mono">net_cost</code> is synthesised if missing</span>
+          </label>
+        </fieldset>
+        <p class="headline-margin-form hidden" id="sq-flex-prices">
+          <label class="headline-margin-label">
+            Default import price ($/kWh)
+            <input type="number" name="default_import_price" class="headline-margin-input" value="0.35" step="0.001" min="0" />
+          </label>
+          <label class="headline-margin-label">
+            Default export / FiT ($/kWh)
+            <input type="number" name="default_export_price" class="headline-margin-input" value="0.05" step="0.001" min="0" />
+          </label>
+        </p>
+        <p class="headline-margin-form">
+          <label class="headline-margin-label">
+            Target headline margin (%)
+            <input type="number" name="target_pct" id="sq-target" class="headline-margin-input" value="25" step="0.1" min="-100" max="100" />
+          </label>
+        </p>
+        <fieldset class="catan-source-fieldset headline-basis-fieldset">
+          <legend class="catan-source-legend">Denominator</legend>
+          <label class="catan-source-option">
+            <input type="radio" name="basis" value="activity" checked />
+            <span class="catan-source-option-text">Activity</span>
+          </label>
+          <label class="catan-source-option">
+            <input type="radio" name="basis" value="revenue" />
+            <span class="catan-source-option-text">Revenue</span>
+          </label>
+        </fieldset>
+        <p class="headline-margin-form">
+          <label class="headline-margin-label">
+            Battery kWh override (optional)
+            <input type="number" name="battery_kwh_override" id="sq-batt" class="headline-margin-input" value="" step="0.1" min="0" placeholder="From CSV if empty" />
+          </label>
+        </p>
+        <p>
+          <button type="submit" class="btn-primary" id="sq-submit">Compute quote</button>
+        </p>
+      </form>
+      <p class="status-line" id="sq-status"></p>
+
+      <div id="sq-results" class="hidden">
+        <h2>Results</h2>
+        <div class="results-grid results-grid--highlight" id="sq-kpis"></div>
+        <dl class="headline-summary-dl">
+          <dt>House id</dt><dd id="sq-house"></dd>
+          <dt>Billing months</dt><dd id="sq-months"></dd>
+          <dt>Sim net margin ($)</dt><dd id="sq-nm-sim"></dd>
+          <dt>Adj net margin ($)</dt><dd id="sq-nm-adj"></dd>
+          <dt>Delivery multiplier</dt><dd id="sq-mult"></dd>
+          <dt>Implied $/mo (sim)</dt><dd id="sq-fee-sim"></dd>
+          <dt>Implied $/mo (reality-adjusted)</dt><dd id="sq-fee-adj"></dd>
+        </dl>
+        <p class="status-line" id="sq-warnings"></p>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const API = "{{ url_for('api_solax_quote') }}";
+
+    function fmtMoney(x) {
+      if (x == null || Number.isNaN(x)) return "—";
+      return Number(x).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function selectedFormat() {
+      const el = document.querySelector('input[name="format"]:checked');
+      return el ? el.value : "optimiser";
+    }
+
+    function syncFlexPrices() {
+      const flex = selectedFormat() === "flexible";
+      document.getElementById("sq-flex-prices").classList.toggle("hidden", !flex);
+    }
+
+    document.querySelectorAll('input[name="format"]').forEach((r) => {
+      r.addEventListener("change", syncFlexPrices);
+    });
+    syncFlexPrices();
+
+    document.getElementById("form-solax-quote").addEventListener("submit", async (ev) => {
+      ev.preventDefault();
+      const status = document.getElementById("sq-status");
+      const results = document.getElementById("sq-results");
+      const fileEl = document.getElementById("sq-file");
+      if (!fileEl.files || !fileEl.files[0]) {
+        status.textContent = "Choose a CSV file.";
+        return;
+      }
+      const fd = new FormData();
+      fd.append("file", fileEl.files[0]);
+      fd.append("format", selectedFormat());
+      fd.append("target_pct", document.getElementById("sq-target").value);
+      const basisEl = document.querySelector('input[name="basis"]:checked');
+      fd.append("basis", basisEl ? basisEl.value : "activity");
+      const batt = document.getElementById("sq-batt").value.trim();
+      if (batt) fd.append("battery_kwh_override", batt);
+      if (selectedFormat() === "flexible") {
+        const dip = document.querySelector('input[name="default_import_price"]');
+        const dep = document.querySelector('input[name="default_export_price"]');
+        if (dip) fd.append("default_import_price", dip.value);
+        if (dep) fd.append("default_export_price", dep.value);
+      }
+
+      status.textContent = "Uploading and computing…";
+      results.classList.add("hidden");
+      document.getElementById("sq-submit").disabled = true;
+      try {
+        const res = await fetch(API, { method: "POST", body: fd });
+        const data = await res.json();
+        if (!res.ok) {
+          status.textContent = data.error ? String(data.error) : "Request failed.";
+          return;
+        }
+
+        const simFee = data.implied_monthly_fee_sim;
+        const adjFee = data.implied_monthly_fee_adjusted;
+        const kpis = document.getElementById("sq-kpis");
+        kpis.innerHTML =
+          `<div class="stat stat--highlight"><span class="label">Implied $/mo (sim)</span><span class="value">${fmtMoney(simFee)}</span></div>` +
+          `<div class="stat stat--highlight"><span class="label">Implied $/mo (reality-adjusted)</span><span class="value">${fmtMoney(adjFee)}</span></div>`;
+
+        document.getElementById("sq-house").textContent = data.house_id || "—";
+        const sm = data.summary_sim || {};
+        document.getElementById("sq-months").textContent = String(sm.n_billing_months != null ? sm.n_billing_months : "—");
+        document.getElementById("sq-nm-sim").textContent = fmtMoney(sm.net_margin);
+        const sadj = data.summary_adjusted || {};
+        document.getElementById("sq-nm-adj").textContent = fmtMoney(sadj.net_margin);
+        const dm = data.delivery_multiplier;
+        document.getElementById("sq-mult").textContent =
+          dm != null ? (Number(dm) * 100).toFixed(1) + "%" : (data.reality_adjusted_meta && data.reality_adjusted_meta.available === false ? "No batch calibration" : "—");
+        document.getElementById("sq-fee-sim").textContent = fmtMoney(simFee);
+        document.getElementById("sq-fee-adj").textContent = fmtMoney(adjFee);
+
+        const warnParts = [];
+        const conv = data.conversion;
+        if (conv && conv.warnings && conv.warnings.length) warnParts.push(...conv.warnings);
+        document.getElementById("sq-warnings").textContent = warnParts.join(" ");
+
+        status.textContent = "Done.";
+        results.classList.remove("hidden");
+      } catch (e) {
+        status.textContent = "Request failed — is the Flask server running?";
+      } finally {
+        document.getElementById("sq-submit").disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

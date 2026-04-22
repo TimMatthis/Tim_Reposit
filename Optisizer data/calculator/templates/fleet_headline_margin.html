@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fleet headline margin — Optisizer</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+  <div class="page-wrap">
+    <header class="site-header">
+      <p class="site-nav-extra">
+        <a href="{{ url_for('index') }}">← Fleet summary</a>
+        · <a href="{{ url_for('fleet_prices_page') }}">Fleet prices</a>
+        · <a href="{{ url_for('solax_quote_page') }}">Usage CSV quote</a>
+        · <a href="{{ url_for('calibrated_prediction_page') }}">Calibrated prediction</a>
+      </p>
+      <h1>Fleet headline margin &amp; implied monthly fee</h1>
+      <p>
+        Uses the same economics as the fleet run: <strong>net margin</strong> is feed-in credits minus grid charges
+        (<code class="mono">gross_revenue − gross_cost</code>). <strong>Headline margin</strong> is that net figure as a percentage of either
+        <strong>activity</strong> (charges + credits) or <strong>gross feed-in credits only</strong>, matching
+        <code class="mono">margin_pct_activity</code> / <code class="mono">margin_pct_revenue</code> on each home.
+      </p>
+      <p>
+        This page shows <strong>two views</strong>: the <em>simulated</em> numbers from the optimiser, and
+        <em>reality-adjusted</em> numbers that apply the delivery-rate haircut learned from comparing
+        simulated vs actual billed performance across the fleet. The adjusted view answers:
+        <strong>"given what we know about model accuracy, what fee is needed to hit the margin target in the real world?"</strong>
+      </p>
+    </header>
+
+    <section class="card" id="panel-headline">
+      <h2>Inputs</h2>
+      <fieldset class="catan-source-fieldset">
+        <legend class="catan-source-legend">Catan export set</legend>
+        {% for s in catan_sources %}
+        <label class="catan-source-option">
+          <input
+            type="radio"
+            name="catan_source"
+            value="{{ s.id }}"
+            data-n-files="{{ s.n_files }}"
+            {% if s.id == default_source %}checked{% endif %}
+            {% if s.n_files <= 0 %}disabled{% endif %}
+          />
+          <span class="catan-source-option-text">
+            <strong>{{ s.label }}</strong>
+            <span class="mono">{{ s.path }}</span>
+            — {{ s.n_files }} file{% if s.n_files != 1 %}s{% endif %}
+            {% if not s.exists %}<span class="catan-source-missing">(folder missing)</span>{% endif %}
+          </span>
+        </label>
+        {% endfor %}
+      </fieldset>
+      <p class="headline-margin-form">
+        <label class="headline-margin-label">
+          Target headline margin (%)
+          <input type="number" id="target-pct" class="headline-margin-input" value="5" step="0.1" min="-100" max="100" />
+        </label>
+      </p>
+      <fieldset class="catan-source-fieldset headline-basis-fieldset">
+        <legend class="catan-source-legend">Denominator for headline %</legend>
+        <label class="catan-source-option">
+          <input type="radio" name="margin_basis" value="activity" checked />
+          <span class="catan-source-option-text">Activity — net margin ÷ (gross grid charges + gross feed-in credits)</span>
+        </label>
+        <label class="catan-source-option">
+          <input type="radio" name="margin_basis" value="revenue" />
+          <span class="catan-source-option-text">Revenue — net margin ÷ gross feed-in credits only (homes with zero export value are excluded)</span>
+        </label>
+      </fieldset>
+      <p>
+        <button type="button" class="btn-primary" id="btn-run-headline">Run analysis</button>
+      </p>
+      <p class="status-line" id="headline-status"></p>
+
+      <div id="headline-results" class="hidden">
+
+        <div class="results-grid results-grid--highlight" id="headline-kpi-grid"></div>
+
+        <div class="headline-dual-summary" id="dual-summary">
+          <div class="headline-dual-col">
+            <h2>Simulated (model prediction)</h2>
+            <dl class="headline-summary-dl">
+              <dt>Basis</dt><dd id="sum-basis"></dd>
+              <dt>Target</dt><dd id="sum-target"></dd>
+              <dt>Homes scanned</dt><dd id="sum-n"></dd>
+              <dt>Natural achievers</dt><dd id="sum-ok"></dd>
+              <dt>Below hurdle</dt><dd id="sum-short"></dd>
+              <dt>Ineligible</dt><dd id="sum-bad"></dd>
+              <dt>Total dollar gap</dt><dd id="sum-gap"></dd>
+              <dt>Sum of implied $/mo</dt><dd id="sum-monthly"></dd>
+            </dl>
+          </div>
+          <div class="headline-dual-col headline-dual-col--adjusted" id="adj-summary-col">
+            <h2>Reality-adjusted (expected actuals)</h2>
+            <p class="status-line" id="adj-callout"></p>
+            <dl class="headline-summary-dl">
+              <dt>Fleet delivery multiplier</dt><dd id="adj-mult"></dd>
+              <dt>Natural achievers</dt><dd id="adj-ok"></dd>
+              <dt>Below hurdle</dt><dd id="adj-short"></dd>
+              <dt>Ineligible</dt><dd id="adj-bad"></dd>
+              <dt>Total dollar gap</dt><dd id="adj-gap"></dd>
+              <dt>Sum of implied $/mo</dt><dd id="adj-monthly"></dd>
+            </dl>
+          </div>
+        </div>
+        <p class="status-line" id="headline-note"></p>
+
+        <h2 style="margin-top:1.5rem">Comparison: simulated vs reality-adjusted fees</h2>
+        <p class="status-line">
+          The <strong>simulated</strong> column is what the model says. The <strong>adjusted</strong> column applies the delivery-rate
+          haircut per battery segment to approximate what bills will actually look like. The gap column shows how much more fee is needed in reality.
+        </p>
+        <div class="file-log">
+          <table>
+            <thead>
+              <tr>
+                <th>House</th>
+                <th class="num">Battery (kWh)</th>
+                <th class="num">Delivery mult.</th>
+                <th class="num">Sim margin %</th>
+                <th class="num">Adj margin %</th>
+                <th class="num">Sim net margin ($)</th>
+                <th class="num">Adj net margin ($)</th>
+                <th class="num">Sim fee $/mo</th>
+                <th class="num">Adj fee $/mo</th>
+                <th class="num">Extra $/mo needed</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-comparison"></tbody>
+          </table>
+        </div>
+
+        <h3 class="fleet-prices-subhead">Simulated: below hurdle — implied monthly fee per home</h3>
+        <div class="file-log">
+          <table>
+            <thead>
+              <tr>
+                <th>House</th>
+                <th class="num">Current %</th>
+                <th class="num">Net margin ($)</th>
+                <th class="num">Net at hurdle ($)</th>
+                <th class="num">Gap ($)</th>
+                <th class="num">Months</th>
+                <th class="num">Implied $/mo</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-shortfall"></tbody>
+          </table>
+        </div>
+
+        <h3 class="fleet-prices-subhead">Natural achievers (simulated)</h3>
+        <div class="file-log">
+          <table>
+            <thead>
+              <tr>
+                <th>House</th>
+                <th class="num">Margin % (basis)</th>
+                <th class="num">Net margin ($)</th>
+                <th class="num">Activity ($)</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-achievers"></tbody>
+          </table>
+        </div>
+
+        <h3 class="fleet-prices-subhead">Ineligible</h3>
+        <p class="status-line" id="ineligible-lead"></p>
+        <div class="file-log">
+          <table>
+            <thead>
+              <tr>
+                <th>House</th>
+                <th>Reason</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-ineligible"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const API = "{{ url_for('api_fleet_headline_margin') }}";
+    const DEFAULT_SOURCE = "{{ default_source }}";
+
+    function selectedSource() {
+      const el = document.querySelector('input[name="catan_source"]:checked');
+      return el ? el.value : DEFAULT_SOURCE;
+    }
+
+    function selectedBasis() {
+      const el = document.querySelector('input[name="margin_basis"]:checked');
+      return el ? el.value : "activity";
+    }
+
+    function syncButton() {
+      const el = document.querySelector('input[name="catan_source"]:checked');
+      const n = el ? parseInt(el.getAttribute("data-n-files") || "0", 10) : 0;
+      document.getElementById("btn-run-headline").disabled = !Number.isFinite(n) || n <= 0;
+    }
+
+    document.querySelectorAll('input[name="catan_source"]').forEach((inp) => {
+      inp.addEventListener("change", syncButton);
+    });
+    syncButton();
+
+    function esc(s) {
+      const d = document.createElement("div");
+      d.textContent = s == null ? "" : String(s);
+      return d.innerHTML;
+    }
+
+    function fmtMoney(x) {
+      if (x == null || Number.isNaN(x)) return "\u2014";
+      return Number(x).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function fmtPct(x) {
+      if (x == null || Number.isNaN(x)) return "\u2014";
+      return Number(x).toFixed(2) + "%";
+    }
+
+    document.getElementById("btn-run-headline").addEventListener("click", async () => {
+      const status = document.getElementById("headline-status");
+      const btn = document.getElementById("btn-run-headline");
+      const results = document.getElementById("headline-results");
+      btn.disabled = true;
+      status.textContent = "Loading all homes\u2026";
+      results.classList.add("hidden");
+      try {
+        const tp = parseFloat(document.getElementById("target-pct").value);
+        const tParam = Number.isFinite(tp) ? tp : 5;
+        const url =
+          `${API}?source=${encodeURIComponent(selectedSource())}` +
+          `&target_pct=${encodeURIComponent(String(tParam))}` +
+          `&basis=${encodeURIComponent(selectedBasis())}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.error === "no_csv") {
+          status.textContent = "No CSV files for this export set.";
+          return;
+        }
+        const lbl = data.data_source_label || data.data_source || "";
+        status.textContent = `${lbl} \u00b7 target ${data.target_margin_pct}% on ${data.basis}.`;
+
+        /* --- Simulated summary --- */
+        document.getElementById("sum-basis").textContent = data.basis_description || data.basis;
+        document.getElementById("sum-target").textContent = String(data.target_margin_pct) + "%";
+        document.getElementById("sum-n").textContent = String(data.n_homes_input || 0);
+        document.getElementById("sum-ok").textContent = String(data.n_natural_achievers || 0);
+        document.getElementById("sum-short").textContent = String(data.n_below_hurdle || 0);
+        document.getElementById("sum-bad").textContent = String(data.n_ineligible || 0);
+        const tot = data.totals || {};
+        document.getElementById("sum-gap").textContent = fmtMoney(tot.shortfall_dollars_sum);
+        document.getElementById("sum-monthly").textContent = fmtMoney(tot.monthly_fee_sum_across_shortfall_homes);
+        document.getElementById("headline-note").textContent = data.note || "";
+
+        /* --- Reality-adjusted summary --- */
+        const ra = data.reality_adjusted || {};
+        const adjCol = document.getElementById("adj-summary-col");
+        const adjCallout = document.getElementById("adj-callout");
+        if (ra.available) {
+          adjCol.classList.remove("hidden");
+          const m = ra.fleet_multiplier;
+          const sf = ra.sign_flip || {};
+          let callout = `Fleet median delivery rate: ${(m * 100).toFixed(1)}%. `;
+          if (m < 0) {
+            callout += "The model predicts profit, but the median home actually loses money in reality. ";
+          }
+          if (sf.pct_flip_to_loss != null) {
+            callout += `${sf.pct_flip_to_loss}% of predicted-profitable homes actually lost money.`;
+          }
+          adjCallout.textContent = callout;
+
+          document.getElementById("adj-mult").textContent = (m * 100).toFixed(1) + "% (p25: " + (ra.fleet_p25_mult * 100).toFixed(1) + "%, p75: " + (ra.fleet_p75_mult * 100).toFixed(1) + "%)";
+          const adjA = ra.analysis || {};
+          document.getElementById("adj-ok").textContent = String(adjA.n_natural_achievers || 0);
+          document.getElementById("adj-short").textContent = String(adjA.n_below_hurdle || 0);
+          document.getElementById("adj-bad").textContent = String(adjA.n_ineligible || 0);
+          const adjTot = adjA.totals || {};
+          document.getElementById("adj-gap").textContent = fmtMoney(adjTot.shortfall_dollars_sum);
+          document.getElementById("adj-monthly").textContent = fmtMoney(adjTot.monthly_fee_sum_across_shortfall_homes);
+        } else {
+          adjCol.classList.add("hidden");
+          adjCallout.textContent = "Batch comparison data not available \u2014 reality adjustment could not be computed.";
+        }
+
+        /* --- KPI grid --- */
+        const kpiGrid = document.getElementById("headline-kpi-grid");
+        kpiGrid.innerHTML = "";
+        const simTotals = data.totals || {};
+        const simMonthly = simTotals.monthly_fee_sum_across_shortfall_homes || 0;
+        if (ra.available) {
+          const adjA2 = ra.analysis || {};
+          const adjTot2 = adjA2.totals || {};
+          const adjMonthly = adjTot2.monthly_fee_sum_across_shortfall_homes || 0;
+          const mult100 = ((ra.fleet_multiplier || 0) * 100).toFixed(1);
+          kpiGrid.innerHTML =
+            `<div class="stat stat--highlight"><span class="label">Model thinks</span><span class="value">$${fmtMoney(simMonthly)}/mo total fees</span></div>` +
+            `<div class="stat stat--highlight"><span class="label">Reality needs</span><span class="value">$${fmtMoney(adjMonthly)}/mo total fees</span></div>` +
+            `<div class="stat stat--highlight"><span class="label">Fleet delivery rate</span><span class="value">${mult100}%</span></div>` +
+            `<div class="stat stat--highlight"><span class="label">Sim achievers \u2192 Adj achievers</span><span class="value">${data.n_natural_achievers || 0} \u2192 ${adjA2.n_natural_achievers || 0}</span></div>`;
+        }
+
+        /* --- Comparison table (sim vs adjusted side by side) --- */
+        const compBody = document.getElementById("tbody-comparison");
+        compBody.innerHTML = "";
+        if (ra.available) {
+          const adjAnalysis = ra.analysis || {};
+          const simAll = [...(data.shortfall_homes || []), ...(data.achievers || [])];
+          const adjAll = [...(adjAnalysis.shortfall_homes || []), ...(adjAnalysis.achievers || [])];
+          const adjMap = {};
+          adjAll.forEach((r) => { adjMap[r.house_id] = r; });
+
+          simAll.forEach((sim) => {
+            const adj = adjMap[sim.house_id] || {};
+            sim._adjFee = adj.monthly_fee || 0;
+            sim._simFee = sim.monthly_fee || 0;
+            sim._extra = sim._adjFee - sim._simFee;
+            sim._adj = adj;
+          });
+          simAll.sort((a, b) => b._extra - a._extra);
+          simAll.forEach((sim) => {
+            const adj = sim._adj || {};
+            const simFee = sim._simFee;
+            const adjFee = sim._adjFee;
+            const extra = sim._extra;
+            const batt = sim.max_battery_soc_kwh;
+            const mult = adj.delivery_multiplier;
+            const tr = document.createElement("tr");
+            tr.innerHTML =
+              `<td><code class="mono">${esc((sim.house_id || "").slice(0, 12))}\u2026</code></td>` +
+              `<td class="num">${batt != null ? Number(batt).toFixed(1) : "\u2014"}</td>` +
+              `<td class="num">${mult != null ? (mult * 100).toFixed(1) + "%" : "\u2014"}</td>` +
+              `<td class="num">${esc(fmtPct(sim.current_margin_pct))}</td>` +
+              `<td class="num">${esc(fmtPct(adj.current_margin_pct))}</td>` +
+              `<td class="num">${esc(fmtMoney(sim.net_margin))}</td>` +
+              `<td class="num">${esc(fmtMoney(adj.net_margin))}</td>` +
+              `<td class="num">${esc(fmtMoney(simFee))}</td>` +
+              `<td class="num">${esc(fmtMoney(adjFee))}</td>` +
+              `<td class="num" style="font-weight:600;color:${extra > 0.01 ? "var(--color-error)" : "var(--color-success)"}">${esc(fmtMoney(extra))}</td>`;
+            compBody.appendChild(tr);
+          });
+        }
+
+        /* --- Simulated shortfall table --- */
+        const ts = document.getElementById("tbody-shortfall");
+        ts.innerHTML = "";
+        (data.shortfall_homes || []).forEach((r) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML =
+            `<td><code class="mono">${esc(r.house_id)}</code></td>` +
+            `<td class="num">${esc(fmtPct(r.current_margin_pct))}</td>` +
+            `<td class="num">${esc(fmtMoney(r.net_margin))}</td>` +
+            `<td class="num">${esc(fmtMoney(r.net_margin_required_for_hurdle))}</td>` +
+            `<td class="num">${esc(fmtMoney(r.shortfall_total))}</td>` +
+            `<td class="num">${esc(r.n_billing_months)}</td>` +
+            `<td class="num">${esc(fmtMoney(r.monthly_fee))}</td>`;
+          ts.appendChild(tr);
+        });
+
+        /* --- Achievers table --- */
+        const ta = document.getElementById("tbody-achievers");
+        ta.innerHTML = "";
+        (data.achievers || []).forEach((r) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML =
+            `<td><code class="mono">${esc(r.house_id)}</code></td>` +
+            `<td class="num">${esc(fmtPct(r.current_margin_pct))}</td>` +
+            `<td class="num">${esc(fmtMoney(r.net_margin))}</td>` +
+            `<td class="num">${esc(fmtMoney(r.activity))}</td>`;
+          ta.appendChild(tr);
+        });
+
+        /* --- Ineligible table --- */
+        const ti = document.getElementById("tbody-ineligible");
+        ti.innerHTML = "";
+        const bad = data.ineligible || [];
+        document.getElementById("ineligible-lead").textContent =
+          bad.length === 0 ? "None." : `${bad.length} home(s) could not be scored on this basis.`;
+        bad.forEach((r) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `<td><code class="mono">${esc(r.house_id)}</code></td><td>${esc(r.reason)}</td>`;
+          ti.appendChild(tr);
+        });
+
+        results.classList.remove("hidden");
+      } catch (e) {
+        status.textContent = "Request failed \u2014 is the Flask server running?";
+      } finally {
+        syncButton();
+      }
+    });
+  </script>
+</body>
+</html>

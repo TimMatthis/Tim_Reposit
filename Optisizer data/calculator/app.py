@@ -20,6 +20,8 @@ import os
 import re
 import shutil
 import tempfile
+import threading
+import time
 import uuid
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from datetime import date
@@ -86,6 +88,14 @@ BATCH_MSC_SCENARIO_KEYS: tuple[str, ...] = (
     "counterfactual_msc_mode",
 )
 
+# Solar Sharer Offer (SSO) counterfactual block (Australian DMO 8, opt-in tariff with 3-hour free window).
+BATCH_SSO_SCENARIO_KEYS: tuple[str, ...] = (
+    "sso",
+    "sso_counterfactual",
+    "counterfactual_sso",
+    "solar_sharer_offer",
+)
+
 # Optional per-row counterfactual in ``optimisation_intervals.csv`` (same sign convention as ``net_cost``).
 _NO_TRADE_NET_COST_HEADER_NAMES: tuple[str, ...] = (
     "net_cost_retail_without_trade",
@@ -94,32 +104,199 @@ _NO_TRADE_NET_COST_HEADER_NAMES: tuple[str, ...] = (
     "net_cost_no_trade",
 )
 
-# MSC valuation assumptions (energy-only):
-# - same import/export rate within each interval, so value comes from offset, not timing spread,
-# - 3 time-of-use windows requested for DMO pricing.
-MSC_TOU_PRICE_PEAK_PER_KWH = 0.45      # 4pm-8pm
-MSC_TOU_PRICE_MIDDAY_PER_KWH = 0.12    # 10am-2pm
-MSC_TOU_PRICE_SHOULDER_PER_KWH = 0.37  # all other times
+# MSC valuation assumptions (energy-only), all configurable via env vars.
+def _env_float(name: str, default: float) -> float:
+    raw = os.getenv(name)
+    if raw is None:
+        return float(default)
+    try:
+        return float(raw)
+    except (TypeError, ValueError):
+        return float(default)
+
+
+def _env_int(name: str, default: int) -> int:
+    raw = os.getenv(name)
+    if raw is None:
+        return int(default)
+    try:
+        return int(raw)
+    except (TypeError, ValueError):
+        return int(default)
+
+
+# Import TOU windows (inclusive start hour, exclusive end hour).
+# The existing ``peak_*`` fields model the afternoon/evening peak; a separate AM
+# peak was added to cover the early-morning demand spike many networks bill for.
+MSC_PEAK_AM_START_HOUR = _env_int("MSC_PEAK_AM_START_HOUR", 7)   # 7am
+MSC_PEAK_AM_END_HOUR = _env_int("MSC_PEAK_AM_END_HOUR", 9)       # 9am
+MSC_PEAK_START_HOUR = _env_int("MSC_PEAK_START_HOUR", 16)        # 4pm (afternoon peak)
+MSC_PEAK_END_HOUR = _env_int("MSC_PEAK_END_HOUR", 20)            # 8pm
+MSC_MIDDAY_START_HOUR = _env_int("MSC_MIDDAY_START_HOUR", 10)    # 10am
+MSC_MIDDAY_END_HOUR = _env_int("MSC_MIDDAY_END_HOUR", 14)        # 2pm
+
+# Import rates by window ($/kWh)
+MSC_IMPORT_RATE_PEAK_AM_PER_KWH = _env_float("MSC_IMPORT_RATE_PEAK_AM_PER_KWH", 0.37)
+MSC_IMPORT_RATE_PEAK_PER_KWH = _env_float("MSC_IMPORT_RATE_PEAK_PER_KWH", 0.45)
+MSC_IMPORT_RATE_MIDDAY_PER_KWH = _env_float("MSC_IMPORT_RATE_MIDDAY_PER_KWH", 0.12)
+MSC_IMPORT_RATE_SHOULDER_PER_KWH = _env_float("MSC_IMPORT_RATE_SHOULDER_PER_KWH", 0.37)
+
+# Export valuation / feed-in tariff used in MSC calculations ($/kWh)
+MSC_EXPORT_FEED_IN_TARIFF_PER_KWH = _env_float("MSC_EXPORT_FEED_IN_TARIFF_PER_KWH", 0.10)
 MSC_COUNTERFACTUAL_MODE = "inverter_msc_mode"
-MSC_CACHE_SCHEMA_VERSION = 2
+# Bumped to 5 when per-TOU-window monthly import buckets were added to the
+# summary (monthly_import_kwh_by_window / monthly_import_cost_by_window); pre-v5
+# caches lack those fields so are cleanly invalidated and re-computed.
+MSC_CACHE_SCHEMA_VERSION = 5
 
 
-def _msc_tou_price_per_kwh(ts_raw: str) -> float:
+def _msc_cfg_defaults() -> dict[str, Any]:
+    """Baseline MSC configuration (driven by env vars / module defaults)."""
+    return {
+        "peak_am_start_hour": int(MSC_PEAK_AM_START_HOUR),
+        "peak_am_end_hour": int(MSC_PEAK_AM_END_HOUR),
+        "peak_start_hour": int(MSC_PEAK_START_HOUR),
+        "peak_end_hour": int(MSC_PEAK_END_HOUR),
+        "midday_start_hour": int(MSC_MIDDAY_START_HOUR),
+        "midday_end_hour": int(MSC_MIDDAY_END_HOUR),
+        "import_rate_peak_am_per_kwh": float(MSC_IMPORT_RATE_PEAK_AM_PER_KWH),
+        "import_rate_peak_per_kwh": float(MSC_IMPORT_RATE_PEAK_PER_KWH),
+        "import_rate_midday_per_kwh": float(MSC_IMPORT_RATE_MIDDAY_PER_KWH),
+        "import_rate_shoulder_per_kwh": float(MSC_IMPORT_RATE_SHOULDER_PER_KWH),
+        "export_feed_in_tariff_per_kwh": float(MSC_EXPORT_FEED_IN_TARIFF_PER_KWH),
+    }
+
+
+def _clamp_hour(value: Any, default: int) -> int:
+    try:
+        n = int(float(value))
+    except (TypeError, ValueError):
+        return int(default)
+    return max(0, min(24, n))
+
+
+def _clamp_rate(value: Any, default: float) -> float:
+    try:
+        n = float(value)
+    except (TypeError, ValueError):
+        return float(default)
+    # Defensive clamp: $/kWh shouldn't ever exceed $10/kWh in sane tariffs; allow small negatives.
+    return max(-10.0, min(10.0, n))
+
+
+def msc_config_from_request(req) -> dict[str, Any]:
     """
-    3-window MSC DMO valuation (same import/export within each interval):
-    - 16:00-19:59 => 0.45 $/kWh
-    - 10:00-13:59 => 0.12 $/kWh
-    - all other times => 0.37 $/kWh
+    Build an MSC config dict from query-string overrides, falling back to module defaults.
+
+    Supported query params (all optional):
+      msc_peak_am_start_hour, msc_peak_am_end_hour,
+      msc_peak_start_hour, msc_peak_end_hour,
+      msc_midday_start_hour, msc_midday_end_hour,
+      msc_import_rate_peak_am_per_kwh, msc_import_rate_peak_per_kwh,
+      msc_import_rate_midday_per_kwh, msc_import_rate_shoulder_per_kwh,
+      msc_export_feed_in_tariff_per_kwh.
+      Alias also accepted: msc_export_tariff_per_kwh.
+    Windows are sanity-checked: if end <= start, the whole window reverts to defaults.
     """
+    d = _msc_cfg_defaults()
+    if req is None:
+        return d
+    args = req.args
+    if "msc_peak_am_start_hour" in args:
+        d["peak_am_start_hour"] = _clamp_hour(args.get("msc_peak_am_start_hour"), d["peak_am_start_hour"])
+    if "msc_peak_am_end_hour" in args:
+        d["peak_am_end_hour"] = _clamp_hour(args.get("msc_peak_am_end_hour"), d["peak_am_end_hour"])
+    if "msc_peak_start_hour" in args:
+        d["peak_start_hour"] = _clamp_hour(args.get("msc_peak_start_hour"), d["peak_start_hour"])
+    if "msc_peak_end_hour" in args:
+        d["peak_end_hour"] = _clamp_hour(args.get("msc_peak_end_hour"), d["peak_end_hour"])
+    if "msc_midday_start_hour" in args:
+        d["midday_start_hour"] = _clamp_hour(args.get("msc_midday_start_hour"), d["midday_start_hour"])
+    if "msc_midday_end_hour" in args:
+        d["midday_end_hour"] = _clamp_hour(args.get("msc_midday_end_hour"), d["midday_end_hour"])
+    if "msc_import_rate_peak_am_per_kwh" in args:
+        d["import_rate_peak_am_per_kwh"] = _clamp_rate(
+            args.get("msc_import_rate_peak_am_per_kwh"), d["import_rate_peak_am_per_kwh"]
+        )
+    if "msc_import_rate_peak_per_kwh" in args:
+        d["import_rate_peak_per_kwh"] = _clamp_rate(
+            args.get("msc_import_rate_peak_per_kwh"), d["import_rate_peak_per_kwh"]
+        )
+    if "msc_import_rate_midday_per_kwh" in args:
+        d["import_rate_midday_per_kwh"] = _clamp_rate(
+            args.get("msc_import_rate_midday_per_kwh"), d["import_rate_midday_per_kwh"]
+        )
+    if "msc_import_rate_shoulder_per_kwh" in args:
+        d["import_rate_shoulder_per_kwh"] = _clamp_rate(
+            args.get("msc_import_rate_shoulder_per_kwh"), d["import_rate_shoulder_per_kwh"]
+        )
+    export_tariff_raw = None
+    if "msc_export_tariff_per_kwh" in args:
+        export_tariff_raw = args.get("msc_export_tariff_per_kwh")
+    elif "msc_export_feed_in_tariff_per_kwh" in args:
+        export_tariff_raw = args.get("msc_export_feed_in_tariff_per_kwh")
+    if export_tariff_raw is not None:
+        d["export_feed_in_tariff_per_kwh"] = _clamp_rate(
+            export_tariff_raw, d["export_feed_in_tariff_per_kwh"]
+        )
+    defaults = _msc_cfg_defaults()
+    if d["peak_am_end_hour"] <= d["peak_am_start_hour"]:
+        d["peak_am_start_hour"] = defaults["peak_am_start_hour"]
+        d["peak_am_end_hour"] = defaults["peak_am_end_hour"]
+    if d["peak_end_hour"] <= d["peak_start_hour"]:
+        d["peak_start_hour"] = defaults["peak_start_hour"]
+        d["peak_end_hour"] = defaults["peak_end_hour"]
+    if d["midday_end_hour"] <= d["midday_start_hour"]:
+        d["midday_start_hour"] = defaults["midday_start_hour"]
+        d["midday_end_hour"] = defaults["midday_end_hour"]
+    # Guard against the AM peak overlapping the PM peak (order by start hour if it does).
+    if d["peak_am_start_hour"] >= d["peak_start_hour"] and d["peak_am_end_hour"] > d["peak_start_hour"]:
+        d["peak_am_start_hour"] = defaults["peak_am_start_hour"]
+        d["peak_am_end_hour"] = defaults["peak_am_end_hour"]
+    return d
+
+
+def _msc_cfg_signature(cfg: dict[str, Any]) -> str:
+    """Deterministic short hash of the fields that affect MSC results (cache key suffix)."""
+    items = (
+        int(cfg.get("peak_am_start_hour", 0)),
+        int(cfg.get("peak_am_end_hour", 0)),
+        int(cfg["peak_start_hour"]),
+        int(cfg["peak_end_hour"]),
+        int(cfg["midday_start_hour"]),
+        int(cfg["midday_end_hour"]),
+        round(float(cfg.get("import_rate_peak_am_per_kwh", 0.0)), 6),
+        round(float(cfg["import_rate_peak_per_kwh"]), 6),
+        round(float(cfg["import_rate_midday_per_kwh"]), 6),
+        round(float(cfg["import_rate_shoulder_per_kwh"]), 6),
+        round(float(cfg["export_feed_in_tariff_per_kwh"]), 6),
+    )
+    return hashlib.sha1(repr(items).encode("utf-8")).hexdigest()[:12]
+
+
+def _msc_import_price_per_kwh(ts_raw: str, cfg: dict[str, Any] | None = None) -> float:
+    """
+    4-window MSC DMO valuation (same import/export within each interval):
+    - morning peak window => configured AM peak rate
+    - afternoon/evening peak window => configured peak rate
+    - midday window => configured midday rate
+    - all other times => configured shoulder rate
+    Windows are checked in a fixed order; the first match wins, so AM peak takes
+    precedence if it ever overlaps with midday.
+    """
+    if cfg is None:
+        cfg = _msc_cfg_defaults()
     if len(ts_raw) >= 13 and ts_raw[11:13].isdigit():
         hour = int(ts_raw[11:13])
     else:
         hour = -1
-    if 16 <= hour < 20:
-        return MSC_TOU_PRICE_PEAK_PER_KWH
-    if 10 <= hour < 14:
-        return MSC_TOU_PRICE_MIDDAY_PER_KWH
-    return MSC_TOU_PRICE_SHOULDER_PER_KWH
+    if int(cfg.get("peak_am_start_hour", 0)) <= hour < int(cfg.get("peak_am_end_hour", 0)):
+        return float(cfg.get("import_rate_peak_am_per_kwh", cfg["import_rate_peak_per_kwh"]))
+    if int(cfg["peak_start_hour"]) <= hour < int(cfg["peak_end_hour"]):
+        return float(cfg["import_rate_peak_per_kwh"])
+    if int(cfg["midday_start_hour"]) <= hour < int(cfg["midday_end_hour"]):
+        return float(cfg["import_rate_midday_per_kwh"])
+    return float(cfg["import_rate_shoulder_per_kwh"])
 
 
 def _batch_no_trade_side(rec: dict[str, Any]) -> dict[str, Any] | None:
@@ -283,19 +460,100 @@ def _find_uid_csv_for_msc(uid: str) -> Path | None:
     return None
 
 
-def _msc_cache_path_for_csv(csv_path: Path) -> Path:
+def _msc_cache_path_for_csv(csv_path: Path, cfg: dict[str, Any] | None = None) -> Path:
+    """Cache path includes an MSC-config signature so different parameter sets coexist."""
     cache_sub = CACHE_DIR / "msc_counterfactual"
     cache_sub.mkdir(parents=True, exist_ok=True)
     stable_key = hashlib.sha1(str(csv_path).encode("utf-8")).hexdigest()
-    return cache_sub / f"{stable_key}.json"
+    sig = _msc_cfg_signature(cfg or _msc_cfg_defaults())
+    return cache_sub / f"{stable_key}__{sig}.json"
+
+
+# Process-local memo so repeated MSC lookups within a single request (and across
+# the two APIs that the MSC page fires in parallel) don't keep re-parsing the
+# on-disk JSON cache for every home on every call. Keyed by
+# (csv_path, mtime_ns, size, cfg_signature) so stale entries are impossible.
+_MSC_MEMO_MAX_ENTRIES = 4096
+_MSC_MEMO: "dict[tuple[str, int, int, str], dict[str, Any]]" = {}
+_MSC_MEMO_LOCK = threading.Lock()
+
+
+def _msc_memo_key(csv_path: Path, cfg: dict[str, Any]) -> tuple[str, int, int, str] | None:
+    try:
+        stat = csv_path.stat()
+    except OSError:
+        return None
+    return (str(csv_path), stat.st_mtime_ns, stat.st_size, _msc_cfg_signature(cfg))
+
+
+def _msc_memo_get(csv_path: Path, cfg: dict[str, Any]) -> dict[str, Any] | None:
+    key = _msc_memo_key(csv_path, cfg)
+    if key is None:
+        return None
+    with _MSC_MEMO_LOCK:
+        return _MSC_MEMO.get(key)
+
+
+def _msc_memo_set(csv_path: Path, cfg: dict[str, Any], summary: dict[str, Any]) -> None:
+    key = _msc_memo_key(csv_path, cfg)
+    if key is None:
+        return
+    with _MSC_MEMO_LOCK:
+        if len(_MSC_MEMO) >= _MSC_MEMO_MAX_ENTRIES:
+            # Simple eviction: drop roughly half when full (rare in practice).
+            drop_keys = list(_MSC_MEMO.keys())[: _MSC_MEMO_MAX_ENTRIES // 2]
+            for k in drop_keys:
+                _MSC_MEMO.pop(k, None)
+        _MSC_MEMO[key] = summary
 
 
 def _simulate_inverter_msc_from_csv(
     csv_path: Path,
     rec: dict[str, Any],
+    cfg: dict[str, Any] | None = None,
 ) -> dict[str, Any] | None:
-    stat = csv_path.stat()
-    cache_path = _msc_cache_path_for_csv(csv_path)
+    if cfg is None:
+        cfg = _msc_cfg_defaults()
+    specs = _extract_battery_specs_for_msc(rec)
+    return _simulate_inverter_msc_from_csv_with_specs(csv_path, specs, cfg)
+
+
+def _simulate_inverter_msc_from_csv_with_specs(
+    csv_path: Path,
+    specs: dict[str, float],
+    cfg: dict[str, Any] | None = None,
+) -> dict[str, Any] | None:
+    """
+    Worker-friendly variant of the MSC simulator: accepts pre-extracted battery specs
+    so large ``rec`` dicts don't need to be pickled when running in a process pool.
+    Results are memoised in-process to avoid repeated disk-cache reads within a run.
+    """
+    if cfg is None:
+        cfg = _msc_cfg_defaults()
+    peak_am_start = int(cfg.get("peak_am_start_hour", 0))
+    peak_am_end = int(cfg.get("peak_am_end_hour", 0))
+    peak_start = int(cfg["peak_start_hour"])
+    peak_end = int(cfg["peak_end_hour"])
+    midday_start = int(cfg["midday_start_hour"])
+    midday_end = int(cfg["midday_end_hour"])
+    rate_peak_am = float(cfg.get("import_rate_peak_am_per_kwh", cfg["import_rate_peak_per_kwh"]))
+    rate_peak = float(cfg["import_rate_peak_per_kwh"])
+    rate_midday = float(cfg["import_rate_midday_per_kwh"])
+    rate_shoulder = float(cfg["import_rate_shoulder_per_kwh"])
+    fit_rate = float(cfg["export_feed_in_tariff_per_kwh"])
+
+    try:
+        stat = csv_path.stat()
+    except OSError:
+        return None
+
+    memo_key = (str(csv_path), stat.st_mtime_ns, stat.st_size, _msc_cfg_signature(cfg))
+    with _MSC_MEMO_LOCK:
+        cached_mem = _MSC_MEMO.get(memo_key)
+    if cached_mem is not None:
+        return cached_mem
+
+    cache_path = _msc_cache_path_for_csv(csv_path, cfg)
     if cache_path.exists():
         try:
             cached = json.loads(cache_path.read_text(encoding="utf-8"))
@@ -304,17 +562,26 @@ def _simulate_inverter_msc_from_csv(
                 meta.get("mtime_ns") == stat.st_mtime_ns
                 and meta.get("size") == stat.st_size
                 and meta.get("schema") == MSC_CACHE_SCHEMA_VERSION
-                and meta.get("price_peak_per_kwh") == round(MSC_TOU_PRICE_PEAK_PER_KWH, 6)
-                and meta.get("price_midday_per_kwh") == round(MSC_TOU_PRICE_MIDDAY_PER_KWH, 6)
-                and meta.get("price_shoulder_per_kwh") == round(MSC_TOU_PRICE_SHOULDER_PER_KWH, 6)
+                and meta.get("peak_am_start_hour") == peak_am_start
+                and meta.get("peak_am_end_hour") == peak_am_end
+                and meta.get("peak_start_hour") == peak_start
+                and meta.get("peak_end_hour") == peak_end
+                and meta.get("midday_start_hour") == midday_start
+                and meta.get("midday_end_hour") == midday_end
+                and meta.get("import_rate_peak_am_per_kwh") == round(rate_peak_am, 6)
+                and meta.get("import_rate_peak_per_kwh") == round(rate_peak, 6)
+                and meta.get("import_rate_midday_per_kwh") == round(rate_midday, 6)
+                and meta.get("import_rate_shoulder_per_kwh") == round(rate_shoulder, 6)
+                and meta.get("export_feed_in_tariff_per_kwh") == round(fit_rate, 6)
             ):
                 summary = cached.get("summary")
                 if isinstance(summary, dict):
+                    with _MSC_MEMO_LOCK:
+                        _MSC_MEMO[memo_key] = summary
                     return summary
         except (json.JSONDecodeError, OSError, ValueError):
             pass
 
-    specs = _extract_battery_specs_for_msc(rec)
     cap = float(specs["capacity_kwh"])
     min_soc = float(specs["min_soc_kwh"])
     soc = float(specs["initial_soc_kwh"])
@@ -327,6 +594,14 @@ def _simulate_inverter_msc_from_csv(
     total_solar_kwh = 0.0
     gross_import = 0.0
     gross_export = 0.0
+    monthly_gross_import: dict[str, float] = {}
+    monthly_gross_export: dict[str, float] = {}
+    # Per-TOU-window monthly buckets: same classification as
+    # ``_msc_import_price_per_kwh`` (first-match-wins order:
+    # peak_am -> peak_pm -> midday -> shoulder). Used by the MSC page to show
+    # which windows drive each month's import $.
+    monthly_import_kwh_by_window: dict[str, dict[str, float]] = {}
+    monthly_import_cost_by_window: dict[str, dict[str, float]] = {}
 
     with csv_path.open(newline="", encoding="utf-8", errors="replace") as f:
         reader = csv.reader(f)
@@ -390,11 +665,40 @@ def _simulate_inverter_msc_from_csv(
                 soc = max(min_soc, soc - (battery_to_load / discharge_eff))
                 remaining_load -= battery_to_load
 
-            total_import_kwh += max(remaining_load, 0.0)
-            total_export_kwh += max(solar_excess, 0.0)
-            p = _msc_tou_price_per_kwh(ts_raw)
-            gross_import += max(remaining_load, 0.0) * p
-            gross_export += max(solar_excess, 0.0) * p
+            grid_import_kwh = max(remaining_load, 0.0)
+            grid_export_kwh = max(solar_excess, 0.0)
+            total_import_kwh += grid_import_kwh
+            total_export_kwh += grid_export_kwh
+            # Classify the interval's TOU window once so pricing and the
+            # per-window bucket use the same decision.
+            if len(ts_raw) >= 13 and ts_raw[11:13].isdigit():
+                _hour = int(ts_raw[11:13])
+            else:
+                _hour = -1
+            if peak_am_start <= _hour < peak_am_end:
+                window = "peak_am"
+                p_import = rate_peak_am
+            elif peak_start <= _hour < peak_end:
+                window = "peak_pm"
+                p_import = rate_peak
+            elif midday_start <= _hour < midday_end:
+                window = "midday"
+                p_import = rate_midday
+            else:
+                window = "shoulder"
+                p_import = rate_shoulder
+            import_cost = grid_import_kwh * p_import
+            export_revenue = grid_export_kwh * fit_rate
+            gross_import += import_cost
+            gross_export += export_revenue
+            if len(ts_raw) >= 7:
+                month_key = ts_raw[:7]
+                monthly_gross_import[month_key] = monthly_gross_import.get(month_key, 0.0) + import_cost
+                monthly_gross_export[month_key] = monthly_gross_export.get(month_key, 0.0) + export_revenue
+                mk_kwh = monthly_import_kwh_by_window.setdefault(month_key, {})
+                mk_cost = monthly_import_cost_by_window.setdefault(month_key, {})
+                mk_kwh[window] = mk_kwh.get(window, 0.0) + grid_import_kwh
+                mk_cost[window] = mk_cost.get(window, 0.0) + import_cost
 
     net_energy_cost = gross_import - gross_export
     export_offset_pct = (
@@ -415,12 +719,34 @@ def _simulate_inverter_msc_from_csv(
         "export_vwap": None if export_vwap is None else round(export_vwap, 6),
         "export_offset_pct": None if export_offset_pct is None else round(export_offset_pct, 6),
         "counterfactual_mode": MSC_COUNTERFACTUAL_MODE,
-        "msc_pricing_mode": "time_of_use_3_block",
-        "msc_price_peak_per_kwh": round(MSC_TOU_PRICE_PEAK_PER_KWH, 6),
-        "msc_price_midday_per_kwh": round(MSC_TOU_PRICE_MIDDAY_PER_KWH, 6),
-        "msc_price_shoulder_per_kwh": round(MSC_TOU_PRICE_SHOULDER_PER_KWH, 6),
+        "msc_pricing_mode": "time_of_use_4_block",
+        "msc_peak_am_start_hour": peak_am_start,
+        "msc_peak_am_end_hour": peak_am_end,
+        "msc_peak_start_hour": peak_start,
+        "msc_peak_end_hour": peak_end,
+        "msc_midday_start_hour": midday_start,
+        "msc_midday_end_hour": midday_end,
+        "msc_import_rate_peak_am_per_kwh": round(rate_peak_am, 6),
+        "msc_import_rate_peak_per_kwh": round(rate_peak, 6),
+        "msc_import_rate_midday_per_kwh": round(rate_midday, 6),
+        "msc_import_rate_shoulder_per_kwh": round(rate_shoulder, 6),
+        "msc_export_feed_in_tariff_per_kwh": round(fit_rate, 6),
+        "monthly_gross_import_cost": {k: round(vv, 6) for k, vv in monthly_gross_import.items()},
+        "monthly_gross_export_revenue": {k: round(vv, 6) for k, vv in monthly_gross_export.items()},
+        "monthly_net_energy_cost": {
+            k: round(monthly_gross_import.get(k, 0.0) - monthly_gross_export.get(k, 0.0), 6)
+            for k in sorted(set(monthly_gross_import.keys()) | set(monthly_gross_export.keys()))
+        },
+        "monthly_import_kwh_by_window": {
+            mk: {w: round(v, 6) for w, v in wins.items()}
+            for mk, wins in monthly_import_kwh_by_window.items()
+        },
+        "monthly_import_cost_by_window": {
+            mk: {w: round(v, 6) for w, v in wins.items()}
+            for mk, wins in monthly_import_cost_by_window.items()
+        },
         "energy_only": True,
-        "same_import_export_rate_per_interval": True,
+        "same_import_export_rate_per_interval": False,
         "time_of_use_valuation": True,
     }
     try:
@@ -431,9 +757,636 @@ def _simulate_inverter_msc_from_csv(
                         "mtime_ns": stat.st_mtime_ns,
                         "size": stat.st_size,
                         "schema": MSC_CACHE_SCHEMA_VERSION,
-                        "price_peak_per_kwh": round(MSC_TOU_PRICE_PEAK_PER_KWH, 6),
-                        "price_midday_per_kwh": round(MSC_TOU_PRICE_MIDDAY_PER_KWH, 6),
-                        "price_shoulder_per_kwh": round(MSC_TOU_PRICE_SHOULDER_PER_KWH, 6),
+                        "peak_am_start_hour": peak_am_start,
+                        "peak_am_end_hour": peak_am_end,
+                        "peak_start_hour": peak_start,
+                        "peak_end_hour": peak_end,
+                        "midday_start_hour": midday_start,
+                        "midday_end_hour": midday_end,
+                        "import_rate_peak_am_per_kwh": round(rate_peak_am, 6),
+                        "import_rate_peak_per_kwh": round(rate_peak, 6),
+                        "import_rate_midday_per_kwh": round(rate_midday, 6),
+                        "import_rate_shoulder_per_kwh": round(rate_shoulder, 6),
+                        "export_feed_in_tariff_per_kwh": round(fit_rate, 6),
+                    },
+                    "summary": summary,
+                }
+            ),
+            encoding="utf-8",
+        )
+    except OSError:
+        pass
+    with _MSC_MEMO_LOCK:
+        _MSC_MEMO[memo_key] = summary
+    return summary
+
+
+def _msc_sim_pool_worker(
+    csv_path_str: str,
+    specs: dict[str, float],
+    cfg: dict[str, Any],
+) -> tuple[str, dict[str, Any] | None]:
+    """Top-level helper so ProcessPoolExecutor can pickle it.
+
+    Each worker process has its own in-memory memo but still shares the on-disk
+    JSON cache with the parent, so repeat runs across processes are fast.
+    """
+    try:
+        summary = _simulate_inverter_msc_from_csv_with_specs(Path(csv_path_str), specs, cfg)
+    except Exception:  # noqa: BLE001
+        summary = None
+    return csv_path_str, summary
+
+
+def _build_msc_counterfactual_side(
+    uid: str,
+    rec: dict[str, Any],
+    cfg: dict[str, Any] | None = None,
+) -> dict[str, Any] | None:
+    existing = _batch_msc_side(rec)
+    if existing is not None and cfg is None:
+        # Only trust pre-existing MSC blocks when caller did not ask for a specific config
+        # (otherwise we must rebuild so the numbers reflect the chosen parameters).
+        return existing
+    if not isinstance(rec, dict) or not uid:
+        return None
+    csv_path = _find_uid_csv_for_msc(uid)
+    if csv_path is None:
+        return existing
+    return _simulate_inverter_msc_from_csv(csv_path, rec, cfg)
+
+
+# Homes needed before we fan MSC simulation out to a process pool. Pool startup
+# and IPC overhead dominates for small batches, so we stay serial below this.
+MSC_PARALLEL_MIN_JOBS = 8
+
+
+def augment_batch_with_msc_counterfactual(
+    batch: dict[str, Any],
+    cfg: dict[str, Any] | None = None,
+    restrict: frozenset[str] | set[str] | None = None,
+) -> dict[str, Any]:
+    """
+    Attach a ``msc_counterfactual`` block to every batch record we can simulate.
+
+    Performance:
+      * Records whose MSC block is already present (and caller did not override cfg)
+        are kept as-is — no simulation runs.
+      * An in-memory memo (``_MSC_MEMO``) short-circuits repeat requests within a
+        session so the two APIs fired by the MSC page don't each re-parse the
+        on-disk JSON cache for every home.
+      * When many homes still need a real simulation we fan the work out to a
+        ``ProcessPoolExecutor`` so long cold-cache runs finish in parallel.
+      * ``restrict`` (uids belonging to the selected Catan source) lets callers
+        skip simulating homes that won't be shown.
+    """
+    cfg_effective = cfg if cfg is not None else _msc_cfg_defaults()
+    out: dict[str, Any] = {}
+    pending: list[tuple[str, Path, dict[str, float]]] = []  # uid, csv_path, specs
+    pending_recs: dict[str, dict[str, Any]] = {}
+
+    for uid, rec in batch.items():
+        if not isinstance(rec, dict):
+            out[uid] = rec
+            continue
+        rec_copy = dict(rec)
+        out[uid] = rec_copy
+        if restrict is not None and str(uid) not in restrict:
+            # Still return the record so existing data (actual/optimised) is visible,
+            # but skip the expensive MSC simulation for homes the caller filtered out.
+            continue
+        if cfg is not None:
+            for k in BATCH_MSC_SCENARIO_KEYS:
+                rec_copy.pop(k, None)
+        existing = _batch_msc_side(rec_copy)
+        if existing is not None and cfg is None:
+            continue  # trust pre-existing block
+        csv_path = _find_uid_csv_for_msc(str(uid))
+        if csv_path is None:
+            continue
+        # Fast path: in-memory memo (populated by earlier sim or the other API).
+        cached = _msc_memo_get(csv_path, cfg_effective)
+        if cached is not None:
+            if _batch_msc_side(rec_copy) is None:
+                rec_copy["msc_counterfactual"] = cached
+            continue
+        specs = _extract_battery_specs_for_msc(rec_copy)
+        pending.append((str(uid), csv_path, specs))
+        pending_recs[str(uid)] = rec_copy
+
+    if not pending:
+        return out
+
+    use_pool = len(pending) >= MSC_PARALLEL_MIN_JOBS
+    if not use_pool:
+        for uid, csv_path, specs in pending:
+            summary = _simulate_inverter_msc_from_csv_with_specs(csv_path, specs, cfg_effective)
+            if summary is None:
+                continue
+            rec_copy = pending_recs[uid]
+            if _batch_msc_side(rec_copy) is None:
+                rec_copy["msc_counterfactual"] = summary
+        return out
+
+    max_workers = min(len(pending), max(1, (os.cpu_count() or 2) - 1))
+    # Map csv_path_str back to (uid, csv_path) so we can populate the parent memo.
+    path_to_info: dict[str, tuple[str, Path]] = {
+        str(csv_path): (uid, csv_path) for uid, csv_path, _ in pending
+    }
+    with ProcessPoolExecutor(max_workers=max_workers) as pool:
+        futures = [
+            pool.submit(_msc_sim_pool_worker, str(csv_path), specs, cfg_effective)
+            for _, csv_path, specs in pending
+        ]
+        for fut in as_completed(futures):
+            try:
+                csv_path_str, summary = fut.result()
+            except Exception:  # noqa: BLE001
+                continue
+            if summary is None:
+                continue
+            info = path_to_info.get(csv_path_str)
+            if info is None:
+                continue
+            uid, csv_path = info
+            rec_copy = pending_recs.get(uid)
+            if rec_copy is None:
+                continue
+            if _batch_msc_side(rec_copy) is None:
+                rec_copy["msc_counterfactual"] = summary
+            # Warm the parent process memo so the sibling API / monthly aggregate
+            # don't have to hit the disk cache again.
+            _msc_memo_set(csv_path, cfg_effective, summary)
+    return out
+
+
+# Small in-memory cache that lets the two APIs fired in parallel by the MSC page
+# (``/api/batch-comparison`` + ``/api/prediction-accuracy``) share the augmented
+# batch instead of doing the same work twice. Keyed by the batch file's mtime +
+# MSC config signature + restrict-set hash, so stale entries can't sneak in.
+_AUGMENTED_BATCH_CACHE_LOCK = threading.Lock()
+_AUGMENTED_BATCH_CACHE: "dict[tuple[int, int, str, str], tuple[float, dict[str, Any]]]" = {}
+_AUGMENTED_BATCH_INFLIGHT: "dict[tuple[int, int, str, str], threading.Event]" = {}
+_AUGMENTED_BATCH_CACHE_TTL_SECONDS = 180.0
+_AUGMENTED_BATCH_CACHE_MAX_ENTRIES = 8
+
+
+def _augmented_batch_cache_key(
+    batch_path: Path,
+    cfg: dict[str, Any],
+    restrict: frozenset[str] | set[str] | None,
+) -> tuple[int, int, str, str] | None:
+    try:
+        stat = batch_path.stat()
+    except OSError:
+        return None
+    if restrict is None:
+        restrict_hash = "all"
+    else:
+        restrict_hash = hashlib.sha1(
+            ("|".join(sorted(str(u) for u in restrict))).encode("utf-8")
+        ).hexdigest()[:16]
+    return (stat.st_mtime_ns, stat.st_size, _msc_cfg_signature(cfg), restrict_hash)
+
+
+def load_and_augment_batch_cached(
+    batch_path: Path,
+    cfg: dict[str, Any] | None,
+    restrict: frozenset[str] | set[str] | None = None,
+    *,
+    force_override: bool = False,
+) -> dict[str, Any] | None:
+    """
+    Load ``comparison_batch.json`` and attach MSC counterfactuals, reusing a
+    short-lived in-memory cache so the MSC page's two parallel API calls don't
+    redo the work. Returns ``None`` when the file is missing or unreadable.
+    """
+    if not batch_path.is_file():
+        return None
+    cfg_effective = cfg if cfg is not None else _msc_cfg_defaults()
+    key = _augmented_batch_cache_key(batch_path, cfg_effective, restrict)
+    now = time.monotonic()
+
+    # Fast-path cache check + single-flight coordination in one critical section
+    # so two concurrent requests for the same key don't both do the heavy work.
+    wait_event: threading.Event | None = None
+    if key is not None:
+        with _AUGMENTED_BATCH_CACHE_LOCK:
+            hit = _AUGMENTED_BATCH_CACHE.get(key)
+            if hit is not None and (now - hit[0]) <= _AUGMENTED_BATCH_CACHE_TTL_SECONDS:
+                return hit[1]
+            inflight = _AUGMENTED_BATCH_INFLIGHT.get(key)
+            if inflight is not None:
+                wait_event = inflight
+            else:
+                _AUGMENTED_BATCH_INFLIGHT[key] = threading.Event()
+
+    if wait_event is not None:
+        # Another request is already augmenting this exact batch+cfg+restrict.
+        # Wait for it, then pick up the cached result.
+        wait_event.wait(timeout=_AUGMENTED_BATCH_CACHE_TTL_SECONDS)
+        with _AUGMENTED_BATCH_CACHE_LOCK:
+            hit = _AUGMENTED_BATCH_CACHE.get(key) if key is not None else None
+        return hit[1] if hit is not None else None
+
+    try:
+        try:
+            raw = json.loads(batch_path.read_text(encoding="utf-8"))
+        except (OSError, UnicodeError, json.JSONDecodeError):
+            return None
+        if not isinstance(raw, dict):
+            return None
+        augmented = augment_batch_with_msc_counterfactual(
+            raw,
+            cfg if force_override else cfg,
+            restrict=restrict,
+        )
+        if key is not None:
+            with _AUGMENTED_BATCH_CACHE_LOCK:
+                if len(_AUGMENTED_BATCH_CACHE) >= _AUGMENTED_BATCH_CACHE_MAX_ENTRIES:
+                    ordered = sorted(_AUGMENTED_BATCH_CACHE.items(), key=lambda kv: kv[1][0])
+                    for drop_key, _ in ordered[: _AUGMENTED_BATCH_CACHE_MAX_ENTRIES // 2]:
+                        _AUGMENTED_BATCH_CACHE.pop(drop_key, None)
+                _AUGMENTED_BATCH_CACHE[key] = (time.monotonic(), augmented)
+        return augmented
+    finally:
+        if key is not None:
+            with _AUGMENTED_BATCH_CACHE_LOCK:
+                evt = _AUGMENTED_BATCH_INFLIGHT.pop(key, None)
+            if evt is not None:
+                evt.set()
+
+
+def msc_config_payload(cfg: dict[str, Any] | None = None) -> dict[str, Any]:
+    c = cfg if cfg is not None else _msc_cfg_defaults()
+    defaults = _msc_cfg_defaults()
+    return {
+        "mode": MSC_COUNTERFACTUAL_MODE,
+        "pricing_mode": "time_of_use_4_block",
+        "morning_peak_window": {
+            "start_hour": int(c.get("peak_am_start_hour", 0)),
+            "end_hour": int(c.get("peak_am_end_hour", 0)),
+        },
+        "peak_window": {"start_hour": int(c["peak_start_hour"]), "end_hour": int(c["peak_end_hour"])},
+        "midday_window": {"start_hour": int(c["midday_start_hour"]), "end_hour": int(c["midday_end_hour"])},
+        "import_rate_peak_am_per_kwh": round(
+            float(c.get("import_rate_peak_am_per_kwh", c["import_rate_peak_per_kwh"])), 6
+        ),
+        "import_rate_peak_per_kwh": round(float(c["import_rate_peak_per_kwh"]), 6),
+        "import_rate_midday_per_kwh": round(float(c["import_rate_midday_per_kwh"]), 6),
+        "import_rate_shoulder_per_kwh": round(float(c["import_rate_shoulder_per_kwh"]), 6),
+        "export_feed_in_tariff_per_kwh": round(float(c["export_feed_in_tariff_per_kwh"]), 6),
+        "current_export_tariff_per_kwh": round(float(c["export_feed_in_tariff_per_kwh"]), 6),
+        "same_import_export_rate_per_interval": False,
+        "energy_only": True,
+        "defaults": {
+            "morning_peak_window": {
+                "start_hour": defaults["peak_am_start_hour"],
+                "end_hour": defaults["peak_am_end_hour"],
+            },
+            "peak_window": {"start_hour": defaults["peak_start_hour"], "end_hour": defaults["peak_end_hour"]},
+            "midday_window": {"start_hour": defaults["midday_start_hour"], "end_hour": defaults["midday_end_hour"]},
+            "import_rate_peak_am_per_kwh": round(defaults["import_rate_peak_am_per_kwh"], 6),
+            "import_rate_peak_per_kwh": round(defaults["import_rate_peak_per_kwh"], 6),
+            "import_rate_midday_per_kwh": round(defaults["import_rate_midday_per_kwh"], 6),
+            "import_rate_shoulder_per_kwh": round(defaults["import_rate_shoulder_per_kwh"], 6),
+            "export_feed_in_tariff_per_kwh": round(defaults["export_feed_in_tariff_per_kwh"], 6),
+            "current_export_tariff_per_kwh": round(defaults["export_feed_in_tariff_per_kwh"], 6),
+        },
+    }
+
+
+# ---------------------------------------------------------------------------
+# Solar Sharer Offer (SSO) counterfactual — new DMO 8 opt-in tariff (2026-27)
+# ---------------------------------------------------------------------------
+# SSO structure (AER draft, March 2026):
+#  * 3-hour free-power window per day (NSW / SE QLD 11:00-14:00, SA 12:00-15:00).
+#  * Daily cap of 24 kWh free within the window; excess billed at a "reasonable usage" c/kWh.
+#  * Outside the window: standard TOU c/kWh (peak + shoulder / solar-soak), with rates uplifted
+#    to recover the forgone free-window revenue.
+#  * Plus a daily supply charge (not part of the c/kWh energy bill).
+# The SSO counterfactual here uses the same MSC self-consumption inverter dispatch as the MSC
+# counterfactual, and only differs in pricing. Comparing Actual / MSC / SSO on the same homes
+# tells us (a) whether SSO is cheaper than current TOU tariffs, and (b) whether the Reposit
+# controller still adds value once SSO is live.
+
+SSO_FREE_START_HOUR = _env_int("SSO_FREE_START_HOUR", 11)
+SSO_FREE_END_HOUR = _env_int("SSO_FREE_END_HOUR", 14)
+SSO_FREE_DAILY_KWH_CAP = _env_float("SSO_FREE_DAILY_KWH_CAP", 24.0)
+SSO_PEAK_START_HOUR = _env_int("SSO_PEAK_START_HOUR", 16)
+SSO_PEAK_END_HOUR = _env_int("SSO_PEAK_END_HOUR", 20)
+SSO_RATE_FREE_EXCESS_PER_KWH = _env_float("SSO_RATE_FREE_EXCESS_PER_KWH", 0.25)
+SSO_RATE_PEAK_PER_KWH = _env_float("SSO_RATE_PEAK_PER_KWH", 0.55)
+SSO_RATE_SHOULDER_PER_KWH = _env_float("SSO_RATE_SHOULDER_PER_KWH", 0.42)
+SSO_EXPORT_FEED_IN_TARIFF_PER_KWH = _env_float("SSO_EXPORT_FEED_IN_TARIFF_PER_KWH", 0.08)
+SSO_DAILY_SUPPLY_CHARGE_PER_DAY = _env_float("SSO_DAILY_SUPPLY_CHARGE_PER_DAY", 1.20)
+SSO_COUNTERFACTUAL_MODE = "inverter_msc_dispatch_sso_tariff"
+SSO_CACHE_SCHEMA_VERSION = 1
+
+
+def _sso_cfg_defaults() -> dict[str, Any]:
+    return {
+        "free_start_hour": int(SSO_FREE_START_HOUR),
+        "free_end_hour": int(SSO_FREE_END_HOUR),
+        "free_daily_kwh_cap": float(SSO_FREE_DAILY_KWH_CAP),
+        "peak_start_hour": int(SSO_PEAK_START_HOUR),
+        "peak_end_hour": int(SSO_PEAK_END_HOUR),
+        "rate_free_excess_per_kwh": float(SSO_RATE_FREE_EXCESS_PER_KWH),
+        "rate_peak_per_kwh": float(SSO_RATE_PEAK_PER_KWH),
+        "rate_shoulder_per_kwh": float(SSO_RATE_SHOULDER_PER_KWH),
+        "export_feed_in_tariff_per_kwh": float(SSO_EXPORT_FEED_IN_TARIFF_PER_KWH),
+        "daily_supply_charge_per_day": float(SSO_DAILY_SUPPLY_CHARGE_PER_DAY),
+    }
+
+
+def _clamp_positive(value: Any, default: float, ceiling: float = 1000.0) -> float:
+    try:
+        n = float(value)
+    except (TypeError, ValueError):
+        return float(default)
+    return max(0.0, min(ceiling, n))
+
+
+def sso_config_from_request(req) -> dict[str, Any]:
+    """
+    Build an SSO config dict from query-string overrides, falling back to env-var defaults.
+    Accepted parameters (all optional):
+      sso_free_start_hour, sso_free_end_hour, sso_free_daily_kwh_cap,
+      sso_peak_start_hour, sso_peak_end_hour,
+      sso_rate_free_excess_per_kwh, sso_rate_peak_per_kwh, sso_rate_shoulder_per_kwh,
+      sso_export_feed_in_tariff_per_kwh, sso_daily_supply_charge_per_day.
+    Windows are sanity-checked: if end <= start, that window reverts to defaults.
+    """
+    d = _sso_cfg_defaults()
+    if req is None:
+        return d
+    args = req.args
+    if "sso_free_start_hour" in args:
+        d["free_start_hour"] = _clamp_hour(args.get("sso_free_start_hour"), d["free_start_hour"])
+    if "sso_free_end_hour" in args:
+        d["free_end_hour"] = _clamp_hour(args.get("sso_free_end_hour"), d["free_end_hour"])
+    if "sso_free_daily_kwh_cap" in args:
+        d["free_daily_kwh_cap"] = _clamp_positive(args.get("sso_free_daily_kwh_cap"), d["free_daily_kwh_cap"], 1000.0)
+    if "sso_peak_start_hour" in args:
+        d["peak_start_hour"] = _clamp_hour(args.get("sso_peak_start_hour"), d["peak_start_hour"])
+    if "sso_peak_end_hour" in args:
+        d["peak_end_hour"] = _clamp_hour(args.get("sso_peak_end_hour"), d["peak_end_hour"])
+    if "sso_rate_free_excess_per_kwh" in args:
+        d["rate_free_excess_per_kwh"] = _clamp_rate(
+            args.get("sso_rate_free_excess_per_kwh"), d["rate_free_excess_per_kwh"]
+        )
+    if "sso_rate_peak_per_kwh" in args:
+        d["rate_peak_per_kwh"] = _clamp_rate(args.get("sso_rate_peak_per_kwh"), d["rate_peak_per_kwh"])
+    if "sso_rate_shoulder_per_kwh" in args:
+        d["rate_shoulder_per_kwh"] = _clamp_rate(
+            args.get("sso_rate_shoulder_per_kwh"), d["rate_shoulder_per_kwh"]
+        )
+    if "sso_export_feed_in_tariff_per_kwh" in args:
+        d["export_feed_in_tariff_per_kwh"] = _clamp_rate(
+            args.get("sso_export_feed_in_tariff_per_kwh"), d["export_feed_in_tariff_per_kwh"]
+        )
+    if "sso_daily_supply_charge_per_day" in args:
+        d["daily_supply_charge_per_day"] = _clamp_positive(
+            args.get("sso_daily_supply_charge_per_day"), d["daily_supply_charge_per_day"], 100.0
+        )
+    defaults = _sso_cfg_defaults()
+    if d["free_end_hour"] <= d["free_start_hour"]:
+        d["free_start_hour"] = defaults["free_start_hour"]
+        d["free_end_hour"] = defaults["free_end_hour"]
+    if d["peak_end_hour"] <= d["peak_start_hour"]:
+        d["peak_start_hour"] = defaults["peak_start_hour"]
+        d["peak_end_hour"] = defaults["peak_end_hour"]
+    return d
+
+
+def _sso_cfg_signature(cfg: dict[str, Any]) -> str:
+    items = (
+        int(cfg["free_start_hour"]),
+        int(cfg["free_end_hour"]),
+        round(float(cfg["free_daily_kwh_cap"]), 6),
+        int(cfg["peak_start_hour"]),
+        int(cfg["peak_end_hour"]),
+        round(float(cfg["rate_free_excess_per_kwh"]), 6),
+        round(float(cfg["rate_peak_per_kwh"]), 6),
+        round(float(cfg["rate_shoulder_per_kwh"]), 6),
+        round(float(cfg["export_feed_in_tariff_per_kwh"]), 6),
+        round(float(cfg["daily_supply_charge_per_day"]), 6),
+    )
+    return hashlib.sha1(repr(items).encode("utf-8")).hexdigest()[:12]
+
+
+def _sso_cache_path_for_csv(csv_path: Path, cfg: dict[str, Any] | None = None) -> Path:
+    cache_sub = CACHE_DIR / "sso_counterfactual"
+    cache_sub.mkdir(parents=True, exist_ok=True)
+    stable_key = hashlib.sha1(str(csv_path).encode("utf-8")).hexdigest()
+    sig = _sso_cfg_signature(cfg or _sso_cfg_defaults())
+    return cache_sub / f"{stable_key}__{sig}.json"
+
+
+def _simulate_inverter_sso_from_csv(
+    csv_path: Path,
+    rec: dict[str, Any],
+    cfg: dict[str, Any] | None = None,
+) -> dict[str, Any] | None:
+    """
+    Same MSC self-consumption inverter dispatch as ``_simulate_inverter_msc_from_csv``, but grid
+    imports are priced under Solar Sharer Offer tariff rules:
+      * Within free window [free_start_hour, free_end_hour): first ``free_daily_kwh_cap`` kWh per
+        calendar day are free; any excess inside the window is billed at ``rate_free_excess``.
+      * Within peak window: ``rate_peak``.
+      * All other hours: ``rate_shoulder``.
+    Exports receive ``export_feed_in_tariff_per_kwh``. A daily supply charge is tallied separately
+    (not added to the ``net_energy_cost`` so it stays comparable with the MSC energy-only number).
+    """
+    if cfg is None:
+        cfg = _sso_cfg_defaults()
+    free_start = int(cfg["free_start_hour"])
+    free_end = int(cfg["free_end_hour"])
+    free_cap = float(cfg["free_daily_kwh_cap"])
+    peak_start = int(cfg["peak_start_hour"])
+    peak_end = int(cfg["peak_end_hour"])
+    rate_free_excess = float(cfg["rate_free_excess_per_kwh"])
+    rate_peak = float(cfg["rate_peak_per_kwh"])
+    rate_shoulder = float(cfg["rate_shoulder_per_kwh"])
+    fit_rate = float(cfg["export_feed_in_tariff_per_kwh"])
+    daily_supply = float(cfg["daily_supply_charge_per_day"])
+    cfg_sig = _sso_cfg_signature(cfg)
+
+    stat = csv_path.stat()
+    cache_path = _sso_cache_path_for_csv(csv_path, cfg)
+    if cache_path.exists():
+        try:
+            cached = json.loads(cache_path.read_text(encoding="utf-8"))
+            meta = cached.get("meta", {})
+            if (
+                meta.get("mtime_ns") == stat.st_mtime_ns
+                and meta.get("size") == stat.st_size
+                and meta.get("schema") == SSO_CACHE_SCHEMA_VERSION
+                and meta.get("cfg_sig") == cfg_sig
+            ):
+                summary = cached.get("summary")
+                if isinstance(summary, dict):
+                    return summary
+        except (json.JSONDecodeError, OSError, ValueError):
+            pass
+
+    specs = _extract_battery_specs_for_msc(rec)
+    cap = float(specs["capacity_kwh"])
+    min_soc = float(specs["min_soc_kwh"])
+    soc = float(specs["initial_soc_kwh"])
+    charge_eff = float(specs["charge_efficiency"])
+    discharge_eff = float(specs["discharge_efficiency"])
+
+    total_import_kwh = 0.0
+    total_import_free_kwh = 0.0
+    total_import_free_excess_kwh = 0.0
+    total_import_peak_kwh = 0.0
+    total_import_shoulder_kwh = 0.0
+    total_export_kwh = 0.0
+    total_load_kwh = 0.0
+    total_solar_kwh = 0.0
+    gross_import = 0.0
+    gross_export = 0.0
+
+    current_day: str | None = None
+    day_free_used_kwh = 0.0
+    n_days = 0
+
+    with csv_path.open(newline="", encoding="utf-8", errors="replace") as f:
+        reader = csv.reader(f)
+        header = next(reader, None)
+        if not header:
+            return None
+        col = {name: i for i, name in enumerate(header)}
+        idx_load = col.get("house_load_kw", -1)
+        idx_solar = col.get("solar_output_kw", -1)
+        idx_soc = col.get("battery_soc_kwh", -1)
+        idx_ts = col.get("timestamp", -1)
+        if idx_load < 0 and idx_solar < 0:
+            return None
+
+        def _f(row: list[str], idx: int) -> float:
+            if idx < 0 or idx >= len(row):
+                return 0.0
+            s = row[idx]
+            return float(s) if s else 0.0
+
+        def _s(row: list[str], idx: int) -> str:
+            if idx < 0 or idx >= len(row):
+                return ""
+            return row[idx]
+
+        if cap > 0.0 and idx_soc >= 0:
+            for row in reader:
+                first_soc = _to_float_or_none(row[idx_soc] if idx_soc < len(row) else None)
+                if first_soc is not None:
+                    soc = min(max(float(first_soc), min_soc), cap)
+                    break
+            f.seek(0)
+            reader = csv.reader(f)
+            next(reader, None)
+
+        for row in reader:
+            ts_raw = _s(row, idx_ts)
+            day_key = ts_raw[0:10] if len(ts_raw) >= 10 else ""
+            if day_key and day_key != current_day:
+                current_day = day_key
+                day_free_used_kwh = 0.0
+                n_days += 1
+            load_kwh = max(_f(row, idx_load), 0.0) * INTERVAL_HOURS
+            solar_kwh = max(_f(row, idx_solar), 0.0) * INTERVAL_HOURS
+            total_load_kwh += load_kwh
+            total_solar_kwh += solar_kwh
+
+            # MSC self-consumption dispatch (same as MSC simulator).
+            solar_to_load = min(solar_kwh, load_kwh)
+            remaining_load = load_kwh - solar_to_load
+            solar_excess = solar_kwh - solar_to_load
+            if cap > 0.0 and solar_excess > 0.0 and charge_eff > 0.0:
+                headroom = max(cap - soc, 0.0)
+                charge_input_limit = headroom / charge_eff
+                solar_to_battery_input = min(solar_excess, charge_input_limit)
+                soc = min(cap, soc + solar_to_battery_input * charge_eff)
+                solar_excess -= solar_to_battery_input
+            if cap > 0.0 and remaining_load > 0.0 and discharge_eff > 0.0:
+                deliverable_to_load = max(soc - min_soc, 0.0) * discharge_eff
+                battery_to_load = min(remaining_load, deliverable_to_load)
+                soc = max(min_soc, soc - (battery_to_load / discharge_eff))
+                remaining_load -= battery_to_load
+
+            imp = max(remaining_load, 0.0)
+            exp = max(solar_excess, 0.0)
+            total_import_kwh += imp
+            total_export_kwh += exp
+
+            if len(ts_raw) >= 13 and ts_raw[11:13].isdigit():
+                hour = int(ts_raw[11:13])
+            else:
+                hour = -1
+
+            if free_start <= hour < free_end:
+                free_remaining = max(free_cap - day_free_used_kwh, 0.0)
+                free_portion = min(imp, free_remaining)
+                excess_portion = imp - free_portion
+                total_import_free_kwh += free_portion
+                total_import_free_excess_kwh += excess_portion
+                day_free_used_kwh += free_portion
+                # Free portion priced at $0/kWh; excess priced at reasonable-usage rate.
+                gross_import += excess_portion * rate_free_excess
+            elif peak_start <= hour < peak_end:
+                total_import_peak_kwh += imp
+                gross_import += imp * rate_peak
+            else:
+                total_import_shoulder_kwh += imp
+                gross_import += imp * rate_shoulder
+
+            gross_export += exp * fit_rate
+
+    net_energy_cost = gross_import - gross_export
+    total_fixed_charge = daily_supply * n_days
+    net_total_bill_incl_fixed = net_energy_cost + total_fixed_charge
+    import_vwap = (gross_import / total_import_kwh) if total_import_kwh > 0.0 else None
+    export_vwap = (gross_export / total_export_kwh) if total_export_kwh > 0.0 else None
+
+    summary: dict[str, Any] = {
+        "net_energy_cost": round(net_energy_cost, 6),
+        "gross_import_cost": round(gross_import, 6),
+        "gross_export_revenue": round(gross_export, 6),
+        "total_grid_import_kwh": round(total_import_kwh, 6),
+        "total_grid_export_kwh": round(total_export_kwh, 6),
+        "total_house_load_kwh": round(total_load_kwh, 6),
+        "total_solar_kwh": round(total_solar_kwh, 6),
+        "import_vwap": None if import_vwap is None else round(import_vwap, 6),
+        "export_vwap": None if export_vwap is None else round(export_vwap, 6),
+        "counterfactual_mode": SSO_COUNTERFACTUAL_MODE,
+        "n_days": n_days,
+        "daily_supply_charge_per_day": round(daily_supply, 6),
+        "total_fixed_supply_charge": round(total_fixed_charge, 6),
+        "net_total_bill_incl_fixed": round(net_total_bill_incl_fixed, 6),
+        "total_import_free_kwh": round(total_import_free_kwh, 6),
+        "total_import_free_excess_kwh": round(total_import_free_excess_kwh, 6),
+        "total_import_peak_kwh": round(total_import_peak_kwh, 6),
+        "total_import_shoulder_kwh": round(total_import_shoulder_kwh, 6),
+        "sso_free_start_hour": free_start,
+        "sso_free_end_hour": free_end,
+        "sso_free_daily_kwh_cap": round(free_cap, 6),
+        "sso_peak_start_hour": peak_start,
+        "sso_peak_end_hour": peak_end,
+        "sso_rate_free_excess_per_kwh": round(rate_free_excess, 6),
+        "sso_rate_peak_per_kwh": round(rate_peak, 6),
+        "sso_rate_shoulder_per_kwh": round(rate_shoulder, 6),
+        "sso_export_feed_in_tariff_per_kwh": round(fit_rate, 6),
+        "energy_only": True,
+    }
+    try:
+        cache_path.write_text(
+            json.dumps(
+                {
+                    "meta": {
+                        "mtime_ns": stat.st_mtime_ns,
+                        "size": stat.st_size,
+                        "schema": SSO_CACHE_SCHEMA_VERSION,
+                        "cfg_sig": cfg_sig,
                     },
                     "summary": summary,
                 }
@@ -445,45 +1398,238 @@ def _simulate_inverter_msc_from_csv(
     return summary
 
 
-def _build_msc_counterfactual_side(
+def _batch_sso_side(rec: dict[str, Any]) -> dict[str, Any] | None:
+    if not isinstance(rec, dict):
+        return None
+    for k in BATCH_SSO_SCENARIO_KEYS:
+        side = rec.get(k)
+        if not isinstance(side, dict):
+            continue
+        if _to_float_or_none(side.get("net_energy_cost")) is None:
+            continue
+        return side
+    return None
+
+
+def _build_sso_counterfactual_side(
     uid: str,
     rec: dict[str, Any],
+    cfg: dict[str, Any] | None = None,
 ) -> dict[str, Any] | None:
-    existing = _batch_msc_side(rec)
-    if existing is not None:
-        return existing
     if not isinstance(rec, dict) or not uid:
         return None
     csv_path = _find_uid_csv_for_msc(uid)
     if csv_path is None:
+        # No CSV available → can't simulate SSO.
         return None
-    return _simulate_inverter_msc_from_csv(csv_path, rec)
+    return _simulate_inverter_sso_from_csv(csv_path, rec, cfg)
 
 
-def augment_batch_with_msc_counterfactual(batch: dict[str, Any]) -> dict[str, Any]:
+def augment_batch_with_sso_counterfactual(
+    batch: dict[str, Any],
+    cfg: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Add/overwrite ``sso_counterfactual`` on each record using the supplied (or default) SSO cfg."""
     out: dict[str, Any] = {}
     for uid, rec in batch.items():
         if not isinstance(rec, dict):
             out[uid] = rec
             continue
         rec_copy = dict(rec)
-        msc = _build_msc_counterfactual_side(str(uid), rec_copy)
-        if msc is not None and _batch_msc_side(rec_copy) is None:
-            rec_copy["msc_counterfactual"] = msc
+        # Drop any stale SSO blocks under aliased keys — we always recompute from the chosen cfg.
+        for k in BATCH_SSO_SCENARIO_KEYS:
+            if k in rec_copy:
+                del rec_copy[k]
+        side = _build_sso_counterfactual_side(str(uid), rec_copy, cfg)
+        if side is not None:
+            rec_copy["sso_counterfactual"] = side
         out[uid] = rec_copy
     return out
 
 
-def msc_config_payload() -> dict[str, Any]:
+def sso_config_payload(cfg: dict[str, Any] | None = None) -> dict[str, Any]:
+    c = cfg if cfg is not None else _sso_cfg_defaults()
+    defaults = _sso_cfg_defaults()
     return {
-        "mode": MSC_COUNTERFACTUAL_MODE,
-        "pricing_mode": "time_of_use_3_block",
-        "price_peak_per_kwh": round(MSC_TOU_PRICE_PEAK_PER_KWH, 6),
-        "price_midday_per_kwh": round(MSC_TOU_PRICE_MIDDAY_PER_KWH, 6),
-        "price_shoulder_per_kwh": round(MSC_TOU_PRICE_SHOULDER_PER_KWH, 6),
-        "same_import_export_rate_per_interval": True,
+        "mode": SSO_COUNTERFACTUAL_MODE,
+        "free_window": {"start_hour": int(c["free_start_hour"]), "end_hour": int(c["free_end_hour"])},
+        "free_daily_kwh_cap": round(float(c["free_daily_kwh_cap"]), 6),
+        "peak_window": {"start_hour": int(c["peak_start_hour"]), "end_hour": int(c["peak_end_hour"])},
+        "rate_free_excess_per_kwh": round(float(c["rate_free_excess_per_kwh"]), 6),
+        "rate_peak_per_kwh": round(float(c["rate_peak_per_kwh"]), 6),
+        "rate_shoulder_per_kwh": round(float(c["rate_shoulder_per_kwh"]), 6),
+        "export_feed_in_tariff_per_kwh": round(float(c["export_feed_in_tariff_per_kwh"]), 6),
+        "daily_supply_charge_per_day": round(float(c["daily_supply_charge_per_day"]), 6),
         "energy_only": True,
+        "defaults": {
+            "free_window": {
+                "start_hour": defaults["free_start_hour"],
+                "end_hour": defaults["free_end_hour"],
+            },
+            "free_daily_kwh_cap": round(defaults["free_daily_kwh_cap"], 6),
+            "peak_window": {
+                "start_hour": defaults["peak_start_hour"],
+                "end_hour": defaults["peak_end_hour"],
+            },
+            "rate_free_excess_per_kwh": round(defaults["rate_free_excess_per_kwh"], 6),
+            "rate_peak_per_kwh": round(defaults["rate_peak_per_kwh"], 6),
+            "rate_shoulder_per_kwh": round(defaults["rate_shoulder_per_kwh"], 6),
+            "export_feed_in_tariff_per_kwh": round(defaults["export_feed_in_tariff_per_kwh"], 6),
+            "daily_supply_charge_per_day": round(defaults["daily_supply_charge_per_day"], 6),
+        },
+        "zones": {
+            "nsw_se_qld": {"free_start_hour": 11, "free_end_hour": 14, "label": "NSW / SE QLD"},
+            "sa": {"free_start_hour": 12, "free_end_hour": 15, "label": "SA"},
+        },
     }
+
+
+def sso_analysis_compute(
+    batch: dict[str, Any],
+    restrict: frozenset[str] | None = None,
+) -> dict[str, Any]:
+    """
+    Per-home Actual vs MSC vs SSO comparison plus a fleet summary.
+    Requires each record to have Actual, MSC counterfactual, and SSO counterfactual sides.
+    """
+    per_home: list[dict[str, Any]] = []
+    n_considered = 0
+    n_with_actual = 0
+    n_with_msc = 0
+    n_with_sso = 0
+    n_complete = 0
+    n_missing_csv = 0
+
+    for uid, rec in batch.items():
+        n_considered += 1
+        if not isinstance(rec, dict):
+            continue
+        if restrict is not None and str(uid) not in restrict:
+            continue
+        actual_side = rec.get("actual") if isinstance(rec.get("actual"), dict) else None
+        msc_side = _batch_msc_side(rec)
+        sso_side = _batch_sso_side(rec)
+        if actual_side:
+            n_with_actual += 1
+        if msc_side:
+            n_with_msc += 1
+        if sso_side:
+            n_with_sso += 1
+        if sso_side is None:
+            # Often caused by missing CSV for that UID.
+            n_missing_csv += 1
+        if actual_side is None or msc_side is None or sso_side is None:
+            continue
+        act_net = _to_float_or_none(actual_side.get("net_energy_cost"))
+        msc_net = _to_float_or_none(msc_side.get("net_energy_cost"))
+        sso_net = _to_float_or_none(sso_side.get("net_energy_cost"))
+        if act_net is None or msc_net is None or sso_net is None:
+            continue
+        n_complete += 1
+
+        benefit_sso_vs_msc = msc_net - sso_net  # positive → SSO is cheaper than current TOU
+        benefit_sso_vs_actual = act_net - sso_net  # positive → SSO is cheaper than Actual (with Reposit)
+        benefit_controller_vs_sso = sso_net - act_net  # positive → Reposit still saves vs SSO
+
+        def _pct(benefit: float, baseline: float) -> float | None:
+            if baseline is None or abs(baseline) < 1e-9:
+                return None
+            return benefit / abs(baseline) * 100.0
+
+        per_home.append(
+            {
+                "house_id": str(uid),
+                "address": rec.get("address") or "",
+                "actual_net_bill": round(act_net, 4),
+                "msc_net_bill": round(msc_net, 4),
+                "sso_net_bill": round(sso_net, 4),
+                "sso_fixed_charge": round(float(sso_side.get("total_fixed_supply_charge") or 0.0), 4),
+                "sso_total_bill_incl_fixed": round(float(sso_side.get("net_total_bill_incl_fixed") or sso_net), 4),
+                "actual_import_kwh": round(_to_float_or_none(actual_side.get("total_grid_import_kwh")) or 0.0, 4),
+                "msc_import_kwh": round(_to_float_or_none(msc_side.get("total_grid_import_kwh")) or 0.0, 4),
+                "sso_import_kwh": round(_to_float_or_none(sso_side.get("total_grid_import_kwh")) or 0.0, 4),
+                "sso_free_kwh": round(float(sso_side.get("total_import_free_kwh") or 0.0), 4),
+                "sso_free_excess_kwh": round(float(sso_side.get("total_import_free_excess_kwh") or 0.0), 4),
+                "sso_peak_kwh": round(float(sso_side.get("total_import_peak_kwh") or 0.0), 4),
+                "sso_shoulder_kwh": round(float(sso_side.get("total_import_shoulder_kwh") or 0.0), 4),
+                "n_days": int(sso_side.get("n_days") or 0),
+                "benefit_sso_vs_msc": round(benefit_sso_vs_msc, 4),
+                "benefit_sso_vs_actual": round(benefit_sso_vs_actual, 4),
+                "benefit_controller_vs_sso": round(benefit_controller_vs_sso, 4),
+                "benefit_pct_sso_vs_msc": _pct(benefit_sso_vs_msc, msc_net),
+                "benefit_pct_sso_vs_actual": _pct(benefit_sso_vs_actual, act_net),
+                "benefit_pct_controller_vs_sso": _pct(benefit_controller_vs_sso, sso_net),
+            }
+        )
+
+    def _mean(values: list[float]) -> float | None:
+        clean = [v for v in values if v is not None]
+        return (sum(clean) / len(clean)) if clean else None
+
+    def _median(values: list[float]) -> float | None:
+        clean = sorted(v for v in values if v is not None)
+        n = len(clean)
+        if n == 0:
+            return None
+        mid = n // 2
+        return clean[mid] if n % 2 else (clean[mid - 1] + clean[mid]) / 2.0
+
+    actual_bills = [h["actual_net_bill"] for h in per_home]
+    msc_bills = [h["msc_net_bill"] for h in per_home]
+    sso_bills = [h["sso_net_bill"] for h in per_home]
+    bens_sso_vs_msc = [h["benefit_sso_vs_msc"] for h in per_home]
+    bens_sso_vs_actual = [h["benefit_sso_vs_actual"] for h in per_home]
+    bens_ctrl_vs_sso = [h["benefit_controller_vs_sso"] for h in per_home]
+    import_total_actual = sum(h["actual_import_kwh"] for h in per_home)
+    import_total_msc = sum(h["msc_import_kwh"] for h in per_home)
+    import_total_sso = sum(h["sso_import_kwh"] for h in per_home)
+    free_total = sum(h["sso_free_kwh"] for h in per_home)
+    free_excess_total = sum(h["sso_free_excess_kwh"] for h in per_home)
+
+    n_sso_cheaper_than_msc = sum(1 for v in bens_sso_vs_msc if v > 0)
+    n_sso_cheaper_than_actual = sum(1 for v in bens_sso_vs_actual if v > 0)
+    n_controller_still_saves = sum(1 for v in bens_ctrl_vs_sso if v > 0)
+
+    summary = {
+        "n_homes_considered": n_considered,
+        "n_homes_with_actual": n_with_actual,
+        "n_homes_with_msc": n_with_msc,
+        "n_homes_with_sso": n_with_sso,
+        "n_homes_with_all_three": n_complete,
+        "n_homes_missing_sso_csv": n_missing_csv,
+        "avg_actual_net_bill": _mean(actual_bills),
+        "avg_msc_net_bill": _mean(msc_bills),
+        "avg_sso_net_bill": _mean(sso_bills),
+        "median_actual_net_bill": _median(actual_bills),
+        "median_msc_net_bill": _median(msc_bills),
+        "median_sso_net_bill": _median(sso_bills),
+        "total_actual_net_bill": sum(actual_bills) if actual_bills else 0.0,
+        "total_msc_net_bill": sum(msc_bills) if msc_bills else 0.0,
+        "total_sso_net_bill": sum(sso_bills) if sso_bills else 0.0,
+        "avg_benefit_sso_vs_msc": _mean(bens_sso_vs_msc),
+        "avg_benefit_sso_vs_actual": _mean(bens_sso_vs_actual),
+        "avg_benefit_controller_vs_sso": _mean(bens_ctrl_vs_sso),
+        "median_benefit_sso_vs_msc": _median(bens_sso_vs_msc),
+        "median_benefit_sso_vs_actual": _median(bens_sso_vs_actual),
+        "median_benefit_controller_vs_sso": _median(bens_ctrl_vs_sso),
+        "n_sso_cheaper_than_msc": n_sso_cheaper_than_msc,
+        "n_sso_cheaper_than_actual": n_sso_cheaper_than_actual,
+        "n_controller_still_saves_vs_sso": n_controller_still_saves,
+        "pct_sso_cheaper_than_msc": (100.0 * n_sso_cheaper_than_msc / n_complete) if n_complete else None,
+        "pct_sso_cheaper_than_actual": (100.0 * n_sso_cheaper_than_actual / n_complete) if n_complete else None,
+        "pct_controller_still_saves_vs_sso": (100.0 * n_controller_still_saves / n_complete) if n_complete else None,
+        "total_actual_import_kwh": round(import_total_actual, 4),
+        "total_msc_import_kwh": round(import_total_msc, 4),
+        "total_sso_import_kwh": round(import_total_sso, 4),
+        "total_sso_free_kwh": round(free_total, 4),
+        "total_sso_free_excess_kwh": round(free_excess_total, 4),
+        "avg_sso_free_kwh_per_home": (free_total / n_complete) if n_complete else None,
+        "avg_sso_free_excess_kwh_per_home": (free_excess_total / n_complete) if n_complete else None,
+    }
+
+    per_home.sort(key=lambda h: (h["benefit_sso_vs_actual"] or 0.0), reverse=True)
+
+    return {"per_home": per_home, "summary": summary}
 
 
 def clock_slot_5min_from_timestamp(ts_raw: str) -> int | None:
@@ -2442,6 +3588,15 @@ def prediction_accuracy_deep_dive(
     When the batch record includes optional counterfactuals (retail/no-trade and/or MSC),
     the same profit sign convention applies and optional multi-scenario summaries are emitted.
     """
+    counterfactual_diagnostics = {
+        "n_records_considered": 0,
+        "n_records_with_error_flag": 0,
+        "n_records_with_both_actual_and_optimised": 0,
+        "n_records_used_in_analysis": 0,
+        "n_records_with_no_trade_counterfactual": 0,
+        "n_records_with_msc_counterfactual": 0,
+        "n_records_with_neither_counterfactual": 0,
+    }
     energy_checks = {
         "actual": {
             "n_homes": 0,
@@ -2465,12 +3620,16 @@ def prediction_accuracy_deep_dive(
     for uid, rec in batch.items():
         if restrict_uids is not None and uid not in restrict_uids:
             continue
+        counterfactual_diagnostics["n_records_considered"] += 1
         if not isinstance(rec, dict) or rec.get("error"):
+            if isinstance(rec, dict) and rec.get("error"):
+                counterfactual_diagnostics["n_records_with_error_flag"] += 1
             continue
         opt = rec.get("optimised")
         act = rec.get("actual")
         if not isinstance(opt, dict) or not isinstance(act, dict):
             continue
+        counterfactual_diagnostics["n_records_with_both_actual_and_optimised"] += 1
         try:
             sn = float(opt["net_energy_cost"])
             an = float(act["net_energy_cost"])
@@ -2486,6 +3645,7 @@ def prediction_accuracy_deep_dive(
         if nt_side is not None:
             try:
                 nt_p = -float(nt_side["net_energy_cost"])
+                counterfactual_diagnostics["n_records_with_no_trade_counterfactual"] += 1
             except (KeyError, TypeError, ValueError):
                 nt_p = None
         msc_side = _batch_msc_side(rec)
@@ -2493,8 +3653,11 @@ def prediction_accuracy_deep_dive(
         if msc_side is not None:
             try:
                 msc_p = -float(msc_side["net_energy_cost"])
+                counterfactual_diagnostics["n_records_with_msc_counterfactual"] += 1
             except (KeyError, TypeError, ValueError):
                 msc_p = None
+        if nt_p is None and msc_p is None:
+            counterfactual_diagnostics["n_records_with_neither_counterfactual"] += 1
         act_snap = _scenario_energy_snapshot(act)
         msc_snap = _scenario_energy_snapshot(msc_side)
         if act_snap is not None:
@@ -2527,6 +3690,7 @@ def prediction_accuracy_deep_dive(
         if msc_p is not None:
             row_obj["msc_profit"] = msc_p
         rows.append(row_obj)
+        counterfactual_diagnostics["n_records_used_in_analysis"] += 1
 
     n = len(rows)
     n_scanned = len(batch)
@@ -2537,10 +3701,12 @@ def prediction_accuracy_deep_dive(
             "restricted_to_export_set": restrict_uids is not None,
             "summary": {},
             "scenario_checksums": {},
+            "counterfactual_diagnostics": counterfactual_diagnostics,
             "percentiles_optimism_usd": {},
             "scatter": [],
             "optimism_histogram": {"labels": [], "counts": []},
             "worst_optimism": [],
+            "without_reposit_better_cases": [],
             "narrative": [],
             "margin_delta_by_size_decile": [],
             "size_decile_bubbles": [],
@@ -2599,6 +3765,37 @@ def prediction_accuracy_deep_dive(
     )
     mean_sim_vs_msc = (
         sum(float(r["sim_profit"]) - float(r["msc_profit"]) for r in msc_subset) / n_msc if n_msc else None
+    )
+    without_reposit_source = "retail_without_trade" if n_nt > 0 else ("msc_counterfactual" if n_msc > 0 else None)
+    if without_reposit_source == "retail_without_trade":
+        wr_subset = nt_subset
+        wr_key = "nt_profit"
+    elif without_reposit_source == "msc_counterfactual":
+        wr_subset = msc_subset
+        wr_key = "msc_profit"
+    else:
+        wr_subset = []
+        wr_key = "nt_profit"
+    n_wr = len(wr_subset)
+    wr_actual_gaps = [float(r[wr_key]) - float(r["act_profit"]) for r in wr_subset]
+    n_without_reposit_better = sum(1 for g in wr_actual_gaps if g > eps)
+    pct_without_reposit_better = (
+        (n_without_reposit_better / n_wr * 100.0) if n_wr else None
+    )
+    without_reposit_better_rows = [
+        {
+            "house_id": str(r["house_id"]),
+            "actual_profit": round(float(r["act_profit"]), 2),
+            "without_reposit_profit": round(float(r[wr_key]), 2),
+            "without_minus_actual_usd": round(float(r[wr_key]) - float(r["act_profit"]), 2),
+            "counterfactual_source": without_reposit_source,
+        }
+        for r in wr_subset
+        if float(r[wr_key]) - float(r["act_profit"]) > eps
+    ]
+    without_reposit_better_rows.sort(
+        key=lambda x: float(x["without_minus_actual_usd"]),
+        reverse=True,
     )
 
     pctiles = {
@@ -2768,6 +3965,11 @@ def prediction_accuracy_deep_dive(
                 else ""
             )
         )
+        if pct_without_reposit_better is not None and without_reposit_source == "retail_without_trade":
+            narrative_lines.append(
+                f"Under this model, {n_without_reposit_better} of {n_nt} homes "
+                f"({pct_without_reposit_better:.1f}%) would be better off without Reposit controller."
+            )
     if n_msc > 0 and mean_msc is not None and mean_customer_savings_vs_msc is not None:
         mean_act_msc = sum(float(r["act_profit"]) for r in msc_subset) / n_msc
         narrative_lines.append(
@@ -2873,6 +4075,12 @@ def prediction_accuracy_deep_dive(
             "mean_simulated_minus_without_usd": None
             if not n_nt or mean_sim_vs_nt is None
             else round(mean_sim_vs_nt, 2),
+            "n_homes_with_without_reposit_counterfactual": n_wr,
+            "without_reposit_counterfactual_source": without_reposit_source,
+            "n_homes_without_reposit_better": n_without_reposit_better,
+            "pct_homes_without_reposit_better": None
+            if pct_without_reposit_better is None
+            else round(pct_without_reposit_better, 2),
             "n_homes_with_msc_counterfactual": n_msc,
             "mean_msc_counterfactual_profit_usd": None if not n_msc or mean_msc is None else round(mean_msc, 2),
             "mean_customer_savings_vs_msc_usd": None
@@ -2902,10 +4110,201 @@ def prediction_accuracy_deep_dive(
         "scatter": scatter,
         "optimism_histogram": {"labels": hist_labels, "counts": hist_counts},
         "worst_optimism": worst_out,
+        "without_reposit_better_cases": without_reposit_better_rows[:80],
         "narrative": narrative_lines,
         "scenario_checksums": checks_out,
+        "counterfactual_diagnostics": counterfactual_diagnostics,
         "margin_delta_by_size_decile": margin_delta_size_dec,
         "size_decile_bubbles": _size_decile_bubbles_payload(rows),
+    }
+
+
+def msc_monthly_bill_aggregate(
+    paths: list[Path],
+    batch: dict[str, Any],
+    cfg: dict[str, Any],
+    source_cache_key: str,
+) -> dict[str, Any]:
+    """
+    Aggregate monthly bills across homes with both scenarios:
+    - with controller: billed Actual from interval CSV ``net_cost``
+    - without controller: MSC counterfactual re-simulated with ``cfg``.
+    """
+    actual_monthly_net_cost: dict[str, float] = {}
+    actual_monthly_gross_cost: dict[str, float] = {}
+    actual_monthly_gross_revenue: dict[str, float] = {}
+    msc_monthly_net_cost: dict[str, float] = {}
+    msc_monthly_gross_cost: dict[str, float] = {}
+    msc_monthly_gross_revenue: dict[str, float] = {}
+    # MSC imports bucketed by TOU window, summed across homes.
+    msc_monthly_import_kwh_by_window: dict[str, dict[str, float]] = {}
+    msc_monthly_import_cost_by_window: dict[str, dict[str, float]] = {}
+    months_with_any_rows: dict[str, int] = {}
+    n_homes_scanned = 0
+    n_homes_compared = 0
+
+    for p in paths:
+        uid = p.parent.name
+        n_homes_scanned += 1
+        rec = batch.get(uid)
+        if not isinstance(rec, dict):
+            continue
+        try:
+            actual = summarize_csv(p, source_cache_key)
+        except Exception:  # noqa: BLE001
+            continue
+        # Prefer the MSC block already attached during augmentation — it contains
+        # the same monthly_* fields and avoids re-parsing the CSV a third time.
+        # We also re-simulate when the new per-TOU-window buckets are absent so
+        # legacy blocks in ``batch_catan_comparison.json`` get upgraded on first
+        # access instead of leaving the UI breakdown empty.
+        msc = rec.get("msc_counterfactual") if isinstance(rec.get("msc_counterfactual"), dict) else None
+        if (
+            not isinstance(msc, dict)
+            or "monthly_net_energy_cost" not in msc
+            or "monthly_import_cost_by_window" not in msc
+        ):
+            msc = _simulate_inverter_msc_from_csv(p, rec, cfg)
+        if not isinstance(msc, dict):
+            continue
+
+        actual_net_margin = actual.get("monthly_net_margin") or {}
+        actual_gross_cost = actual.get("monthly_gross_cost") or {}
+        actual_gross_revenue = actual.get("monthly_gross_revenue") or {}
+        msc_net_cost = msc.get("monthly_net_energy_cost") or {}
+        msc_gross_cost = msc.get("monthly_gross_import_cost") or {}
+        msc_gross_revenue = msc.get("monthly_gross_export_revenue") or {}
+        if not (actual_net_margin and msc_net_cost):
+            continue
+
+        n_homes_compared += 1
+        for mk, vv in actual_net_margin.items():
+            try:
+                actual_monthly_net_cost[mk] = actual_monthly_net_cost.get(mk, 0.0) + (-float(vv))
+                months_with_any_rows[mk] = months_with_any_rows.get(mk, 0) + 1
+            except (TypeError, ValueError):
+                continue
+        for mk, vv in actual_gross_cost.items():
+            try:
+                actual_monthly_gross_cost[mk] = actual_monthly_gross_cost.get(mk, 0.0) + float(vv)
+            except (TypeError, ValueError):
+                continue
+        for mk, vv in actual_gross_revenue.items():
+            try:
+                actual_monthly_gross_revenue[mk] = actual_monthly_gross_revenue.get(mk, 0.0) + float(vv)
+            except (TypeError, ValueError):
+                continue
+        for mk, vv in msc_net_cost.items():
+            try:
+                msc_monthly_net_cost[mk] = msc_monthly_net_cost.get(mk, 0.0) + float(vv)
+            except (TypeError, ValueError):
+                continue
+        for mk, vv in msc_gross_cost.items():
+            try:
+                msc_monthly_gross_cost[mk] = msc_monthly_gross_cost.get(mk, 0.0) + float(vv)
+            except (TypeError, ValueError):
+                continue
+        for mk, vv in msc_gross_revenue.items():
+            try:
+                msc_monthly_gross_revenue[mk] = msc_monthly_gross_revenue.get(mk, 0.0) + float(vv)
+            except (TypeError, ValueError):
+                continue
+        msc_import_kwh_by_window = msc.get("monthly_import_kwh_by_window") or {}
+        msc_import_cost_by_window = msc.get("monthly_import_cost_by_window") or {}
+        if isinstance(msc_import_kwh_by_window, dict):
+            for mk, wins in msc_import_kwh_by_window.items():
+                if not isinstance(wins, dict):
+                    continue
+                bucket = msc_monthly_import_kwh_by_window.setdefault(mk, {})
+                for w, vv in wins.items():
+                    try:
+                        bucket[w] = bucket.get(w, 0.0) + float(vv)
+                    except (TypeError, ValueError):
+                        continue
+        if isinstance(msc_import_cost_by_window, dict):
+            for mk, wins in msc_import_cost_by_window.items():
+                if not isinstance(wins, dict):
+                    continue
+                bucket = msc_monthly_import_cost_by_window.setdefault(mk, {})
+                for w, vv in wins.items():
+                    try:
+                        bucket[w] = bucket.get(w, 0.0) + float(vv)
+                    except (TypeError, ValueError):
+                        continue
+
+    months = sorted(
+        set(actual_monthly_net_cost.keys())
+        | set(msc_monthly_net_cost.keys())
+        | set(actual_monthly_gross_cost.keys())
+        | set(actual_monthly_gross_revenue.keys())
+        | set(msc_monthly_gross_cost.keys())
+        | set(msc_monthly_gross_revenue.keys())
+    )
+    points: list[dict[str, Any]] = []
+    for mk in months:
+        with_bill = actual_monthly_net_cost.get(mk, 0.0)
+        without_bill = msc_monthly_net_cost.get(mk, 0.0)
+        kwh_wins = msc_monthly_import_kwh_by_window.get(mk, {})
+        cost_wins = msc_monthly_import_cost_by_window.get(mk, {})
+        points.append(
+            {
+                "month": mk,
+                "with_controller_net_bill_usd": round(with_bill, 6),
+                "without_controller_net_bill_usd": round(without_bill, 6),
+                "controller_benefit_usd": round(without_bill - with_bill, 6),
+                "with_controller_gross_cost_usd": round(actual_monthly_gross_cost.get(mk, 0.0), 6),
+                "with_controller_gross_export_credit_usd": round(
+                    actual_monthly_gross_revenue.get(mk, 0.0), 6
+                ),
+                "without_controller_gross_cost_usd": round(msc_monthly_gross_cost.get(mk, 0.0), 6),
+                "without_controller_gross_export_credit_usd": round(
+                    msc_monthly_gross_revenue.get(mk, 0.0), 6
+                ),
+                "without_controller_import_cost_by_window_usd": {
+                    w: round(float(v), 6) for w, v in cost_wins.items()
+                },
+                "without_controller_import_kwh_by_window": {
+                    w: round(float(v), 6) for w, v in kwh_wins.items()
+                },
+                "active_homes": months_with_any_rows.get(mk, 0),
+            }
+        )
+    window_labels = [
+        {
+            "id": "peak_am",
+            "label": "AM peak",
+            "hours": [int(cfg.get("peak_am_start_hour", 0)), int(cfg.get("peak_am_end_hour", 0))],
+            "rate_per_kwh_usd": round(
+                float(cfg.get("import_rate_peak_am_per_kwh", cfg["import_rate_peak_per_kwh"])), 6
+            ),
+        },
+        {
+            "id": "peak_pm",
+            "label": "PM peak",
+            "hours": [int(cfg["peak_start_hour"]), int(cfg["peak_end_hour"])],
+            "rate_per_kwh_usd": round(float(cfg["import_rate_peak_per_kwh"]), 6),
+        },
+        {
+            "id": "midday",
+            "label": "Midday",
+            "hours": [int(cfg["midday_start_hour"]), int(cfg["midday_end_hour"])],
+            "rate_per_kwh_usd": round(float(cfg["import_rate_midday_per_kwh"]), 6),
+        },
+        {
+            "id": "shoulder",
+            "label": "Shoulder",
+            "hours": None,
+            "rate_per_kwh_usd": round(float(cfg["import_rate_shoulder_per_kwh"]), 6),
+        },
+    ]
+    return {
+        "period_start": months[0] if months else None,
+        "period_end": months[-1] if months else None,
+        "n_months": len(months),
+        "n_homes_scanned": n_homes_scanned,
+        "n_homes_compared": n_homes_compared,
+        "months": points,
+        "windows": window_labels,
     }
 
 
@@ -4565,6 +5964,19 @@ def fleet_prices_page():
     )
 
 
+@app.route("/msc-vs-reality")
+def msc_vs_reality_page():
+    """Dedicated page: MSC counterfactual vs billed reality with all input assumptions shown up-front."""
+    catalog = catan_source_catalog()
+    default_source = default_catan_source(catalog)
+    return render_template(
+        "msc_vs_reality.html",
+        catan_sources=catalog,
+        default_source=default_source,
+        msc_config=msc_config_payload(),
+    )
+
+
 @app.route("/api/fleet-prices")
 def api_fleet_prices():
     """Aggregate volume-weighted import/export $/kWh by month and by day across all homes for one Catan export set."""
@@ -4686,13 +6098,15 @@ def api_batch_comparison():
     """
     if not COMPARISON_BATCH_JSON.is_file():
         return jsonify({"loaded": False, "error": "file_missing", "uids": {}})
-    try:
-        raw = json.loads(COMPARISON_BATCH_JSON.read_text(encoding="utf-8"))
-    except (OSError, UnicodeError, json.JSONDecodeError):
+    cfg = msc_config_from_request(request)
+    cfg_overridden = cfg != _msc_cfg_defaults()
+    raw = load_and_augment_batch_cached(
+        COMPARISON_BATCH_JSON,
+        cfg if cfg_overridden else None,
+        restrict=None,
+    )
+    if raw is None:
         return jsonify({"loaded": False, "error": "read_or_parse_failed", "uids": {}})
-    if not isinstance(raw, dict):
-        return jsonify({"loaded": False, "error": "bad_shape", "uids": {}})
-    raw = augment_batch_with_msc_counterfactual(raw)
     try:
         rel = str(COMPARISON_BATCH_JSON.relative_to(REPO_ROOT))
     except ValueError:
@@ -4702,7 +6116,7 @@ def api_batch_comparison():
             "loaded": True,
             "relative_path": rel,
             "n_uids": len(raw),
-            "msc_config": msc_config_payload(),
+            "msc_config": msc_config_payload(cfg),
             "uids": raw,
         }
     )
@@ -4717,29 +6131,44 @@ def api_prediction_accuracy():
     """
     if not COMPARISON_BATCH_JSON.is_file():
         return jsonify({"loaded": False, "error": "file_missing"})
-    try:
-        batch = json.loads(COMPARISON_BATCH_JSON.read_text(encoding="utf-8"))
-    except (OSError, UnicodeError, json.JSONDecodeError):
+    cfg = msc_config_from_request(request)
+    cfg_overridden = cfg != _msc_cfg_defaults()
+
+    # Uses the same cache key (restrict=None) as /api/batch-comparison so the
+    # two parallel calls the MSC page fires share a single augmentation pass.
+    batch = load_and_augment_batch_cached(
+        COMPARISON_BATCH_JSON,
+        cfg if cfg_overridden else None,
+        restrict=None,
+    )
+    if batch is None:
         return jsonify({"loaded": False, "error": "read_or_parse_failed"})
-    if not isinstance(batch, dict):
-        return jsonify({"loaded": False, "error": "bad_shape"})
-    batch = augment_batch_with_msc_counterfactual(batch)
 
     restrict: frozenset[str] | None = None
+    source_paths: list[Path] = []
     disc_meta: dict[str, int | str | None] = {}
     meta_extra: dict[str, str | int | dict] = {}
+    source_cache_key = CATAN_SOURCE_WITH_VIC
     if request.args.get("source"):
         source_id = normalize_catan_source(request)
         root = catan_root_for_source(source_id)
         paths, disc_meta = discover_csv_paths_with_meta(root)
+        source_paths = paths
+        source_cache_key = source_id
         restrict = frozenset(p.parent.name for p in paths)
         meta_extra = {**catan_source_meta(source_id), "discovery": disc_meta}
 
     dive = prediction_accuracy_deep_dive(batch, restrict)
+    monthly_aggregate = (
+        msc_monthly_bill_aggregate(source_paths, batch, cfg, source_cache_key)
+        if source_paths
+        else {"period_start": None, "period_end": None, "n_months": 0, "n_homes_scanned": 0, "n_homes_compared": 0, "months": []}
+    )
     return jsonify(
         {
             "loaded": True,
-            "msc_config": msc_config_payload(),
+            "msc_config": msc_config_payload(cfg),
+            "msc_monthly_aggregate": monthly_aggregate,
             **meta_extra,
             **dive,
         }

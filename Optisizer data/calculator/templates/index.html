@@ -15,16 +15,12 @@
       <h2 class="page-overview-title">Overview</h2>
       <p class="page-overview-lead">
         This page streams a Catan export set through the server, then lays out fleet-level charts and tables.
-        Everything below starts <strong>collapsed</strong>: use the <strong>section menu</strong> to jump to a block (it opens the target for you), or open any row heading on the page.
+        Everything below starts <strong>collapsed</strong>: use the <strong>Section menu</strong> just below to jump to a block (it opens the target for you), or open any row heading on the page.
         After a run, <strong>Export full analysis (PDF)</strong> inside results opens sections automatically for capture.
       </p>
-      <ul class="page-overview-list">
-        <li><strong>Demographic augmentation</strong> — how census fields attach to homes and CSV notes.</li>
-        <li><strong>About the data</strong> — paths, <code class="mono">net_cost</code> rule, and detected folder counts.</li>
-        <li><strong>Run</strong> — choose <code class="mono">catan_results</code> or <code class="mono">catan_no_vic</code> and start analysis.</li>
-        <li><strong>Progress</strong> — per-file log while the run is in flight.</li>
-        <li><strong>Results</strong> — fleet averages, per-house chart, decile profile, model vs reality, system size, predictors, loss dive, segments, calendar &amp; timing, and PNG/PDF export.</li>
-      </ul>
+      <p class="status-line">
+        Navigation is centralized in the <strong>Section menu</strong> to avoid duplicate menus and keep the page flow clearer.
+      </p>
     </section>
 
     <nav class="page-section-nav card" aria-label="Jump to section">
@@ -34,11 +30,13 @@
         <button type="button" class="page-section-nav__chip" data-section-nav="section-about-data">About the data</button>
         <button type="button" class="page-section-nav__chip" data-section-nav="section-run">Run</button>
         <button type="button" class="page-section-nav__chip" data-section-nav="section-progress">Progress</button>
+        <a class="page-section-nav__chip page-section-nav__chip--link" href="{{ url_for('msc_vs_reality_page') }}" target="_blank" rel="noopener" title="Opens the dedicated MSC vs reality analysis page in a new tab">MSC vs reality &#8599;</a>
         <details class="page-section-nav__megamenu">
           <summary class="page-section-nav__megamenu-summary">Results…</summary>
           <div class="page-section-nav__megamenu-panel" role="group" aria-label="Result subsections">
             <button type="button" class="page-section-nav__menu-item" data-section-nav="section-fleet-averages">Fleet averages</button>
             <button type="button" class="page-section-nav__menu-item" data-section-nav="panel-model-vs-reality">Model vs reality</button>
+            <a class="page-section-nav__menu-item" href="{{ url_for('msc_vs_reality_page') }}" target="_blank" rel="noopener">MSC vs reality (opens new page)</a>
             <button type="button" class="page-section-nav__menu-item" data-section-nav="section-fleet-by-house">Fleet profitability by house</button>
             <button type="button" class="page-section-nav__menu-item" data-section-nav="section-decile-chart">Decile profile (chart)</button>
             <button type="button" class="page-section-nav__menu-item" data-section-nav="section-decile-table">Decile profile (table)</button>
@@ -149,10 +147,8 @@
       <fieldset class="catan-source-fieldset">
         <legend class="catan-source-legend">MSC valuation input</legend>
         <p class="status-line">
-          MSC DMO time-of-use pricing uses equal import/export rates per interval:
-          <code class="mono">4pm-8pm = $0.45/kWh</code>,
-          <code class="mono">10am-2pm = $0.12/kWh</code>,
-          <code class="mono">all other times = $0.37/kWh</code>.
+          MSC assumptions are configurable server-side (time windows, import TOU rates, and export feed-in tariff).
+          Current values are shown in the <strong>MSC vs reality</strong> section.
         </p>
       </fieldset>
       <p class="status-line">Process every file in the selected set and stream progress below.</p>
@@ -242,18 +238,6 @@
         <h3 class="fleet-prices-subhead">Batch match summary</h3>
         <ul class="batch-comparison-stats" id="batch-comparison-stats" aria-label="Batch comparison summary counts"></ul>
         <p class="status-line comparison-tech-note" id="comparison-chart-note"></p>
-
-        <h3 class="fleet-prices-subhead">Home drill-down (Actual vs MSC detail)</h3>
-        <div class="home-drilldown-controls">
-          <label for="home-drilldown-select">Select home UID</label>
-          <select id="home-drilldown-select" aria-label="Select home for scenario drill-down">
-            <option value="">Choose a home</option>
-          </select>
-        </div>
-        <p class="status-line" id="home-drilldown-note">
-          Choose a home to compare scenario totals: import/export kWh, weighted prices, and net energy outcomes.
-        </p>
-        <div class="results-grid" id="home-drilldown-stats"></div>
 
         <h3 class="fleet-prices-subhead">If the model predicts $X, what do actuals look like?</h3>
         <p class="status-line" id="pred-bands-lead">Homes grouped into equal-count bands by simulated profit. Table shows the actual-outcome range within each band.</p>
@@ -401,6 +385,61 @@
           <button type="button" class="btn-download" id="btn-download-margin-delta-size-decile">Download margin Δ by size decile (PNG)</button>
           <button type="button" class="btn-download" id="btn-download-pred-hist">Download optimism histogram (PNG)</button>
         </div>
+      </div>
+        </div>
+      </details>
+
+      <details class="collapsible-section hidden" id="panel-msc-vs-reality">
+        <summary class="collapsible-section__summary">MSC vs reality</summary>
+        <div class="collapsible-section__body">
+      <div class="pdf-block">
+        <h2 style="margin-top:1rem">MSC vs reality</h2>
+        <p class="status-line" id="msc-deep-lead">
+          Comparison of billed actual outcomes against MSC counterfactual outcomes.
+        </p>
+        <div class="results-grid" id="msc-deep-stats"></div>
+        <h3 class="fleet-prices-subhead">Monthly aggregate bill comparison (with vs without controller)</h3>
+        <p class="status-line" id="msc-monthly-note">
+          Grouped bars show the monthly net bill (gross charges − export credits) with controller vs without controller (MSC).
+        </p>
+        <div class="chart-wrap chart-wrap--tall">
+          <canvas id="chart-msc-monthly-main"></canvas>
+        </div>
+        <h3 class="fleet-prices-subhead">MSC import $ by TOU window (without controller)</h3>
+        <p class="status-line" id="msc-monthly-window-note">
+          Stacked bars split each month's MSC gross import charges by the TOU window in which they were incurred (AM peak, PM peak, midday, shoulder).
+        </p>
+        <div class="chart-wrap chart-wrap--tall">
+          <canvas id="chart-msc-monthly-import-by-window"></canvas>
+        </div>
+        <h3 class="fleet-prices-subhead">Homes better off without Reposit controller (model counterfactual)</h3>
+        <p class="status-line" id="without-reposit-note"></p>
+        <div class="file-log decile-log">
+          <table>
+            <thead>
+              <tr>
+                <th>House</th>
+                <th class="num">Without ctrl net bill ($)</th>
+                <th class="num">With ctrl net bill ($)</th>
+                <th class="num">Controller benefit ($)</th>
+                <th class="num">Controller benefit (%)</th>
+              </tr>
+            </thead>
+            <tbody id="without-reposit-body"></tbody>
+          </table>
+        </div>
+
+        <h3 class="fleet-prices-subhead">Home drill-down (Actual vs MSC detail)</h3>
+        <div class="home-drilldown-controls">
+          <label for="home-drilldown-select">Select home UID</label>
+          <select id="home-drilldown-select" aria-label="Select home for scenario drill-down">
+            <option value="">Choose a home</option>
+          </select>
+        </div>
+        <p class="status-line" id="home-drilldown-note">
+          Choose a home to compare scenario totals: import/export kWh, weighted prices, and net energy outcomes.
+        </p>
+        <div class="results-grid" id="home-drilldown-stats"></div>
       </div>
         </div>
       </details>
@@ -794,6 +833,10 @@
       n == null || Number.isNaN(n)
         ? "—"
         : Number(n).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 1 });
+    const pctFromBaseline = (benefit, baseline) =>
+      benefit == null || baseline == null || Number.isNaN(benefit) || Number.isNaN(baseline) || Math.abs(baseline) < 1e-9
+        ? null
+        : (benefit / Math.abs(baseline)) * 100;
 
     async function copyTextToClipboard(text) {
       try {
@@ -905,6 +948,8 @@
     let timingMonthProfitChartInstance = null;
     let timingSlotLossChartInstance = null;
     let timingSlotProfitChartInstance = null;
+    let mscMonthlyMainChartInstance = null;
+    let mscMonthlyImportByWindowChartInstance = null;
 
     function downloadChart(canvasId, filename) {
       const canvas = document.getElementById(canvasId);
@@ -1349,6 +1394,7 @@
         return;
       }
       const savingsVsMsc = (act.profit != null && msc.profit != null) ? (act.profit - msc.profit) : null;
+      const benefitPct = pctFromBaseline(savingsVsMsc, msc.netEnergyCost);
       const cards = [
         ["Home UID", uid],
         ["Actual import kWh", fmtKwh(act.importKwh)],
@@ -1358,9 +1404,10 @@
         ["MSC weighted import $/kWh", fmtNum(msc.importVwap, 4)],
         ["Actual weighted export $/kWh", fmtNum(act.exportVwap, 4)],
         ["MSC weighted export $/kWh", fmtNum(msc.exportVwap, 4)],
-        ["Actual net energy cost $", fmtMoney(act.netEnergyCost)],
-        ["MSC net energy cost $", fmtMoney(msc.netEnergyCost)],
-        ["Customer savings vs MSC $ (Actual profit − MSC profit)", fmtMoneyWithGainLoss(savingsVsMsc)],
+        ["Without controller net bill $ (MSC)", fmtMoney(msc.netEnergyCost)],
+        ["With controller net bill $ (Actual)", fmtMoney(act.netEnergyCost)],
+        ["Controller benefit $ (MSC bill − Actual bill)", fmtMoneyWithGainLoss(savingsVsMsc)],
+        ["Controller benefit % (of MSC baseline bill)", benefitPct == null ? "—" : fmtPct(benefitPct)],
       ];
       homeDrilldownStats.innerHTML = cards
         .map(([label, val]) => `<div class="stat"><div class="label">${escapeHtml(String(label))}</div><div class="value">${escapeHtml(String(val))}</div></div>`)
@@ -1669,10 +1716,12 @@
 
     async function renderPredictionDeepDiveFetch(sourceId) {
       const panel = document.getElementById("panel-model-vs-reality");
-      if (!panel) return;
+      const panelMsc = document.getElementById("panel-msc-vs-reality");
+      if (!panel || !panelMsc) return;
       [chartPredHistInstance,
        chartPredByBatteryInstance, chartPredBySolarInstance,
-       chartMarginDeltaSizeDecileInstance,
+       chartMarginDeltaSizeDecileInstance, mscMonthlyMainChartInstance,
+       mscMonthlyImportByWindowChartInstance,
        chartQuadrantInstance].forEach((c) => {
         if (c) c.destroy();
       });
@@ -1680,6 +1729,8 @@
       chartPredByBatteryInstance = null;
       chartPredBySolarInstance = null;
       chartMarginDeltaSizeDecileInstance = null;
+      mscMonthlyMainChartInstance = null;
+      mscMonthlyImportByWindowChartInstance = null;
       chartQuadrantInstance = null;
       try {
         const parts = sourceId ? ["source=" + encodeURIComponent(sourceId)] : [];
@@ -1689,32 +1740,53 @@
         renderPredictionDeepDive(d);
       } catch (e) {
         panel.classList.add("hidden");
+        panelMsc.classList.add("hidden");
       }
     }
 
     function renderPredictionDeepDive(d) {
       const panel = document.getElementById("panel-model-vs-reality");
+      const panelMsc = document.getElementById("panel-msc-vs-reality");
       const lead = document.getElementById("pred-deep-lead");
       const narEl = document.getElementById("pred-deep-narrative");
       const statsEl = document.getElementById("pred-deep-stats");
+      const mscLeadEl = document.getElementById("msc-deep-lead");
+      const mscStatsEl = document.getElementById("msc-deep-stats");
+      const mscMonthlyNoteEl = document.getElementById("msc-monthly-note");
       const haircutEl = document.getElementById("pred-haircut-stats");
       const worstBody = document.getElementById("pred-deep-worst-body");
+      const withoutRepositBody = document.getElementById("without-reposit-body");
+      const withoutRepositNote = document.getElementById("without-reposit-note");
       const bandsBody = document.getElementById("pred-bands-body");
       const battBody = document.getElementById("pred-battery-body");
       const marginDeltaBody = document.getElementById("margin-delta-size-body");
       const marginDeltaSummaryEl = document.getElementById("margin-delta-size-summary");
       const optPredBody = document.getElementById("pred-optimism-predictors-body");
-      if (!panel) return;
+      if (!panel || !panelMsc) return;
       if (!d || !d.loaded || !d.n_homes) {
         [chartMarginDeltaSizeDecileInstance, chartQuadrantInstance].forEach((c) => {
           if (c) c.destroy();
         });
         chartMarginDeltaSizeDecileInstance = null;
+        if (mscMonthlyMainChartInstance) {
+          mscMonthlyMainChartInstance.destroy();
+          mscMonthlyMainChartInstance = null;
+        }
+        if (mscMonthlyImportByWindowChartInstance) {
+          mscMonthlyImportByWindowChartInstance.destroy();
+          mscMonthlyImportByWindowChartInstance = null;
+        }
         chartQuadrantInstance = null;
-        [narEl, statsEl, haircutEl, worstBody, bandsBody, battBody, marginDeltaBody, marginDeltaSummaryEl, optPredBody].forEach((el) => { if (el) el.innerHTML = ""; });
+        [narEl, statsEl, mscStatsEl, haircutEl, worstBody, withoutRepositBody, bandsBody, battBody, marginDeltaBody, marginDeltaSummaryEl, optPredBody].forEach((el) => { if (el) el.innerHTML = ""; });
+        if (withoutRepositNote) withoutRepositNote.textContent = "";
+        if (mscLeadEl) mscLeadEl.textContent = "";
+        if (mscMonthlyNoteEl) mscMonthlyNoteEl.textContent = "";
+        panel.classList.add("hidden");
+        panelMsc.classList.add("hidden");
         return;
       }
       panel.classList.remove("hidden");
+      panelMsc.classList.remove("hidden");
 
       if (lead) {
         const scope = d.restricted_to_export_set
@@ -1724,9 +1796,14 @@
         const mscN = (d.summary && d.summary.n_homes_with_msc_counterfactual) || 0;
         const mscCfg = d.msc_config || {};
         const mscMode = mscCfg.mode || "";
-        const pPeak = mscCfg.price_peak_per_kwh != null ? Number(mscCfg.price_peak_per_kwh) : null;
-        const pMidday = mscCfg.price_midday_per_kwh != null ? Number(mscCfg.price_midday_per_kwh) : null;
-        const pShoulder = mscCfg.price_shoulder_per_kwh != null ? Number(mscCfg.price_shoulder_per_kwh) : null;
+        const pPeakAm = mscCfg.import_rate_peak_am_per_kwh != null ? Number(mscCfg.import_rate_peak_am_per_kwh) : null;
+        const pPeak = mscCfg.import_rate_peak_per_kwh != null ? Number(mscCfg.import_rate_peak_per_kwh) : null;
+        const pMidday = mscCfg.import_rate_midday_per_kwh != null ? Number(mscCfg.import_rate_midday_per_kwh) : null;
+        const pShoulder = mscCfg.import_rate_shoulder_per_kwh != null ? Number(mscCfg.import_rate_shoulder_per_kwh) : null;
+        const fitRate = mscCfg.export_feed_in_tariff_per_kwh != null ? Number(mscCfg.export_feed_in_tariff_per_kwh) : null;
+        const amPeakWin = mscCfg.morning_peak_window || {};
+        const peakWin = mscCfg.peak_window || {};
+        const middayWin = mscCfg.midday_window || {};
         lead.textContent =
           "Quantified gap between what the optimiser predicted and what actually showed up on bills." +
           (ntN > 0
@@ -1739,9 +1816,22 @@
               + (mscMode ? " using " + mscMode + "." : ".")
               + (
                 pPeak != null && pMidday != null && pShoulder != null
-                  ? " DMO TOU pricing: 4-8pm " + fmtMoney(pPeak) + "/kWh, 10am-2pm " + fmtMoney(pMidday) + "/kWh, all other times " + fmtMoney(pShoulder) + "/kWh."
+                  ? " Import TOU pricing: "
+                    + (pPeakAm != null && amPeakWin.start_hour != null && amPeakWin.end_hour != null
+                      ? "AM peak " + amPeakWin.start_hour + ":00-" + amPeakWin.end_hour + ":00 " + fmtMoney(pPeakAm) + "/kWh, "
+                      : "")
+                    + (peakWin.start_hour != null && peakWin.end_hour != null
+                      ? "PM peak " + peakWin.start_hour + ":00-" + peakWin.end_hour + ":00 "
+                      : "peak window ")
+                    + fmtMoney(pPeak) + "/kWh, "
+                    + (middayWin.start_hour != null && middayWin.end_hour != null
+                      ? "midday " + middayWin.start_hour + ":00-" + middayWin.end_hour + ":00 "
+                      : "midday window ")
+                    + fmtMoney(pMidday) + "/kWh, "
+                    + "all other times " + fmtMoney(pShoulder) + "/kWh."
                   : ""
               )
+              + (fitRate != null ? " Export feed-in tariff used in MSC: " + fmtMoney(fitRate) + "/kWh." : "")
             : "") +
           scope;
       }
@@ -1787,8 +1877,12 @@
       const s = d.summary || {};
       const dr = d.delivery_rate || {};
       const sf = d.sign_flip || {};
+      const diag = d.counterfactual_diagnostics || {};
+      const checks = d.scenario_checksums || {};
+      const actChecks = checks.actual || {};
+      const mscChecks = checks.msc || {};
       if (statsEl) {
-        const cards = [
+        const modelCards = [
           ["Homes analysed", String(d.n_homes)],
           ["Median delivery rate", dr.median_delivery_pct != null ? dr.median_delivery_pct + "%" : "\u2014"],
           ["p25 / p75 delivery", dr.p25_delivery_pct != null ? dr.p25_delivery_pct + "% / " + dr.p75_delivery_pct + "%" : "\u2014"],
@@ -1800,64 +1894,351 @@
         ];
         const ntN2 = s.n_homes_with_retail_without_trade || 0;
         if (ntN2 > 0) {
-          cards.push(["Homes with no-trade batch block", String(ntN2)]);
-          cards.push(["Mean no-trade profit $", fmtMoney(s.mean_retail_without_trade_profit_usd)]);
-          cards.push(["Mean Reposit uplift (bill − no-trade) $", fmtMoney(s.mean_reposit_uplift_actual_minus_without_usd)]);
-          cards.push(["Mean (sim − no-trade) $", fmtMoney(s.mean_simulated_minus_without_usd)]);
-        }
-        const mscN2 = s.n_homes_with_msc_counterfactual || 0;
-        if (mscN2 > 0) {
-          cards.push(["Homes with MSC counterfactual", String(mscN2)]);
-          cards.push([
-            "Mean MSC baseline profit $ (counterfactual MSC-mode profit; positive = net benefit, negative = net cost)",
-            fmtMoney(s.mean_msc_counterfactual_profit_usd),
-          ]);
-          cards.push([
-            "Mean customer savings vs MSC $ (actual billed profit − MSC baseline profit; gain/loss vs MSC)",
-            fmtMoneyWithGainLoss(s.mean_customer_savings_vs_msc_usd),
-          ]);
-          cards.push([
-            "Median customer savings vs MSC $ (50th percentile of actual billed profit − MSC baseline profit)",
-            fmtMoneyWithGainLoss(s.median_customer_savings_vs_msc_usd),
+          modelCards.push(["Homes with no-trade batch block", String(ntN2)]);
+          modelCards.push(["Mean no-trade profit $", fmtMoney(s.mean_retail_without_trade_profit_usd)]);
+          modelCards.push(["Mean Reposit uplift (bill − no-trade) $", fmtMoney(s.mean_reposit_uplift_actual_minus_without_usd)]);
+          modelCards.push(["Mean (sim − no-trade) $", fmtMoney(s.mean_simulated_minus_without_usd)]);
+          modelCards.push([
+            "Homes better without Reposit controller",
+            s.n_homes_without_reposit_better != null && s.pct_homes_without_reposit_better != null
+              ? `${s.n_homes_without_reposit_better} (${s.pct_homes_without_reposit_better}%)`
+              : "—",
           ]);
         }
-        const checks = d.scenario_checksums || {};
-        const actChecks = checks.actual || {};
-        const mscChecks = checks.msc || {};
-        if (actChecks.total_import_kwh != null && mscChecks.total_import_kwh != null) {
-          if (checks.n_homes_with_both_scenarios != null) {
-            cards.push([
-              "Scenario check sum — homes with both Actual and MSC energy sides",
-              String(checks.n_homes_with_both_scenarios),
-            ]);
-          }
-          cards.push([
-            "Scenario check sum — total kWh purchased (grid import): Actual vs MSC",
-            `${fmtKwh(actChecks.total_import_kwh)} vs ${fmtKwh(mscChecks.total_import_kwh)}`,
+        if (diag.n_records_considered != null) {
+          modelCards.push(["Counterfactual diagnostics — records considered", String(diag.n_records_considered)]);
+          modelCards.push([
+            "Counterfactual diagnostics — records used in analysis",
+            String(diag.n_records_used_in_analysis != null ? diag.n_records_used_in_analysis : "—"),
           ]);
-          cards.push([
-            "Scenario check sum — weighted avg import price $/kWh: Actual vs MSC",
-            `${fmtNum(actChecks.weighted_avg_import_price_per_kwh, 4)} vs ${fmtNum(mscChecks.weighted_avg_import_price_per_kwh, 4)}`,
+          modelCards.push([
+            "Counterfactual diagnostics — homes with no-trade block",
+            String(diag.n_records_with_no_trade_counterfactual != null ? diag.n_records_with_no_trade_counterfactual : "—"),
           ]);
-          cards.push([
-            "Scenario check sum — weighted avg export price $/kWh: Actual vs MSC",
-            `${fmtNum(actChecks.weighted_avg_export_price_per_kwh, 4)} vs ${fmtNum(mscChecks.weighted_avg_export_price_per_kwh, 4)}`,
+          modelCards.push([
+            "Counterfactual diagnostics — homes with MSC block",
+            String(diag.n_records_with_msc_counterfactual != null ? diag.n_records_with_msc_counterfactual : "—"),
           ]);
-          cards.push([
-            "Scenario check sum — total gross import cost $: Actual vs MSC",
-            `${fmtMoney(actChecks.total_gross_import_cost_usd)} vs ${fmtMoney(mscChecks.total_gross_import_cost_usd)}`,
-          ]);
-          cards.push([
-            "Scenario check sum — total grid export kWh: Actual vs MSC",
-            `${fmtKwh(actChecks.total_export_kwh)} vs ${fmtKwh(mscChecks.total_export_kwh)}`,
+          modelCards.push([
+            "Counterfactual diagnostics — homes with neither no-trade nor MSC",
+            String(diag.n_records_with_neither_counterfactual != null ? diag.n_records_with_neither_counterfactual : "—"),
           ]);
         }
-        statsEl.innerHTML = cards
+        statsEl.innerHTML = modelCards
           .map(
             ([label, val]) =>
               `<div class="stat"><div class="label">${escapeHtml(label)}</div><div class="value">${escapeHtml(String(val))}</div></div>`
           )
           .join("");
+      }
+      if (mscStatsEl) {
+        const mscCards = [];
+        const mscN2 = s.n_homes_with_msc_counterfactual || 0;
+        if (mscCfg && Object.keys(mscCfg).length) {
+          const peakWindowTxt = (peakWin.start_hour != null && peakWin.end_hour != null)
+            ? `${peakWin.start_hour}:00-${peakWin.end_hour}:00`
+            : "configured peak window";
+          const middayWindowTxt = (middayWin.start_hour != null && middayWin.end_hour != null)
+            ? `${middayWin.start_hour}:00-${middayWin.end_hour}:00`
+            : "configured midday window";
+          mscCards.push(["MSC parameter — pricing mode", String(mscCfg.pricing_mode || "—")]);
+          mscCards.push(["MSC parameter — peak window and import rate", `${peakWindowTxt} @ ${fmtMoney(pPeak)}/kWh`]);
+          mscCards.push(["MSC parameter — midday window and import rate", `${middayWindowTxt} @ ${fmtMoney(pMidday)}/kWh`]);
+          mscCards.push(["MSC parameter — shoulder import rate", `${fmtMoney(pShoulder)}/kWh`]);
+          mscCards.push(["MSC parameter — export feed-in tariff", `${fmtMoney(fitRate)}/kWh`]);
+        }
+        const nBoth = checks.n_homes_with_both_scenarios != null ? Number(checks.n_homes_with_both_scenarios) : 0;
+        const totalWithout = mscChecks.total_net_energy_cost_usd != null ? Number(mscChecks.total_net_energy_cost_usd) : null;
+        const totalWith = actChecks.total_net_energy_cost_usd != null ? Number(actChecks.total_net_energy_cost_usd) : null;
+        const totalBenefit = (totalWithout != null && totalWith != null) ? (totalWithout - totalWith) : null;
+        const benefitPct = pctFromBaseline(totalBenefit, totalWithout);
+        const avgImportKwh = nBoth > 0 && actChecks.total_import_kwh != null ? Number(actChecks.total_import_kwh) / nBoth : null;
+        const avgWithout = nBoth > 0 && totalWithout != null ? totalWithout / nBoth : null;
+        const avgWith = nBoth > 0 && totalWith != null ? totalWith / nBoth : null;
+        const avgBenefit = nBoth > 0 && totalBenefit != null ? totalBenefit / nBoth : null;
+        if (mscN2 > 0) {
+          mscCards.push(["Homes with MSC counterfactual", String(mscN2)]);
+          mscCards.push([
+            "Average home electricity purchased (kWh, with controller Actual)",
+            fmtKwh(avgImportKwh),
+          ]);
+          mscCards.push([
+            "Average home would pay without controller ($, MSC baseline net bill)",
+            fmtMoney(avgWithout),
+          ]);
+          mscCards.push([
+            "Average home pays with controller ($, Actual net bill)",
+            fmtMoney(avgWith),
+          ]);
+          mscCards.push([
+            "Average controller benefit per home ($)",
+            fmtMoneyWithGainLoss(avgBenefit),
+          ]);
+          mscCards.push([
+            "Controller benefit % (total, vs MSC baseline bill)",
+            benefitPct == null ? "—" : fmtPct(benefitPct),
+          ]);
+          mscCards.push([
+            "Total controller benefit ($, MSC bill − Actual bill)",
+            fmtMoneyWithGainLoss(totalBenefit),
+          ]);
+          mscCards.push([
+            "Mean MSC baseline profit $ (counterfactual MSC-mode profit; positive = net benefit, negative = net cost)",
+            fmtMoney(s.mean_msc_counterfactual_profit_usd),
+          ]);
+          mscCards.push([
+            "Mean customer savings vs MSC $ (actual billed profit − MSC baseline profit; gain/loss vs MSC)",
+            fmtMoneyWithGainLoss(s.mean_customer_savings_vs_msc_usd),
+          ]);
+          mscCards.push([
+            "Median customer savings vs MSC $ (50th percentile of actual billed profit − MSC baseline profit)",
+            fmtMoneyWithGainLoss(s.median_customer_savings_vs_msc_usd),
+          ]);
+        }
+        if (actChecks.total_import_kwh != null && mscChecks.total_import_kwh != null) {
+          if (checks.n_homes_with_both_scenarios != null) {
+            mscCards.push([
+              "Scenario check sum — homes with both Actual and MSC energy sides",
+              String(checks.n_homes_with_both_scenarios),
+            ]);
+          }
+          mscCards.push([
+            "Scenario check sum — total kWh purchased (grid import): Actual vs MSC",
+            `${fmtKwh(actChecks.total_import_kwh)} vs ${fmtKwh(mscChecks.total_import_kwh)}`,
+          ]);
+          mscCards.push([
+            "Scenario check sum — weighted avg import price $/kWh: Actual vs MSC",
+            `${fmtNum(actChecks.weighted_avg_import_price_per_kwh, 4)} vs ${fmtNum(mscChecks.weighted_avg_import_price_per_kwh, 4)}`,
+          ]);
+          mscCards.push([
+            "Scenario check sum — weighted avg export price $/kWh: Actual vs MSC",
+            `${fmtNum(actChecks.weighted_avg_export_price_per_kwh, 4)} vs ${fmtNum(mscChecks.weighted_avg_export_price_per_kwh, 4)}`,
+          ]);
+          mscCards.push([
+            "Scenario check sum — total gross import cost $: Actual vs MSC",
+            `${fmtMoney(actChecks.total_gross_import_cost_usd)} vs ${fmtMoney(mscChecks.total_gross_import_cost_usd)}`,
+          ]);
+          mscCards.push([
+            "Scenario check sum — total grid export kWh: Actual vs MSC",
+            `${fmtKwh(actChecks.total_export_kwh)} vs ${fmtKwh(mscChecks.total_export_kwh)}`,
+          ]);
+        }
+        mscStatsEl.innerHTML = mscCards
+          .map(
+            ([label, val]) =>
+              `<div class="stat"><div class="label">${escapeHtml(label)}</div><div class="value">${escapeHtml(String(val))}</div></div>`
+          )
+          .join("");
+      }
+      if (mscMonthlyMainChartInstance) {
+        mscMonthlyMainChartInstance.destroy();
+        mscMonthlyMainChartInstance = null;
+      }
+      const mscMonthly = d.msc_monthly_aggregate || {};
+      const mscMonthlyRows = Array.isArray(mscMonthly.months) ? mscMonthly.months : [];
+      const mscMonthlyCanvas = document.getElementById("chart-msc-monthly-main");
+      if (mscMonthlyCanvas && mscMonthlyRows.length) {
+        const labels = mscMonthlyRows.map((m) => m.month || "");
+        const withNet = mscMonthlyRows.map((m) => Number(m.with_controller_net_bill_usd || 0));
+        const withoutNet = mscMonthlyRows.map((m) => Number(m.without_controller_net_bill_usd || 0));
+        if (mscMonthlyNoteEl) {
+          mscMonthlyNoteEl.textContent =
+            `Monthly aggregate across ${mscMonthly.n_homes_compared || 0} homes (${mscMonthly.period_start || "?"} to ${mscMonthly.period_end || "?"}). ` +
+            "Bars show the net bill (gross charges − export credits) with controller (Actual) vs without controller (MSC).";
+        }
+        mscMonthlyMainChartInstance = new Chart(mscMonthlyCanvas, {
+          type: "bar",
+          data: {
+            labels,
+            datasets: [
+              {
+                label: "Net bill with controller ($)",
+                data: withNet,
+                backgroundColor: "rgba(42, 157, 143, 0.85)",
+              },
+              {
+                label: "Net bill without controller (MSC) ($)",
+                data: withoutNet,
+                backgroundColor: "rgba(230, 57, 70, 0.85)",
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: "index", intersect: false },
+            plugins: {
+              legend: { labels: { color: "#8892a4" } },
+              tooltip: {
+                callbacks: {
+                  afterBody: (items) => {
+                    if (!items || !items.length) return [];
+                    const i = items[0].dataIndex;
+                    const row = mscMonthlyRows[i];
+                    if (!row) return [];
+                    return [
+                      `Controller benefit: ${fmtMoneyWithGainLoss(row.controller_benefit_usd)}`,
+                      `Active homes: ${row.active_homes != null ? row.active_homes : "—"}`,
+                    ];
+                  },
+                },
+              },
+            },
+            scales: {
+              x: {
+                ticks: { color: "#8892a4", maxRotation: 45 },
+                title: { display: true, text: "Month", color: "#8892a4" },
+                grid: { color: "rgba(44,48,80,0.25)" },
+              },
+              y: {
+                ticks: { color: "#8892a4" },
+                title: { display: true, text: "Net bill ($)", color: "#8892a4" },
+                grid: { color: "rgba(44,48,80,0.3)" },
+              },
+            },
+          },
+        });
+      } else if (mscMonthlyNoteEl) {
+        mscMonthlyNoteEl.textContent = "No monthly aggregate comparison available for this run.";
+      }
+      if (mscMonthlyImportByWindowChartInstance) {
+        mscMonthlyImportByWindowChartInstance.destroy();
+        mscMonthlyImportByWindowChartInstance = null;
+      }
+      const mscMonthlyWindowNoteEl = document.getElementById("msc-monthly-window-note");
+      const mscMonthlyWindowCanvas = document.getElementById("chart-msc-monthly-import-by-window");
+      if (mscMonthlyWindowCanvas && mscMonthlyRows.length) {
+        const windows = Array.isArray(mscMonthly.windows) && mscMonthly.windows.length
+          ? mscMonthly.windows
+          : [
+              { id: "peak_am", label: "AM peak" },
+              { id: "peak_pm", label: "PM peak" },
+              { id: "midday", label: "Midday" },
+              { id: "shoulder", label: "Shoulder" },
+            ];
+        const windowColors = {
+          peak_am: "rgba(241, 143, 1, 0.85)",
+          peak_pm: "rgba(230, 57, 70, 0.85)",
+          midday: "rgba(38, 139, 210, 0.85)",
+          shoulder: "rgba(136, 146, 164, 0.85)",
+        };
+        const windowLabels = mscMonthlyRows.map((m) => m.month || "");
+        const windowDatasets = windows.map((w) => {
+          const data = mscMonthlyRows.map((m) => {
+            const bucket = m.without_controller_import_cost_by_window_usd || {};
+            const v = Number(bucket[w.id]);
+            return Number.isFinite(v) ? v : 0;
+          });
+          const rate = Number(w.rate_per_kwh_usd);
+          const hours = Array.isArray(w.hours) && w.hours.length === 2 ? w.hours : null;
+          const hoursLabel = hours ? ` ${String(hours[0]).padStart(2, "0")}–${String(hours[1]).padStart(2, "0")}` : "";
+          const rateLabel = Number.isFinite(rate) ? ` @ $${rate.toFixed(2)}/kWh` : "";
+          return {
+            label: `${w.label}${hoursLabel}${rateLabel}`,
+            data,
+            backgroundColor: windowColors[w.id] || "rgba(136, 146, 164, 0.85)",
+            stack: "import_cost",
+          };
+        });
+        if (mscMonthlyWindowNoteEl) {
+          mscMonthlyWindowNoteEl.textContent =
+            `Stacked bars split each month's MSC gross import charges across ${mscMonthly.n_homes_compared || 0} homes ` +
+            `(${mscMonthly.period_start || "?"} to ${mscMonthly.period_end || "?"}) into TOU windows. ` +
+            "A month dominated by the PM-peak colour is driven by peak-window imports; a tall bar dominated by shoulder is driven by raw volume rather than peak concentration.";
+        }
+        mscMonthlyImportByWindowChartInstance = new Chart(mscMonthlyWindowCanvas, {
+          type: "bar",
+          data: { labels: windowLabels, datasets: windowDatasets },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: "index", intersect: false },
+            plugins: {
+              legend: { labels: { color: "#8892a4" } },
+              tooltip: {
+                callbacks: {
+                  afterBody: (items) => {
+                    if (!items || !items.length) return [];
+                    const i = items[0].dataIndex;
+                    const row = mscMonthlyRows[i];
+                    if (!row) return [];
+                    const costs = row.without_controller_import_cost_by_window_usd || {};
+                    const kwhs = row.without_controller_import_kwh_by_window || {};
+                    const total = Object.values(costs).reduce((a, b) => {
+                      const v = Number(b);
+                      return a + (Number.isFinite(v) ? v : 0);
+                    }, 0);
+                    const lines = [`Gross import $ (MSC): ${fmtMoney(total)}`];
+                    windows.forEach((w) => {
+                      const c = Number(costs[w.id]);
+                      const k = Number(kwhs[w.id]);
+                      const cVal = Number.isFinite(c) ? c : 0;
+                      const kVal = Number.isFinite(k) ? k : 0;
+                      const pct = total > 0 ? ((cVal / total) * 100).toFixed(1) : "0.0";
+                      lines.push(`  ${w.label}: ${fmtMoney(cVal)} (${pct}%) on ${Math.round(kVal).toLocaleString()} kWh`);
+                    });
+                    return lines;
+                  },
+                },
+              },
+            },
+            scales: {
+              x: {
+                stacked: true,
+                ticks: { color: "#8892a4", maxRotation: 45 },
+                title: { display: true, text: "Month", color: "#8892a4" },
+                grid: { color: "rgba(44,48,80,0.25)" },
+              },
+              y: {
+                stacked: true,
+                ticks: { color: "#8892a4" },
+                title: { display: true, text: "MSC import charges ($)", color: "#8892a4" },
+                grid: { color: "rgba(44,48,80,0.3)" },
+              },
+            },
+          },
+        });
+      } else if (mscMonthlyWindowNoteEl) {
+        mscMonthlyWindowNoteEl.textContent = "No monthly TOU-window breakdown available for this run.";
+      }
+      if (mscLeadEl) {
+        const mscN2 = s.n_homes_with_msc_counterfactual || 0;
+        mscLeadEl.textContent = mscN2 > 0
+          ? `Direct MSC counterfactual comparison across ${mscN2} homes: billed Actual vs MSC scenario outcomes. MSC parameters used in this run are listed first below.`
+          : "MSC counterfactual not available for this run.";
+      }
+
+      const withoutCases = d.without_reposit_better_cases || [];
+      if (withoutRepositBody) {
+        withoutRepositBody.innerHTML = "";
+        withoutCases.forEach((row) => {
+          const actualProfit = Number(row.actual_profit);
+          const withoutProfit = Number(row.without_reposit_profit);
+          const withoutBill = Number.isFinite(withoutProfit) ? -withoutProfit : null;
+          const withBill = Number.isFinite(actualProfit) ? -actualProfit : null;
+          const controllerBenefit = Number.isFinite(withoutBill) && Number.isFinite(withBill) ? (withoutBill - withBill) : null;
+          const controllerBenefitPct = pctFromBaseline(controllerBenefit, withoutBill);
+          const tr = document.createElement("tr");
+          tr.innerHTML =
+            `<td><code class="mono">${escapeHtml((row.house_id || "").slice(0, 12))}…</code></td>` +
+            `<td class="num">${escapeHtml(fmtMoney(withoutBill))}</td>` +
+            `<td class="num">${escapeHtml(fmtMoney(withBill))}</td>` +
+            `<td class="num">${escapeHtml(fmtMoneyWithGainLoss(controllerBenefit))}</td>` +
+            `<td class="num">${escapeHtml(controllerBenefitPct == null ? "—" : fmtPct(controllerBenefitPct))}</td>`;
+          withoutRepositBody.appendChild(tr);
+        });
+      }
+      if (withoutRepositNote) {
+        const nWr = s.n_homes_with_without_reposit_counterfactual || 0;
+        const nBetter = s.n_homes_without_reposit_better || 0;
+        const pctBetter = s.pct_homes_without_reposit_better;
+        const src = s.without_reposit_counterfactual_source || "";
+        const srcText = src === "retail_without_trade"
+          ? "retail no-trade counterfactual"
+          : (src === "msc_counterfactual" ? "MSC counterfactual (fallback because no no-trade block was present)" : "available counterfactual");
+        withoutRepositNote.textContent = nWr > 0
+          ? `${nBetter} of ${nWr} homes` + (pctBetter != null ? ` (${pctBetter}%)` : "") + ` would be better off without Reposit controller using the ${srcText}. Controller benefit = (without-controller bill − with-controller bill). Table shows largest gaps first.`
+          : "No suitable counterfactual available in batch for this run.";
       }
 
       /* --- Update bands lead with key finding --- */
@@ -3478,7 +3859,8 @@
       timingSlotProfitChartInstance = null;
       [chartPredHistInstance,
        chartPredByBatteryInstance, chartPredBySolarInstance,
-       chartMarginDeltaSizeDecileInstance,
+       chartMarginDeltaSizeDecileInstance, mscMonthlyMainChartInstance,
+       mscMonthlyImportByWindowChartInstance,
        chartQuadrantInstance].forEach(
         (c) => {
           if (c) c.destroy();
@@ -3488,9 +3870,13 @@
       chartPredByBatteryInstance = null;
       chartPredBySolarInstance = null;
       chartMarginDeltaSizeDecileInstance = null;
+      mscMonthlyMainChartInstance = null;
+      mscMonthlyImportByWindowChartInstance = null;
       chartQuadrantInstance = null;
       const panelModelVsReality = document.getElementById("panel-model-vs-reality");
       if (panelModelVsReality) panelModelVsReality.classList.add("hidden");
+      const panelMscVsReality = document.getElementById("panel-msc-vs-reality");
+      if (panelMscVsReality) panelMscVsReality.classList.add("hidden");
       const lossCompareBody = document.getElementById("loss-compare-body");
       const lossDriversBody = document.getElementById("loss-drivers-body");
       const lossWorstBody = document.getElementById("loss-worst-body");

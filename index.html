@@ -42,7 +42,7 @@
       <div class="card-head">
         <div class="card-title-wrap">
           <div class="card-title">Optisizer fleet summary</div>
-          <div class="card-desc">Per-home <code>net_cost</code> rollups from <code>catan_results</code> CSVs, live progress, fleet averages, and a net-margin chart.</div>
+          <div class="card-desc">Per-home <code>net_cost</code> rollups from <code>catan_results</code> or <code>catan_no_vic</code> CSVs, live progress, fleet averages, and a net-margin chart.</div>
           <span class="badge flask"><span class="badge-dot"></span>Flask · port 5010</span>
         </div>
       </div>
@@ -56,6 +56,10 @@
         </div>
         <a class="link-item" href="http://127.0.0.1:5010/" target="_blank" rel="noopener noreferrer">
           <span class="link-item-label">Open Optisizer only (if Flask is already running on port 5010)</span>
+          <span class="link-item-arrow">↗</span>
+        </a>
+        <a class="link-item" href="http://127.0.0.1:5010/solax-quote" target="_blank" rel="noopener noreferrer">
+          <span class="link-item-label">Usage CSV quote — Solax / optimiser upload, haircut, implied $/mo (port 5010)</span>
           <span class="link-item-arrow">↗</span>
         </a>
       </div>

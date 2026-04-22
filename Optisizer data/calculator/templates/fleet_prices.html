@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fleet import &amp; export prices — Optisizer</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="page-wrap">
+    <header class="site-header">
+      <p class="site-nav-extra">
+        <a href="{{ url_for('index') }}">← Fleet summary</a>
+        · <a href="{{ url_for('fleet_headline_margin_page') }}">Headline margin &amp; fee</a>
+        · <a href="{{ url_for('solax_quote_page') }}">Usage CSV quote</a>
+        · <a href="{{ url_for('calibrated_prediction_page') }}">Calibrated prediction</a>
+      </p>
+      <h1>Fleet import &amp; export prices (aggregate)</h1>
+      <p>
+        For each calendar <strong>month</strong> and each <strong>day</strong>, prices are <strong>volume-weighted</strong> across every home in the export set:
+        fleet import $/kWh = (sum of import_price × import energy) ÷ (sum of import energy), and similarly for exports.
+        All <code class="mono">optimisation_intervals.csv</code> rows in that period are pooled (this can take a minute on large fleets).
+      </p>
+    </header>
+
+    <section class="card" id="panel-prices">
+      <h2>Data source</h2>
+      <fieldset class="catan-source-fieldset">
+        <legend class="catan-source-legend">Catan export set</legend>
+        {% for s in catan_sources %}
+        <label class="catan-source-option">
+          <input
+            type="radio"
+            name="catan_source"
+            value="{{ s.id }}"
+            data-n-files="{{ s.n_files }}"
+            {% if s.id == default_source %}checked{% endif %}
+            {% if s.n_files <= 0 %}disabled{% endif %}
+          />
+          <span class="catan-source-option-text">
+            <strong>{{ s.label }}</strong>
+            <span class="mono">{{ s.path }}</span>
+            — {{ s.n_files }} file{% if s.n_files != 1 %}s{% endif %}
+            {% if not s.exists %}<span class="catan-source-missing">(folder missing)</span>{% endif %}
+          </span>
+        </label>
+        {% endfor %}
+      </fieldset>
+      <p>
+        <button type="button" class="btn-primary" id="btn-load-prices">Load monthly &amp; daily series</button>
+      </p>
+      <p class="status-line" id="prices-status"></p>
+      <h3 class="fleet-prices-subhead">By month</h3>
+      <div class="chart-wrap chart-wrap--tall">
+        <canvas id="chart-fleet-prices"></canvas>
+      </div>
+      <div class="chart-actions pdf-hide">
+        <button type="button" class="btn-download" id="btn-download-prices-chart">Download monthly chart (PNG)</button>
+      </div>
+      <h3 class="fleet-prices-subhead">By day</h3>
+      <div class="chart-wrap chart-wrap--tall chart-wrap--hscroll">
+        <div class="chart-canvas-host--daily">
+          <canvas id="chart-fleet-prices-daily"></canvas>
+        </div>
+      </div>
+      <div class="chart-actions pdf-hide">
+        <button type="button" class="btn-download" id="btn-download-prices-chart-daily">Download daily chart (PNG)</button>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const API_FLEET_PRICES = "{{ url_for('api_fleet_prices') }}";
+    const DEFAULT_SOURCE = "{{ default_source }}";
+    let priceChart = null;
+    let priceChartDaily = null;
+
+    function selectedSource() {
+      const el = document.querySelector('input[name="catan_source"]:checked');
+      return el ? el.value : DEFAULT_SOURCE;
+    }
+
+    function syncLoadButton() {
+      const el = document.querySelector('input[name="catan_source"]:checked');
+      const n = el ? parseInt(el.getAttribute("data-n-files") || "0", 10) : 0;
+      document.getElementById("btn-load-prices").disabled = !Number.isFinite(n) || n <= 0;
+    }
+
+    document.querySelectorAll('input[name="catan_source"]').forEach((inp) => {
+      inp.addEventListener("change", syncLoadButton);
+    });
+    syncLoadButton();
+
+    function fmtNum(n, d) {
+      if (n == null || Number.isNaN(n)) return "—";
+      return Number(n).toFixed(d);
+    }
+
+    document.getElementById("btn-load-prices").addEventListener("click", async () => {
+      const status = document.getElementById("prices-status");
+      const btn = document.getElementById("btn-load-prices");
+      btn.disabled = true;
+      status.textContent = "Loading all homes (CPU-bound; please wait)…";
+      try {
+        const url = `${API_FLEET_PRICES}?source=${encodeURIComponent(selectedSource())}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.error === "no_csv") {
+          status.textContent = "No CSV files found for this export set.";
+          if (priceChart) {
+            priceChart.destroy();
+            priceChart = null;
+          }
+          if (priceChartDaily) {
+            priceChartDaily.destroy();
+            priceChartDaily = null;
+          }
+          return;
+        }
+        const months = data.months || [];
+        const days = data.days || [];
+        const lbl = data.data_source_label || data.data_source || "";
+        const nHomes = data.n_homes != null ? data.n_homes : 0;
+        const nM = data.n_homes_with_monthly_prices != null ? data.n_homes_with_monthly_prices : 0;
+        const nD = data.n_homes_with_daily_prices != null ? data.n_homes_with_daily_prices : 0;
+        const parts = [`${lbl} · ${nHomes} homes scanned`];
+        if (months.length === 0) {
+          parts.push("no monthly price buckets");
+        } else {
+          parts.push(
+            `${nM} with monthly weights · ${months.length} month(s) ${data.period_start || "?"} → ${data.period_end || "?"}`
+          );
+        }
+        if (days.length === 0) {
+          parts.push("no daily price buckets");
+        } else {
+          parts.push(
+            `${nD} with daily weights · ${days.length} day(s) ${data.daily_period_start || "?"} → ${data.daily_period_end || "?"}`
+          );
+        }
+        status.textContent = parts.join(" · ") + ".";
+
+        const labels = months.map((m) => m.month);
+        const imp = months.map((m) => (m.avg_import_price != null ? m.avg_import_price : null));
+        const exp = months.map((m) => (m.avg_export_price != null ? m.avg_export_price : null));
+        const el = document.getElementById("chart-fleet-prices");
+        if (priceChart) priceChart.destroy();
+        priceChart = new Chart(el, {
+          type: "line",
+          data: {
+            labels,
+            datasets: [
+              {
+                label: "Import price ($/kWh, fleet weighted)",
+                data: imp,
+                borderColor: "rgba(230, 57, 70, 0.95)",
+                backgroundColor: "rgba(230, 57, 70, 0.12)",
+                tension: 0.2,
+                spanGaps: false,
+              },
+              {
+                label: "Export price ($/kWh, fleet weighted)",
+                data: exp,
+                borderColor: "rgba(42, 157, 143, 0.95)",
+                backgroundColor: "rgba(42, 157, 143, 0.12)",
+                tension: 0.2,
+                spanGaps: false,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: "index", intersect: false },
+            plugins: {
+              legend: { labels: { color: "#8892a4" } },
+              tooltip: {
+                callbacks: {
+                  afterBody: (items) => {
+                    const i = items[0].dataIndex;
+                    const row = months[i];
+                    if (!row) return [];
+                    return [
+                      "Fleet import MWh: " + fmtNum((row.fleet_import_kwh || 0) / 1000, 3),
+                      "Fleet export MWh: " + fmtNum((row.fleet_export_kwh || 0) / 1000, 3),
+                    ];
+                  },
+                },
+              },
+            },
+            scales: {
+              x: {
+                ticks: { color: "#8892a4", maxRotation: 45 },
+                title: { display: true, text: "Month", color: "#8892a4" },
+                grid: { color: "rgba(44,48,80,0.25)" },
+              },
+              y: {
+                ticks: { color: "#8892a4" },
+                title: { display: true, text: "$/kWh (volume-weighted)", color: "#8892a4" },
+                grid: { color: "rgba(44,48,80,0.3)" },
+              },
+            },
+          },
+        });
+
+        const dLabels = days.map((d) => d.day);
+        const dImp = days.map((d) => (d.avg_import_price != null ? d.avg_import_price : null));
+        const dExp = days.map((d) => (d.avg_export_price != null ? d.avg_export_price : null));
+        const elD = document.getElementById("chart-fleet-prices-daily");
+        if (priceChartDaily) priceChartDaily.destroy();
+        priceChartDaily = new Chart(elD, {
+          type: "line",
+          data: {
+            labels: dLabels,
+            datasets: [
+              {
+                label: "Import price ($/kWh, fleet weighted)",
+                data: dImp,
+                borderColor: "rgba(230, 57, 70, 0.95)",
+                backgroundColor: "rgba(230, 57, 70, 0.12)",
+                tension: 0.15,
+                spanGaps: false,
+                pointRadius: 0,
+                pointHoverRadius: 3,
+              },
+              {
+                label: "Export price ($/kWh, fleet weighted)",
+                data: dExp,
+                borderColor: "rgba(42, 157, 143, 0.95)",
+                backgroundColor: "rgba(42, 157, 143, 0.12)",
+                tension: 0.15,
+                spanGaps: false,
+                pointRadius: 0,
+                pointHoverRadius: 3,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: "index", intersect: false },
+            plugins: {
+              legend: { labels: { color: "#8892a4" } },
+              tooltip: {
+                callbacks: {
+                  afterBody: (items) => {
+                    const i = items[0].dataIndex;
+                    const row = days[i];
+                    if (!row) return [];
+                    return [
+                      "Fleet import MWh: " + fmtNum((row.fleet_import_kwh || 0) / 1000, 3),
+                      "Fleet export MWh: " + fmtNum((row.fleet_export_kwh || 0) / 1000, 3),
+                    ];
+                  },
+                },
+              },
+            },
+            scales: {
+              x: {
+                ticks: {
+                  color: "#8892a4",
+                  maxRotation: 60,
+                  minRotation: 0,
+                  autoSkip: true,
+                  maxTicksLimit: 18,
+                },
+                title: { display: true, text: "Day", color: "#8892a4" },
+                grid: { color: "rgba(44,48,80,0.25)" },
+              },
+              y: {
+                ticks: { color: "#8892a4" },
+                title: { display: true, text: "$/kWh (volume-weighted)", color: "#8892a4" },
+                grid: { color: "rgba(44,48,80,0.3)" },
+              },
+            },
+          },
+        });
+      } catch (e) {
+        status.textContent = "Request failed — is the Flask server running on this port?";
+      } finally {
+        syncLoadButton();
+      }
+    });
+
+    document.getElementById("btn-download-prices-chart").addEventListener("click", () => {
+      const canvas = document.getElementById("chart-fleet-prices");
+      if (!canvas || !priceChart) return;
+      const a = document.createElement("a");
+      a.href = canvas.toDataURL("image/png");
+      a.download = "fleet-import-export-prices-by-month.png";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    });
+
+    document.getElementById("btn-download-prices-chart-daily").addEventListener("click", () => {
+      const canvas = document.getElementById("chart-fleet-prices-daily");
+      if (!canvas || !priceChartDaily) return;
+      const a = document.createElement("a");
+      a.href = canvas.toDataURL("image/png");
+      a.download = "fleet-import-export-prices-by-day.png";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    });
+  </script>
+</body>
+</html>

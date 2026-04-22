@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calibrated prediction &mdash; Optisizer</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+  <div class="page-wrap">
+    <header class="site-header">
+      <p class="site-nav-extra">
+        <a href="{{ url_for('index') }}">&larr; Fleet summary</a>
+        &middot; <a href="{{ url_for('fleet_prices_page') }}">Fleet prices</a>
+        &middot; <a href="{{ url_for('fleet_headline_margin_page') }}">Headline margin &amp; fee</a>
+        &middot; <a href="{{ url_for('solax_quote_page') }}">Usage CSV quote</a>
+      </p>
+      <h1>Calibrated prediction for a new system</h1>
+      <p>
+        Turns a simulated profit from the optimiser into an
+        <strong>expected actual profit</strong> with a <strong>reliability band</strong>,
+        using the persisted fleet behaviour-segment model and the lowest-MAE calibration model.
+      </p>
+      <details class="collapsible-section collapsible-section--in-header">
+        <summary class="collapsible-section__summary">What is a &ldquo;primary segment&rdquo;?</summary>
+        <div class="collapsible-section__body">
+          <p>
+            The reference fleet is split into <strong>K=4 behaviour segments</strong> by k-means on
+            standardised usage features &mdash; average load, evening load share, import/export/battery
+            activity, price spread, solar self-consumption and export:import ratio. Each cluster is
+            given a stable label <strong>S1&hellip;S4</strong>, ordered by the cluster&apos;s average
+            net margin in the reference fleet (S1 lowest, S4 highest).
+          </p>
+          <p>
+            A new home&apos;s features are z-scored with the reference fleet&apos;s mean/std and the
+            distance to each centroid is computed. The <strong>primary segment</strong> is the nearest
+            centroid &mdash; the fleet &ldquo;shadow&rdquo; the home most resembles. The
+            <strong>secondary segment</strong> is the second nearest; if the two distances are
+            near-equal the home is flagged <em>ambiguous</em> and soft weights are used to blend
+            segment-specific calibrations. The primary segment&apos;s own sim&rarr;actual calibration
+            and in-segment residuals drive both the point estimate and the p10&ndash;p90 reliability
+            band, making the band personalised to homes that behave like this one rather than to the
+            fleet as a whole.
+          </p>
+        </div>
+      </details>
+    </header>
+
+    <section class="card" id="panel-reference">
+      <h2>Reference model</h2>
+      <p class="status-line" id="ref-status">Checking persisted artefact&hellip;</p>
+      <div class="results-grid" id="ref-kpi-grid"></div>
+      <details class="collapsible-section collapsible-section--in-card">
+        <summary class="collapsible-section__summary">Rebuild from a Catan export</summary>
+        <div class="collapsible-section__body">
+          <fieldset class="catan-source-fieldset">
+            <legend class="catan-source-legend">Catan export set</legend>
+            {% for s in catan_sources %}
+            <label class="catan-source-option">
+              <input
+                type="radio"
+                name="ref_catan_source"
+                value="{{ s.id }}"
+                {% if s.id == default_source %}checked{% endif %}
+                {% if s.n_files <= 0 %}disabled{% endif %}
+              />
+              <span class="catan-source-option-text">
+                <strong>{{ s.label }}</strong>
+                &mdash; {{ s.n_files }} file{% if s.n_files != 1 %}s{% endif %}
+              </span>
+            </label>
+            {% endfor %}
+          </fieldset>
+          <p>
+            <button type="button" class="btn-primary" id="btn-refresh-ref">Rebuild reference model</button>
+          </p>
+          <p class="status-line" id="refresh-status"></p>
+          <h3 class="fleet-prices-subhead">Model-zoo CV report</h3>
+          <div class="file-log">
+            <table>
+              <thead>
+                <tr>
+                  <th>Model</th>
+                  <th class="num">Mean MAE ($)</th>
+                  <th class="num">SD MAE ($)</th>
+                  <th class="num">Stability</th>
+                </tr>
+              </thead>
+              <tbody id="model-zoo-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <section class="card" id="panel-predict">
+      <h2>Predict for a new home</h2>
+
+      <h3 class="fleet-prices-subhead">Option A &mdash; existing fleet UID</h3>
+      <p class="headline-margin-form">
+        <label class="headline-margin-label">
+          House UID
+          <input type="text" id="uid-input" class="headline-margin-input" placeholder="e.g. 0000f96b963a4bc69e99316ef1e2ad3d" />
+        </label>
+      </p>
+      <p>
+        <button type="button" class="btn-primary" id="btn-predict-uid">Predict for this UID</button>
+      </p>
+
+      <h3 class="fleet-prices-subhead">Option B &mdash; upload a CSV</h3>
+      <fieldset class="catan-source-fieldset">
+        <legend class="catan-source-legend">Format</legend>
+        <label class="catan-source-option">
+          <input type="radio" name="upload_format" value="optimiser" checked />
+          <span class="catan-source-option-text">Optimiser output (has <code class="mono">net_cost</code>)</span>
+        </label>
+        <label class="catan-source-option">
+          <input type="radio" name="upload_format" value="flexible" />
+          <span class="catan-source-option-text">Flexible usage (timestamp + import/export energy)</span>
+        </label>
+      </fieldset>
+      <p class="headline-margin-form">
+        <label class="headline-margin-label">
+          CSV file
+          <input type="file" id="upload-input" accept=".csv" />
+        </label>
+      </p>
+      <div id="flexible-price-fallbacks" class="hidden">
+        <p class="status-line">
+          Only used if the flexible CSV has no per-row <code class="mono">import_price</code> /
+          <code class="mono">export_price</code> columns.
+        </p>
+        <p class="headline-margin-form">
+          <label class="headline-margin-label">
+            Fallback import price ($/kWh)
+            <input type="number" id="default-import" class="headline-margin-input" value="0.35" step="0.01" />
+          </label>
+        </p>
+        <p class="headline-margin-form">
+          <label class="headline-margin-label">
+            Fallback export price ($/kWh)
+            <input type="number" id="default-export" class="headline-margin-input" value="0.05" step="0.01" />
+          </label>
+        </p>
+      </div>
+      <p>
+        <button type="button" class="btn-primary" id="btn-predict-upload">Predict from upload</button>
+      </p>
+      <p class="status-line" id="predict-status"></p>
+    </section>
+
+    <section class="card hidden" id="panel-results">
+      <h2>Result</h2>
+      <div class="results-grid results-grid--highlight" id="result-kpis"></div>
+      <p class="status-line">
+        <strong>Primary segment</strong> = the fleet behaviour cluster this home most resembles
+        (S1 = lowest-margin shadow, S4 = highest). The reliability band below is built from the
+        sim&rarr;actual residuals of other homes in the same segment.
+      </p>
+
+      <details class="collapsible-section collapsible-section--in-card">
+        <summary class="collapsible-section__summary">Diagnostics</summary>
+        <div class="collapsible-section__body">
+          <p class="status-line">
+            <strong>Primary</strong> = nearest centroid in z-space.
+            <strong>Secondary</strong> = second nearest (used to detect ambiguity).
+            <strong>Soft weights</strong> blend segments when the home sits between clusters.
+            <strong>Out-of-distribution</strong> fires when the primary distance exceeds the
+            fleet&apos;s p90, causing the reliability band to be widened or fall back to fleet-wide
+            residuals.
+          </p>
+          <div class="headline-dual-summary">
+            <div class="headline-dual-col">
+              <h3 class="fleet-prices-subhead">Segment assignment</h3>
+              <dl class="headline-summary-dl">
+                <dt>Primary segment</dt><dd id="seg-primary">&mdash;</dd>
+                <dt>Secondary segment</dt><dd id="seg-secondary">&mdash;</dd>
+                <dt>Distance to primary</dt><dd id="seg-dist-primary">&mdash;</dd>
+                <dt>Distance to secondary</dt><dd id="seg-dist-secondary">&mdash;</dd>
+                <dt>Fleet p90 distance</dt><dd id="seg-dist-p90">&mdash;</dd>
+                <dt>Ambiguous?</dt><dd id="seg-amb">&mdash;</dd>
+                <dt>Out-of-distribution?</dt><dd id="seg-far">&mdash;</dd>
+                <dt>Imputed features</dt><dd id="seg-imputed">&mdash;</dd>
+                <dt>Soft weights</dt><dd id="seg-weights">&mdash;</dd>
+              </dl>
+            </div>
+            <div class="headline-dual-col headline-dual-col--adjusted">
+              <h3 class="fleet-prices-subhead">Reliability</h3>
+              <dl class="headline-summary-dl">
+                <dt>Mode</dt><dd id="rel-mode">&mdash;</dd>
+                <dt>Residual band (low)</dt><dd id="rel-low">&mdash;</dd>
+                <dt>Residual band (high)</dt><dd id="rel-high">&mdash;</dd>
+                <dt>Winner model</dt><dd id="rel-winner">&mdash;</dd>
+                <dt>Winner CV MAE</dt><dd id="rel-mae">&mdash;</dd>
+                <dt>Beats baseline?</dt><dd id="rel-beats">&mdash;</dd>
+              </dl>
+            </div>
+          </div>
+          <h3 class="fleet-prices-subhead">Derived features for this home</h3>
+          <div class="file-log">
+            <table>
+              <thead>
+                <tr>
+                  <th>Field</th>
+                  <th class="num">Value</th>
+                </tr>
+              </thead>
+              <tbody id="input-summary-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </details>
+    </section>
+  </div>
+
+  <script>
+    const API_STATUS = "{{ url_for('api_calibration_status') }}";
+    const API_REFRESH = "{{ url_for('api_calibration_refresh') }}";
+    const API_BY_UID = "{{ url_for('api_calibrated_prediction_by_uid') }}";
+    const API_UPLOAD = "{{ url_for('api_calibrated_prediction_upload') }}";
+
+    let ARTEFACT_SOURCE = null;
+
+    function fmtNum(n, d) {
+      if (n == null || Number.isNaN(Number(n))) return "\u2014";
+      return Number(n).toLocaleString(undefined, { minimumFractionDigits: d, maximumFractionDigits: d });
+    }
+    function fmtMoney(n) {
+      if (n == null || Number.isNaN(Number(n))) return "\u2014";
+      const sign = Number(n) < 0 ? "-" : "";
+      return sign + "$" + Math.abs(Number(n)).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    }
+    function setText(id, v) { const el = document.getElementById(id); if (el) el.textContent = v; }
+    function boolBadge(b) { return b ? "Yes" : "No"; }
+
+    function selectedSource(name) {
+      const el = document.querySelector('input[name="' + name + '"]:checked');
+      return el ? el.value : "no_vic";
+    }
+
+    function renderRefStatus(data) {
+      const status = document.getElementById("ref-status");
+      const grid = document.getElementById("ref-kpi-grid");
+      const zoo = document.getElementById("model-zoo-body");
+      grid.innerHTML = "";
+      zoo.innerHTML = "";
+      if (!data || !data.available) {
+        ARTEFACT_SOURCE = null;
+        status.textContent = "No persisted reference model. Expand \u201cRebuild\u201d below to create one.";
+        return;
+      }
+      ARTEFACT_SOURCE = data.source || null;
+      const seg = data.segment_model || {};
+      const calib = data.calibration || {};
+      status.textContent = "Loaded from source \u201c" + (data.source || "?") +
+        "\u201d \u00b7 built " + (data.created_utc || "?");
+      const kpis = [
+        { label: "Homes in model", value: seg.n_homes != null ? seg.n_homes : "\u2014" },
+        { label: "Segments (K)", value: seg.k != null ? seg.k : "\u2014" },
+        { label: "Calibration rows", value: calib.n_rows != null ? calib.n_rows : "\u2014" },
+        { label: "Winner model", value: calib.winner || "identity" },
+        { label: "Beats baseline?", value: boolBadge(!!calib.beats_baseline) },
+      ];
+      for (const k of kpis) {
+        const d = document.createElement("div");
+        d.className = "stat";
+        d.innerHTML = '<div class="label"></div><div class="value"></div>';
+        d.querySelector(".label").textContent = k.label;
+        d.querySelector(".value").textContent = k.value;
+        grid.appendChild(d);
+      }
+      const models = calib.models || [];
+      for (const m of models) {
+        const tr = document.createElement("tr");
+        tr.innerHTML =
+          "<td>" + (m.name || "") + "</td>" +
+          '<td class="num">' + fmtMoney(m.mean_cv_mae) + "</td>" +
+          '<td class="num">' + fmtMoney(m.sd_cv_mae) + "</td>" +
+          '<td class="num">' + fmtNum(m.stability, 3) + "</td>";
+        if (m.name === calib.winner) tr.style.fontWeight = "600";
+        zoo.appendChild(tr);
+      }
+    }
+
+    async function loadStatus() {
+      try {
+        const res = await fetch(API_STATUS);
+        const data = await res.json();
+        renderRefStatus(data);
+      } catch (e) {
+        document.getElementById("ref-status").textContent = "Status request failed.";
+      }
+    }
+
+    document.getElementById("btn-refresh-ref").addEventListener("click", async () => {
+      const btn = document.getElementById("btn-refresh-ref");
+      const s = document.getElementById("refresh-status");
+      btn.disabled = true;
+      s.textContent = "Rebuilding (summarising every home; this can take a minute)\u2026";
+      try {
+        const src = selectedSource("ref_catan_source");
+        const res = await fetch(API_REFRESH + "?source=" + encodeURIComponent(src), { method: "POST" });
+        const data = await res.json();
+        if (!res.ok || data.ok === false) {
+          s.textContent = "Refresh failed: " + (data.error || res.status);
+        } else {
+          s.textContent = "Reference rebuilt.";
+          renderRefStatus(data.status || {});
+        }
+      } catch (e) {
+        s.textContent = "Refresh request failed.";
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    function renderResult(data) {
+      const panel = document.getElementById("panel-results");
+      panel.classList.remove("hidden");
+
+      const kpis = document.getElementById("result-kpis");
+      kpis.innerHTML = "";
+      const assignment = data.assignment || {};
+      const interval = data.prediction_interval || null;
+      const kpiItems = [
+        { label: "Simulated profit", value: fmtMoney(data.sim_profit) },
+        { label: "Expected actual profit", value: fmtMoney(data.expected_actual_profit) },
+        { label: "Delta vs sim", value: fmtMoney(data.delta_vs_sim) },
+        {
+          label: "Interval (p10 \u2013 p90)",
+          value: interval ? (fmtMoney(interval.low) + " \u2013 " + fmtMoney(interval.high)) : "\u2014",
+        },
+        { label: "Primary segment", value: assignment.primary_label || "\u2014" },
+      ];
+      for (const k of kpiItems) {
+        const d = document.createElement("div");
+        d.className = "stat stat--highlight";
+        d.innerHTML = '<div class="label"></div><div class="value"></div>';
+        d.querySelector(".label").textContent = k.label;
+        d.querySelector(".value").textContent = k.value;
+        kpis.appendChild(d);
+      }
+
+      setText("seg-primary", (assignment.primary_label || "\u2014"));
+      setText("seg-secondary", (assignment.secondary_label || "\u2014"));
+      setText("seg-dist-primary", fmtNum(assignment.primary_distance, 3));
+      setText("seg-dist-secondary", fmtNum(assignment.secondary_distance, 3));
+      setText("seg-dist-p90", fmtNum(assignment.distance_p90_fleet, 3));
+      setText("seg-amb", boolBadge(!!assignment.ambiguous));
+      setText("seg-far", boolBadge(!!assignment.far_from_fleet));
+      setText("seg-imputed", (assignment.imputed_dims || []).length ? (assignment.imputed_dims || []).join(", ") : "none");
+      const weights = assignment.soft_weights_by_rank || {};
+      const wparts = Object.keys(weights).sort().map((k) => k + ": " + fmtNum(weights[k], 3));
+      setText("seg-weights", wparts.length ? wparts.join(" \u00b7 ") : "\u2014");
+
+      const rel = data.reliability || {};
+      setText("rel-mode", rel.mode || "\u2014");
+      const rb = rel.residual_band || null;
+      setText("rel-low", rb ? fmtMoney(rb.low) : "\u2014");
+      setText("rel-high", rb ? fmtMoney(rb.high) : "\u2014");
+      setText("rel-winner", data.winner_model || "\u2014");
+      setText("rel-mae", fmtMoney(data.winner_cv_mae));
+      setText("rel-beats", boolBadge(!!data.beats_baseline));
+
+      const body = document.getElementById("input-summary-body");
+      body.innerHTML = "";
+      const inp = data.input_summary || {};
+      const rowOrder = [
+        "house_id", "n_rows", "start_date", "end_date",
+        "gross_cost", "gross_revenue", "net_margin",
+        "avg_load_kw", "evening_load_share_pct",
+        "max_battery_soc_kwh", "max_solar_kw",
+      ];
+      for (const key of rowOrder) {
+        if (!(key in inp)) continue;
+        const tr = document.createElement("tr");
+        tr.innerHTML = "<td>" + key + '</td><td class="num"></td>';
+        tr.querySelector(".num").textContent = inp[key] == null ? "\u2014" : String(inp[key]);
+        body.appendChild(tr);
+      }
+    }
+
+    function handlePredictError(data, status) {
+      const el = document.getElementById("predict-status");
+      if (status === 409) {
+        el.textContent = "No reference model yet. Expand the \u201cReference model\u201d panel and rebuild first.";
+      } else {
+        el.textContent = "Prediction failed: " + (data && data.error ? data.error : status);
+      }
+    }
+
+    document.getElementById("btn-predict-uid").addEventListener("click", async () => {
+      const btn = document.getElementById("btn-predict-uid");
+      const status = document.getElementById("predict-status");
+      const uid = (document.getElementById("uid-input").value || "").trim();
+      if (!uid) { status.textContent = "Please enter a UID."; return; }
+      if (!ARTEFACT_SOURCE) { status.textContent = "Rebuild the reference model first."; return; }
+      btn.disabled = true;
+      status.textContent = "Running prediction\u2026";
+      try {
+        const url = API_BY_UID + "?source=" + encodeURIComponent(ARTEFACT_SOURCE) +
+          "&uid=" + encodeURIComponent(uid);
+        const res = await fetch(url, { method: "POST" });
+        const data = await res.json();
+        if (!res.ok) { handlePredictError(data, res.status); return; }
+        status.textContent = "Prediction complete.";
+        renderResult(data);
+      } catch (e) {
+        status.textContent = "Request failed.";
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    function syncFlexibleVisibility() {
+      const fmt = (document.querySelector('input[name="upload_format"]:checked') || {}).value || "optimiser";
+      const host = document.getElementById("flexible-price-fallbacks");
+      if (!host) return;
+      if (fmt === "flexible") host.classList.remove("hidden");
+      else host.classList.add("hidden");
+    }
+    document.querySelectorAll('input[name="upload_format"]').forEach((inp) => {
+      inp.addEventListener("change", syncFlexibleVisibility);
+    });
+    syncFlexibleVisibility();
+
+    document.getElementById("btn-predict-upload").addEventListener("click", async () => {
+      const btn = document.getElementById("btn-predict-upload");
+      const status = document.getElementById("predict-status");
+      const fileInp = document.getElementById("upload-input");
+      if (!fileInp.files || !fileInp.files[0]) { status.textContent = "Pick a CSV file first."; return; }
+      const fmt = (document.querySelector('input[name="upload_format"]:checked') || {}).value || "optimiser";
+      const fd = new FormData();
+      fd.append("file", fileInp.files[0]);
+      fd.append("format", fmt);
+      if (fmt === "flexible") {
+        fd.append("default_import_price", document.getElementById("default-import").value || "0.35");
+        fd.append("default_export_price", document.getElementById("default-export").value || "0.05");
+      }
+      btn.disabled = true;
+      status.textContent = "Uploading and summarising\u2026";
+      try {
+        const res = await fetch(API_UPLOAD, { method: "POST", body: fd });
+        const data = await res.json();
+        if (!res.ok) { handlePredictError(data, res.status); return; }
+        status.textContent = "Prediction complete.";
+        renderResult(data);
+      } catch (e) {
+        status.textContent = "Upload request failed.";
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    loadStatus();
+  </script>
+</body>
+</html>
