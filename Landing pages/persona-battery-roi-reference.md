@@ -11,6 +11,7 @@ Use this file to guide landing pages, ads, email, sales scripts, offer pages, on
 - Keep Reposit positioned as the missing layer that turns an owned battery from passive storage into an earning asset.
 - Avoid abstract sustainability claims as the primary hook. Environmental benefit can support the argument, but ROI is the decision frame.
 - Every journey step should answer: "Will this make my battery investment work harder?"
+- Do not use em dashes in generated copy. Use commas, full stops, colons, or shorter sentences instead. Avoid obvious AI tells such as formulaic transitions, inflated claims, repetitive three-part phrasing, and generic phrases like "unlock the power of" or "take control of your energy future."
 
 ## Brand Frame
 

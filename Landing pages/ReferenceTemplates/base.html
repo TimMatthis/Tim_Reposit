@@ -1,0 +1,192 @@
+<!--
+  templateType: "none"
+  isAvailableForNewContent: false
+-->
+<!doctype html>
+<html lang="{{ html_lang }}" {{ html_lang_dir }}>
+  <head>
+    <meta charset="utf-8">
+    <title>{{ page_meta.html_title }}</title>
+    {#{% if site_settings.favicon_src %}<link rel="shortcut icon" href="{{ site_settings.favicon_src }}" />{% endif %}#}
+    <meta name="description" content="{{ page_meta.meta_description }}">
+    {{ require_css(get_asset_url("../../css/main-head.css")) }}
+    {{ require_css(get_asset_url("../../css/main-foot.css"), { async: true }) }}
+    {{ require_js(get_asset_url("../../js/clean-pro.js"), { position: 'footer'}) }}
+    {{ require_js(get_asset_url("../../js/jquery-modal-min.js"), { position: 'footer', defer:true }) }}
+    {{ require_js(get_asset_url("../../child.js")) }}
+    {{ standard_header_includes }}
+    {{ require_css(get_public_template_url("../../child.css")) }}
+    <link rel="preconnect" href="https://cdn2.hubspot.net" crossorigin>
+    <link rel="preconnect" href="https://js.hs-analytics.net" crossorigin>
+    <link rel="preconnect" href="https://js.hs-banner.com" crossorigin>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" media="screen">
+    <script defer src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  </head>
+  <body>
+    <div class="body-wrapper {{ builtin_body_classes }}">
+
+      {% block header %}
+      {% global_partial path="../partials/reposit-header.html" %}
+      {% endblock header %}
+
+      <main id="main-content">
+        {% block body %}
+          <!-- Nothing to see here -->
+        {% endblock body %}
+      </main>
+
+      {% block footer %}
+      {% global_partial path="../partials/reposit-footer.html" %}
+      {% endblock footer %}
+
+    </div>
+    {{ standard_footer_includes }}
+    <script type="text/javascript">
+      document.addEventListener('DOMContentLoaded', function() {
+        let lockIntervals = new WeakMap(); 
+        let observedButtons = new Set();
+
+        function validateHubspotForm(button) {
+          if (!button) return;
+
+          var stepContainer = button.closest('.hsfc-Step');
+          if (!stepContainer) return;
+
+          const validateNow = () => {
+            var requiredFields = stepContainer.querySelectorAll('[aria-required="true"]');
+
+            var groups = {};
+            var otherFields = [];
+
+            requiredFields.forEach(function(field) {
+              if (field.offsetParent === null) return; // skip hidden fields
+
+              if (field.type === 'checkbox' || field.type === 'radio') {
+                if (!groups[field.name]) {
+                  groups[field.name] = [];
+                }
+                groups[field.name].push(field);
+              } else {
+                otherFields.push(field);
+              }
+            });
+
+            let allGroupsValid = true;
+            for (let groupName in groups) {
+              let groupFields = groups[groupName];
+              let isGroupValid = groupFields.some(function(field) {
+                return field.checked;
+              });
+              if (!isGroupValid) {
+                allGroupsValid = false;
+                break;
+              }
+            }
+
+            let allOtherFieldsValid = true;
+            for (let i = 0; i < otherFields.length; i++) {
+              if (otherFields[i].value.trim() === '') {
+                allOtherFieldsValid = false;
+                break;
+              }
+            }
+
+            let allFieldsFilled = true;
+            if (Object.keys(groups).length > 0 && !allGroupsValid) {
+              allFieldsFilled = false;
+            }
+            if (otherFields.length > 0 && !allOtherFieldsValid) {
+              allFieldsFilled = false;
+            }
+
+            console.log('Groups valid:', allGroupsValid, 'Other fields valid:', allOtherFieldsValid, 'All fields filled:', allFieldsFilled);
+
+            // 🚀 NEW: Only update the button if status changed
+            const shouldBeEnabled = allFieldsFilled;
+            if (button.disabled === shouldBeEnabled) {
+              button.disabled = !shouldBeEnabled;
+              button.style.opacity = shouldBeEnabled ? '1' : '0.5';
+              button.style.cursor = shouldBeEnabled ? 'pointer' : 'not-allowed';
+            }
+          };
+
+          if (lockIntervals.has(button)) {
+            return; 
+          }
+
+          const interval = setInterval(() => {
+            if (!document.body.contains(button)) {
+              clearInterval(interval);
+              lockIntervals.delete(button);
+              return;
+            }
+            validateNow(); // <-- Validate fresh every interval
+          }, 100);
+
+          lockIntervals.set(button, interval);
+        }
+
+        function findNextButton(stepContainer) {
+          var buttons = stepContainer.querySelectorAll('[data-hsfc-id="Button"]');
+          for (var i = 0; i < buttons.length; i++) {
+            var btnText = buttons[i].innerText.trim().toLowerCase();
+            if (btnText.includes('next') || btnText.includes('continue')) {
+              return buttons[i];
+            }
+          }
+          return null;
+        }
+
+        function findActiveStep() {
+          return document.querySelector('.hsfc-Step:not([style*="display: none"])');
+        }
+
+        function setupValidationOnStep(stepContainer) {
+          if (!stepContainer) return;
+          var nextButton = findNextButton(stepContainer);
+          if (nextButton && !observedButtons.has(nextButton)) {
+            validateHubspotForm(nextButton);
+            observedButtons.add(nextButton);
+          }
+        }
+
+        document.addEventListener('input', function(event) {
+          if (event.target.getAttribute('aria-required') === 'true') {
+            var stepContainer = event.target.closest('.hsfc-Step');
+            setupValidationOnStep(stepContainer);
+          }
+        });
+
+        document.addEventListener('change', function(event) {
+          if (event.target.getAttribute('aria-required') === 'true') {
+            var stepContainer = event.target.closest('.hsfc-Step');
+            setupValidationOnStep(stepContainer);
+          }
+        });
+
+        document.addEventListener('blur', function(event) {
+          if (event.target.getAttribute('aria-required') === 'true') {
+            var stepContainer = event.target.closest('.hsfc-Step');
+            setupValidationOnStep(stepContainer);
+          }
+        }, true); // useCapture=true to catch blur events properly
+
+        document.addEventListener('click', function(event) {
+          if (event.target.matches('[data-hsfc-id="Button"]')) {
+            setTimeout(() => {
+              var activeStep = findActiveStep();
+              if (activeStep) {
+                setupValidationOnStep(activeStep);
+              }
+            }, 100); 
+          }
+        });
+
+        // Initial validation
+        const firstStep = findActiveStep();
+        setupValidationOnStep(firstStep);
+      });
+    </script>
+  </body>
+</html>

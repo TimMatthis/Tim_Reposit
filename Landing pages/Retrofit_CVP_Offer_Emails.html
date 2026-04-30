@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CVP Offer Emails - Reposit Retrofit</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    /* ── Page layout ── */
+    .email-hub-header {
+      max-width: 900px;
+      margin: 0 auto 40px;
+    }
+
+    .email-hub-header h1 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 8px;
+    }
+
+    .email-hub-header p {
+      color: #475569;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .email-hub-header .hub-note {
+      margin-top: 12px;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.85rem;
+      color: #166534;
+    }
+
+    .email-hub-header .hub-note code {
+      background: #dcfce7;
+      border-radius: 4px;
+      padding: 1px 5px;
+      font-size: 0.82rem;
+      font-family: monospace;
+    }
+
+    /* ── Persona tabs ── */
+    .persona-tabs {
+      max-width: 900px;
+      margin: 0 auto 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .persona-tab {
+      padding: 7px 16px;
+      border-radius: 999px;
+      border: 1.5px solid #e2e8f0;
+      background: #fff;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #475569;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+
+    .persona-tab:hover { border-color: #94a3b8; color: #0f172a; }
+    .persona-tab.active { border-color: #19c37d; background: #f0fdf4; color: #166534; }
+
+    /* ── Email template section ── */
+    .email-section {
+      max-width: 1220px;
+      margin: 0 auto 48px;
+      display: none;
+    }
+
+    .email-section.active { display: block; }
+
+    .persona-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 14px;
+    }
+
+    .badge-roi     { background: #fef3c7; color: #92400e; }
+    .badge-uncert  { background: #f0fdf4; color: #166534; }
+    .badge-fixed   { background: #dbeafe; color: #1e3a8a; }
+    .badge-green   { background: #dcfce7; color: #14532d; }
+    .badge-forget  { background: #ccfbf1; color: #115e59; }
+    .badge-base    { background: #f1f5f9; color: #334155; }
+
+    .email-meta {
+      background: #fff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 18px 22px;
+      margin-bottom: 20px;
+    }
+
+    .email-meta-row {
+      display: flex;
+      gap: 10px;
+      align-items: baseline;
+      padding: 6px 0;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 0.88rem;
+    }
+
+    .email-meta-row:last-child { border-bottom: none; }
+
+    .email-meta-label {
+      font-weight: 700;
+      color: #64748b;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      min-width: 100px;
+    }
+
+    .email-meta-val { color: #0f172a; font-weight: 600; }
+
+    /* ── Preview + source pane ── */
+    .email-pane-wrap {
+      display: grid;
+      grid-template-columns: minmax(620px, 640px) minmax(0, 1fr);
+      gap: 20px;
+      align-items: start;
+    }
+
+    @media (max-width: 1100px) {
+      .email-pane-wrap { grid-template-columns: 1fr; }
+    }
+
+    .pane-label {
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #94a3b8;
+      margin-bottom: 8px;
+    }
+
+    .email-preview-frame {
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #f8fafc;
+    }
+
+    .email-preview-chrome {
+      background: #e2e8f0;
+      padding: 8px 12px;
+      display: flex;
+      gap: 5px;
+      align-items: center;
+    }
+
+    .chrome-dot {
+      width: 9px; height: 9px;
+      border-radius: 50%;
+    }
+
+    .chrome-dot:nth-child(1) { background: #ef4444; }
+    .chrome-dot:nth-child(2) { background: #f59e0b; }
+    .chrome-dot:nth-child(3) { background: #22c55e; }
+
+    .email-preview-body {
+      padding: 0;
+      overflow: hidden;
+      background: #f8fafc;
+    }
+
+    .email-preview-body iframe {
+      display: block;
+      width: 100%;
+      min-height: 720px;
+      border: none;
+      background: #fff;
+    }
+
+    @media (max-width: 700px) {
+      .email-preview-frame { overflow-x: auto; }
+      .email-preview-body iframe { min-width: 600px; }
+    }
+
+    .source-pane {
+      position: relative;
+    }
+
+    .source-code {
+      background: #0f172a;
+      border-radius: 12px;
+      padding: 16px;
+      overflow: auto;
+      max-height: 640px;
+      font-size: 0.75rem;
+      line-height: 1.5;
+      color: #94a3b8;
+      font-family: 'Consolas', 'Monaco', monospace;
+      white-space: pre;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: #94a3b8;
+      border-radius: 6px;
+      padding: 5px 12px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+
+    .copy-btn:hover { background: #334155; color: #e2e8f0; }
+    .copy-btn.copied { background: #14532d; border-color: #16a34a; color: #86efac; }
+
+    /* Clean preview-hub shell. Overrides the shared dark utility stylesheet. */
+    body.email-template-page {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(25, 195, 125, 0.12), transparent 34rem),
+        linear-gradient(180deg, #ffffff 0%, #f6f8fb 34rem);
+      color: #0f172a;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    .email-template-page .header {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 40px 24px 22px;
+    }
+
+    .email-template-page .header-eyebrow {
+      margin: 0 0 8px;
+      color: #2b78a7;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .email-template-page .header h1 {
+      margin: 0;
+      color: #0f172a;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 900;
+      letter-spacing: 0;
+      line-height: 1.04;
+    }
+
+    .email-template-page .header h1 span {
+      color: #19c37d;
+      font-weight: 900;
+    }
+
+    .email-template-page .header-sub {
+      max-width: 680px;
+      margin: 14px 0 0;
+      color: #475569;
+      font-size: 1rem;
+      line-height: 1.65;
+    }
+
+    .email-template-main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 64px;
+    }
+
+    .email-template-page .email-hub-header {
+      max-width: none;
+      margin: 0 0 18px;
+    }
+
+    .email-template-page .hub-note {
+      margin-top: 0;
+      border-radius: 10px;
+      padding: 12px 14px;
+    }
+
+    .email-template-page .persona-tabs {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      max-width: none;
+      margin: 0 0 22px;
+      gap: 10px;
+      padding: 12px 0;
+      background: rgba(246, 248, 251, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(215, 227, 244, 0.75);
+    }
+
+    .email-template-page .persona-tab {
+      min-height: 38px;
+      padding: 8px 15px;
+      border-radius: 10px;
+    }
+
+    .email-template-page .persona-tab.active {
+      box-shadow: 0 8px 18px rgba(25, 195, 125, 0.12);
+    }
+
+    .email-template-page .email-section {
+      max-width: none;
+      margin: 0 0 48px;
+    }
+
+    .email-template-page .email-meta {
+      border-color: #d7e3f4;
+      border-radius: 14px;
+      padding: 8px 20px;
+      margin-bottom: 18px;
+      box-shadow: 0 14px 40px rgba(15, 23, 42, 0.08);
+    }
+
+    .email-template-page .email-meta-row {
+      display: grid;
+      grid-template-columns: 104px minmax(0, 1fr);
+      gap: 14px;
+      padding: 10px 0;
+    }
+
+    .email-template-page .email-pane-wrap {
+      grid-template-columns: minmax(560px, 640px) minmax(360px, 1fr);
+      gap: 24px;
+    }
+
+    .email-template-page .pane-label {
+      color: #64748b;
+      margin-bottom: 10px;
+    }
+
+    .email-template-page .email-preview-frame,
+    .email-template-page .source-pane {
+      border-color: #d7e3f4;
+      border-radius: 16px;
+      background: #ffffff;
+      box-shadow: 0 14px 40px rgba(15, 23, 42, 0.08);
+    }
+
+    .email-template-page .email-preview-chrome {
+      background: #eef4f9;
+      padding: 10px 14px;
+      border-bottom: 1px solid #d7e3f4;
+    }
+
+    .email-template-page .source-pane {
+      padding: 14px;
+      border: 1.5px solid #d7e3f4;
+    }
+
+    .email-template-page .source-code {
+      border-radius: 10px;
+      max-height: 720px;
+    }
+
+    .email-template-page .copy-btn {
+      top: 12px;
+      right: 14px;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      color: #334155;
+      border-radius: 8px;
+      padding: 6px 12px;
+    }
+
+    .email-template-page .copy-btn:hover {
+      background: #f8fafc;
+      color: #0f172a;
+      border-color: #94a3b8;
+    }
+
+    @media (max-width: 720px) {
+      .email-template-page .header {
+        padding: 28px 18px 18px;
+      }
+
+      .email-template-main {
+        padding: 0 14px 48px;
+      }
+
+      .email-template-page .persona-tabs {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        scrollbar-width: thin;
+      }
+
+      .email-template-page .persona-tab {
+        flex: 0 0 auto;
+      }
+
+      .email-template-page .email-meta {
+        padding: 8px 14px;
+      }
+
+      .email-template-page .email-meta-row {
+        grid-template-columns: 1fr;
+        gap: 4px;
+      }
+    }
+  </style>
+</head>
+<body class="email-template-page">
+
+  <header class="header">
+    <p class="header-eyebrow">Retrofit CVP</p>
+    <h1>Offer <span>Email Templates</span></h1>
+    <p class="header-sub">One email per persona variant. Review the preview, then copy the source into HubSpot's drag-and-drop editor as a Custom HTML block.</p>
+  </header>
+
+  <main class="email-template-main">
+
+    <div class="email-hub-header">
+      <div class="hub-note">
+        The offer link in every template uses HubSpot merge tag <code>{{ contact.retro_offer }}</code>. This should match the contact property <strong>retro_offer</strong> populated by the optimiser pipeline. The customer is never addressed by name.
+      </div>
+    </div>
+
+    <!-- Persona tab nav -->
+    <div class="persona-tabs" role="tablist">
+      <button class="persona-tab active" role="tab" data-persona="base" onclick="showPersona('base', this)">Standard</button>
+      <button class="persona-tab"         role="tab" data-persona="roi" onclick="showPersona('roi', this)">Battery ROI</button>
+      <button class="persona-tab"         role="tab" data-persona="uncert" onclick="showPersona('uncert', this)">Energy Uncertainty</button>
+      <button class="persona-tab"         role="tab" data-persona="fixed" onclick="showPersona('fixed', this)">Fixed Income</button>
+      <button class="persona-tab"         role="tab" data-persona="green" onclick="showPersona('green', this)">Green Impact</button>
+      <button class="persona-tab"         role="tab" data-persona="forget" onclick="showPersona('forget', this)">Set &amp; Forget</button>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════
+         1. STANDARD
+    ══════════════════════════════════════════════════════════ -->
+    <div class="email-section active" id="section-base">
+      <div class="persona-badge badge-base">Standard · Retrofit CVP</div>
+      <div class="email-meta">
+        <div class="email-meta-row"><span class="email-meta-label">Subject</span><span class="email-meta-val">Your personalised Reposit offer is ready</span></div>
+        <div class="email-meta-row"><span class="email-meta-label">Preview</span><span class="email-meta-val">We've analysed your battery data and prepared your best offer - click to see it.</span></div>
+        <div class="email-meta-row"><span class="email-meta-label">Persona</span><span class="email-meta-val">General / balanced. Confident, clear, no persona-specific angle.</span></div>
+        <div class="email-meta-row"><span class="email-meta-label">CTA</span><span class="email-meta-val">See My Offer</span></div>
+      </div>
+      <div class="email-pane-wrap">
+        <div>
+          <div class="pane-label">Preview</div>
+          <div class="email-preview-frame">
+            <div class="email-preview-chrome"><div class="chrome-dot"></div><div class="chrome-dot"></div><div class="chrome-dot"></div></div>
+            <div class="email-preview-body"><iframe id="preview-base" scrolling="yes" style="width:100%;border:none;min-height:560px;" title="Standard email preview"></iframe></div>
+          </div>
+        </div>
+        <div class="source-pane">
+          <div class="pane-label">HTML source - paste into HubSpot</div>
+          <button class="copy-btn" onclick="copySource('base')">Copy</button>
+          <pre class="source-code" id="source-base"></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════
+         2. BATTERY ROI
+    ══════════════════════════════════════════════════════════ -->
+    <div class="email-section" id="section-roi">
+      <div class="persona-badge badge-roi">Battery ROI · The Battery Investor</div>
+      <div class="email-meta">
+        <div class="email-meta-row"><span class="email-meta-label">Subject</span><span class="email-meta-val">Your battery's earning potential is ready</span></div>
+        <div class="email-meta-row"><span class="email-meta-label">Preview</span><span class="email-meta-val">We've run the numbers on your battery. Same hardware - more value. See what your offer looks like.</span></div>
+        <div class="email-meta-row"><span class="email-meta-label">Persona</span><span class="email-meta-val">Direct, numbers-led. Provocative about idle capacity. ROI is the decision frame.</span></div>
+        <div class="email-meta-row"><span class="email-meta-label">CTA</span><span class="email-meta-val">Put My Battery to Work</span></div>
+      </div>
+      <div class="email-pane-wrap">
+        <div>
+          <div class="pane-label">Preview</div>
+          <div class="email-preview-frame">
+            <div class="email-preview-chrome"><div class="chrome-dot"></div><div class="chrome-dot"></div><div class="chrome-dot"></div></div>
+            <div class="email-preview-body"><iframe id="preview-roi" scrolling="yes" style="width:100%;border:none;min-height:560px;" title="Battery ROI email preview"></iframe></div>
+          </div>
+        </div>
+        <div class="source-pane">
+          <div class="pane-label">HTML source - paste into HubSpot</div>
+          <button class="copy-btn" onclick="copySource('roi')">Copy</button>
+          <pre class="source-code" id="source-roi"></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════
+         3. ENERGY UNCERTAINTY
+    ══════════════════════════════════════════════════════════ -->
+    <div class="email-section" id="section-uncert">
+      <div class="persona-badge badge-uncert">Energy Uncertainty · The Volatility Avoider</div>
+      <div class="email-meta">
+        <div class="email-meta-row"><span class="email-meta-label">Subject</span><span class="email-meta-val">Your fixed price is ready</span></div>
+        <div class="email-meta-row"><span class="email-meta-label">Preview</span><span class="email-meta-val">We've analysed your usage. One fixed monthly fee - based on your actual data. No more variable bills.</span></div>
+        <div class="email-meta-row"><span class="email-meta-label">Persona</span><span class="email-meta-val">Calm, reassuring, decisive. Control and predictability are the emotional hook.</span></div>
+        <div class="email-meta-row"><span class="email-meta-label">CTA</span><span class="email-meta-val">See My Fixed Price</span></div>
+      </div>
+      <div class="email-pane-wrap">
+        <div>
+          <div class="pane-label">Preview</div>
+          <div class="email-preview-frame">
+            <div class="email-preview-chrome"><div class="chrome-dot"></div><div class="chrome-dot"></div><div class="chrome-dot"></div></div>
+            <div class="email-preview-body"><iframe id="preview-uncert" scrolling="yes" style="width:100%;border:none;min-height:560px;" title="Energy Uncertainty email preview"></iframe></div>
+          </div>
+        </div>
+        <div class="source-pane">
+          <div class="pane-label">HTML source - paste into HubSpot</div>
+          <button class="copy-btn" onclick="copySource('uncert')">Copy</button>
+          <pre class="source-code" id="source-uncert"></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════
+         4. FIXED INCOME
+    ══════════════════════════════════════════════════════════ -->
+    <div class="email-section" id="section-fixed">
+      <div class="persona-badge badge-fixed">Fixed Income · The Budget Protector</div>
+      <div class="email-meta">
+        <div class="email-meta-row"><span class="email-meta-label">Subject</span><span class="email-meta-val">Your offer is ready - one fixed monthly amount</span></div>
+        <div class="email-meta-row"><span class="email-meta-label">Preview</span><span class="email-meta-val">We've prepared a straightforward offer based on your actual usage. Same amount every month. Take a look.</span></div>
+        <div class="email-meta-row"><span class="email-meta-label">Persona</span><span class="email-meta-val">Clear, respectful, patient. Low-pressure, plain language. No jargon.</span></div>
+        <div class="email-meta-row"><span class="email-meta-label">CTA</span><span class="email-meta-val">See What I'd Pay Each Month</span></div>
+      </div>
+      <div class="email-pane-wrap">
+        <div>
+          <div class="pane-label">Preview</div>
+          <div class="email-preview-frame">
+            <div class="email-preview-chrome"><div class="chrome-dot"></div><div class="chrome-dot"></div><div class="chrome-dot"></div></div>
+            <div class="email-preview-body"><iframe id="preview-fixed" scrolling="yes" style="width:100%;border:none;min-height:560px;" title="Fixed Income email preview"></iframe></div>
+          </div>
+        </div>
+        <div class="source-pane">
+          <div class="pane-label">HTML source - paste into HubSpot</div>
+          <button class="copy-btn" onclick="copySource('fixed')">Copy</button>
+          <pre class="source-code" id="source-fixed"></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════
+         5. GREEN IMPACT
+    ══════════════════════════════════════════════════════════ -->
+    <div class="email-section" id="section-green">
+      <div class="persona-badge badge-green">Green Impact · The Grid Contributor</div>
+      <div class="email-meta">
+        <div class="email-meta-row"><span class="email-meta-label">Subject</span><span class="email-meta-val">Your offer is ready - savings and impact, together</span></div>
+        <div class="email-meta-row"><span class="email-meta-label">Preview</span><span class="email-meta-val">We've analysed your battery. Your personalised plan is ready - join the fleet and support a cleaner grid.</span></div>
+        <div class="email-meta-row"><span class="email-meta-label">Persona</span><span class="email-meta-val">Purposeful, optimistic, concrete. Impact tied to grid mechanics, not vague virtue.</span></div>
+        <div class="email-meta-row"><span class="email-meta-label">CTA</span><span class="email-meta-val">Join the Fleet</span></div>
+      </div>
+      <div class="email-pane-wrap">
+        <div>
+          <div class="pane-label">Preview</div>
+          <div class="email-preview-frame">
+            <div class="email-preview-chrome"><div class="chrome-dot"></div><div class="chrome-dot"></div><div class="chrome-dot"></div></div>
+            <div class="email-preview-body"><iframe id="preview-green" scrolling="yes" style="width:100%;border:none;min-height:560px;" title="Green Impact email preview"></iframe></div>
+          </div>
+        </div>
+        <div class="source-pane">
+          <div class="pane-label">HTML source - paste into HubSpot</div>
+          <button class="copy-btn" onclick="copySource('green')">Copy</button>
+          <pre class="source-code" id="source-green"></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════
+         6. SET AND FORGET
+    ══════════════════════════════════════════════════════════ -->
+    <div class="email-section" id="section-forget">
+      <div class="persona-badge badge-forget">Set &amp; Forget · The Energy Delegator</div>
+      <div class="email-meta">
+        <div class="email-meta-row"><span class="email-meta-label">Subject</span><span class="email-meta-val">Done. Your offer is ready.</span></div>
+        <div class="email-meta-row"><span class="email-meta-label">Preview</span><span class="email-meta-val">One fixed fee. Zero ongoing decisions. This is the only click you need.</span></div>
+        <div class="email-meta-row"><span class="email-meta-label">Persona</span><span class="email-meta-val">Minimal, confident, slightly witty. Energy should feel boring. Respect their time.</span></div>
+        <div class="email-meta-row"><span class="email-meta-label">CTA</span><span class="email-meta-val">Just Fix It For Me</span></div>
+      </div>
+      <div class="email-pane-wrap">
+        <div>
+          <div class="pane-label">Preview</div>
+          <div class="email-preview-frame">
+            <div class="email-preview-chrome"><div class="chrome-dot"></div><div class="chrome-dot"></div><div class="chrome-dot"></div></div>
+            <div class="email-preview-body"><iframe id="preview-forget" scrolling="yes" style="width:100%;border:none;min-height:560px;" title="Set and Forget email preview"></iframe></div>
+          </div>
+        </div>
+        <div class="source-pane">
+          <div class="pane-label">HTML source - paste into HubSpot</div>
+          <button class="copy-btn" onclick="copySource('forget')">Copy</button>
+          <pre class="source-code" id="source-forget"></pre>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+<script>
+/* ─────────────────────────────────────────────────────────────────
+   Email HTML templates - one per persona.
+   {{ contact.retro_offer }} is the HubSpot merge tag for the offer URL.
+   Inline CSS is required for email client compatibility.
+───────────────────────────────────────────────────────────────── */
+
+var emails = {
+
+  base: {
+    html: `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>Your personalised Reposit offer is ready</title>
+</head>
+<body style="margin:0;padding:0;background:#f1f5f9;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f1f5f9;">
+<tr><td align="center" style="padding:32px 16px;">
+
+  <table width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;width:100%;">
+
+    <!-- Header -->
+    <tr>
+      <td style="background:linear-gradient(135deg,#2b78a7 0%,#265f87 42%,#4f5f69 75%,#8c6647 100%);border-radius:16px 16px 0 0;padding:28px 36px;text-align:center;">
+        <img src="https://repositpower.com/hubfs/Reposit%20Logo/Reposit_logo_white.svg" alt="Reposit" width="140" style="display:block;margin:0 auto 0;" />
+      </td>
+    </tr>
+
+    <!-- Body card -->
+    <tr>
+      <td style="background:#ffffff;padding:36px 40px 28px;border-radius:0 0 16px 16px;box-shadow:0 8px 32px rgba(0,0,0,0.1);">
+
+        <p style="margin:0 0 6px;font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#2a6b94;">Your offer</p>
+        <h1 style="margin:0 0 18px;font-size:1.5rem;font-weight:900;color:#0f172a;line-height:1.25;">Your personalised offer is ready.</h1>
+
+        <p style="margin:0 0 16px;font-size:0.95rem;color:#374151;line-height:1.65;">
+          We've analysed your battery and energy usage data and prepared your personalised Reposit offer.
+        </p>
+        <p style="margin:0 0 24px;font-size:0.95rem;color:#374151;line-height:1.65;">
+          Based on your actual usage profile, we've built a plan that replaces your variable electricity bills with one fixed monthly fee - set below what you currently pay.
+        </p>
+
+        <!-- Offer ready highlight -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:28px;">
+          <tr>
+            <td style="background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:10px;padding:16px 20px;">
+              <p style="margin:0 0 4px;font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#15803d;">Status</p>
+              <p style="margin:0;font-size:1rem;font-weight:800;color:#0f172a;">Your offer has been prepared and is held for 24 hours.</p>
+            </td>
+          </tr>
+        </table>
+
+        <!-- CTA -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:20px;">
+          <tr>
+            <td align="center">
+              <a href="{{ contact.retro_offer }}" style="display:inline-block;background:linear-gradient(135deg,#2de49d 0%,#15b876 100%);color:#042d14;font-size:1rem;font-weight:800;text-decoration:none;padding:16px 36px;border-radius:12px;box-shadow:0 8px 24px rgba(25,195,125,0.35);">See My Offer →</a>
+            </td>
+          </tr>
+        </table>
+
+        <p style="margin:0 0 28px;font-size:0.8rem;color:#94a3b8;text-align:center;line-height:1.5;">No payment today &nbsp;·&nbsp; No commitment until you choose &nbsp;·&nbsp; Cancel anytime before install</p>
+
+        <hr style="border:none;border-top:1px solid #f1f5f9;margin:0 0 20px;" />
+
+        <p style="margin:0;font-size:0.8rem;color:#94a3b8;line-height:1.6;">
+          This offer is personalised to your home's energy profile. Once your offer expires, we'd need to re-run the assessment. If you have any questions, reply to this email and our team will be in touch.
+        </p>
+      </td>
+    </tr>
+
+    <!-- Footer -->
+    <tr>
+      <td style="padding:20px 0;text-align:center;">
+        <p style="margin:0;font-size:0.75rem;color:#94a3b8;">Reposit Power &nbsp;·&nbsp; <a href="https://repositpower.com" style="color:#94a3b8;text-decoration:underline;">repositpower.com</a></p>
+        <p style="margin:6px 0 0;font-size:0.72rem;color:#cbd5e1;">You're receiving this because you started an assessment with Reposit. <a href="{{{ unsubscribe_link }}}" style="color:#94a3b8;">Unsubscribe</a></p>
+      </td>
+    </tr>
+
+  </table>
+</td></tr>
+</table>
+</body>
+</html>`
+  },
+
+  roi: {
+    html: `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>Your battery's earning potential is ready</title>
+</head>
+<body style="margin:0;padding:0;background:#0f172a;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#0f172a;">
+<tr><td align="center" style="padding:32px 16px;">
+
+  <table width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;width:100%;">
+
+    <!-- Header -->
+    <tr>
+      <td style="background:linear-gradient(135deg,#1a2235 0%,#0f172a 100%);border:1px solid #27354f;border-radius:16px 16px 0 0;padding:28px 36px;text-align:center;">
+        <img src="https://repositpower.com/hubfs/Reposit%20Logo/Reposit_logo_white.svg" alt="Reposit" width="140" style="display:block;margin:0 auto 16px;" />
+        <p style="margin:0;font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#f59e0b;">Smart battery optimisation</p>
+      </td>
+    </tr>
+
+    <!-- Body card -->
+    <tr>
+      <td style="background:#131929;border:1px solid #27354f;border-top:none;padding:36px 40px 28px;border-radius:0 0 16px 16px;">
+
+        <h1 style="margin:0 0 18px;font-size:1.5rem;font-weight:900;color:#e4ecf7;line-height:1.25;">Your battery's earning potential is ready.</h1>
+
+        <p style="margin:0 0 16px;font-size:0.95rem;color:#8899b3;line-height:1.65;">
+          We've run the numbers on your battery capacity and usage data.
+        </p>
+        <p style="margin:0 0 16px;font-size:0.95rem;color:#8899b3;line-height:1.65;">
+          Your battery has been doing its job - but there's more value on the table. Idle storage is value your battery isn't capturing: wholesale price spikes, grid stability windows, and market opportunities that pass every day.
+        </p>
+        <p style="margin:0 0 24px;font-size:0.95rem;color:#8899b3;line-height:1.65;">
+          We've calculated a personalised plan that puts your battery to work in the wholesale market and returns that value to you through a fixed fee - set below your current spend.
+        </p>
+
+        <!-- Highlight box -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:28px;">
+          <tr>
+            <td style="background:rgba(0,212,160,0.08);border:1px solid rgba(0,212,160,0.3);border-radius:10px;padding:16px 20px;">
+              <p style="margin:0 0 4px;font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#00d4a0;">Same hardware. More value.</p>
+              <p style="margin:0;font-size:1rem;font-weight:800;color:#e4ecf7;">Your personalised offer is ready. Held for 24 hours.</p>
+            </td>
+          </tr>
+        </table>
+
+        <!-- CTA -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:20px;">
+          <tr>
+            <td align="center">
+              <a href="{{ contact.retro_offer }}" style="display:inline-block;background:linear-gradient(135deg,#f59e0b 0%,#d97706 100%);color:#0f172a;font-size:1rem;font-weight:800;text-decoration:none;padding:16px 36px;border-radius:12px;box-shadow:0 8px 24px rgba(245,158,11,0.35);">Put My Battery to Work →</a>
+            </td>
+          </tr>
+        </table>
+
+        <p style="margin:0 0 28px;font-size:0.8rem;color:#8899b3;text-align:center;line-height:1.5;">No commitment until you choose &nbsp;·&nbsp; Offer held 24 hours &nbsp;·&nbsp; Cancel anytime before install</p>
+
+        <hr style="border:none;border-top:1px solid #27354f;margin:0 0 20px;" />
+
+        <p style="margin:0;font-size:0.8rem;color:#8899b3;line-height:1.6;">
+          This offer is calculated from your actual battery and usage data. Trading revenue varies with market conditions - your fixed fee reflects your profile, not a generic estimate.
+        </p>
+      </td>
+    </tr>
+
+    <!-- Footer -->
+    <tr>
+      <td style="padding:20px 0;text-align:center;">
+        <p style="margin:0;font-size:0.75rem;color:#475569;">Reposit Power &nbsp;·&nbsp; <a href="https://repositpower.com" style="color:#475569;text-decoration:underline;">repositpower.com</a></p>
+        <p style="margin:6px 0 0;font-size:0.72rem;color:#334155;">You're receiving this because you started an assessment with Reposit. <a href="{{{ unsubscribe_link }}}" style="color:#475569;">Unsubscribe</a></p>
+      </td>
+    </tr>
+
+  </table>
+</td></tr>
+</table>
+</body>
+</html>`
+  },
+
+  uncert: {
+    html: `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>Your fixed price is ready</title>
+</head>
+<body style="margin:0;padding:0;background:#f8fafc;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f8fafc;">
+<tr><td align="center" style="padding:32px 16px;">
+
+  <table width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;width:100%;">
+
+    <!-- Header -->
+    <tr>
+      <td style="background:linear-gradient(135deg,#2b78a7 0%,#265f87 42%,#4f5f69 75%,#8c6647 100%);border-radius:16px 16px 0 0;padding:28px 36px;text-align:center;">
+        <img src="https://repositpower.com/hubfs/Reposit%20Logo/Reposit_logo_white.svg" alt="Reposit" width="140" style="display:block;margin:0 auto 16px;" />
+        <p style="margin:0;font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.7);">Smart energy certainty</p>
+      </td>
+    </tr>
+
+    <!-- Body card -->
+    <tr>
+      <td style="background:#ffffff;padding:36px 40px 28px;border-radius:0 0 16px 16px;box-shadow:0 8px 32px rgba(0,0,0,0.08);">
+
+        <h1 style="margin:0 0 18px;font-size:1.5rem;font-weight:900;color:#0f172a;line-height:1.25;">Your fixed price is ready.</h1>
+
+        <p style="margin:0 0 16px;font-size:0.95rem;color:#374151;line-height:1.65;">
+          The market can keep moving. Your bill doesn't have to.
+        </p>
+        <p style="margin:0 0 16px;font-size:0.95rem;color:#374151;line-height:1.65;">
+          We've analysed your energy usage and prepared your personalised fixed monthly fee - based on your actual data, not an estimate.
+        </p>
+        <p style="margin:0 0 24px;font-size:0.95rem;color:#374151;line-height:1.65;">
+          One number. The same every month. No more variable retailer charges, no more bracing for the next quarterly statement.
+        </p>
+
+        <!-- Highlight box -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:28px;">
+          <tr>
+            <td style="background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:10px;padding:16px 20px;">
+              <p style="margin:0 0 4px;font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#166534;">You cannot control the market.</p>
+              <p style="margin:0;font-size:1rem;font-weight:800;color:#0f172a;">You can control your bill. Your offer is held for 24 hours.</p>
+            </td>
+          </tr>
+        </table>
+
+        <!-- CTA -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:20px;">
+          <tr>
+            <td align="center">
+              <a href="{{ contact.retro_offer }}" style="display:inline-block;background:linear-gradient(135deg,#2de49d 0%,#15b876 100%);color:#042d14;font-size:1rem;font-weight:800;text-decoration:none;padding:16px 36px;border-radius:12px;box-shadow:0 8px 24px rgba(25,195,125,0.35);">See My Fixed Price →</a>
+            </td>
+          </tr>
+        </table>
+
+        <p style="margin:0 0 28px;font-size:0.8rem;color:#94a3b8;text-align:center;line-height:1.5;">No commitment until you choose &nbsp;·&nbsp; Offer held 24 hours &nbsp;·&nbsp; Cancel anytime before install</p>
+
+        <hr style="border:none;border-top:1px solid #f1f5f9;margin:0 0 20px;" />
+
+        <p style="margin:0;font-size:0.8rem;color:#94a3b8;line-height:1.6;">
+          Your fee is sized using your actual usage profile. We only read your data to calculate the offer - your offer is shown before any commitment is made.
+        </p>
+      </td>
+    </tr>
+
+    <!-- Footer -->
+    <tr>
+      <td style="padding:20px 0;text-align:center;">
+        <p style="margin:0;font-size:0.75rem;color:#94a3b8;">Reposit Power &nbsp;·&nbsp; <a href="https://repositpower.com" style="color:#94a3b8;text-decoration:underline;">repositpower.com</a></p>
+        <p style="margin:6px 0 0;font-size:0.72rem;color:#cbd5e1;">You're receiving this because you started an assessment with Reposit. <a href="{{{ unsubscribe_link }}}" style="color:#94a3b8;">Unsubscribe</a></p>
+      </td>
+    </tr>
+
+  </table>
+</td></tr>
+</table>
+</body>
+</html>`
+  },
+
+  fixed: {
+    html: `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>Your offer is ready - one fixed monthly amount</title>
+</head>
+<body style="margin:0;padding:0;background:#f8fafc;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f8fafc;">
+<tr><td align="center" style="padding:32px 16px;">
+
+  <table width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;width:100%;">
+
+    <!-- Header -->
+    <tr>
+      <td style="background:linear-gradient(135deg,#1e3a5f 0%,#1e40af 100%);border-radius:16px 16px 0 0;padding:28px 36px;text-align:center;">
+        <img src="https://repositpower.com/hubfs/Reposit%20Logo/Reposit_logo_white.svg" alt="Reposit" width="140" style="display:block;margin:0 auto 16px;" />
+        <p style="margin:0;font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.7);">Predictable home energy</p>
+      </td>
+    </tr>
+
+    <!-- Body card -->
+    <tr>
+      <td style="background:#ffffff;padding:40px 40px 32px;border-radius:0 0 16px 16px;box-shadow:0 8px 32px rgba(0,0,0,0.08);">
+
+        <h1 style="margin:0 0 20px;font-size:1.4rem;font-weight:900;color:#0f172a;line-height:1.3;">Your offer is ready.</h1>
+
+        <p style="margin:0 0 16px;font-size:0.95rem;color:#374151;line-height:1.7;">
+          We've looked at your battery and energy usage, and we've prepared a clear, straightforward offer based on your actual data.
+        </p>
+        <p style="margin:0 0 16px;font-size:0.95rem;color:#374151;line-height:1.7;">
+          One fixed monthly amount - the same in summer, the same in winter.
+        </p>
+        <p style="margin:0 0 28px;font-size:0.95rem;color:#374151;line-height:1.7;">
+          No surprise bills. No hidden fees. Just a predictable amount each month, sized from your actual usage.
+        </p>
+
+        <!-- Highlight box -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:32px;">
+          <tr>
+            <td style="background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:10px;padding:18px 22px;">
+              <p style="margin:0 0 4px;font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#1d4ed8;">Ready for you</p>
+              <p style="margin:0;font-size:1rem;font-weight:800;color:#0f172a;line-height:1.5;">Your offer is prepared and held for 24 hours. There is no commitment until you choose to proceed.</p>
+            </td>
+          </tr>
+        </table>
+
+        <!-- CTA -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:20px;">
+          <tr>
+            <td align="center">
+              <a href="{{ contact.retro_offer }}" style="display:inline-block;background:linear-gradient(135deg,#2de49d 0%,#15b876 100%);color:#042d14;font-size:1rem;font-weight:800;text-decoration:none;padding:18px 36px;border-radius:12px;box-shadow:0 8px 24px rgba(25,195,125,0.35);">See What I'd Pay Each Month →</a>
+            </td>
+          </tr>
+        </table>
+
+        <p style="margin:0 0 32px;font-size:0.82rem;color:#94a3b8;text-align:center;line-height:1.5;">Free assessment &nbsp;·&nbsp; No commitment, no pressure &nbsp;·&nbsp; Cancel before install at no cost</p>
+
+        <hr style="border:none;border-top:1px solid #f1f5f9;margin:0 0 22px;" />
+
+        <p style="margin:0;font-size:0.82rem;color:#64748b;line-height:1.7;">
+          If you have any questions before looking at your offer, simply reply to this email and our team will be happy to help. We're here if you need us.
+        </p>
+      </td>
+    </tr>
+
+    <!-- Footer -->
+    <tr>
+      <td style="padding:20px 0;text-align:center;">
+        <p style="margin:0;font-size:0.75rem;color:#94a3b8;">Reposit Power &nbsp;·&nbsp; <a href="https://repositpower.com" style="color:#94a3b8;text-decoration:underline;">repositpower.com</a></p>
+        <p style="margin:6px 0 0;font-size:0.72rem;color:#cbd5e1;">You're receiving this because you started an assessment with Reposit. <a href="{{{ unsubscribe_link }}}" style="color:#94a3b8;">Unsubscribe</a></p>
+      </td>
+    </tr>
+
+  </table>
+</td></tr>
+</table>
+</body>
+</html>`
+  },
+
+  green: {
+    html: `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>Your offer is ready - savings and impact, together</title>
+</head>
+<body style="margin:0;padding:0;background:#f8fafc;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f8fafc;">
+<tr><td align="center" style="padding:32px 16px;">
+
+  <table width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;width:100%;">
+
+    <!-- Header -->
+    <tr>
+      <td style="background:linear-gradient(135deg,#064e3b 0%,#065f46 50%,#047857 100%);border-radius:16px 16px 0 0;padding:28px 36px;text-align:center;">
+        <img src="https://repositpower.com/hubfs/Reposit%20Logo/Reposit_logo_white.svg" alt="Reposit" width="140" style="display:block;margin:0 auto 16px;" />
+        <p style="margin:0;font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.7);">Smart energy, cleaner grid</p>
+      </td>
+    </tr>
+
+    <!-- Body card -->
+    <tr>
+      <td style="background:#ffffff;border:1px solid #d7e3f4;border-top:none;padding:36px 40px 28px;border-radius:0 0 16px 16px;box-shadow:0 8px 32px rgba(10,20,40,0.08);">
+
+        <h1 style="margin:0 0 18px;font-size:1.5rem;font-weight:900;color:#0f172a;line-height:1.25;">Your offer is ready - savings and impact, together.</h1>
+
+        <p style="margin:0 0 16px;font-size:0.95rem;color:#374151;line-height:1.65;">
+          We've analysed your battery and energy data, and your personalised plan is ready.
+        </p>
+        <p style="margin:0 0 16px;font-size:0.95rem;color:#374151;line-height:1.65;">
+          When you join the Reposit fleet, your battery works alongside 2,000+ others - absorbing peak demand, storing surplus solar, and reducing the need for fossil backup. The value that creates comes back to you as a fixed monthly fee below your current spend.
+        </p>
+        <p style="margin:0 0 24px;font-size:0.95rem;color:#374151;line-height:1.65;">
+          One battery helps one home. Thousands change the grid.
+        </p>
+
+        <!-- Highlight box -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:28px;">
+          <tr>
+            <td style="background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:10px;padding:16px 20px;">
+              <p style="margin:0 0 4px;font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#166534;">Fleet status</p>
+              <p style="margin:0;font-size:1rem;font-weight:800;color:#0f172a;">2,000+ batteries active. Yours is ready to join. Offer held 24 hours.</p>
+            </td>
+          </tr>
+        </table>
+
+        <!-- CTA -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:20px;">
+          <tr>
+            <td align="center">
+              <a href="{{ contact.retro_offer }}" style="display:inline-block;background:linear-gradient(135deg,#2de49d 0%,#15b876 100%);color:#042d14;font-size:1rem;font-weight:800;text-decoration:none;padding:16px 36px;border-radius:12px;box-shadow:0 8px 24px rgba(25,195,125,0.4);">Join the Fleet →</a>
+            </td>
+          </tr>
+        </table>
+
+        <p style="margin:0 0 28px;font-size:0.8rem;color:#94a3b8;text-align:center;line-height:1.5;">No commitment until you choose &nbsp;·&nbsp; Offer held 24 hours &nbsp;·&nbsp; Cancel before install at no cost</p>
+
+        <hr style="border:none;border-top:1px solid #f1f5f9;margin:0 0 20px;" />
+
+        <p style="margin:0;font-size:0.8rem;color:#64748b;line-height:1.6;">
+          Your offer is calculated from actual battery and usage data. Emissions impact depends on grid conditions and fleet dispatch - we only make claims we can support.
+        </p>
+      </td>
+    </tr>
+
+    <!-- Footer -->
+    <tr>
+      <td style="padding:20px 0;text-align:center;">
+        <p style="margin:0;font-size:0.75rem;color:#94a3b8;">Reposit Power &nbsp;·&nbsp; <a href="https://repositpower.com" style="color:#94a3b8;text-decoration:underline;">repositpower.com</a></p>
+        <p style="margin:6px 0 0;font-size:0.72rem;color:#cbd5e1;">You're receiving this because you started an assessment with Reposit. <a href="{{{ unsubscribe_link }}}" style="color:#94a3b8;">Unsubscribe</a></p>
+      </td>
+    </tr>
+
+  </table>
+</td></tr>
+</table>
+</body>
+</html>`
+  },
+
+  forget: {
+    html: `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>Done. Your offer is ready.</title>
+</head>
+<body style="margin:0;padding:0;background:#f8fafc;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f8fafc;">
+<tr><td align="center" style="padding:32px 16px;">
+
+  <table width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;width:100%;">
+
+    <!-- Header -->
+    <tr>
+      <td style="background:linear-gradient(135deg,#0f172a 0%,#1e1b4b 50%,#0f172a 100%);border-radius:16px 16px 0 0;padding:28px 36px;text-align:center;">
+        <img src="https://repositpower.com/hubfs/Reposit%20Logo/Reposit_logo_white.svg" alt="Reposit" width="140" style="display:block;margin:0 auto 16px;" />
+        <p style="margin:0;font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.5);">Smart energy on autopilot</p>
+      </td>
+    </tr>
+
+    <!-- Body card -->
+    <tr>
+      <td style="background:#ffffff;padding:40px 40px 32px;border-radius:0 0 16px 16px;box-shadow:0 8px 32px rgba(0,0,0,0.08);">
+
+        <h1 style="margin:0 0 20px;font-size:1.6rem;font-weight:900;color:#0f172a;line-height:1.2;">Done.<br>Your offer is ready.</h1>
+
+        <p style="margin:0 0 16px;font-size:0.95rem;color:#374151;line-height:1.65;">
+          We've done the analysis. Your personalised offer is ready.
+        </p>
+        <p style="margin:0 0 24px;font-size:0.95rem;color:#374151;line-height:1.65;">
+          One fixed monthly fee. No ongoing decisions. No monitoring. No energy admin. Reposit handles the rest - battery trading, plan complexity, billing - all of it.
+        </p>
+
+        <!-- Highlight box -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:32px;">
+          <tr>
+            <td style="background:#f0f9ff;border:1.5px solid #bae6fd;border-radius:10px;padding:18px 22px;">
+              <p style="margin:0 0 8px;font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#0369a1;">This is the only click you need.</p>
+              <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="padding:3px 0;font-size:0.88rem;color:#0f172a;font-weight:600;">✓ &nbsp;One fixed fee</td>
+                </tr>
+                <tr>
+                  <td style="padding:3px 0;font-size:0.88rem;color:#0f172a;font-weight:600;">✓ &nbsp;Zero ongoing decisions</td>
+                </tr>
+                <tr>
+                  <td style="padding:3px 0;font-size:0.88rem;color:#0f172a;font-weight:600;">✓ &nbsp;Nothing to monitor</td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+
+        <!-- CTA -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:20px;">
+          <tr>
+            <td align="center">
+              <a href="{{ contact.retro_offer }}" style="display:inline-block;background:linear-gradient(135deg,#2de49d 0%,#15b876 100%);color:#042d14;font-size:1rem;font-weight:800;text-decoration:none;padding:16px 36px;border-radius:12px;box-shadow:0 8px 24px rgba(25,195,125,0.35);">Just Fix It For Me →</a>
+            </td>
+          </tr>
+        </table>
+
+        <p style="margin:0 0 28px;font-size:0.8rem;color:#94a3b8;text-align:center;line-height:1.5;">Offer held 24 hours &nbsp;·&nbsp; No commitment until you choose</p>
+
+        <hr style="border:none;border-top:1px solid #f1f5f9;margin:0 0 20px;" />
+
+        <p style="margin:0;font-size:0.8rem;color:#94a3b8;line-height:1.6;">
+          Your offer is built from your actual usage and battery data. After this, Reposit handles everything. You'll hear from us when it matters.
+        </p>
+      </td>
+    </tr>
+
+    <!-- Footer -->
+    <tr>
+      <td style="padding:20px 0;text-align:center;">
+        <p style="margin:0;font-size:0.75rem;color:#94a3b8;">Reposit Power &nbsp;·&nbsp; <a href="https://repositpower.com" style="color:#94a3b8;text-decoration:underline;">repositpower.com</a></p>
+        <p style="margin:6px 0 0;font-size:0.72rem;color:#cbd5e1;">You're receiving this because you started an assessment with Reposit. <a href="{{{ unsubscribe_link }}}" style="color:#94a3b8;">Unsubscribe</a></p>
+      </td>
+    </tr>
+
+  </table>
+</td></tr>
+</table>
+</body>
+</html>`
+  }
+
+};
+
+/* ── Tab switching ── */
+function normalisePersonaKey(key) {
+  var aliases = {
+    uncertainty: 'uncert',
+    energyuncertainty: 'uncert',
+    batteryroi: 'roi',
+    fixedincome: 'fixed',
+    greenimpact: 'green',
+    setandforget: 'forget',
+    forget: 'forget',
+    standard: 'base'
+  };
+  var cleanKey = String(key || '').toLowerCase().replace(/[^a-z]/g, '');
+  return aliases[cleanKey] || key;
+}
+
+function getPersonaFromUrl() {
+  var params = new URLSearchParams(window.location.search);
+  var persona = params.get('persona');
+  if (persona) return normalisePersonaKey(persona);
+  if (window.location.hash.indexOf('#section-') === 0) {
+    return normalisePersonaKey(window.location.hash.replace('#section-', ''));
+  }
+  return 'base';
+}
+
+function showPersona(key, activeTab) {
+  var section = document.getElementById('section-' + key);
+  if (!section) return;
+  document.querySelectorAll('.email-section').forEach(function(el) { el.classList.remove('active'); });
+  document.querySelectorAll('.persona-tab').forEach(function(el) { el.classList.remove('active'); });
+  section.classList.add('active');
+  (activeTab || document.querySelector('.persona-tab[data-persona="' + key + '"]')).classList.add('active');
+  resizePreviewIframe(key);
+}
+
+/* ── Populate source + iframes ── */
+function escapeHtml(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function resizePreviewIframe(key) {
+  var iframe = document.getElementById('preview-' + key);
+  if (!iframe || !iframe.contentDocument || !iframe.contentDocument.body) return;
+  var doc = iframe.contentDocument;
+  var height = Math.max(
+    doc.body.scrollHeight,
+    doc.documentElement.scrollHeight,
+    720
+  );
+  iframe.style.height = (height + 24) + 'px';
+}
+
+Object.keys(emails).forEach(function(key) {
+  var html = emails[key].html;
+
+  // Source code pane
+  var pre = document.getElementById('source-' + key);
+  if (pre) pre.textContent = html;
+
+  // Preview iframe - replace HubSpot merge tags with placeholder text
+  var previewHtml = html
+    .replace(/\{\{\s*contact\.retro_offer\s*\}\}/g, '#offer-link-preview')
+    .replace(/\{\{\{[^}]+\}\}\}/g, '#');
+  var iframe = document.getElementById('preview-' + key);
+  if (iframe) {
+    iframe.onload = function() {
+      resizePreviewIframe(key);
+    };
+    iframe.srcdoc = previewHtml;
+  }
+});
+
+window.addEventListener('resize', function() {
+  Object.keys(emails).forEach(resizePreviewIframe);
+});
+
+showPersona(getPersonaFromUrl());
+
+/* ── Copy button ── */
+function copySource(key) {
+  var html = emails[key].html;
+  navigator.clipboard.writeText(html).then(function() {
+    var btn = event.target;
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(function() {
+      btn.textContent = 'Copy';
+      btn.classList.remove('copied');
+    }, 2000);
+  }).catch(function() {
+    var pre = document.getElementById('source-' + key);
+    if (pre) {
+      var range = document.createRange();
+      range.selectNodeContents(pre);
+      window.getSelection().removeAllRanges();
+      window.getSelection().addRange(range);
+    }
+  });
+}
+</script>
+</body>
+</html>

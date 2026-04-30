@@ -419,18 +419,34 @@ const MIME_TYPES = {
 };
 
 function serveStatic(urlPath, res) {
-  let filePath = path.join(STATIC_ROOT, decodeURIComponent(urlPath));
-  if (filePath.endsWith('/') || filePath === STATIC_ROOT) {
-    filePath = path.join(filePath, 'index.html');
-  }
+  const decoded = decodeURIComponent(urlPath);
+  const filePath = path.join(STATIC_ROOT, decoded);
   const resolved = path.resolve(filePath);
+
   if (!resolved.startsWith(STATIC_ROOT)) {
     sendJson(res, 403, { ok: false, error: 'Forbidden' });
     return;
   }
 
   fs.stat(resolved, (err, stats) => {
-    if (err || !stats.isFile()) {
+    if (err) {
+      sendJson(res, 404, { ok: false, error: 'Not found' });
+      return;
+    }
+    // Directory → serve index.html inside it (works on Windows and Unix)
+    if (stats.isDirectory()) {
+      const indexPath = path.join(resolved, 'index.html');
+      fs.stat(indexPath, (err2, stats2) => {
+        if (err2 || !stats2.isFile()) {
+          sendJson(res, 404, { ok: false, error: 'Not found' });
+          return;
+        }
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        fs.createReadStream(indexPath).pipe(res);
+      });
+      return;
+    }
+    if (!stats.isFile()) {
       sendJson(res, 404, { ok: false, error: 'Not found' });
       return;
     }

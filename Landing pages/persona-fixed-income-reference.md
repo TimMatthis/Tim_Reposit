@@ -11,6 +11,7 @@ Use this file to guide landing pages, ads, email, sales scripts, offer pages, on
 - Explain Reposit as a way to make energy costs fit a fixed income.
 - Avoid patronising language, exaggerated fear, or complicated financial framing.
 - Every journey step should answer: "Can I trust this, and will it fit my budget?"
+- Do not use em dashes in generated copy. Use commas, full stops, colons, or shorter sentences instead. Avoid obvious AI tells such as formulaic transitions, inflated claims, repetitive three-part phrasing, and generic phrases like "unlock the power of" or "take control of your energy future."
 
 ## Brand Frame
 

@@ -11,6 +11,7 @@ Use this file to guide landing pages, ads, email, sales scripts, offer pages, on
 - Explain Reposit as the buffer between the household and energy market volatility.
 - Avoid making the customer feel financially unsophisticated. They are seeking calm, not a lecture.
 - Every journey step should answer: "Will this stop energy surprises?"
+- Do not use em dashes in generated copy. Use commas, full stops, colons, or shorter sentences instead. Avoid obvious AI tells such as formulaic transitions, inflated claims, repetitive three-part phrasing, and generic phrases like "unlock the power of" or "take control of your energy future."
 
 ## Brand Frame
 

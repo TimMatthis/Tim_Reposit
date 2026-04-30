@@ -11,6 +11,7 @@ Use this file to guide landing pages, ads, email, sales scripts, offer pages, on
 - Explain Reposit as the energy autopilot: one fixed fee, zero ongoing decisions.
 - Avoid detailed market mechanics unless needed for trust or objections.
 - Every journey step should answer: "Can I stop thinking about electricity?"
+- Do not use em dashes in generated copy. Use commas, full stops, colons, or shorter sentences instead. Avoid obvious AI tells such as formulaic transitions, inflated claims, repetitive three-part phrasing, and generic phrases like "unlock the power of" or "take control of your energy future."
 
 ## Brand Frame
 

@@ -754,7 +754,7 @@
           <!-- Urgency -->
           <div class="wiz-urgency-strip">
             <span class="wiz-urgency-icon">⏱</span>
-            <span>This offer is personalised to your home profile and <strong>held for 48 hours</strong>. After that we'd need to reassess.</span>
+            <span>This offer is personalised to your home profile and <strong>held for 24 hours</strong>. After that we'd need to reassess.</span>
           </div>
 
           <!-- Trust signals -->
@@ -783,7 +783,7 @@
 
           <!-- Social proof -->
           <div class="wiz-social-proof">
-            Joining <strong>2,000+ households</strong> who've already switched to No Bill electricity across Australia.
+            6000
           </div>
 
           <!-- What happens next -->
@@ -861,7 +861,11 @@
 
 <script>
   (function () {
-    var API_BASE = 'https://dev-customer.repositpower.com';
+    var isLocalPreview = ['localhost', '127.0.0.1'].indexOf(window.location.hostname) !== -1;
+    var API_BASE = isLocalPreview
+      ? 'http://localhost:5050'
+      : 'https://dev-customer.repositpower.com';
+    var LOCAL_STUB_TOKEN = 'test-dev-token';
 
     var facts = [
       'Analysing your 12 months of energy data…',
@@ -1029,6 +1033,7 @@
 
     // ── Get token from URL ──
     var token = new URLSearchParams(window.location.search).get('token');
+    if (!token && isLocalPreview) token = LOCAL_STUB_TOKEN;
 
     if (!token) {
       show('stepError');

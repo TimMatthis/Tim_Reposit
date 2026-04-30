@@ -11,6 +11,7 @@ Use this file to guide landing pages, ads, email, sales scripts, offer pages, on
 - Explain Reposit as the coordination layer that turns individual batteries into grid-scale clean flexibility.
 - Avoid generic greenwashing. This persona needs credible mechanism and measurable role.
 - Every journey step should answer: "Will my battery make a real difference?"
+- Do not use em dashes in generated copy. Use commas, full stops, colons, or shorter sentences instead. Avoid obvious AI tells such as formulaic transitions, inflated claims, repetitive three-part phrasing, and generic phrases like "unlock the power of" or "take control of your energy future."
 
 ## Brand Frame
 
