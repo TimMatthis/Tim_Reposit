@@ -1,14 +1,50 @@
-<!--
+﻿<!--
   templateType: "page"
   label: "Reposit - No Bill Retrofit Campaign"
   isAvailableForNewContent: true
+-->
+<!--
+  DEVELOPER NOTES - HubSpot Three-Page Quote Journey
+
+  This page is the entry point (/get-quote) for the customer quote
+  journey hosted on info.repositpower.com.
+
+  PAGE MAP
+  Page                  Path        Purpose / Data source
+  Landing / Get Quote   /get-quote  Collects customer email, initiates OAuth.
+                                    This file.
+  System Confirmation   /confirm    Shows SolaX system details from the
+                                    JS-readable plant_info cookie.
+                                    -> Quote_Confirm_HubSpot.html
+  Offer                 /offer      Shows optimisation result / subscription
+                                    quote via GET /estimate + session cookie.
+                                    -> Quote_Offer_HubSpot.html
+
+  GET QUOTE FLOW (this page)
+  The wizard modal collects the customer email. On submit the browser
+  is redirected to:
+    https://api.repositpower.com/quote/start?email=<encoded email>
+  The API handles OAuth consent, sets the plant_info cookie and session
+  cookie, then redirects the customer to /confirm.
+
+  DEPLOYMENT CHECKLIST
+  1. Publish this page at path /get-quote in HubSpot.
+  2. Publish Quote_Confirm_HubSpot.html at /confirm.
+  3. Publish Quote_Offer_HubSpot.html at /offer.
+  4. Ensure CORS on api.repositpower.com allows info.repositpower.com.
+  5. Confirm plant_info cookie is JS-readable (no HttpOnly flag) so
+     /confirm can read it via document.cookie.
+  6. Confirm /estimate authenticates via session cookie
+     (credentials: 'include' is used on the /offer page).
+  7. standard_header_includes / standard_footer_includes load HubSpot
+     analytics and cookie tools - keep both tags in all three pages.
 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Reposit Power — No Bill Retrofit</title>
+  <title>Reposit Power - No Bill Retrofit</title>
   {{ standard_header_includes }}
   <style>
     * {
@@ -41,7 +77,7 @@
       color: var(--ink);
       background:
         url(https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/noise.png),
-        radial-gradient(circle at top left, rgba(246,141,38,1) 5%, rgba(203,128,70,1) 20%, rgba(42,107,148,1) 60%, rgba(19,26,43,1) 100%);
+        radial-gradient(130% 110% at 18% 24%, #2b78a7 0%, #265f87 42%, #4f5f69 64%, #8c6647 82%, #b27a4b 100%);
       background-blend-mode: multiply;
       padding: 0;
       overflow: hidden;
@@ -1791,7 +1827,7 @@
       flex-direction: column;
       background:
         url(https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/noise.png),
-        radial-gradient(circle at top left, rgba(246,141,38,1) 5%, rgba(203,128,70,1) 20%, rgba(42,107,148,1) 60%, rgba(19,26,43,1) 100%);
+        radial-gradient(130% 110% at 18% 24%, #2b78a7 0%, #265f87 42%, #4f5f69 64%, #8c6647 82%, #b27a4b 100%);
       background-blend-mode: multiply;
       opacity: 0;
       pointer-events: none;
@@ -1818,22 +1854,13 @@
     .wizard-logo {
       display: flex;
       align-items: center;
-      gap: 10px;
-      color: #fff;
-      font-weight: 900;
-      font-size: 1.1rem;
-      letter-spacing: -0.01em;
+      margin-left: auto;
     }
 
-    .wizard-logo-mark {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      background: linear-gradient(135deg, #F68D26 0%, #2a6b94 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1rem;
+    .wizard-logo-img {
+      width: 132px;
+      height: auto;
+      display: block;
     }
 
     .wizard-close {
@@ -2006,6 +2033,64 @@
       font-size: 1.8rem;
       font-weight: 800;
       letter-spacing: 0.5rem;
+    }
+
+    .wiz-hs-form .hs-form-field {
+      margin-bottom: 16px;
+    }
+
+    .wiz-hs-form label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 5px;
+    }
+
+    .wiz-hs-form .hs-input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid var(--line);
+      border-radius: 12px;
+      font-size: 1rem;
+      background: #f9fafb;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .wiz-hs-form .hs-input:focus {
+      outline: none;
+      border-color: var(--blue);
+      background: #fff;
+      box-shadow: 0 0 0 4px rgba(42,107,148,0.1);
+    }
+
+    .wiz-hs-form .hs-error-msgs {
+      list-style: none;
+      margin: 6px 0 0;
+      padding: 0;
+    }
+
+    .wiz-hs-form .hs-error-msg {
+      font-size: 0.82rem;
+      color: #991b1b;
+    }
+
+    .wiz-hs-form .hs-button.primary {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #F68D26 0%, #2a6b94 100%);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: filter 0.2s, transform 0.2s;
+    }
+
+    .wiz-hs-form .hs-button.primary:hover {
+      filter: brightness(1.07);
+      transform: translateY(-2px);
     }
 
     .wiz-hint {
@@ -2633,6 +2718,61 @@
     .wiz-chosen-summary { display: none; }
     .wiz-chosen-list { display: none; }
 
+    /* ─── QUOTE FORM (hsq-* components, scoped to this page) ── */
+    .hsq-form {
+      display: grid;
+      gap: 10px;
+      text-align: left;
+      margin-bottom: 12px;
+    }
+
+    .hsq-field-row {
+      display: grid;
+      gap: 6px;
+    }
+
+    .hsq-label {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.92);
+    }
+
+    .hsq-input {
+      width: 100%;
+      min-height: 46px;
+      border-radius: 11px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 10px 14px;
+      font-size: 0.95rem;
+      color: #0f172a;
+      background: #ffffff;
+      font-family: inherit;
+    }
+
+    .hsq-input:focus {
+      outline: 2px solid #19c37d;
+      outline-offset: 1px;
+    }
+
+    .hsq-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .hsq-note {
+      font-size: 0.82rem;
+      color: rgba(255, 255, 255, 0.65);
+      text-align: center;
+    }
+
+    .hsq-error {
+      font-size: 0.88rem;
+      color: #fca5a5;
+      min-height: 1.2em;
+    }
+
     /* CTA section (replaces the embedded assessment block on the landing page) */
     .landing-cta-block {
       text-align: center;
@@ -2731,13 +2871,13 @@
             <p class="lead">
               Most battery owners are still paying variable electricity bills, including daily supply charges.
               Reposit adds smart trading to your existing system and replaces all of that with one simple,
-              fixed monthly fee — set lower than what you pay today.
+              fixed monthly fee - set lower than what you pay today.
             </p>
             <div class="btn-row">
               <button class="btn btn-primary" onclick="openWizard()">Get My Free Assessment</button>
             </div>
             <p class="hero-note">
-              Takes 60 seconds to connect your battery data. Your personalised offer arrives by email in about 15 minutes. No commitment until you choose a plan.
+              Takes 60 seconds. Enter your battery app email to start - your personalised offer arrives in about 15 minutes.
             </p>
             <div class="tags">
               <span class="tag">$0 Electricity Bill</span>
@@ -2779,7 +2919,7 @@
         <div class="glass">
           <h2>What actually changes when you retrofit with Reposit</h2>
           <p class="lead">
-            Right now your battery stores solar and discharges at home — but it does not trade. That means you are
+            Right now your battery stores solar and discharges at home - but it does not trade. That means you are
             still paying retail rates, supply charges, and absorbing winter price spikes. Reposit changes that.
           </p>
 
@@ -2798,7 +2938,7 @@
               <span class="winner-badge">With Reposit</span>
               <h3>A single, predictable monthly cost</h3>
               <ul>
-                <li>$0 electricity retailer bill — including supply charges</li>
+                <li>$0 electricity retailer bill - including supply charges</li>
                 <li>One fixed monthly fee, lower than your current spend</li>
                 <li>Value maintained through winter and cloudy periods</li>
                 <li>You know exactly what you pay, every month</li>
@@ -2827,7 +2967,7 @@
 
             <!-- Bar chart -->
             <div class="chart-wrap">
-              <p class="chart-title">Indicative Monthly Electricity Bills — Current vs Reposit</p>
+              <p class="chart-title">Indicative Monthly Electricity Bills - Current vs Reposit</p>
               <div class="bar-chart">
                 <!-- Reposit flat-fee dashed line at ~$149, shown at 48% from bottom (149/310 = 48%) -->
                 <div class="reposit-line">
@@ -2968,7 +3108,7 @@
                 <div class="journey-body">
                   <p class="journey-step-tag"><span class="step-badge">1</span>Connect</p>
                   <h3 class="journey-h3">Share your battery data</h3>
-                  <p class="journey-p">Enter the email you use for your battery app (Solax, Sigenergy). We send a one-time code — enter it to grant secure, read-only access. We never control your system.</p>
+                  <p class="journey-p">Enter the email you use for your battery app (Solax, Sigenergy). We send a one-time code - enter it to grant secure, read-only access. We never control your system.</p>
                   <span class="journey-time">⏱ About 60 seconds</span>
                 </div>
               </article>
@@ -3008,8 +3148,8 @@
                 <div class="journey-body">
                   <p class="journey-step-tag"><span class="step-badge">2</span>Analyse</p>
                   <h3 class="journey-h3">We read your real energy usage</h3>
-                  <p class="journey-p">Our engine analyses 12 months of your actual solar, battery and grid data — peak hours, winter spikes, daily patterns. This is what makes your offer specific to your home, not a generic quote.</p>
-                  <span class="journey-time">⚙️ Automatic — nothing to do</span>
+                  <p class="journey-p">Our engine analyses 12 months of your actual solar, battery and grid data - peak hours, winter spikes, daily patterns. This is what makes your offer specific to your home, not a generic quote.</p>
+                  <span class="journey-time">⚙️ Automatic - nothing to do</span>
                 </div>
               </article>
             </div>
@@ -3105,7 +3245,7 @@
                 <div class="journey-body">
                   <p class="journey-step-tag" style="color:#0a7a4a"><span class="step-badge">4</span>Go live</p>
                   <h3 class="journey-h3">We install the Reposit Controller</h3>
-                  <p class="journey-p">Our certified installer fits a small smart controller directly onto your existing battery system. This is the piece that connects your battery to the energy market — enabling the smart trading that eliminates your electricity bill.</p>
+                  <p class="journey-p">Our certified installer fits a small smart controller directly onto your existing battery system. This is the piece that connects your battery to the energy market - enabling the smart trading that eliminates your electricity bill.</p>
                   <span class="journey-time">🔧 Booked after you choose your plan (~2 hrs)</span>
                 </div>
               </article>
@@ -3118,14 +3258,14 @@
             <div class="controller-callout-icon">🔌</div>
             <div>
               <h4>What is the Reposit Controller?</h4>
-              <p>It's a small hardware device — about the size of a Wi-Fi router — that our team installs directly onto your existing battery cabinet. It connects your battery to the wholesale energy market, allowing Reposit to trade on your behalf 24/7. Your existing battery, inverter and solar setup stay exactly as they are. The controller just makes them smarter.</p>
+              <p>It's a small hardware device - about the size of a Wi-Fi router - that our team installs directly onto your existing battery cabinet. It connects your battery to the wholesale energy market, allowing Reposit to trade on your behalf 24/7. Your existing battery, inverter and solar setup stay exactly as they are. The controller just makes them smarter.</p>
             </div>
           </div>
 
           <div class="reassure-row">
             <div class="reassure-chip">
               <strong>Read-only data access</strong>
-              We only ever read your energy data — never change settings
+              We only ever read your energy data - never change settings
             </div>
             <div class="reassure-chip">
               <strong>Left the page?</strong>
@@ -3149,14 +3289,14 @@
       <div class="container">
         <div class="glass">
           <div class="landing-cta-block">
-            <p class="eyebrow">Free assessment — no commitment</p>
+            <p class="eyebrow">Free assessment - no commitment</p>
             <h2>See your personalised offer in 15 minutes.</h2>
             <p class="lead" style="margin-bottom:28px;">
               Connect your battery data, we do the analysis, your offer arrives by email. Pick a plan and we handle setup and paperwork.
             </p>
             <button class="btn-primary" onclick="openWizard()">Get My Free Assessment →</button>
             <div class="landing-cta-notes">
-              <span class="landing-cta-note">✓ Free — no commitment until you choose</span>
+              <span class="landing-cta-note">✓ Free - no commitment until you choose</span>
               <span class="landing-cta-note">✓ Offer arrives in ~15 minutes</span>
               <span class="landing-cta-note">✓ We handle installation &amp; paperwork</span>
             </div>
@@ -3194,11 +3334,10 @@
 
     <!-- Wizard header -->
     <header class="wizard-header">
-      <div class="wizard-logo">
-        <div class="wizard-logo-mark">⚡</div>
-        Reposit No Bill
-      </div>
       <button class="wizard-close" onclick="closeWizard()">← Back to overview</button>
+      <div class="wizard-logo">
+        <img class="wizard-logo-img" src="https://repositpower.com/hubfs/Reposit%20Logo/Reposit_logo_white.svg" alt="Reposit">
+      </div>
     </header>
 
     <!-- Step progress bars -->
@@ -3226,16 +3365,19 @@
       <!-- ── STEP 1: Email ─────────────────────────── -->
       <div class="wiz-step wiz-step--narrow is-active" id="wizStep1">
         <div class="wiz-card">
-          <p class="wiz-eyebrow">Step 1 of 4 — Connect your battery</p>
+          <p class="wiz-eyebrow">Step 1 - Connect your battery</p>
           <h2 class="wiz-title">Enter your battery app email</h2>
-          <p class="wiz-body-text">Use the email you log in with on the Solax or Sigenergy app. We'll send a one-time code — entering it grants us secure, read-only access to your usage data.</p>
+          <p class="wiz-body-text">Use the email you log in with on your battery app (Solax, Sigenergy, etc.). We will redirect you to complete secure consent - the whole process takes about 60 seconds.</p>
           <div id="wizEmailError" class="wiz-hint is-error" style="display:none;"></div>
-          <div class="wiz-field">
-            <label for="wizEmail">Battery app email</label>
-            <input type="email" id="wizEmail" placeholder="you@example.com" autocomplete="email">
-          </div>
-          <div class="wiz-btn-row">
-            <button class="wiz-btn-primary" id="wizSendCodeBtn">Send my verification code</button>
+          <div
+            id="wizHubspotForm"
+            class="wiz-hs-form"
+            data-hs-portal-id="3445699"
+            data-hs-form-id="50b50652-1c23-49c0-ac5c-40fb994124a8"
+            data-hs-region="ap1"
+          ></div>
+          <div class="wiz-btn-row" id="wizHubspotFormLoading">
+            <button class="wiz-btn-primary" type="button" disabled>Loading form…</button>
           </div>
           <p class="wiz-reassure">🔒 Read-only access. We never control or adjust your battery.</p>
         </div>
@@ -3244,18 +3386,13 @@
       <!-- ── STEP 2: Verify code ───────────────────── -->
       <div class="wiz-step wiz-step--narrow" id="wizStep2">
         <div class="wiz-card">
-          <p class="wiz-eyebrow">Step 2 of 4 — Confirm consent</p>
-          <h2 class="wiz-title">Enter your verification code</h2>
-          <p class="wiz-body-text" id="wizCodeSentNote">We've sent a 6-digit code to your email. Enter it below to confirm your consent and unlock your personalised offer.</p>
+          <p class="wiz-eyebrow">Step 2 of 4 - Confirm your address</p>
+          <h2 class="wiz-title">Please confirm this is your address</h2>
+          <p class="wiz-body-text" id="wizCodeSentNote">We retrieved your ADDRESS as "<strong id="wizRetrievedAddress">[address unavailable]</strong>". Please can you confirm that this is you?</p>
           <div id="wizCodeError" class="wiz-hint is-error" style="display:none;"></div>
-          <div id="wizCodeSuccess" class="wiz-hint" style="display:none;">Code verified. Reading your energy usage…</div>
-          <div class="wiz-field">
-            <label for="wizCode">6-digit code</label>
-            <input type="text" id="wizCode" class="wiz-code-input" inputmode="numeric" maxlength="6" placeholder="· · · · · ·" autocomplete="one-time-code">
-          </div>
           <div class="wiz-btn-row">
-            <button class="wiz-btn-primary" id="wizVerifyBtn">Confirm &amp; get my offer</button>
-            <button class="wiz-btn-secondary" id="wizResendBtn">Resend code or change email</button>
+            <button class="wiz-btn-primary" id="wizVerifyBtn">CONFIRM and GET OFFER</button>
+            <button class="wiz-btn-secondary" id="wizResendBtn">CANCEL, this ISN'T me</button>
           </div>
         </div>
       </div>
@@ -3291,12 +3428,12 @@
               <!-- Savings estimate hero -->
               <div class="wiz-savings-hero" id="wizSavingsHero">
                 <div class="wiz-savings-est-label">Estimated annual saving</div>
-                <div class="wiz-savings-est-amt" id="wizSavingsAmt">—</div>
+                <div class="wiz-savings-est-amt" id="wizSavingsAmt">-</div>
                 <div class="wiz-savings-est-sub">per year, based on your usage profile</div>
-                <div class="wiz-savings-est-qualifier">Best estimate — your actual saving depends on usage and market conditions</div>
+                <div class="wiz-savings-est-qualifier">Best estimate - your actual saving depends on usage and market conditions</div>
                 <div class="wiz-certainty-bar">
                   <span class="wiz-certainty-icon">🔒</span>
-                  <span class="wiz-certainty-text">One fixed fee of <span id="wizCertaintyFee">—</span>/mo — no electricity bill, ever</span>
+                  <span class="wiz-certainty-text">One fixed fee of <span id="wizCertaintyFee">-</span>/mo - no electricity bill, ever</span>
                   <span class="wiz-certainty-sub">Your fee is set below your current average spend. It never changes with the market.</span>
                 </div>
               </div>
@@ -3321,7 +3458,7 @@
                 </li>
                 <li>
                   <span class="wiz-trust-icon">✓</span>
-                  <span><strong>30-day satisfaction guarantee.</strong> Cancel before installation at no cost — no questions asked.</span>
+                  <span><strong>30-day satisfaction guarantee.</strong> Cancel before installation at no cost - no questions asked.</span>
                 </li>
                 <li>
                   <span class="wiz-trust-icon">✓</span>
@@ -3348,12 +3485,12 @@
                 <li><span class="wiz-next-step-num">1</span><span>We email you a full plan summary and contract within minutes.</span></li>
                 <li><span class="wiz-next-step-num">2</span><span>Our team calls you within one business day to book your installation slot.</span></li>
                 <li><span class="wiz-next-step-num">3</span><span>A certified installer fits the Reposit Controller onto your battery cabinet (~2 hours).</span></li>
-                <li><span class="wiz-next-step-num">4</span><span>You go live — Reposit starts trading your battery, and your bill goes to $0.</span></li>
+                <li><span class="wiz-next-step-num">4</span><span>You go live - Reposit starts trading your battery, and your bill goes to $0.</span></li>
               </ul>
 
               <!-- Escape -->
               <div class="wiz-confirm-escape">
-                <button id="wizChangeBtn">Not right — let me choose a different plan</button>
+                <button id="wizChangeBtn">Not right - let me choose a different plan</button>
               </div>
 
             </div>
@@ -3372,12 +3509,12 @@
           <p class="wiz-eyebrow" style="justify-content:center; display:flex;">You're confirmed</p>
           <h2 class="wiz-title" style="margin-bottom:6px;">Welcome to Reposit No Bill.</h2>
           <p class="wiz-body-text" style="margin-bottom:20px;">
-            Your electricity bill is about to become $0. Check your inbox — your plan summary is on its way. We'll call you within one business day to book your installation.
+            Your electricity bill is about to become $0. Check your inbox - your plan summary is on its way. We'll call you within one business day to book your installation.
           </p>
           <ul class="wiz-trust-strip" style="text-align:left; margin-bottom:20px;">
             <li>
               <span class="wiz-trust-icon">✓</span>
-              <span><strong>Check your inbox</strong> — plan summary and contract sent now.</span>
+              <span><strong>Check your inbox</strong> - plan summary and contract sent now.</span>
             </li>
             <li>
               <span class="wiz-trust-icon">✓</span>
@@ -3385,9 +3522,21 @@
             </li>
             <li>
               <span class="wiz-trust-icon">✓</span>
-              <span><strong>30-day guarantee</strong> — cancel before installation, no cost.</span>
+              <span><strong>30-day guarantee</strong> - cancel before installation, no cost.</span>
             </li>
           </ul>
+          <div class="wiz-btn-row" style="max-width:320px; margin:0 auto;">
+            <button class="wiz-btn-primary" onclick="closeWizard()">Back to overview</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── STEP 6: API unavailable ───────────────── -->
+      <div class="wiz-step wiz-step--narrow" id="wizStep6">
+        <div class="wiz-card" style="text-align:center;">
+          <p class="wiz-eyebrow" style="justify-content:center; display:flex;">Temporarily unavailable</p>
+          <h2 class="wiz-title" style="margin-bottom:6px;">Something went wrong.</h2>
+          <p class="wiz-body-text" id="wizApiUnavailableMessage" style="margin-bottom:20px;">Please come back later.</p>
           <div class="wiz-btn-row" style="max-width:320px; margin:0 auto;">
             <button class="wiz-btn-primary" onclick="closeWizard()">Back to overview</button>
           </div>
@@ -3403,7 +3552,7 @@
     <div class="energy-modal-card">
 
       <h4 id="manualEnergyTitle" class="energy-modal-title">We need your electricity bill</h4>
-      <p class="energy-modal-copy">We couldn't access your usage history automatically. Upload a recent electricity bill — we'll pull out the number we need to size your offer.</p>
+      <p class="energy-modal-copy">We couldn't access your usage history automatically. Upload a recent electricity bill - we'll pull out the number we need to size your offer.</p>
 
       <div id="manualEnergyError" class="energy-modal-error hidden" role="alert"></div>
 
@@ -3434,7 +3583,7 @@
         <input type="number" id="manualAvgMonthly" min="0" step="1" placeholder="e.g. 178">
       </div>
       <div class="energy-modal-row">
-        <label for="manualDailyKwh">Typical daily energy use in kWh <span style="font-weight:400;color:#9ca3af;">— optional</span></label>
+        <label for="manualDailyKwh">Typical daily energy use in kWh <span style="font-weight:400;color:#9ca3af;">- optional</span></label>
         <input type="number" id="manualDailyKwh" min="0" step="0.1" placeholder="e.g. 8.2">
       </div>
 
@@ -3533,6 +3682,7 @@
       };
       var assessmentState = {
         email: '',
+        address: '',
         consentVerified: false,
         consentFallback: false,
         profile: null,
@@ -3600,7 +3750,7 @@
 
       function formatFairCapHtml(pkg, dailyKwh) {
         var cell = pkg.fairUseCap;
-        if (!cell) return '—';
+        if (!cell) return '-';
         var v = cell.value;
         if (dailyKwh > 0 && typeof v === 'number' && v > 0 && v < 20) {
           return escapeHtml(String(v)) + '× <span class="sim-fair-sub">your typical daily use</span>';
@@ -3638,7 +3788,183 @@
               }
               return json;
             });
+        }).catch(function (err) {
+          var out = err instanceof Error ? err : new Error('API request failed.');
+          if (!out.httpStatus) out.isNetworkError = true;
+          if (!out.path) out.path = path;
+          throw out;
         });
+      }
+
+      function isApiUnavailableError(err) {
+        var status = err && err.httpStatus;
+        if (err && err.isNetworkError) return true;
+        if (status === 0) return true;
+        if (typeof status === 'number' && status >= 500) return true;
+        return false;
+      }
+
+      function showApiUnavailableState(customMessage) {
+        stopLoading();
+        var messageEl = document.getElementById('wizApiUnavailableMessage');
+        if (messageEl) {
+          messageEl.textContent = customMessage || 'Please come back later.';
+        }
+        showWizStep(6);
+      }
+
+      function getSubmittedEmail($form, submissionValues) {
+        var email = '';
+        if (submissionValues && typeof submissionValues === 'object') {
+          email = submissionValues.email || submissionValues.Email || '';
+        }
+        if (!email && $form && typeof $form.find === 'function') {
+          var input = $form.find('input[name="email"]');
+          if (input && input.length) email = String(input.val() || '');
+        }
+        return String(email || '').trim();
+      }
+
+      function getAddressFromQuery(params) {
+        var keys = ['address', 'full_address', 'site_address', 'property_address'];
+        for (var i = 0; i < keys.length; i++) {
+          var v = String(params.get(keys[i]) || '').trim();
+          if (v) return v;
+        }
+        return '';
+      }
+
+      function getHubspotHutk() {
+        var m = document.cookie.match(/(?:^|;\s*)hubspotutk=([^;]+)/);
+        return m ? decodeURIComponent(m[1]) : '';
+      }
+
+      function sendHubspotVerificationCapture(isConfirmed) {
+        var email = String(assessmentState.email || '').trim();
+        if (!email) return Promise.resolve();
+
+        var host = document.getElementById('wizHubspotForm');
+        var portalId = host ? String(host.getAttribute('data-hs-portal-id') || '').trim() : '';
+        var formId = host ? String(host.getAttribute('data-hs-form-id') || '').trim() : '';
+        if (!portalId || !formId) return Promise.resolve();
+
+        var payload = {
+          fields: [
+            { name: 'email', value: email },
+            { name: 'retrofit_address_retrieved', value: String(assessmentState.address || '') },
+            { name: 'retrofit_address_confirmed', value: isConfirmed ? 'true' : 'false' }
+          ],
+          context: {
+            hutk: getHubspotHutk(),
+            pageUri: window.location.href,
+            pageName: document.title
+          }
+        };
+
+        return fetch('https://api.hsforms.com/submissions/v3/integration/submit/' + encodeURIComponent(portalId) + '/' + encodeURIComponent(formId), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        }).catch(function () { return null; });
+      }
+
+      function updateVerifyAddressCopy() {
+        var addressEl = document.getElementById('wizRetrievedAddress');
+        if (addressEl) {
+          addressEl.textContent = assessmentState.address || '[address unavailable]';
+        }
+      }
+
+      function initHubspotEmailForm() {
+        var host = document.getElementById('wizHubspotForm');
+        var errEl = document.getElementById('wizEmailError');
+        var loadingEl = document.getElementById('wizHubspotFormLoading');
+        if (!host) return;
+
+        var portalId = host.getAttribute('data-hs-portal-id') || '';
+        var formId = host.getAttribute('data-hs-form-id') || '';
+        var region = host.getAttribute('data-hs-region') || 'na1';
+
+        if (!portalId || !formId) {
+          if (loadingEl) loadingEl.style.display = 'none';
+          if (errEl) {
+            errEl.textContent = 'HubSpot form is not configured. Set data-hs-form-id on #wizHubspotForm.';
+            errEl.style.display = 'block';
+          }
+          return;
+        }
+
+        function renderForm() {
+          if (!window.hbspt || !window.hbspt.forms || typeof window.hbspt.forms.create !== 'function') {
+            if (loadingEl) loadingEl.style.display = 'none';
+            if (errEl) {
+              errEl.textContent = 'Unable to load HubSpot form. Please refresh and try again.';
+              errEl.style.display = 'block';
+            }
+            return;
+          }
+
+          window.hbspt.forms.create({
+            region: region,
+            portalId: portalId,
+            formId: formId,
+            target: '#wizHubspotForm',
+            onFormReady: function () {
+              if (loadingEl) loadingEl.style.display = 'none';
+              if (errEl) errEl.style.display = 'none';
+            },
+            onFormSubmitted: function ($form, data) {
+              var email = getSubmittedEmail($form, data && data.submissionValues);
+              if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                if (errEl) {
+                  errEl.textContent = 'Please enter a valid email address.';
+                  errEl.style.display = 'block';
+                }
+                return;
+              }
+              if (errEl) errEl.style.display = 'none';
+              assessmentState.email = email;
+              updateVerifyAddressCopy();
+              if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+                showApiUnavailableState('Our service is currently unavailable. Please come back later.');
+                return;
+              }
+              window.location.assign('https://api.repositpower.com/quote/start?email=' + encodeURIComponent(email));
+            }
+          });
+        }
+
+        if (window.hbspt && window.hbspt.forms && typeof window.hbspt.forms.create === 'function') {
+          renderForm();
+          return;
+        }
+
+        var scriptUrl = 'https://js-ap1.hsforms.net/forms/embed/v2.js';
+        var existingScript = document.querySelector('script[src="' + scriptUrl + '"]');
+        if (existingScript) {
+          existingScript.addEventListener('load', renderForm, { once: true });
+          existingScript.addEventListener('error', function() {
+            if (loadingEl) loadingEl.style.display = 'none';
+            if (errEl) {
+              errEl.textContent = 'Unable to load HubSpot form. Please refresh and try again.';
+              errEl.style.display = 'block';
+            }
+          }, { once: true });
+          return;
+        }
+
+        var script = document.createElement('script');
+        script.src = scriptUrl;
+        script.async = true;
+        script.onload = renderForm;
+        script.onerror = function () {
+          if (loadingEl) loadingEl.style.display = 'none';
+          if (errEl) {
+            errEl.textContent = 'Unable to load HubSpot form. Please refresh and try again.';
+            errEl.style.display = 'block';
+          }
+        };
+        document.head.appendChild(script);
       }
 
       function friendlyApiError(err, fallbackMsg) {
@@ -3694,7 +4020,7 @@
 
       function showWizStep(n) {
         currentWizStep = n;
-        for (var s = 1; s <= 5; s++) {
+        for (var s = 1; s <= 6; s++) {
           var el = document.getElementById('wizStep' + s);
           if (el) el.classList.toggle('is-active', s === n);
         }
@@ -3778,7 +4104,7 @@
         if (confirmPanel) confirmPanel.style.display = 'none';
 
         if (!data || !data.ok || !data.topPackages || !data.topPackages.length) {
-          if (errBanner) { errBanner.textContent = 'Unexpected API response — no packages returned.'; errBanner.style.display = 'block'; }
+          if (errBanner) { errBanner.textContent = 'Unexpected API response - no packages returned.'; errBanner.style.display = 'block'; }
           return;
         }
 
@@ -3795,18 +4121,18 @@
             (snap.dailyKwh > 0 ? '<div class="wiz-offers-banner-sub">~' + snap.dailyKwh + ' kWh typical daily use</div>' : '') + '</div>';
         }
 
-        if (intro) intro.textContent = 'Three options built for your home. Compare the upfront cost, monthly fee, and estimated annual saving — then choose the one that suits you.';
+        if (intro) intro.textContent = 'Three options built for your home. Compare the upfront cost, monthly fee, and estimated annual saving - then choose the one that suits you.';
 
         var c = data.constraints && data.constraints.monthlyFee;
         if (c && constraint) {
           constraint.style.display = 'block';
-          constraint.textContent = 'All three options use ' + (c.display || '$' + c.value + '/mo') + ' as the fixed monthly fee — the other terms vary to maximise value for your profile.';
+          constraint.textContent = 'All three options use ' + (c.display || '$' + c.value + '/mo') + ' as the fixed monthly fee - the other terms vary to maximise value for your profile.';
         }
 
         data.topPackages.forEach(function(row) {
           var pkg = row.package || {};
           var rec = row.rank === 1;
-          function disp(cell) { return cell ? (cell.display != null ? String(cell.display) : String(cell.value)) : '—'; }
+          function disp(cell) { return cell ? (cell.display != null ? String(cell.display) : String(cell.value)) : '-'; }
           var fairHtml = formatFairCapHtml(pkg, snap.dailyKwh);
           var saving = demoYearOneSaving(snap.avgMonthly, pkg);
           var savingBlock = Number.isFinite(saving) && saving >= 0
@@ -3855,7 +4181,7 @@
           c.classList.toggle('wiz-pkg-card--selected', parseInt(c.getAttribute('data-offer-rank'), 10) === rank);
         });
 
-        function disp(cell) { return cell ? (cell.display != null ? String(cell.display) : String(cell.value)) : '—'; }
+        function disp(cell) { return cell ? (cell.display != null ? String(cell.display) : String(cell.value)) : '-'; }
 
         /* ── Savings hero ──────────────────────────────── */
         var savedEl      = document.getElementById('wizSavingsAmt');
@@ -3864,7 +4190,7 @@
         var hero         = document.getElementById('wizSavingsHero');
 
         /* Populate the fixed fee certainty bar */
-        if (certaintyFee) certaintyFee.textContent = disp(pkg.monthlyFee) || '—';
+        if (certaintyFee) certaintyFee.textContent = disp(pkg.monthlyFee) || '-';
 
         if (Number.isFinite(saving) && saving > 0) {
           if (savedEl) savedEl.textContent = '~' + fmtMoney(saving);
@@ -3876,7 +4202,7 @@
           var estSub   = hero && hero.querySelector('.wiz-savings-est-sub');
           var estQual  = hero && hero.querySelector('.wiz-savings-est-qualifier');
           if (estLabel) estLabel.textContent = 'Your fixed monthly fee';
-          if (savedEl)  savedEl.textContent  = disp(pkg.monthlyFee) || '—';
+          if (savedEl)  savedEl.textContent  = disp(pkg.monthlyFee) || '-';
           if (estSub)   estSub.textContent   = 'No electricity bill on top. Ever.';
           if (estQual)  estQual.textContent  = 'Your fee is set below your average spend and never changes with the market.';
           if (hero) hero.style.display = 'block';
@@ -3955,6 +4281,10 @@
             updateFeeReadout();
           })
           .catch(function (err) {
+            if (isApiUnavailableError(err)) {
+              showApiUnavailableState('Our systems are temporarily unavailable. Please come back later.');
+              return;
+            }
             assessmentState.profile = null;
             assessmentState.profileSource = '';
             updateFeeReadout();
@@ -3989,6 +4319,10 @@
               renderOffers(json);
             })
             .catch(function(err) {
+              if (isApiUnavailableError(err)) {
+                showApiUnavailableState('Our systems are temporarily unavailable. Please come back later.');
+                return;
+              }
               stopLoading();
               showWizStep(4);
               var errBanner = document.getElementById('wizOffersErrorBanner');
@@ -3997,85 +4331,43 @@
         });
       }
 
-      /* ── Step 1: Send code ───────────────────────────── */
-      var wizSendBtn = document.getElementById('wizSendCodeBtn');
-      if (wizSendBtn) {
-        wizSendBtn.addEventListener('click', function() {
-          var emailEl = document.getElementById('wizEmail');
-          var errEl = document.getElementById('wizEmailError');
-          var email = emailEl ? String(emailEl.value || '').trim() : '';
-          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            if (errEl) { errEl.textContent = 'Please enter a valid email address.'; errEl.style.display = 'block'; }
-            if (emailEl) emailEl.focus();
-            return;
-          }
-          if (errEl) errEl.style.display = 'none';
-          wizSendBtn.disabled = true;
-          wizSendBtn.textContent = 'Sending…';
-          apiJson(API_PATHS.requestCode, { method: 'POST', body: { email: email } })
-            .then(function() {
-              assessmentState.email = email;
-              assessmentState.consentFallback = false;
-              wizSendBtn.textContent = 'Code sent';
-              var note = document.getElementById('wizCodeSentNote');
-              if (note) note.textContent = 'We sent a 6-digit code to ' + email + '. Enter it below to confirm.';
-              showWizStep(2);
-            })
-            .catch(function(err) {
-              assessmentState.email = email;
-              wizSendBtn.disabled = false;
-              wizSendBtn.textContent = 'Send my verification code';
-              if (err && err.httpStatus === 404) {
-                assessmentState.consentFallback = true;
-                if (errEl) { errEl.textContent = 'Consent API not available. Enter any 6 digits to continue in manual mode.'; errEl.style.display = 'block'; }
-                showWizStep(2);
-                return;
-              }
-              if (errEl) { errEl.textContent = friendlyApiError(err, 'Could not send verification code.'); errEl.style.display = 'block'; }
-            });
-        });
-      }
+      initHubspotEmailForm();
+
+      (function initStateFromUrl() {
+        var params = new URLSearchParams(window.location.search || '');
+        var incomingEmail = String(params.get('email') || '').trim();
+        var incomingAddress = getAddressFromQuery(params);
+        if (incomingEmail) assessmentState.email = incomingEmail;
+        if (incomingAddress) assessmentState.address = incomingAddress;
+        updateVerifyAddressCopy();
+        if (incomingEmail) showWizStep(2);
+      }());
 
       /* ── Step 2: Verify code ─────────────────────────── */
       var wizVerifyBtn = document.getElementById('wizVerifyBtn');
       if (wizVerifyBtn) {
         wizVerifyBtn.addEventListener('click', function() {
-          var codeEl = document.getElementById('wizCode');
           var errEl = document.getElementById('wizCodeError');
-          var successEl = document.getElementById('wizCodeSuccess');
-          var code = codeEl ? String(codeEl.value || '').trim() : '';
           var email = assessmentState.email;
-          if (!code) { if (codeEl) codeEl.focus(); return; }
           if (errEl) errEl.style.display = 'none';
           wizVerifyBtn.disabled = true;
           wizVerifyBtn.textContent = 'Verifying…';
 
           var proceed = function() {
             assessmentState.consentVerified = true;
-            if (successEl) { successEl.style.display = 'block'; successEl.textContent = 'Code confirmed. Fetching your usage data…'; }
+            sendHubspotVerificationCapture(true);
             setTimeout(function() {
               loadEnergyProfile().then(function() { requestOffers(); }).catch(function() { requestOffers(); });
             }, 800);
           };
-
-          if (assessmentState.consentFallback) {
-            if (!/^[0-9]{4,10}$/.test(code)) {
-              wizVerifyBtn.disabled = false;
-              wizVerifyBtn.textContent = 'Confirm & get my offer';
-              if (errEl) { errEl.textContent = 'Enter a valid code to continue.'; errEl.style.display = 'block'; }
-              return;
-            }
-            proceed();
+          if (!email) {
+            wizVerifyBtn.disabled = false;
+            wizVerifyBtn.textContent = 'CONFIRM and GET OFFER';
+            if (errEl) { errEl.textContent = 'Please enter your email first.'; errEl.style.display = 'block'; }
+            showWizStep(1);
             return;
           }
-
-          apiJson(API_PATHS.verifyCode, { method: 'POST', body: { email: email, code: code } })
-            .then(function() { proceed(); })
-            .catch(function(err) {
-              wizVerifyBtn.disabled = false;
-              wizVerifyBtn.textContent = 'Confirm & get my offer';
-              if (errEl) { errEl.textContent = friendlyApiError(err, 'Code verification failed. Try again.'); errEl.style.display = 'block'; }
-            });
+          proceed();
         });
       }
 
@@ -4083,8 +4375,7 @@
       var wizResendBtn = document.getElementById('wizResendBtn');
       if (wizResendBtn) {
         wizResendBtn.addEventListener('click', function() {
-          var wizSendBtnFresh = document.getElementById('wizSendCodeBtn');
-          if (wizSendBtnFresh) { wizSendBtnFresh.disabled = false; wizSendBtnFresh.textContent = 'Send my verification code'; }
+          sendHubspotVerificationCapture(false);
           var errEl = document.getElementById('wizEmailError');
           if (errEl) errEl.style.display = 'none';
           showWizStep(1);
@@ -4115,15 +4406,13 @@
       if (wizRestartBtn) {
         wizRestartBtn.addEventListener('click', function() {
           stopLoading();
-          assessmentState = { email: '', consentVerified: false, consentFallback: false, profile: null, profileSource: '' };
-          var fields = ['wizEmail', 'wizCode', 'manualAvgMonthly', 'manualDailyKwh'];
+          assessmentState = { email: '', address: '', consentVerified: false, consentFallback: false, profile: null, profileSource: '' };
+          updateVerifyAddressCopy();
+          var fields = ['manualAvgMonthly', 'manualDailyKwh'];
           fields.forEach(function(id) { var el = document.getElementById(id); if (el) el.value = ''; });
-          var sendBtn = document.getElementById('wizSendCodeBtn');
-          if (sendBtn) { sendBtn.disabled = false; sendBtn.textContent = 'Send my verification code'; }
           var verBtn = document.getElementById('wizVerifyBtn');
-          if (verBtn) { verBtn.disabled = false; verBtn.textContent = 'Confirm & get my offer'; }
+          if (verBtn) { verBtn.disabled = false; verBtn.textContent = 'CONFIRM and GET OFFER'; }
           ['wizEmailError','wizCodeError'].forEach(function(id) { var el = document.getElementById(id); if (el) el.style.display = 'none'; });
-          ['wizCodeSuccess'].forEach(function(id) { var el = document.getElementById(id); if (el) el.style.display = 'none'; });
           closeManualModal();
           showWizStep(1);
           var grid = document.getElementById('wizOffersGrid');

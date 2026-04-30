@@ -1,0 +1,1037 @@
+<!--
+  templateType: "page"
+  label: "Reposit - GridCredits Customer Survey"
+  screenshotPath: "../images/gridcredits_survey_screen.png"
+  description: "Package preference survey for existing Grid Credits customers."
+  isAvailableForNewContent: true
+-->
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reposit Power - GridCredits Evolution Survey</title>
+    {{ standard_header_includes }}
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: url(https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/noise.png), radial-gradient(circle at top left, rgba(246, 141, 38, 1) 5%, rgba(203, 128, 70, 1) 20%, rgba(42, 107, 148, 1) 60%, rgba(19, 26, 43, 1) 100%);
+            background-blend-mode: multiply;
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .customer-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .value-proposition {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            padding: 28px 36px;
+            margin: 0 auto 40px;
+            max-width: 900px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .value-proposition h2 {
+            font-size: 1.5rem;
+            color: #1f2937;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .value-proposition p {
+            font-size: 1.05rem;
+            color: #4b5563;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .value-proposition strong {
+            color: #F68D26;
+        }
+
+        .comparison-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-top: 24px;
+        }
+
+        .comparison-card {
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .comparison-card.current {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            border: 2px solid #fca5a5;
+        }
+
+        .comparison-card.new {
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            border: 2px solid #86efac;
+        }
+
+        .comparison-card h4 {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .comparison-card.current h4 {
+            color: #dc2626;
+        }
+
+        .comparison-card.new h4 {
+            color: #16a34a;
+        }
+
+        .comparison-card p {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 2px dotted #2A6B94;
+            cursor: help;
+            color: #2A6B94;
+            font-weight: 600;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 280px;
+            background-color: #1f2937;
+            color: #fff;
+            text-align: left;
+            border-radius: 8px;
+            padding: 12px 16px;
+            position: absolute;
+            z-index: 99999;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -140px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.9rem;
+            font-weight: 400;
+            line-height: 1.4;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -6px;
+            border-width: 6px;
+            border-style: solid;
+            border-color: #1f2937 transparent transparent transparent;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .progress-container {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            height: 12px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #4ade80 0%, #22c55e 100%);
+            border-radius: 50px;
+            transition: width 0.4s ease;
+            box-shadow: 0 2px 8px rgba(34, 197, 94, 0.4);
+        }
+
+        .task-counter {
+            text-align: center;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .survey-instructions {
+            text-align: center;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 32px;
+            padding: 20px 40px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 40px;
+        }
+
+        .survey-instructions strong {
+            font-weight: 700;
+            color: #FFF;
+        }
+
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .package-card {
+            background: white;
+            border-radius: 20px;
+            padding: 32px 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .package-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #F68D26 0%, #2A6B94 100%);
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .package-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+        }
+
+        .package-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .package-card.selected {
+            border: 3px solid #4ade80;
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(74, 222, 128, 0.3);
+        }
+
+        .package-card.selected::before {
+            transform: scaleX(1);
+            background: linear-gradient(90deg, #4ade80 0%, #22c55e 100%);
+        }
+
+        .card-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #F68D26 0%, #2A6B94 100%);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .monthly-fee {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .monthly-fee-amount {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: #4ade80;
+            margin-bottom: 4px;
+        }
+
+        .monthly-fee-label {
+            font-size: 0.85rem;
+            color: #6b7280;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .attribute-list {
+            list-style: none;
+            margin-bottom: 24px;
+        }
+
+        .attribute-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .attribute-item:last-child {
+            border-bottom: none;
+        }
+
+        .attribute-label {
+            font-size: 0.95rem;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .attribute-value {
+            font-size: 1rem;
+            color: #1f2937;
+            font-weight: 700;
+        }
+
+        .attribute-value.highlight {
+            color: #2A6B94;
+        }
+
+        .select-button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #F68D26 0%, #2A6B94 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .select-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .select-button:active {
+            transform: translateY(0);
+        }
+
+        .package-card.selected .select-button {
+            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+            box-shadow: 0 4px 12px rgba(74, 222, 128, 0.3);
+        }
+
+        .navigation {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .next-button {
+            padding: 18px 48px;
+            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 6px 20px rgba(74, 222, 128, 0.3);
+        }
+
+        .next-button:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(74, 222, 128, 0.4);
+        }
+
+        .next-button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .completion-screen {
+            display: none;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 24px;
+            padding: 60px 48px;
+            max-width: 550px;
+            margin: 80px auto;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            position: relative;
+            backdrop-filter: blur(10px);
+        }
+
+        .completion-screen.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .completion-icon {
+            font-size: 5rem;
+            margin-bottom: 24px;
+            color: #22c55e;
+            font-weight: bold;
+        }
+
+        .completion-screen h2 {
+            font-size: 2.5rem;
+            color: #1f2937;
+            margin-bottom: 16px;
+            font-weight: 800;
+        }
+
+        .completion-screen p {
+            font-size: 1.1rem;
+            color: #6b7280;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.95rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f9fafb;
+        }
+
+        .form-input:focus {
+            border-color: #F68D26;
+            background: white;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(246, 141, 38, 0.1);
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #F68D26 0%, #2A6B94 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 10px 25px -5px rgba(246, 141, 38, 0.4);
+            margin-top: 12px;
+        }
+
+        .submit-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px -5px rgba(246, 141, 38, 0.5);
+            filter: brightness(1.05);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .header p {
+                font-size: 1rem;
+            }
+
+            .cards-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .package-card {
+                padding: 24px 20px;
+            }
+
+            .monthly-fee-amount {
+                font-size: 2.2rem;
+            }
+
+            .next-button {
+                width: 100%;
+                padding: 16px 32px;
+            }
+
+            .completion-screen {
+                padding: 40px 24px;
+                margin: 40px 20px;
+            }
+
+            .completion-screen h2 {
+                font-size: 2rem;
+            }
+
+            .comparison-box {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .survey-screen {
+            display: none;
+        }
+
+        .survey-screen.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .welcome-screen {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            padding: 40px;
+            margin: 0 auto 40px;
+            max-width: 800px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            text-align: center;
+        }
+
+        .welcome-screen h2 {
+            font-size: 2rem;
+            color: #1f2937;
+            margin-bottom: 16px;
+            font-weight: 800;
+        }
+
+        .welcome-screen p {
+            font-size: 1.1rem;
+            color: #4b5563;
+            margin-bottom: 32px;
+        }
+
+        .cta-button {
+            padding: 18px 48px;
+            background: linear-gradient(135deg, #F68D26 0%, #2A6B94 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .cta-button:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .value-prop-list {
+            list-style: none;
+            margin-top: 16px;
+            padding-left: 0;
+            text-align: left;
+        }
+
+        .value-prop-list li {
+            position: relative;
+            padding-left: 32px;
+            margin-bottom: 12px;
+            color: #4b5563;
+            font-size: 1.05rem;
+            line-height: 1.5;
+        }
+
+        .value-prop-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: #22c55e;
+            font-weight: 800;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-container">
+                <img src="https://placehold.co/200x50/transparent/FFFFFF?text=REPOSIT+POWER&font=montserrat"
+                    alt="Reposit Power" id="mainLogo" style="height: 48px; margin-bottom: 24px; border-radius: 4px;">
+            </div>
+            <div class="customer-badge">🔋 Valued Grid Credits Customer</div>
+            <h1>Take Control of Your Energy Costs</h1>
+            <p>As a Grid Credits customer, you've been earning variable rewards from battery trading. 
+               Now we're offering you a chance to swap uncertainty for <strong>predictable savings</strong>.</p>
+        </div>
+
+        <div class="value-proposition" id="valueProp" style="display: none;">
+            <h2>Say Goodbye to Guesswork</h2>
+            <p>With our new fixed-rate plans, you'll know exactly what you're paying each month — no more wondering what your Grid Credits will be.</p>
+            
+            <div class="comparison-box">
+                <div class="comparison-card current">
+                    <h4>Your Current Plan</h4>
+                    <p>Variable credits that change monthly based on market conditions</p>
+                </div>
+                <div class="comparison-card new">
+                    <h4>New Fixed Plans</h4>
+                    <p>Predictable monthly fee with guaranteed energy coverage</p>
+                </div>
+            </div>
+
+            <ul class="value-prop-list" style="margin-top: 24px;">
+                <li>We handle your electricity bill — you just pay a simple monthly fee</li>
+                <li>Your usage is covered up to a fair-use cap based on your current consumption</li>
+                <li>No surprises, no market volatility — just predictable costs</li>
+            </ul>
+        </div>
+
+        <!-- Welcome / Introduction Screen -->
+        <div id="welcomeScreen" class="welcome-screen">
+            <h2>We Want Your Feedback</h2>
+            <p>Help us design the perfect plan for customers like you. We'll show you different package options — 
+               just pick the one you'd prefer in each scenario.</p>
+            
+            <p style="font-size: 0.95rem; color: #6b7280; margin-bottom: 32px;">
+                This takes about <strong>3 minutes</strong> and your feedback directly shapes what we offer.
+            </p>
+
+            <button class="cta-button" id="startSurveyBtn" onclick="startSurvey()">Show Me The Options</button>
+        </div>
+
+        <div id="surveyContainer"></div>
+
+        <div id="completionScreen" class="completion-screen">
+            <div class="completion-icon">✓</div>
+            <h2>Thanks for Your Input!</h2>
+            <p>Your preferences will help us build better plans for Grid Credits customers like you.</p>
+
+            <form id="detailsForm" onsubmit="submitToHubSpot(event)" style="max-width: 450px; margin: 0 auto;">
+                <div class="form-group" style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 2px solid #e5e7eb;">
+                    <label class="consent-option" style="display: flex; align-items: flex-start; cursor: pointer; gap: 12px;">
+                        <input type="checkbox" id="contactConsent" name="contactConsent" 
+                            style="width: 24px; height: 24px; margin-top: 2px; accent-color: #F68D26; flex-shrink: 0;">
+                        <span style="font-size: 1rem; color: #374151; line-height: 1.5;">
+                            <strong>Yes, I'm interested!</strong><br>
+                            <span style="font-size: 0.9rem; color: #6b7280;">
+                                Contact me when new fixed-rate plans become available for Grid Credits customers.
+                            </span>
+                        </span>
+                    </label>
+                </div>
+
+                <button type="submit" class="submit-button">Submit My Feedback</button>
+                
+                <p style="font-size: 0.8rem; color: #9ca3af; margin-top: 16px; text-align: center;">
+                    Your survey responses will be saved regardless of your contact preference.
+                </p>
+            </form>
+            <div id="submissionMessage" style="display:none; margin-top:20px;"></div>
+        </div>
+    </div>
+
+    <script>
+        // Attribute definitions - focused on what matters to existing customers
+        const attributes = {
+            monthlyFee: [39, 79, 129, 179],
+            signupIncentive: ['$0', '$100', '$250', '$500'],
+            fairUseCap: ['1.2x', '1.5x', '2x', '3x'],
+            contractTerm: ['Month to month', '6 months', '12 months', '24 months']
+        };
+
+        // Survey state
+        let currentTask = 0;
+        const totalTasks = 6;
+        let surveyResults = [];
+        let currentTaskData = {};
+
+        // User Profile
+        let userProfile = {
+            customerType: 'grid_credits_existing',
+            surveySource: 'email_campaign'
+        };
+
+        function startSurvey() {
+            document.getElementById('welcomeScreen').style.display = 'none';
+            document.getElementById('surveyContainer').style.display = 'block';
+            document.getElementById('valueProp').style.display = 'block';
+            renderTask();
+        }
+
+        // Fisher-Yates Shuffle
+        function shuffle(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function randomChoice(array) {
+            return array[Math.floor(Math.random() * array.length)];
+        }
+
+        // Validate package against strategic guardrails
+        function isValidPackage(pkg) {
+            // High incentive needs commitment
+            if ((pkg.signupIncentive === '$500' || pkg.signupIncentive === '$250') && 
+                pkg.contractTerm === 'Month to month') {
+                return false;
+            }
+
+            // High cap needs higher fee
+            if (pkg.fairUseCap === '3x' && pkg.monthlyFee < 129) {
+                return false;
+            }
+
+            // Long term needs some benefit
+            if (pkg.contractTerm === '24 months' && pkg.monthlyFee === 179 && pkg.signupIncentive === '$0') {
+                return false;
+            }
+
+            return true;
+        }
+
+        function generatePackage() {
+            let pkg;
+            let attempts = 0;
+            const maxAttempts = 100;
+
+            do {
+                pkg = {
+                    monthlyFee: randomChoice(attributes.monthlyFee),
+                    signupIncentive: randomChoice(attributes.signupIncentive),
+                    fairUseCap: randomChoice(attributes.fairUseCap),
+                    contractTerm: randomChoice(attributes.contractTerm)
+                };
+                attempts++;
+            } while (!isValidPackage(pkg) && attempts < maxAttempts);
+
+            return pkg;
+        }
+
+        function generateTaskPackages() {
+            const packages = [];
+            const seen = new Set();
+
+            while (packages.length < 3) {
+                const pkg = generatePackage();
+                const key = JSON.stringify(pkg);
+
+                if (!seen.has(key)) {
+                    seen.add(key);
+                    packages.push(pkg);
+                }
+            }
+
+            return packages;
+        }
+
+        function formatCurrency(amount) {
+            if (amount === 0) return '$0';
+            return `$${amount.toLocaleString()}`;
+        }
+
+        function formatFairUseCap(cap) {
+            return `${cap} <span style="font-size:0.8em; color:#666;">of your usage</span>`;
+        }
+
+        function formatIncentive(incentive) {
+            if (incentive === '$0') {
+                return '<span style="color: #9ca3af;">—</span>';
+            }
+            return `<span style="color: #22c55e; font-weight: 600;">${incentive}</span>`;
+        }
+
+        function renderPackageCard(pkg, index) {
+            return `
+            <div class="package-card" data-index="${index}">
+                <div class="card-badge">Option ${index + 1}</div>
+                
+                <div class="monthly-fee">
+                    <div class="monthly-fee-amount">${formatCurrency(pkg.monthlyFee)}/mo</div>
+                    <div class="monthly-fee-label">Fixed Monthly Fee</div>
+                </div>
+
+                <ul class="attribute-list">
+                    <li class="attribute-item">
+                        <span class="attribute-label"><span class="tooltip">Switch Bonus<span class="tooltiptext">One-time credit when you switch from Grid Credits to this plan</span></span></span>
+                        <span class="attribute-value">${formatIncentive(pkg.signupIncentive)}</span>
+                    </li>
+                    <li class="attribute-item">
+                        <span class="attribute-label"><span class="tooltip">Usage Coverage<span class="tooltiptext">How much of your current electricity usage is covered. 1.5x means 50% more than you typically use.</span></span></span>
+                        <span class="attribute-value highlight">${formatFairUseCap(pkg.fairUseCap)}</span>
+                    </li>
+                    <li class="attribute-item">
+                        <span class="attribute-label"><span class="tooltip">Commitment<span class="tooltiptext">How long you agree to stay on this plan</span></span></span>
+                        <span class="attribute-value">${pkg.contractTerm}</span>
+                    </li>
+                </ul>
+
+                <button class="select-button" onclick="selectPackage(${index})">I'd Choose This</button>
+            </div>
+        `;
+        }
+
+        function renderTask() {
+            const packages = generateTaskPackages();
+            currentTaskData = {
+                taskId: currentTask + 1,
+                packages: packages,
+                selectedIndex: null
+            };
+
+            const progress = ((currentTask) / totalTasks) * 100;
+
+            const html = `
+                <div class="survey-screen active">
+                    <div class="progress-container">
+                        <div class="progress-bar" style="width: ${progress}%"></div>
+                    </div>
+                    
+                    <div class="task-counter">
+                        Question ${currentTask + 1} of ${totalTasks}
+                    </div>
+
+                    <div class="survey-instructions">
+                        <strong>If you were switching from Grid Credits today, which plan would you choose?</strong>
+                    </div>
+
+                    <div class="cards-container">
+                        ${packages.map((pkg, index) => renderPackageCard(pkg, index)).join('')}
+                    </div>
+
+                    <div class="navigation">
+                        <button class="next-button" id="nextButton" disabled onclick="nextTask()">
+                            ${currentTask === totalTasks - 1 ? 'Finish Survey' : 'Next Question'} →
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('surveyContainer').innerHTML = html;
+        }
+
+        function selectPackage(index) {
+            document.querySelectorAll('.package-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+
+            document.querySelectorAll('.package-card')[index].classList.add('selected');
+            currentTaskData.selectedIndex = index;
+            document.getElementById('nextButton').disabled = false;
+        }
+
+        function nextTask() {
+            if (currentTaskData.selectedIndex === null) return;
+
+            surveyResults.push({
+                taskId: currentTaskData.taskId,
+                option1: currentTaskData.packages[0],
+                option2: currentTaskData.packages[1],
+                option3: currentTaskData.packages[2],
+                selectedOption: currentTaskData.selectedIndex + 1
+            });
+
+            currentTask++;
+
+            if (currentTask < totalTasks) {
+                renderTask();
+            } else {
+                showCompletion();
+            }
+        }
+
+        function showCompletion() {
+            document.getElementById('surveyContainer').style.display = 'none';
+            document.getElementById('completionScreen').classList.add('active');
+            document.querySelector('.header').style.display = 'none';
+            document.getElementById('valueProp').style.display = 'none';
+        }
+
+        // Get email from URL parameter (passed from mailshot)
+        function getEmailFromURL() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('email') || params.get('e') || '';
+        }
+
+        async function submitToHubSpot(event) {
+            event.preventDefault();
+
+            const submitBtn = document.querySelector('.submit-button');
+            const messageDiv = document.getElementById('submissionMessage');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+
+            const contactConsent = document.getElementById('contactConsent').checked;
+            const email = getEmailFromURL();
+
+            const surveyDataJSON = JSON.stringify({
+                userProfile: userProfile,
+                responses: surveyResults
+            });
+
+            // HubSpot Forms API endpoint - UPDATE THIS FORM GUID
+            const portalId = '3445699';
+            const formGuid = 'YOUR_GRIDCREDITS_FORM_GUID'; // Create new form in HubSpot
+
+            const hubspotEndpoint = `https://api.hsforms.com/submissions/v3/integration/submit/${portalId}/${formGuid}`;
+
+            const payload = {
+                fields: [
+                    { name: 'email', value: email },
+                    { name: 'gridcredits_survey_data', value: surveyDataJSON },
+                    { name: 'customer_type', value: 'grid_credits_existing' },
+                    { name: 'survey_source', value: 'email_campaign' },
+                    { name: 'new_offering_consent', value: contactConsent ? 'yes' : 'no' }
+                ],
+                context: {
+                    pageUri: window.location.href,
+                    pageName: document.title
+                }
+            };
+
+            try {
+                const response = await fetch(hubspotEndpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    document.getElementById('detailsForm').style.display = 'none';
+                    
+                    if (contactConsent) {
+                        messageDiv.innerHTML = `
+                            <div style="color: #22c55e; font-size: 1.2rem; font-weight: 600;">
+                                ✓ Thank you! We'll be in touch.
+                            </div>
+                            <p style="margin-top: 12px; color: #6b7280;">
+                                We've noted your interest and will contact you when new plans are available.
+                            </p>
+                        `;
+                    } else {
+                        messageDiv.innerHTML = `
+                            <div style="color: #22c55e; font-size: 1.2rem; font-weight: 600;">
+                                ✓ Thank you for your feedback!
+                            </div>
+                            <p style="margin-top: 12px; color: #6b7280;">
+                                Your preferences have been recorded.
+                            </p>
+                        `;
+                    }
+                    messageDiv.style.display = 'block';
+
+                    setTimeout(() => {
+                        window.location.href = 'https://repositpower.com/';
+                    }, 3000);
+                } else {
+                    throw new Error('Submission failed');
+                }
+            } catch (error) {
+                console.error('HubSpot submission error:', error);
+                messageDiv.innerHTML = `
+                    <div style="color: #ef4444;">
+                        Something went wrong. Please try again or contact support.
+                    </div>
+                `;
+                messageDiv.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit My Feedback';
+            }
+        }
+    </script>
+
+    {{ standard_footer_includes }}
+</body>
+
+</html>

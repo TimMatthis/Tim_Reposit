@@ -1,0 +1,1305 @@
+<!--
+  templateType: "page"
+  label: "Reposit - Landing Page 2 (Opt.2)"
+  screenshotPath: "../images/new_lp2_screen.png"
+  description: "Landing page featuring a hero section with support for legacy forms."
+  isAvailableForNewContent: true
+-->
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sig Energy - Package Preference Survey</title>
+    {{ standard_header_includes }}
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: url(https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/noise.png), radial-gradient(circle at top left, rgba(246, 141, 38, 1) 5%, rgba(203, 128, 70, 1) 20%, rgba(42, 107, 148, 1) 60%, rgba(19, 26, 43, 1) 100%);
+            background-blend-mode: multiply;
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+
+        .value-proposition {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            padding: 28px 36px;
+            margin: 0 auto 40px;
+            max-width: 900px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .value-proposition h2 {
+            font-size: 1.5rem;
+            color: #1f2937;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .value-proposition p {
+            font-size: 1.05rem;
+            color: #4b5563;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .value-proposition strong {
+            color: #F68D26;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 2px dotted #2A6B94;
+            cursor: help;
+            color: #2A6B94;
+            font-weight: 600;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 280px;
+            background-color: #1f2937;
+            color: #fff;
+            text-align: left;
+            border-radius: 8px;
+            padding: 12px 16px;
+            position: absolute;
+            z-index: 99999;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -140px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.9rem;
+            font-weight: 400;
+            line-height: 1.4;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -6px;
+            border-width: 6px;
+            border-style: solid;
+            border-color: #1f2937 transparent transparent transparent;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .progress-container {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            height: 12px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #4ade80 0%, #22c55e 100%);
+            border-radius: 50px;
+            transition: width 0.4s ease;
+            box-shadow: 0 2px 8px rgba(34, 197, 94, 0.4);
+        }
+
+        .task-counter {
+            text-align: center;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .survey-instructions {
+            text-align: center;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 32px;
+            padding: 20px 40px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 40px;
+        }
+
+        .survey-instructions strong {
+            font-weight: 700;
+            color: #FFF;
+        }
+
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .package-card {
+            background: white;
+            border-radius: 20px;
+            padding: 32px 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            /* overflow: hidden; Removed to allow tooltips to show */
+        }
+
+        .package-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #F68D26 0%, #2A6B94 100%);
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .package-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+        }
+
+        .package-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .package-card.selected {
+            border: 3px solid #4ade80;
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(74, 222, 128, 0.3);
+        }
+
+        .package-card.selected::before {
+            transform: scaleX(1);
+            background: linear-gradient(90deg, #4ade80 0%, #22c55e 100%);
+        }
+
+        .card-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #F68D26 0%, #2A6B94 100%);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .upfront-fee {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: #1f2937;
+            margin-bottom: 8px;
+            line-height: 1;
+        }
+
+        .upfront-label {
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin-bottom: 24px;
+            font-weight: 500;
+        }
+
+        .monthly-fee {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .monthly-fee-amount {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #4ade80;
+            margin-bottom: 4px;
+        }
+
+        .monthly-fee-label {
+            font-size: 0.85rem;
+            color: #6b7280;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .attribute-list {
+            list-style: none;
+            margin-bottom: 24px;
+        }
+
+        .attribute-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .attribute-item:last-child {
+            border-bottom: none;
+        }
+
+        .attribute-label {
+            font-size: 0.95rem;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .attribute-value {
+            font-size: 1rem;
+            color: #1f2937;
+            font-weight: 700;
+        }
+
+        .attribute-value.highlight {
+            color: #2A6B94;
+        }
+
+        .select-button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #F68D26 0%, #2A6B94 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .select-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .select-button:active {
+            transform: translateY(0);
+        }
+
+        .package-card.selected .select-button {
+            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+            box-shadow: 0 4px 12px rgba(74, 222, 128, 0.3);
+        }
+
+        .navigation {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .next-button {
+            padding: 18px 48px;
+            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 6px 20px rgba(74, 222, 128, 0.3);
+        }
+
+        .next-button:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(74, 222, 128, 0.4);
+        }
+
+        .next-button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .completion-screen {
+            display: none;
+            text-align: center;
+            background: white;
+            border-radius: 24px;
+            padding: 60px 40px;
+            max-width: 600px;
+            margin: 100px auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        }
+
+        .completion-screen.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .completion-screen {
+            display: none;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 24px;
+            padding: 60px 48px;
+            max-width: 550px;
+            margin: 80px auto;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            position: relative;
+            backdrop-filter: blur(10px);
+        }
+
+        .completion-icon {
+            font-size: 5rem;
+            margin-bottom: 24px;
+            /* animation: bounce 2s infinite; Removed to look less gimmicky */
+            color: #22c55e;
+            font-weight: bold;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            20%,
+            50%,
+            80%,
+            100% {
+                transform: translateY(0);
+            }
+
+            40% {
+                transform: translateY(-20px);
+            }
+
+            60% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .completion-screen h2 {
+            font-size: 2.5rem;
+            color: #1f2937;
+            margin-bottom: 16px;
+            font-weight: 800;
+        }
+
+        .completion-screen p {
+            font-size: 1.1rem;
+            color: #6b7280;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.95rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f9fafb;
+        }
+
+        .form-input:focus {
+            border-color: #F68D26;
+            background: white;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(246, 141, 38, 0.1);
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #F68D26 0%, #2A6B94 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 10px 25px -5px rgba(246, 141, 38, 0.4);
+            margin-top: 12px;
+        }
+
+        .submit-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px -5px rgba(246, 141, 38, 0.5);
+            filter: brightness(1.05);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .header p {
+                font-size: 1rem;
+            }
+
+            .cards-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .package-card {
+                padding: 24px 20px;
+            }
+
+            .upfront-fee {
+                font-size: 2.2rem;
+            }
+
+            .monthly-fee-amount {
+                font-size: 1.8rem;
+            }
+
+            .next-button,
+            .download-button {
+                width: 100%;
+                padding: 16px 32px;
+            }
+
+
+            .completion-screen {
+                padding: 40px 24px;
+                margin: 40px 20px;
+            }
+
+            .completion-screen h2 {
+                font-size: 2rem;
+            }
+
+            .form-group {
+                margin-bottom: 20px;
+                text-align: left;
+            }
+
+            .form-label {
+                display: block;
+                margin-bottom: 8px;
+                font-weight: 600;
+                color: #374151;
+            }
+
+            .form-input {
+                width: 100%;
+                padding: 12px;
+                border: 2px solid #e5e7eb;
+                border-radius: 8px;
+                font-size: 1rem;
+                transition: border-color 0.2s;
+            }
+
+            .form-input:focus {
+                border-color: #F68D26;
+                outline: none;
+            }
+
+            .submit-button {
+                background: linear-gradient(135deg, #F68D26 0%, #F57F20 100%);
+                color: white;
+                border: none;
+                padding: 16px 32px;
+                border-radius: 12px;
+                font-size: 1.125rem;
+                font-weight: 700;
+                cursor: pointer;
+                transition: transform 0.2s, box-shadow 0.2s;
+                width: 100%;
+                margin-top: 10px;
+            }
+
+            .submit-button:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(246, 141, 38, 0.3);
+            }
+        }
+
+        .survey-screen {
+            display: none;
+        }
+
+        .survey-screen.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .welcome-screen {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            padding: 40px;
+            margin: 0 auto 40px;
+            max-width: 800px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            text-align: center;
+        }
+
+        .welcome-screen h2 {
+            font-size: 2rem;
+            color: #1f2937;
+            margin-bottom: 16px;
+            font-weight: 800;
+        }
+
+        .welcome-screen p {
+            font-size: 1.1rem;
+            color: #4b5563;
+            margin-bottom: 32px;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            max-width: 600px;
+            margin: 0 auto 32px;
+            text-align: left;
+        }
+
+        .radio-option {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 16px 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            color: #374151;
+            display: block;
+            position: relative;
+        }
+
+        .radio-option:hover {
+            border-color: #F68D26;
+            background: #fffbf7;
+        }
+
+        .radio-option.selected {
+            border-color: #F68D26;
+            background: #fffbf7;
+            box-shadow: 0 4px 12px rgba(246, 141, 38, 0.15);
+        }
+
+        .radio-option input[type="radio"] {
+            margin-right: 12px;
+            accent-color: #F68D26;
+            transform: scale(1.2);
+        }
+
+        .battery-select {
+            display: none;
+            width: 100%;
+            margin-top: 12px;
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            color: #374151;
+        }
+
+        .battery-select.visible {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .cta-button {
+            padding: 18px 48px;
+            background: linear-gradient(135deg, #F68D26 0%, #2A6B94 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .cta-button:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .cta-button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            box-shadow: none;
+            opacity: 0.7;
+        }
+
+        .value-prop-list {
+            list-style: none;
+            margin-top: 16px;
+            padding-left: 0;
+        }
+
+        .value-prop-list li {
+            position: relative;
+            padding-left: 32px;
+            margin-bottom: 12px;
+            color: #4b5563;
+            font-size: 1.05rem;
+            line-height: 1.5;
+        }
+
+        .value-prop-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: #22c55e;
+            font-weight: 800;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-container">
+                <img src="https://placehold.co/200x50/transparent/FFFFFF?text=REPOSIT+POWER&font=montserrat"
+                    alt="Reposit Power" id="mainLogo" style="height: 48px; margin-bottom: 24px; border-radius: 4px;">
+            </div>
+            <h1>Help Shape the Future of Energy</h1>
+            <p>We are building something groundbreaking and new, based on the best ideas globally. Help us refine this
+                and you could go into a draw for a <strong>500 AUD prize</strong>.</p>
+        </div>
+
+
+
+        <div class="value-proposition" id="valueProp" style="display: none;">
+            <h2 id="vpHeading">We want to unlock more value from your battery</h2>
+            <p id="vpIntro">In all our proposed offerings we include:</p>
+            <ul class="value-prop-list">
+                <li>We take your bill from you and service it for you, subject to the caps below.</li>
+                <li>Our standard offering covers all billing line items on your standard electricity bill.</li>
+                <li>We are testing what some new products might look like, <strong>we don't yet provide them</strong>.
+                </li>
+            </ul>
+        </div>
+
+        <!-- Welcome / Qualification Screen -->
+        <div id="welcomeScreen" class="welcome-screen">
+            <h2>Welcome</h2>
+            <p>Tell us a bit about your current setup to get started.</p>
+
+            <div class="radio-group">
+                <label class="radio-option" onclick="selectBatteryOption('sigenergy')">
+                    <input type="radio" name="batteryStatus" value="sigenergy">
+                    I have a Sigenergy battery (SigenStor)
+                </label>
+
+                <label class="radio-option" onclick="selectBatteryOption('other')">
+                    <input type="radio" name="batteryStatus" value="other">
+                    I have another battery system
+                    <select id="batteryBrandSelect" class="battery-select" onclick="event.stopPropagation()">
+                        <option value="" disabled selected>Select Brand...</option>
+                        <option value="Alpha ESS">Alpha ESS</option>
+                        <option value="BYD">BYD</option>
+                        <option value="Enphase">Enphase</option>
+                        <option value="Esy Sunhome">Esy Sunhome</option>
+                        <option value="FoxESS">Fox ESS</option>
+                        <option value="GoodWe">GoodWe</option>
+                        <option value="Growatt">Growatt</option>
+                        <option value="Huawei">Huawei</option>
+                        <option value="LG Energy Solution">LG Energy Solution</option>
+                        <option value="Pylontech">Pylontech</option>
+                        <option value="Redback Technologies">Redback Technologies</option>
+                        <option value="SAJ">SAJ</option>
+                        <option value="SolarEdge">SolarEdge</option>
+                        <option value="Solax">Solax</option>
+                        <option value="SMA">SMA</option>
+                        <option value="Sungrow">Sungrow</option>
+                        <option value="Tesla">Tesla</option>
+                        <option value="Victron">Victron</option>
+                        <option value="Other">OTHER</option>
+                    </select>
+                </label>
+
+                <label class="radio-option" onclick="selectBatteryOption('none')">
+                    <input type="radio" name="batteryStatus" value="none">
+                    I don't have a battery yet
+                </label>
+            </div>
+
+            <button class="cta-button" id="startSurveyBtn" onclick="startSurvey()" disabled>Start Survey</button>
+        </div>
+
+        <div id="surveyContainer"></div>
+
+        <div id="completionScreen" class="completion-screen">
+            <div class="completion-icon">✓</div>
+            <h2>Survey Complete - thank you. </h2>
+            <p>Enter your details below to submit your preferences and enter the draw.</p>
+
+            <form id="detailsForm" onsubmit="submitToHubSpot(event)" style="max-width: 400px; margin: 0 auto;">
+                <div class="form-group">
+                    <label class="form-label" for="firstname">First Name</label>
+                    <input type="text" id="firstname" name="firstname" class="form-input" required placeholder="Jane">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="lastname">Last Name</label>
+                    <input type="text" id="lastname" name="lastname" class="form-input" required placeholder="Doe">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="email">Email Address</label>
+                    <input type="email" id="email" name="email" class="form-input" required
+                        placeholder="jane@example.com">
+                </div>
+
+                <button type="submit" class="submit-button">Submit & Enter Draw</button>
+            </form>
+            <div id="submissionMessage" style="display:none; margin-top:20px;"></div>
+        </div>
+    </div>
+
+    <script>
+        // Attribute definitions
+        // Attribute definitions
+        const attributes = {
+            installationCost: [0, 500, 1000, 1500],
+            monthlyFee: [0, 39, 79, 129],
+            signupIncentive: ['$0', '$250', '$500', '$1000'],
+            fairUseCap: ['1.2x', '1.4x', '1.5x', '2x', '4x'],
+            contractTerm: ['Month to month', '3 months', '12 months', '24 months']
+        };
+
+        // Survey state
+        // Survey state
+        let currentTask = 0;
+        const totalTasks = 8;
+        let surveyResults = [];
+        let currentTaskData = {};
+
+
+        // Qualification Data
+        let userProfile = {
+            batteryStatus: null, // 'sigenergy', 'other', 'none'
+            batteryBrand: null // If 'other'
+        };
+
+        // Welcome Screen Logic
+        function selectBatteryOption(status) {
+            userProfile.batteryStatus = status;
+
+            // UI Updates
+            document.querySelectorAll('.radio-option').forEach(el => el.classList.remove('selected'));
+            document.querySelector(`input[value="${status}"]`).closest('.radio-option').classList.add('selected');
+            document.querySelector(`input[value="${status}"]`).checked = true;
+
+            // Handle Dropdown
+            const dropdown = document.getElementById('batteryBrandSelect');
+            if (status === 'other') {
+                dropdown.classList.add('visible');
+            } else {
+                dropdown.classList.remove('visible');
+                dropdown.value = ""; // Reset
+                userProfile.batteryBrand = null;
+            }
+
+            checkStartButton();
+        }
+
+        // Dropdown change listener
+        document.getElementById('batteryBrandSelect').addEventListener('change', function (e) {
+            userProfile.batteryBrand = e.target.value;
+            checkStartButton();
+        });
+
+        function checkStartButton() {
+            const btn = document.getElementById('startSurveyBtn');
+            let valid = false;
+
+            if (userProfile.batteryStatus === 'sigenergy') valid = true;
+            if (userProfile.batteryStatus === 'none') valid = true;
+            if (userProfile.batteryStatus === 'other' && userProfile.batteryBrand) valid = true;
+
+            btn.disabled = !valid;
+        }
+
+        function startSurvey() {
+            // Hide Welcome, Show Survey
+            document.getElementById('welcomeScreen').style.display = 'none';
+            document.getElementById('surveyContainer').style.display = 'block';
+
+            // Reveal Value Proposition
+            const vp = document.getElementById('valueProp');
+            vp.style.display = 'block';
+
+            // Update Text Context
+            if (userProfile.batteryStatus === 'none') {
+                document.getElementById('vpHeading').innerText = "Imagine asking us to unlock more value from a battery";
+                // The list content is generic enough to apply to the 'Imagined' scenario as "proposed offerings"
+            } else {
+                // Ensure default text is correct for battery owners
+                document.getElementById('vpHeading').innerText = "We want to unlock more value from your battery";
+            }
+
+            // Start the actual survey logic
+            renderTask();
+        }
+
+        // Fisher-Yates Shuffle
+        function shuffle(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // Random selection from array
+        function randomChoice(array) {
+            return array[Math.floor(Math.random() * array.length)];
+        }
+
+        // Validate package against strategic guardrails
+        // Validate package against strategic guardrails
+        function isValidPackage(pkg) {
+            // 1. Prevent "Take the money and run" (High incentive + short term)
+            if ((pkg.signupIncentive === '$1000' || pkg.signupIncentive === '$500') && 
+                (pkg.contractTerm === 'Month to month' || pkg.contractTerm === '3 months')) {
+                return false;
+            }
+
+            // 2. High Value must have a cost (4x Cap shouldn't be $0 or $39)
+            if (pkg.fairUseCap === '4x' && pkg.monthlyFee <= 39) {
+                return false;
+            }
+
+            // 3. Double Subsidy Rule (Don't give $0 install AND high incentive)
+            if (pkg.installationCost === 0 && (pkg.signupIncentive === '$1000' || pkg.signupIncentive === '$500')) {
+                return false;
+            }
+
+            // 4. The "No-Brainer" Filter (Don't allow $0 Install, $0 Monthly, and any incentive)
+            // This is the "Free Lunch" scenario that ruins data quality.
+            if (pkg.installationCost === 0 && pkg.monthlyFee === 0) {
+                return false; 
+            }
+
+            // 5. Realistic Commitment (Don't show 24 months with zero benefit)
+            if (pkg.contractTerm === '24 months' && pkg.monthlyFee === 129 && pkg.signupIncentive === '$0') {
+                return false;
+            }
+
+            return true;
+        }
+
+        // Generate a valid random package
+        // Generate a valid random package
+        function generatePackage() {
+            let pkg;
+            let attempts = 0;
+            const maxAttempts = 100;
+
+            do {
+                pkg = {
+                    installationCost: randomChoice(attributes.installationCost),
+                    monthlyFee: randomChoice(attributes.monthlyFee),
+                    signupIncentive: randomChoice(attributes.signupIncentive),
+                    fairUseCap: randomChoice(attributes.fairUseCap),
+                    contractTerm: randomChoice(attributes.contractTerm)
+                };
+                attempts++;
+            } while (!isValidPackage(pkg) && attempts < maxAttempts);
+
+            return pkg;
+        }
+
+        // Generate 3 unique packages for a task
+        function generateTaskPackages() {
+            const packages = [];
+            const seen = new Set();
+
+            while (packages.length < 3) {
+                const pkg = generatePackage();
+                const key = JSON.stringify(pkg);
+
+                if (!seen.has(key)) {
+                    seen.add(key);
+                    packages.push(pkg);
+                }
+            }
+
+            return packages;
+        }
+
+        // Format currency
+        function formatCurrency(amount) {
+            if (amount === 0) return '$0';
+            return `$${amount.toLocaleString()}`;
+        }
+
+        // Format Fair Use Cap
+        function formatFairUseCap(cap) {
+            return `${cap} <span style="font-size:0.8em; color:#666;">of current usage</span>`;
+        }
+
+        // Format Contract Term
+        function formatContractTerm(term) {
+            return term;
+        }
+
+        // Format signup incentive
+        function formatIncentive(incentive) {
+            if (incentive === '$0') {
+                return '<span style="color: #9ca3af;">$0</span>';
+            }
+            return `<span style="color: #22c55e; font-weight: 600;">${incentive}</span>`;
+        }
+
+        // Render a package card
+        // Render a package card
+        function renderPackageCard(pkg, index) {
+            return `
+            <div class="package-card" data-index="${index}">
+                <div class="card-badge">Option ${index + 1}</div>
+                <div class="upfront-fee">${formatCurrency(pkg.installationCost)}</div>
+                <div class="upfront-label"><span class="tooltip">Installation Cost<span class="tooltiptext">One-time cost to have the system installed by a qualified electrician</span></span></div>
+                
+                <div class="monthly-fee">
+                    <div class="monthly-fee-amount">${formatCurrency(pkg.monthlyFee)}/mo</div>
+                    <div class="monthly-fee-label">Monthly Fee</div>
+                </div>
+
+                <ul class="attribute-list">
+                    <li class="attribute-item">
+                        <span class="attribute-label"><span class="tooltip">Sign-up Incentive<span class="tooltiptext">Cash bonus provided after installation is complete</span></span></span>
+                        <span class="attribute-value">${formatIncentive(pkg.signupIncentive)}</span>
+                    </li>
+                    <li class="attribute-item">
+                        <span class="attribute-label"><span class="tooltip">FAIR Use Cap<span class="tooltiptext">The amount of energy included in your plan, calculated as a multiple of your current total energy usage.</span></span></span>
+                        <span class="attribute-value highlight">${formatFairUseCap(pkg.fairUseCap)}</span>
+                    </li>
+                    <li class="attribute-item">
+                        <span class="attribute-label"><span class="tooltip">Contract Term<span class="tooltiptext">The length of the contract commitment.</span></span></span>
+                        <span class="attribute-value">${formatContractTerm(pkg.contractTerm)}</span>
+                    </li>
+                </ul>
+
+                <button class="select-button" onclick="selectPackage(${index})">Select This Package</button>
+            </div>
+        `;
+        }
+
+        // Render current task
+        function renderTask() {
+            const packages = generateTaskPackages();
+            currentTaskData = {
+                taskId: currentTask + 1,
+                packages: packages,
+                selectedIndex: null
+            };
+
+            const progress = ((currentTask) / totalTasks) * 100;
+
+            const html = `
+ <div class="survey-screen active">
+ <div class="progress-container">
+ <div class="progress-bar" style="width: ${progress}%"></div>
+ </div>
+ 
+ <div class="task-counter">
+ Question ${currentTask + 1} of ${totalTasks}
+ </div>
+
+ <div class="survey-instructions">
+ <strong>If you had to choose only one of the following packages, which would you choose?</strong>
+ </div>
+
+ <div class="cards-container">
+ ${packages.map((pkg, index) => renderPackageCard(pkg, index)).join('')}
+ </div>
+
+ <div class="navigation">
+ <button class="next-button" id="nextButton" disabled onclick="nextTask()">
+ ${currentTask === totalTasks - 1 ? 'Finish Survey' : 'Next Question'} →
+ </button>
+ </div>
+ </div>
+ `;
+
+            document.getElementById('surveyContainer').innerHTML = html;
+        }
+
+        // Select a package
+        function selectPackage(index) {
+            // Remove previous selection
+            document.querySelectorAll('.package-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+
+            // Add selection to clicked card
+            document.querySelectorAll('.package-card')[index].classList.add('selected');
+
+            // Update current task data
+            currentTaskData.selectedIndex = index;
+
+            // Enable next button
+            document.getElementById('nextButton').disabled = false;
+        }
+
+        // Move to next task
+        function nextTask() {
+            if (currentTaskData.selectedIndex === null) return;
+
+            // Save result
+            surveyResults.push({
+                taskId: currentTaskData.taskId,
+                option1: currentTaskData.packages[0],
+                option2: currentTaskData.packages[1],
+                option3: currentTaskData.packages[2],
+                selectedOption: currentTaskData.selectedIndex + 1
+            });
+
+            // Move to next task or show completion
+            currentTask++;
+
+            if (currentTask < totalTasks) {
+                renderTask();
+            } else {
+                showCompletion();
+            }
+        }
+
+        // Show completion screen with HubSpot Form
+        function showCompletion() {
+            document.getElementById('surveyContainer').style.display = 'none';
+            document.getElementById('completionScreen').classList.add('active');
+
+            // Hide Header and Value Prop for a cleaner finish
+            document.querySelector('.header').style.display = 'none';
+            document.getElementById('valueProp').style.display = 'none';
+        }
+
+        // Generate CSV and download
+        function downloadCSV() {
+            // CSV Headers
+            let csv = 'TaskID,Option1_InstallCost,Option1_MonthlyFee,Option1_Incentive,Option1_FairUseCap,Option1_ContractTerm,';
+            csv += 'Option2_InstallCost,Option2_MonthlyFee,Option2_Incentive,Option2_FairUseCap,Option2_ContractTerm,';
+            csv += 'Option3_InstallCost,Option3_MonthlyFee,Option3_Incentive,Option3_FairUseCap,Option3_ContractTerm,';
+            csv += 'SelectedOption\n';
+
+            // CSV Data
+            surveyResults.forEach(result => {
+                const row = [
+                    result.taskId,
+                    result.option1.installationCost,
+                    result.option1.monthlyFee,
+                    result.option1.signupIncentive,
+                    result.option1.fairUseCap,
+                    result.option1.contractTerm,
+                    result.option2.installationCost,
+                    result.option2.monthlyFee,
+                    result.option2.signupIncentive,
+                    result.option2.fairUseCap,
+                    result.option2.contractTerm,
+                    result.option3.installationCost,
+                    result.option3.monthlyFee,
+                    result.option3.signupIncentive,
+                    result.option3.fairUseCap,
+                    result.option3.contractTerm,
+                    result.selectedOption
+                ];
+                csv += row.map(val => `"${val}"`).join(',') + '\n';
+            });
+
+            // Create download
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'reposit_conjoint_data.csv');
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Submit to HubSpot Forms API
+        async function submitToHubSpot(event) {
+            event.preventDefault();
+
+            const submitBtn = document.querySelector('.submit-button');
+            const messageDiv = document.getElementById('submissionMessage');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+
+            // Collect form data
+            const firstname = document.getElementById('firstname').value;
+            const lastname = document.getElementById('lastname').value;
+            const email = document.getElementById('email').value;
+
+            // Prepare survey data as JSON string
+            const surveyDataJSON = JSON.stringify({
+                userProfile: userProfile,
+                responses: surveyResults
+            });
+
+            // HubSpot Forms API endpoint
+            const portalId = '3445699';
+            const formGuid = 'ac9365f7-9098-4e3c-a3aa-2e091ca42ae8';
+
+            const hubspotEndpoint = `https://api.hsforms.com/submissions/v3/integration/submit/${portalId}/${formGuid}`;
+
+            const payload = {
+                fields: [
+                    { name: 'firstname', value: firstname },
+                    { name: 'lastname', value: lastname },
+                    { name: 'email', value: email },
+                    { name: 'conjoint_survey_data', value: surveyDataJSON },
+                    { name: 'battery_status', value: userProfile.batteryStatus || '' },
+                    { name: 'battery_brand', value: userProfile.batteryBrand || '' }
+                ],
+                context: {
+                    pageUri: window.location.href,
+                    pageName: document.title
+                }
+            };
+
+            try {
+                const response = await fetch(hubspotEndpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    document.getElementById('detailsForm').style.display = 'none';
+                    messageDiv.innerHTML = `
+                    <div style="color: #22c55e; font-size: 1.2rem; font-weight: 600;">
+                        ✓ Thank you! Your responses have been submitted.
+                    </div>
+                    <p style="margin-top: 12px; color: #6b7280;">
+                        You're now entered in the draw for a 500 AUD prize!
+                    </p>
+                `;
+                    messageDiv.style.display = 'block';
+
+                    // Redirect to landing page after 3 seconds
+                    setTimeout(() => {
+                        window.location.href = 'https://repositpower.com/';
+                    }, 1000);
+                } else {
+                    throw new Error('Submission failed');
+                }
+            } catch (error) {
+                console.error('HubSpot submission error:', error);
+                messageDiv.innerHTML = `
+                <div style="color: #ef4444;">
+                    Something went wrong. Please try again or contact support.
+                </div>
+            `;
+                messageDiv.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit & Enter Draw';
+            }
+        }
+
+        // Initialize survey
+        // renderTask(); // NOW CALL ON START
+    </script>
+
+    {{ standard_footer_includes }}
+</body>
+
+</html>

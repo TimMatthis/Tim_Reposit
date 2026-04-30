@@ -292,3 +292,135 @@ footer .nem-footer-inline {
   margin-left: 0.35rem;
   vertical-align: middle;
 }
+
+/* HubSpot quote flow shared components */
+.hsq-form {
+  display: grid;
+  gap: 10px;
+}
+
+.hsq-field-row {
+  display: grid;
+  gap: 8px;
+}
+
+.hsq-label {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.hsq-input {
+  min-height: 46px;
+  border-radius: 11px;
+  border: 1px solid #d7e3f4;
+  padding: 10px 12px;
+  font-size: 0.95rem;
+  color: #0f172a;
+  background: #ffffff;
+}
+
+.hsq-input:focus {
+  outline: 2px solid #19c37d;
+  outline-offset: 1px;
+}
+
+.hsq-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.hsq-note {
+  font-size: 0.86rem;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.hsq-error {
+  font-size: 0.9rem;
+  color: #fecaca;
+  min-height: 1.3em;
+}
+
+.hsq-processing-copy {
+  margin: 0 auto;
+  text-align: center;
+  max-width: 580px;
+}
+
+.hsq-page-wrap {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+}
+
+.hsq-card {
+  background: #ffffff;
+  border: 1px solid #d7e3f4;
+  border-radius: 14px;
+  padding: 22px;
+  box-shadow: 0 10px 32px rgba(10, 20, 40, 0.2);
+}
+
+.hsq-title {
+  color: #0f172a;
+  font-size: 1.8rem;
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+
+.hsq-body {
+  color: #334155;
+  margin-bottom: 14px;
+}
+
+.hsq-kv-list {
+  list-style: none;
+  display: grid;
+  gap: 10px;
+  margin: 12px 0;
+}
+
+.hsq-kv-item {
+  display: grid;
+  grid-template-columns: minmax(140px, 220px) 1fr;
+  gap: 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.hsq-kv-key {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.hsq-kv-value {
+  color: #334155;
+}
+
+.hsq-state {
+  border: 1px solid #d7e3f4;
+  background: #f8fafc;
+  border-radius: 10px;
+  padding: 12px;
+  color: #334155;
+}
+
+.hsq-state.is-error {
+  border-color: #fecaca;
+  background: #fff1f2;
+  color: #9f1239;
+}
+
+.hsq-state.is-success {
+  border-color: #bbf7d0;
+  background: #f0fdf4;
+  color: #14532d;
+}
+
+@media (max-width: 640px) {
+  .hsq-kv-item {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,738 @@
+<!--
+  templateType: "page"
+  label: "Reposit - Your Offer"
+  isAvailableForNewContent: true
+-->
+<!--
+  DEVELOPER NOTES - Offer Page
+
+  Path: /offer
+  Reached via email link sent after the optimiser completes.
+  URL format: https://info.repositpower.com/offer?uid=<uuid>
+
+  DATA SOURCE
+  Reads uid from URL query param.
+  Calls GET https://api.repositpower.com/estimate?uid=<uid>
+
+  Expected response shape (TBC with backend team):
+  {
+    "uid": "...",
+    "status": "ready" | "processing" | "error",
+    "annual_saving": 1800,        // dollars
+    "monthly_fee": 89,            // dollars
+    "contract_term_years": 5,
+    "install_cost": 0
+  }
+
+  STATES
+  Loading  — while fetching (step 3 active)
+  Ready    — offer data returned (step 3 done, step 4 active, confirm panel shown)
+  Processing — pipeline not done yet, show "check back soon" message
+  Error    — API failure or uid not found
+  Done     — after user clicks "Lock in" CTA (step 4 done, thank-you card)
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reposit Power - Your Offer</title>
+  {{ standard_header_includes }}
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green:        #19c37d;
+      --green-glow:   rgba(25, 195, 125, 0.28);
+      --blue:         #2a6b94;
+      --ink:          #0f172a;
+      --muted:        #374151;
+      --line:         #d7e3f4;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.55;
+      color: var(--ink);
+    }
+
+    .wizard-shell {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      background:
+        url(https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/noise.png),
+        radial-gradient(130% 110% at 18% 24%, #2b78a7 0%, #265f87 42%, #4f5f69 64%, #8c6647 82%, #b27a4b 100%);
+      background-blend-mode: multiply;
+      overflow-y: auto;
+    }
+
+    /* ── Header ── */
+    .wizard-header {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .wizard-logo-img { width: 132px; height: auto; display: block; }
+
+    /* ── Progress bar ── */
+    .wizard-progress-bar {
+      flex-shrink: 0;
+      padding: 12px 24px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      max-width: 640px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .wizard-prog-step { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+
+    .wizard-prog-bar {
+      width: 100%; height: 4px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 4px; overflow: hidden;
+    }
+
+    .wizard-prog-fill {
+      height: 100%; width: 0%;
+      background: var(--green);
+      border-radius: 4px;
+      transition: width 0.6s ease;
+    }
+
+    .wizard-prog-step.is-done  .wizard-prog-fill  { width: 100%; }
+    .wizard-prog-step.is-active .wizard-prog-fill { width: 50%; }
+
+    .wizard-prog-label {
+      font-size: 0.68rem; font-weight: 700;
+      color: rgba(255,255,255,0.5);
+      text-transform: uppercase; letter-spacing: 0.06em;
+      transition: color 0.3s;
+    }
+
+    .wizard-prog-step.is-active .wizard-prog-label { color: rgba(255,255,255,0.9); }
+    .wizard-prog-step.is-done   .wizard-prog-label { color: var(--green); }
+
+    /* ── Body ── */
+    .wizard-body {
+      flex: 1;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 24px 16px 40px;
+    }
+
+    .wiz-step {
+      width: 100%;
+      animation: wizFadeIn 0.3s ease forwards;
+    }
+
+    .wiz-step--narrow { max-width: 520px; }
+    .wiz-step--wide   { max-width: 680px; }
+
+    @keyframes wizFadeIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Cards ── */
+    .wiz-card {
+      background: rgba(255,255,255,0.97);
+      border-radius: 20px;
+      padding: 36px 40px;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.3);
+    }
+
+    .wiz-card--loading {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.16);
+      text-align: center;
+      padding: 60px 40px;
+      color: #fff;
+    }
+
+    /* ── Loading state ── */
+    .wiz-loading-icon {
+      font-size: 3rem;
+      margin-bottom: 16px;
+      animation: wiz-pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes wiz-pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.6; transform: scale(0.92); }
+    }
+
+    .wiz-card--loading .wiz-title {
+      color: #fff; font-size: 1.5rem; margin-bottom: 12px;
+    }
+
+    .wiz-card--loading .wiz-body-text {
+      color: rgba(255,255,255,0.75); margin-bottom: 0;
+    }
+
+    .wiz-progress-track {
+      width: 100%; max-width: 340px; height: 6px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 6px;
+      margin: 16px auto 0; overflow: hidden;
+    }
+
+    .wiz-progress-fill {
+      height: 100%; width: 0%;
+      background: var(--green);
+      border-radius: 6px;
+      transition: width 0.15s linear;
+    }
+
+    .wiz-loading-fact {
+      font-size: 0.92rem;
+      color: rgba(255,255,255,0.75);
+      font-style: italic;
+      margin-top: 16px;
+      min-height: 2.4em;
+      animation: wizFadeIn 0.4s ease;
+    }
+
+    /* ── Typography ── */
+    .wiz-eyebrow {
+      font-size: 0.72rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--blue); margin-bottom: 6px;
+    }
+
+    .wiz-title {
+      font-size: clamp(1.4rem, 2.4vw, 1.8rem);
+      font-weight: 900; color: var(--ink);
+      margin-bottom: 8px; line-height: 1.2;
+    }
+
+    .wiz-body-text {
+      font-size: 0.92rem; color: var(--muted);
+      line-height: 1.6; margin-bottom: 22px;
+    }
+
+    /* ── Confirm / offer card ── */
+    .wiz-confirm-card {
+      background: rgba(255,255,255,0.97);
+      border-radius: 20px;
+      padding: 36px 40px 32px;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.3);
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    /* Savings hero */
+    .wiz-savings-hero {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+      border-radius: 16px;
+      padding: 26px 28px 22px;
+      margin-bottom: 22px;
+      text-align: center;
+    }
+
+    .wiz-savings-est-label {
+      font-size: 0.68rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.5); margin-bottom: 8px;
+    }
+
+    .wiz-savings-est-amt {
+      font-size: clamp(2.6rem, 5vw, 3.6rem);
+      font-weight: 900; color: var(--green);
+      line-height: 1; letter-spacing: -0.03em; margin-bottom: 6px;
+    }
+
+    .wiz-savings-est-sub {
+      font-size: 0.88rem; font-weight: 700;
+      color: rgba(255,255,255,0.7); margin-bottom: 4px;
+    }
+
+    .wiz-savings-est-qualifier {
+      font-size: 0.72rem; color: rgba(255,255,255,0.35);
+      font-style: italic; margin-bottom: 16px;
+    }
+
+    .wiz-certainty-bar {
+      background: rgba(25,195,125,0.14);
+      border: 1px solid rgba(25,195,125,0.3);
+      border-radius: 10px; padding: 10px 16px;
+      display: flex; align-items: center;
+      justify-content: center; gap: 8px; flex-wrap: wrap;
+    }
+
+    .wiz-certainty-icon { font-size: 1rem; flex-shrink: 0; }
+
+    .wiz-certainty-text {
+      font-size: 0.88rem; font-weight: 800;
+      color: #86efac; text-align: left;
+    }
+
+    .wiz-certainty-text span { font-size: 1rem; color: var(--green); }
+
+    .wiz-certainty-sub {
+      font-size: 0.72rem; color: rgba(255,255,255,0.45);
+      font-weight: 500; width: 100%; text-align: center; margin-top: 4px;
+    }
+
+    /* Plan recap */
+    .wiz-plan-recap {
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px; padding: 14px 18px; margin-bottom: 18px;
+    }
+
+    .wiz-plan-recap-label {
+      font-size: 0.68rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--blue); margin-bottom: 10px;
+    }
+
+    .wiz-plan-recap-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px;
+    }
+
+    .wiz-plan-recap-item { display: flex; flex-direction: column; gap: 1px; }
+    .wiz-plan-recap-item-label { font-size: 0.7rem; color: #94a3b8; font-weight: 600; }
+    .wiz-plan-recap-item-val   { font-size: 0.95rem; font-weight: 800; color: var(--ink); }
+
+    /* Urgency */
+    .wiz-urgency-strip {
+      display: flex; align-items: center; gap: 10px;
+      background: #fff7ed; border: 1px solid #fed7aa;
+      border-radius: 10px; padding: 10px 14px;
+      margin-bottom: 20px; font-size: 0.85rem;
+      color: #92400e; font-weight: 600;
+    }
+
+    .wiz-urgency-icon { font-size: 1rem; flex-shrink: 0; }
+    .wiz-urgency-strip strong { color: #78350f; }
+
+    /* CTA */
+    .wiz-confirm-cta-block { margin-bottom: 16px; }
+
+    .wiz-btn-primary {
+      width: 100%; padding: 16px;
+      background: linear-gradient(135deg, #F68D26 0%, #2a6b94 100%);
+      color: #fff; border: none; border-radius: 12px;
+      font-size: 1rem; font-weight: 800; cursor: pointer;
+      transition: filter 0.2s, transform 0.2s;
+    }
+
+    .wiz-btn-primary:hover { filter: brightness(1.07); transform: translateY(-2px); }
+
+    .wiz-btn-cta-green {
+      background: linear-gradient(135deg, #2de49d 0%, #15b876 100%) !important;
+      color: #042d14 !important;
+      font-size: 1.1rem !important;
+      padding: 18px !important;
+      border-radius: 14px !important;
+      box-shadow: 0 10px 30px rgba(25,195,125,0.45);
+    }
+
+    .wiz-btn-cta-green:hover { box-shadow: 0 14px 40px rgba(25,195,125,0.55) !important; }
+
+    .wiz-confirm-cta-sub {
+      text-align: center; font-size: 0.8rem;
+      color: #64748b; margin-top: 8px; line-height: 1.5;
+    }
+
+    /* Trust strip */
+    .wiz-trust-strip {
+      list-style: none; display: grid; gap: 8px;
+      margin-bottom: 18px; padding: 16px 18px;
+      background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px;
+    }
+
+    .wiz-trust-strip li {
+      display: flex; align-items: flex-start; gap: 9px;
+      font-size: 0.85rem; color: #166534; line-height: 1.4;
+    }
+
+    .wiz-trust-icon {
+      flex-shrink: 0; width: 18px; height: 18px;
+      border-radius: 50%; background: var(--green);
+      color: #fff; font-size: 0.62rem; font-weight: 900;
+      display: flex; align-items: center; justify-content: center;
+      margin-top: 1px;
+    }
+
+    .wiz-trust-strip strong { color: #14532d; }
+
+    /* Social proof */
+    .wiz-social-proof {
+      text-align: center; font-size: 0.82rem; color: #6b7280;
+      margin-bottom: 16px; padding: 10px;
+      border-top: 1px solid #f1f5f9;
+    }
+
+    .wiz-social-proof strong { color: var(--ink); }
+
+    /* Next steps */
+    .wiz-next-steps-toggle {
+      font-size: 0.82rem; color: #94a3b8; text-align: center;
+      cursor: pointer; background: none; border: none;
+      padding: 4px; margin: 0 auto 10px; display: block;
+      text-decoration: underline;
+    }
+
+    .wiz-next-steps {
+      list-style: none; margin: 0 0 16px; display: none;
+      grid-template-columns: 1fr; gap: 8px;
+    }
+
+    .wiz-next-steps.is-open { display: grid; }
+
+    .wiz-next-steps li {
+      display: flex; gap: 12px; font-size: 0.85rem;
+      color: var(--muted); align-items: flex-start;
+    }
+
+    .wiz-next-step-num {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: linear-gradient(135deg, #F68D26 0%, #2a6b94 100%);
+      color: #fff; font-size: 0.68rem; font-weight: 900;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px;
+    }
+
+    .wiz-confirm-escape { text-align: center; }
+
+    .wiz-confirm-escape button {
+      background: none; border: none; font-size: 0.82rem;
+      color: #9ca3af; cursor: pointer; text-decoration: underline; padding: 4px;
+    }
+
+    .wiz-btn-secondary {
+      background: transparent; border: none; color: #6b7280;
+      font-size: 0.88rem; font-weight: 600; cursor: pointer;
+      text-decoration: underline; padding: 4px; text-align: center;
+    }
+
+    /* Error banner */
+    .wiz-error-banner {
+      background: #fef2f2; border: 1px solid #fecaca;
+      color: #991b1b; padding: 12px 16px;
+      border-radius: 10px; font-size: 0.88rem; margin-bottom: 16px;
+    }
+
+    @media (max-width: 480px) {
+      .wiz-confirm-card { padding: 28px 20px; }
+      .wiz-plan-recap-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="wizard-shell">
+
+  <!-- Header -->
+  <header class="wizard-header">
+    <div style="width:80px;"></div>
+    <img class="wizard-logo-img"
+         src="https://repositpower.com/hubfs/Reposit%20Logo/Reposit_logo_white.svg"
+         alt="Reposit">
+    <div style="width:80px;"></div>
+  </header>
+
+  <!-- Progress: Connect done, Verify done, Your offers active, Confirm pending -->
+  <div class="wizard-progress-bar" id="progressBar" role="list" aria-label="Assessment steps">
+    <div class="wizard-prog-step is-done" id="prog1" role="listitem">
+      <div class="wizard-prog-bar"><div class="wizard-prog-fill"></div></div>
+      <span class="wizard-prog-label">Connect</span>
+    </div>
+    <div class="wizard-prog-step is-done" id="prog2" role="listitem">
+      <div class="wizard-prog-bar"><div class="wizard-prog-fill"></div></div>
+      <span class="wizard-prog-label">Verify</span>
+    </div>
+    <div class="wizard-prog-step is-active" id="prog3" role="listitem">
+      <div class="wizard-prog-bar"><div class="wizard-prog-fill"></div></div>
+      <span class="wizard-prog-label">Your offer</span>
+    </div>
+    <div class="wizard-prog-step" id="prog4" role="listitem">
+      <div class="wizard-prog-bar"><div class="wizard-prog-fill"></div></div>
+      <span class="wizard-prog-label">Confirm</span>
+    </div>
+  </div>
+
+  <div class="wizard-body">
+
+    <!-- ── Step 3: Loading ── -->
+    <div class="wiz-step wiz-step--narrow" id="stepLoading">
+      <div class="wiz-card wiz-card--loading">
+        <div class="wiz-loading-icon" aria-hidden="true">⚡</div>
+        <h2 class="wiz-title">Loading your personalised offer…</h2>
+        <div class="wiz-progress-track">
+          <div class="wiz-progress-fill" id="loadingBar"></div>
+        </div>
+        <p class="wiz-loading-fact" id="loadingFact"></p>
+      </div>
+    </div>
+
+    <!-- ── Step 4: Offer (hidden until data loads) ── -->
+    <div class="wiz-step wiz-step--wide" id="stepOffer" style="display:none;">
+      <div class="wiz-confirm-card">
+        <p class="wiz-eyebrow">Your personalised plan is ready</p>
+
+        <!-- Savings hero -->
+        <div class="wiz-savings-hero">
+          <div class="wiz-savings-est-label">Estimated annual saving</div>
+          <div class="wiz-savings-est-amt" id="savingsAmt">—</div>
+          <div class="wiz-savings-est-sub">per year, based on your usage profile</div>
+          <div class="wiz-savings-est-qualifier">Best estimate — your actual saving depends on usage and market conditions</div>
+          <div class="wiz-certainty-bar">
+            <span class="wiz-certainty-icon">🔒</span>
+            <span class="wiz-certainty-text">One fixed fee of <span id="monthlyFee">—</span>/mo — no electricity bill, ever</span>
+            <span class="wiz-certainty-sub">Your fee is set below your current average spend. It never changes with the market.</span>
+          </div>
+        </div>
+
+        <!-- Plan recap -->
+        <div class="wiz-plan-recap">
+          <div class="wiz-plan-recap-label">Your selected plan</div>
+          <div class="wiz-plan-recap-grid">
+            <div class="wiz-plan-recap-item">
+              <span class="wiz-plan-recap-item-label">Monthly fee</span>
+              <span class="wiz-plan-recap-item-val" id="recapMonthly">—</span>
+            </div>
+            <div class="wiz-plan-recap-item">
+              <span class="wiz-plan-recap-item-label">Installation cost</span>
+              <span class="wiz-plan-recap-item-val" id="recapInstall">—</span>
+            </div>
+            <div class="wiz-plan-recap-item">
+              <span class="wiz-plan-recap-item-label">Contract term</span>
+              <span class="wiz-plan-recap-item-val" id="recapTerm">—</span>
+            </div>
+            <div class="wiz-plan-recap-item">
+              <span class="wiz-plan-recap-item-label">Estimated annual saving</span>
+              <span class="wiz-plan-recap-item-val" id="recapSaving">—</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Urgency -->
+        <div class="wiz-urgency-strip">
+          <span class="wiz-urgency-icon">⏱</span>
+          <span>This offer is personalised to your home profile and <strong>held for 48 hours</strong>. After that we'd need to reassess.</span>
+        </div>
+
+        <!-- Trust signals -->
+        <ul class="wiz-trust-strip">
+          <li>
+            <span class="wiz-trust-icon">✓</span>
+            <span><strong>No payment today.</strong> We contact you within one business day to confirm details and book your installation.</span>
+          </li>
+          <li>
+            <span class="wiz-trust-icon">✓</span>
+            <span><strong>30-day satisfaction guarantee.</strong> Cancel before installation at no cost — no questions asked.</span>
+          </li>
+          <li>
+            <span class="wiz-trust-icon">✓</span>
+            <span><strong>Nothing changes on your existing setup.</strong> Your battery, inverter and solar panels stay exactly as they are.</span>
+          </li>
+        </ul>
+
+        <!-- Primary CTA -->
+        <div class="wiz-confirm-cta-block">
+          <button class="wiz-btn-primary wiz-btn-cta-green" id="btnLockIn">
+            Lock in $0 electricity →
+          </button>
+          <p class="wiz-confirm-cta-sub">No payment today &nbsp;·&nbsp; We call you within 1 business day &nbsp;·&nbsp; Cancel anytime before install</p>
+        </div>
+
+        <!-- Social proof -->
+        <div class="wiz-social-proof">
+          Joining <strong>2,000+ households</strong> who've already switched to No Bill electricity across Australia.
+        </div>
+
+        <!-- What happens next -->
+        <button class="wiz-next-steps-toggle" id="nextToggle">▼ What happens after I confirm?</button>
+        <ul class="wiz-next-steps" id="nextSteps">
+          <li><span class="wiz-next-step-num">1</span><span>We email you a full plan summary and contract within minutes.</span></li>
+          <li><span class="wiz-next-step-num">2</span><span>Our team calls you within one business day to book your installation slot.</span></li>
+          <li><span class="wiz-next-step-num">3</span><span>A certified installer fits the Reposit Controller onto your battery cabinet (~2 hours).</span></li>
+          <li><span class="wiz-next-step-num">4</span><span>You go live — Reposit starts trading your battery, and your bill goes to $0.</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ── Still processing ── -->
+    <div class="wiz-step wiz-step--narrow" id="stepProcessing" style="display:none;">
+      <div class="wiz-card" style="text-align:center;">
+        <div style="font-size:3rem; margin-bottom:16px;">⏳</div>
+        <p class="wiz-eyebrow" style="justify-content:center; display:flex;">Almost there</p>
+        <h2 class="wiz-title" style="margin-bottom:8px;">We're still working on your offer</h2>
+        <p class="wiz-body-text">
+          Your analysis is still running — this usually takes 10–15 minutes from when you connected your system.
+          Check back shortly or wait for our email.
+        </p>
+        <button class="wiz-btn-primary" onclick="window.location.reload()" style="max-width:280px; margin:0 auto; display:block;">
+          Check again
+        </button>
+      </div>
+    </div>
+
+    <!-- ── Done (after lock-in) ── -->
+    <div class="wiz-step wiz-step--narrow" id="stepDone" style="display:none;">
+      <div class="wiz-card" style="text-align:center;">
+        <div style="font-size:3.5rem; margin-bottom:12px;">🎉</div>
+        <p class="wiz-eyebrow" style="justify-content:center; display:flex;">You're confirmed</p>
+        <h2 class="wiz-title" style="margin-bottom:6px;">Welcome to Reposit No Bill.</h2>
+        <p class="wiz-body-text" style="margin-bottom:20px;">
+          Your electricity bill is about to become $0. Check your inbox — your plan summary is on its way.
+          We'll call you within one business day to book your installation.
+        </p>
+        <ul class="wiz-trust-strip" style="text-align:left; margin-bottom:0;">
+          <li>
+            <span class="wiz-trust-icon">✓</span>
+            <span><strong>Check your inbox</strong> — plan summary and contract sent now.</span>
+          </li>
+          <li>
+            <span class="wiz-trust-icon">✓</span>
+            <span><strong>We call you</strong> within one business day to book installation.</span>
+          </li>
+          <li>
+            <span class="wiz-trust-icon">✓</span>
+            <span><strong>30-day guarantee</strong> — cancel before installation, no cost.</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ── Error ── -->
+    <div class="wiz-step wiz-step--narrow" id="stepError" style="display:none;">
+      <div class="wiz-card" style="text-align:center;">
+        <p class="wiz-eyebrow" style="justify-content:center; display:flex;">Something went wrong</p>
+        <h2 class="wiz-title" style="margin-bottom:8px;">We couldn't load your offer</h2>
+        <p class="wiz-body-text" id="errorMsg">
+          We couldn't find your offer details. The link may have expired or there was a problem loading your data.
+          Please contact us and we'll sort it out.
+        </p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{{ standard_footer_includes }}
+
+<script>
+  (function () {
+    var API_BASE = 'https://dev-customer.repositpower.com';
+
+    var facts = [
+      'Analysing your 12 months of energy data…',
+      'Calculating your optimal trading schedule…',
+      'Comparing market rates and usage patterns…',
+      'Personalising your subscription fee…',
+      'Almost done — preparing your offer…'
+    ];
+
+    var factIdx = 0;
+    var factEl  = document.getElementById('loadingFact');
+    var barEl   = document.getElementById('loadingBar');
+    var pct     = 0;
+
+    function nextFact() {
+      if (factEl) factEl.textContent = facts[factIdx % facts.length];
+      factIdx++;
+    }
+
+    function animateBar() {
+      if (pct < 90) {
+        pct += (90 - pct) * 0.04;
+        if (barEl) barEl.style.width = pct + '%';
+      }
+    }
+
+    nextFact();
+    var factTimer = setInterval(nextFact, 3000);
+    var barTimer  = setInterval(animateBar, 200);
+
+    function fmt(dollars) { return '$' + Math.round(dollars).toLocaleString('en-AU'); }
+
+    function show(id) {
+      ['stepLoading','stepOffer','stepProcessing','stepDone','stepError'].forEach(function (s) {
+        document.getElementById(s).style.display = s === id ? 'block' : 'none';
+      });
+    }
+
+    function showOffer(data) {
+      clearInterval(factTimer);
+      clearInterval(barTimer);
+      if (barEl) barEl.style.width = '100%';
+
+      // Populate values
+      var annual  = data.annual_saving  != null ? fmt(data.annual_saving)     : '—';
+      var monthly = data.monthly_fee    != null ? fmt(data.monthly_fee) + '/mo' : '—';
+      var install = data.install_cost   != null ? (data.install_cost === 0 ? '$0' : fmt(data.install_cost)) : '—';
+      var term    = data.contract_term_years != null ? data.contract_term_years + ' years' : '—';
+
+      document.getElementById('savingsAmt').textContent   = annual;
+      document.getElementById('monthlyFee').textContent   = monthly;
+      document.getElementById('recapMonthly').textContent = monthly;
+      document.getElementById('recapInstall').textContent = install;
+      document.getElementById('recapTerm').textContent    = term;
+      document.getElementById('recapSaving').textContent  = annual + '/yr';
+
+      // Advance progress: step 3 done, step 4 active
+      document.getElementById('prog3').classList.remove('is-active');
+      document.getElementById('prog3').classList.add('is-done');
+      document.getElementById('prog4').classList.add('is-active');
+
+      show('stepOffer');
+    }
+
+    // ── Get token from URL ──
+    var token = new URLSearchParams(window.location.search).get('token');
+
+    if (!token) {
+      show('stepError');
+      document.getElementById('errorMsg').textContent =
+        'No offer token found in the link. Please check the email we sent you and try again.';
+      return;
+    }
+
+    // ── Fetch offer ──
+    fetch(API_BASE + '/offer/data?token=' + encodeURIComponent(token))
+      .then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      })
+      .then(function (data) {
+        showOffer(data.offer);
+      })
+      .catch(function (err) {
+        clearInterval(factTimer);
+        clearInterval(barTimer);
+        show('stepError');
+      });
+
+    // ── Lock-in CTA ──
+    document.getElementById('btnLockIn').addEventListener('click', function () {
+      document.getElementById('prog4').classList.remove('is-active');
+      document.getElementById('prog4').classList.add('is-done');
+      show('stepDone');
+    });
+
+    // ── Next steps toggle ──
+    document.getElementById('nextToggle').addEventListener('click', function () {
+      var list = document.getElementById('nextSteps');
+      list.classList.toggle('is-open');
+      this.textContent = list.classList.contains('is-open')
+        ? '▲ Hide what happens next'
+        : '▼ What happens after I confirm?';
+    });
+  })();
+</script>
+
+</body>
+</html>

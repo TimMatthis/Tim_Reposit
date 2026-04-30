@@ -1,0 +1,14 @@
+{
+  "runtime": "nodejs18.x",
+  "version": "1.0",
+  "environment": {
+    "GEMINI_API_KEY": "YOUR_GEMINI_API_KEY_HERE"
+  },
+  "secrets": ["GEMINI_API_KEY"],
+  "endpoints": {
+    "analyze": {
+      "method": "POST",
+      "file": "analyze.js"
+    }
+  }
+}

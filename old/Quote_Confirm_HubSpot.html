@@ -1,0 +1,118 @@
+<!--
+  templateType: "page"
+  label: "Reposit - Quote Confirm"
+  isAvailableForNewContent: true
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirm Your System | Reposit Power</title>
+  <link rel="stylesheet" href="/css/style.css">
+  {{ standard_header_includes }}
+</head>
+<body>
+  <main class="hsq-page-wrap">
+    <section class="hsq-card">
+      <h1 class="hsq-title">System Confirmation</h1>
+      <p class="hsq-body">
+        We found your system details from your consent step. Please confirm this looks right before continuing.
+      </p>
+
+      <div class="hsq-state" id="confirmState" aria-live="polite">Reading system details...</div>
+      <ul class="hsq-kv-list" id="plantInfoList"></ul>
+
+      <div class="hsq-actions">
+        <a class="btn btn-primary" href="/offer">Continue to my offer</a>
+        <a class="btn btn-ghost" href="/get-quote">Start again</a>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      var stateEl = document.getElementById('confirmState');
+      var listEl = document.getElementById('plantInfoList');
+      var preferredFields = [
+        { key: 'site_name', label: 'Site name' },
+        { key: 'inverter_brand', label: 'Inverter brand' },
+        { key: 'inverter_model', label: 'Inverter model' },
+        { key: 'battery_brand', label: 'Battery brand' },
+        { key: 'battery_model', label: 'Battery model' },
+        { key: 'battery_capacity_kwh', label: 'Battery capacity (kWh)' },
+        { key: 'postcode', label: 'Postcode' }
+      ];
+
+      function setState(message, variant) {
+        if (!stateEl) return;
+        stateEl.className = 'hsq-state' + (variant ? ' ' + variant : '');
+        stateEl.textContent = message;
+      }
+
+      function getCookie(name) {
+        var escapedName = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        var match = document.cookie.match(new RegExp('(?:^|; )' + escapedName + '=([^;]*)'));
+        return match ? decodeURIComponent(match[1]) : '';
+      }
+
+      function parsePlantInfoCookie() {
+        var cookieValue = getCookie('plant_info');
+        if (!cookieValue) return null;
+        try {
+          return JSON.parse(cookieValue);
+        } catch (error) {
+          return null;
+        }
+      }
+
+      function renderPairs(data) {
+        if (!listEl) return;
+        listEl.innerHTML = '';
+
+        var renderedCount = 0;
+        preferredFields.forEach(function (field) {
+          if (data[field.key] == null || data[field.key] === '') return;
+          var item = document.createElement('li');
+          item.className = 'hsq-kv-item';
+          item.innerHTML =
+            '<span class="hsq-kv-key">' + field.label + '</span>' +
+            '<span class="hsq-kv-value">' + String(data[field.key]) + '</span>';
+          listEl.appendChild(item);
+          renderedCount += 1;
+        });
+
+        if (renderedCount === 0) {
+          Object.keys(data).slice(0, 8).forEach(function (key) {
+            var value = data[key];
+            if (value == null || value === '') return;
+            var item = document.createElement('li');
+            item.className = 'hsq-kv-item';
+            item.innerHTML =
+              '<span class="hsq-kv-key">' + key.replace(/_/g, ' ') + '</span>' +
+              '<span class="hsq-kv-value">' + String(value) + '</span>';
+            listEl.appendChild(item);
+            renderedCount += 1;
+          });
+        }
+
+        if (renderedCount === 0) {
+          setState('We could not find displayable system details in plant_info.', 'is-error');
+          return;
+        }
+
+        setState('System details loaded successfully.', 'is-success');
+      }
+
+      var plantInfo = parsePlantInfoCookie();
+      if (!plantInfo || typeof plantInfo !== 'object') {
+        setState('No valid plant_info cookie found. Please restart from Get Quote.', 'is-error');
+        return;
+      }
+
+      renderPairs(plantInfo);
+    }());
+  </script>
+  {{ standard_footer_includes }}
+</body>
+</html>

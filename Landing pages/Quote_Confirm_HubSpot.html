@@ -1,0 +1,347 @@
+<!--
+  templateType: "page"
+  label: "Reposit - Quote Confirm"
+  isAvailableForNewContent: true
+-->
+<!--
+  DEVELOPER NOTES - /confirm page
+
+  PURPOSE
+  This page is shown immediately after SolaX OAuth completes.
+  price-estimator-public has already:
+    1. Exchanged the auth code for SolaX tokens
+    2. Fetched the customer's plant details from SolaX
+    3. Published the Pub/Sub pipeline job (analysis is already running)
+    4. Set two cookies and redirected here
+
+  COOKIE: plant_info
+  The cookie value is a base64-encoded JSON blob, e.g.:
+    plant_info=<base64({"plant":"My Solar Home","address":"123 Main St ACT 2601","pv_kw":6.6,"battery_kwh":10.0})>
+    Domain=.repositpower.com; Secure; SameSite=Lax; Max-Age=3600
+  Note: NOT HttpOnly - this page reads it via document.cookie and atob().
+
+  KNOWN FIELDS (from SolaX plant details)
+    plant        - Plant/system name (string)
+    address      - Installation address (string)
+    pv_kw        - Solar panel capacity in kW (number)
+    battery_kwh  - Battery capacity in kWh (number)
+
+  IMPORTANT: The backend pipeline is already running when the customer
+  lands here. What the customer does on this page has no effect on
+  the job. This page is display-only.
+
+  NEXT PAGE
+  The "Continue" button links to /offer (Quote_Offer_HubSpot.html),
+  which fetches the estimate result via GET /estimate + session cookie.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your System | Reposit Power</title>
+  {{ standard_header_includes }}
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.55;
+      color: #0f172a;
+      background:
+        url(https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/noise.png),
+        radial-gradient(circle at top left, rgba(246,141,38,1) 5%, rgba(203,128,70,1) 20%, rgba(42,107,148,1) 60%, rgba(19,26,43,1) 100%);
+      background-blend-mode: multiply;
+      min-height: 100vh;
+      padding: 32px 16px 64px;
+    }
+
+    .page-wrap {
+      max-width: 560px;
+      margin: 0 auto;
+    }
+
+    .logo-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 28px;
+      color: rgba(255,255,255,0.9);
+      font-weight: 800;
+      font-size: 1rem;
+    }
+
+    .logo-mark {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #2de49d 0%, #15b876 100%);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.97);
+      border: 1px solid #d7e3f4;
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 10px 32px rgba(10,20,40,0.2);
+    }
+
+    .card-eyebrow {
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #2a6b94;
+      margin-bottom: 8px;
+    }
+
+    .card-title {
+      font-size: 1.55rem;
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
+
+    .card-body {
+      font-size: 0.94rem;
+      color: #374151;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    .pipeline-notice {
+      background: #f0fdf6;
+      border: 1px solid #bbf7d0;
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 0.88rem;
+      color: #166534;
+      margin-bottom: 20px;
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+
+    .pipeline-notice-icon { flex-shrink: 0; }
+
+    .kv-list {
+      list-style: none;
+      display: grid;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .kv-item {
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      gap: 8px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 10px 14px;
+    }
+
+    .kv-key {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      align-self: center;
+    }
+
+    .kv-value {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #0f172a;
+      align-self: center;
+    }
+
+    .state-msg {
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 0.9rem;
+      margin-bottom: 20px;
+      border: 1px solid #d7e3f4;
+      background: #f8fafc;
+      color: #374151;
+    }
+
+    .state-msg.is-error {
+      border-color: #fecaca;
+      background: #fff1f2;
+      color: #9f1239;
+    }
+
+    .state-msg.is-success {
+      border-color: #bbf7d0;
+      background: #f0fdf4;
+      color: #14532d;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 11px 22px;
+      border-radius: 11px;
+      font-size: 0.95rem;
+      font-weight: 800;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      background: linear-gradient(135deg, #2de49d 0%, #15b876 100%);
+      color: #042d14;
+      box-shadow: 0 8px 22px rgba(25,195,125,0.3);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 10px 28px rgba(25,195,125,0.42); }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 11px 22px;
+      border-radius: 11px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      background: transparent;
+      border: 1px solid #d7e3f4;
+      color: #374151;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+
+    .btn-ghost:hover { background: #f1f5f9; }
+
+    @media (max-width: 480px) {
+      .kv-item { grid-template-columns: 1fr; }
+      .btn-primary, .btn-ghost { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page-wrap">
+
+    <div class="logo-row">
+      <div class="logo-mark">⚡</div>
+      Reposit Power
+    </div>
+
+    <div class="card">
+      <p class="card-eyebrow">Step 2 — System confirmed</p>
+      <h1 class="card-title">We found your system</h1>
+      <p class="card-body">
+        Your SolaX system details are shown below. We are already building your personalised offer in the background — this usually takes about 15 minutes.
+      </p>
+
+      <div class="pipeline-notice">
+        <span class="pipeline-notice-icon">⚡</span>
+        <span>Your offer is being calculated now. You can safely leave this page — it will arrive in your inbox in approximately 15 minutes.</span>
+      </div>
+
+      <div class="state-msg" id="confirmState" aria-live="polite">Reading your system details...</div>
+      <ul class="kv-list" id="plantInfoList"></ul>
+
+      <div class="actions">
+        <a class="btn-primary" href="/offer">See my offer →</a>
+        <a class="btn-ghost" href="/get-quote">Start again</a>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    (function () {
+      var stateEl = document.getElementById('confirmState');
+      var listEl  = document.getElementById('plantInfoList');
+
+      var FIELDS = [
+        { key: 'plant',       label: 'System name' },
+        { key: 'address',     label: 'Address' },
+        { key: 'pv_kw',       label: 'Solar capacity',   suffix: ' kW' },
+        { key: 'battery_kwh', label: 'Battery capacity', suffix: ' kWh' }
+      ];
+
+      function setState(message, variant) {
+        if (!stateEl) return;
+        stateEl.className = 'state-msg' + (variant ? ' ' + variant : '');
+        stateEl.textContent = message;
+      }
+
+      function getCookieRaw(name) {
+        var escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        var match   = document.cookie.match(new RegExp('(?:^|; )' + escaped + '=([^;]*)'));
+        return match ? match[1] : '';
+      }
+
+      function parsePlantInfoCookie() {
+        var raw = getCookieRaw('plant_info');
+        if (!raw) return null;
+        try {
+          /* Cookie value is base64-encoded JSON */
+          var decoded = atob(decodeURIComponent(raw));
+          return JSON.parse(decoded);
+        } catch (e) {
+          /* Fallback: try plain JSON in case cookie is not encoded */
+          try { return JSON.parse(decodeURIComponent(raw)); } catch (e2) { return null; }
+        }
+      }
+
+      function escapeHtml(s) {
+        var d = document.createElement('div');
+        d.textContent = String(s == null ? '' : s);
+        return d.innerHTML;
+      }
+
+      function renderFields(data) {
+        if (!listEl) return;
+        listEl.innerHTML = '';
+        var count = 0;
+
+        FIELDS.forEach(function (field) {
+          var val = data[field.key];
+          if (val == null || val === '') return;
+          var display = escapeHtml(val) + (field.suffix ? '<span style="font-size:0.82rem;color:#64748b;">' + field.suffix + '</span>' : '');
+          var li = document.createElement('li');
+          li.className = 'kv-item';
+          li.innerHTML = '<span class="kv-key">' + field.label + '</span><span class="kv-value">' + display + '</span>';
+          listEl.appendChild(li);
+          count++;
+        });
+
+        if (count === 0) {
+          setState('System details were found but no recognisable fields could be displayed.', 'is-error');
+          return;
+        }
+
+        setState('System details loaded.', 'is-success');
+      }
+
+      var plantInfo = parsePlantInfoCookie();
+
+      if (!plantInfo || typeof plantInfo !== 'object') {
+        setState('Could not read system details. The link may have expired — please start again.', 'is-error');
+        return;
+      }
+
+      renderFields(plantInfo);
+    }());
+  </script>
+  {{ standard_footer_includes }}
+</body>
+</html>
