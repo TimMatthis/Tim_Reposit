@@ -52,3 +52,5 @@ Then open **http://127.0.0.1:5020/** again. If the terminal shows an import erro
 Pipeline data (optional but needed for charts): from repo root run  
 `python3 nem_weather_price_ml/scripts/run_pipeline.py`  
 so `data/processed/features_daily.parquet` exists; the home page still loads without it, but `/api/features` will error until then.
+
+
