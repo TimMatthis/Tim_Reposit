@@ -4,6 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CVP Offer Emails - Reposit Retrofit</title>
+  <!-- Geist + Inter: matches CVP landing + google-ads-png-from-context email guidance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../css/style.css" />
   <style>
     /* ── Page layout ── */
@@ -228,6 +232,78 @@
     .copy-btn:hover { background: #334155; color: #e2e8f0; }
     .copy-btn.copied { background: #14532d; border-color: #16a34a; color: #86efac; }
 
+    /* Related landing + display ad thumbnails */
+    .campaign-assets-card {
+      background: #fff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 18px 22px;
+      margin-bottom: 20px;
+    }
+
+    .campaign-assets-inner .pane-label:first-of-type {
+      margin-top: 0;
+    }
+
+    .campaign-asset-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 18px;
+      align-items: center;
+      margin: 8px 0 4px;
+    }
+
+    .campaign-asset-links a {
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: #1e5272;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .campaign-asset-links a:hover {
+      color: #0f172a;
+    }
+
+    .ad-thumb-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: flex-start;
+      margin-top: 4px;
+    }
+
+    .ad-thumb-strip .thumb-wrap {
+      display: block;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+      background: #f1f5f9;
+      line-height: 0;
+    }
+
+    .ad-thumb-strip .thumb-wrap:hover {
+      border-color: #94a3b8;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.1);
+    }
+
+    .ad-thumb-strip img {
+      width: 220px;
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .ad-thumb-caption {
+      font-size: 0.68rem;
+      font-weight: 800;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-top: 14px;
+      margin-bottom: 6px;
+    }
+
     /* Clean preview-hub shell. Overrides the shared dark utility stylesheet. */
     body.email-template-page {
       margin: 0;
@@ -237,7 +313,7 @@
         radial-gradient(circle at top left, rgba(25, 195, 125, 0.12), transparent 34rem),
         linear-gradient(180deg, #ffffff 0%, #f6f8fb 34rem);
       color: #0f172a;
-      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: Geist, Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
     .email-template-page .header {
@@ -454,6 +530,7 @@
         <div class="email-meta-row"><span class="email-meta-label">Persona</span><span class="email-meta-val">General / balanced. Confident, clear, no persona-specific angle.</span></div>
         <div class="email-meta-row"><span class="email-meta-label">CTA</span><span class="email-meta-val">See My Offer</span></div>
       </div>
+      <div class="campaign-assets-card" id="campaign-assets-base"></div>
       <div class="email-pane-wrap">
         <div>
           <div class="pane-label">Preview</div>
@@ -481,6 +558,7 @@
         <div class="email-meta-row"><span class="email-meta-label">Persona</span><span class="email-meta-val">Direct, numbers-led. Provocative about idle capacity. ROI is the decision frame.</span></div>
         <div class="email-meta-row"><span class="email-meta-label">CTA</span><span class="email-meta-val">Put My Battery to Work</span></div>
       </div>
+      <div class="campaign-assets-card" id="campaign-assets-roi"></div>
       <div class="email-pane-wrap">
         <div>
           <div class="pane-label">Preview</div>
@@ -508,6 +586,7 @@
         <div class="email-meta-row"><span class="email-meta-label">Persona</span><span class="email-meta-val">Calm, reassuring, decisive. Control and predictability are the emotional hook.</span></div>
         <div class="email-meta-row"><span class="email-meta-label">CTA</span><span class="email-meta-val">See My Fixed Price</span></div>
       </div>
+      <div class="campaign-assets-card" id="campaign-assets-uncert"></div>
       <div class="email-pane-wrap">
         <div>
           <div class="pane-label">Preview</div>
@@ -535,6 +614,7 @@
         <div class="email-meta-row"><span class="email-meta-label">Persona</span><span class="email-meta-val">Clear, respectful, patient. Low-pressure, plain language. No jargon.</span></div>
         <div class="email-meta-row"><span class="email-meta-label">CTA</span><span class="email-meta-val">See What I'd Pay Each Month</span></div>
       </div>
+      <div class="campaign-assets-card" id="campaign-assets-fixed"></div>
       <div class="email-pane-wrap">
         <div>
           <div class="pane-label">Preview</div>
@@ -562,6 +642,7 @@
         <div class="email-meta-row"><span class="email-meta-label">Persona</span><span class="email-meta-val">Purposeful, optimistic, concrete. Impact tied to grid mechanics, not vague virtue.</span></div>
         <div class="email-meta-row"><span class="email-meta-label">CTA</span><span class="email-meta-val">Join the Fleet</span></div>
       </div>
+      <div class="campaign-assets-card" id="campaign-assets-green"></div>
       <div class="email-pane-wrap">
         <div>
           <div class="pane-label">Preview</div>
@@ -589,6 +670,7 @@
         <div class="email-meta-row"><span class="email-meta-label">Persona</span><span class="email-meta-val">Minimal, confident, slightly witty. Energy should feel boring. Respect their time.</span></div>
         <div class="email-meta-row"><span class="email-meta-label">CTA</span><span class="email-meta-val">Just Fix It For Me</span></div>
       </div>
+      <div class="campaign-assets-card" id="campaign-assets-forget"></div>
       <div class="email-pane-wrap">
         <div>
           <div class="pane-label">Preview</div>
@@ -610,8 +692,19 @@
 <script>
 /* ─────────────────────────────────────────────────────────────────
    Email HTML templates - one per persona.
+
+   Typography: Geist primary, Inter fallback (see google-ads-png-from-context
+   SKILL.md - HTML HubSpot offer emails). Google Fonts links are included in each
+   <head> for clients that support web fonts.
+
+   Colour tokens (align with Retrofit_CVP_Landing.html): accent green #19c37d,
+   blue #2a6b94, ink #0f172a; hero gradients use #2b78a7 family as on landing.
+
+   Logo: HubSpot-hosted white SVG only; preserve aspect ratio (width x height attrs).
+
    {{ contact.retro_offer }} is the HubSpot merge tag for the offer URL.
-   Inline CSS is required for email client compatibility.
+
+   Inline CSS kept for email client compatibility.
 ───────────────────────────────────────────────────────────────── */
 
 var emails = {
@@ -624,8 +717,11 @@ var emails = {
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <title>Your personalised Reposit offer is ready</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet" />
 </head>
-<body style="margin:0;padding:0;background:#f1f5f9;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+<body style="margin:0;padding:0;background:#f1f5f9;font-family:Geist,'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
 <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f1f5f9;">
 <tr><td align="center" style="padding:32px 16px;">
 
@@ -634,7 +730,7 @@ var emails = {
     <!-- Header -->
     <tr>
       <td style="background:linear-gradient(135deg,#2b78a7 0%,#265f87 42%,#4f5f69 75%,#8c6647 100%);border-radius:16px 16px 0 0;padding:28px 36px;text-align:center;">
-        <img src="https://repositpower.com/hubfs/Reposit%20Logo/Reposit_logo_white.svg" alt="Reposit" width="140" style="display:block;margin:0 auto 0;" />
+        <img src="https://repositpower.com/hubfs/Reposit%20Logo/Reposit_logo_white.svg" alt="Reposit" width="140" height="36" style="display:block;margin:0 auto 0;" />
       </td>
     </tr>
 
@@ -657,7 +753,7 @@ var emails = {
           <tr>
             <td style="background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:10px;padding:16px 20px;">
               <p style="margin:0 0 4px;font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#15803d;">Status</p>
-              <p style="margin:0;font-size:1rem;font-weight:800;color:#0f172a;">Your offer has been prepared and is held for 24 hours.</p>
+              <p style="margin:0;font-size:1rem;font-weight:800;color:#0f172a;">Your personalised offer is ready and based on your latest energy profile.</p>
             </td>
           </tr>
         </table>
@@ -676,7 +772,7 @@ var emails = {
         <hr style="border:none;border-top:1px solid #f1f5f9;margin:0 0 20px;" />
 
         <p style="margin:0;font-size:0.8rem;color:#94a3b8;line-height:1.6;">
-          This offer is personalised to your home's energy profile. Once your offer expires, we'd need to re-run the assessment. If you have any questions, reply to this email and our team will be in touch.
+          This offer is personalised to your home's energy profile. If your usage or battery setup changes, we may need to re-run the assessment. If you have any questions, reply to this email and our team will be in touch.
         </p>
       </td>
     </tr>
@@ -704,8 +800,11 @@ var emails = {
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <title>Your battery's earning potential is ready</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet" />
 </head>
-<body style="margin:0;padding:0;background:#0f172a;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+<body style="margin:0;padding:0;background:#0f172a;font-family:Geist,'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
 <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#0f172a;">
 <tr><td align="center" style="padding:32px 16px;">
 
@@ -714,7 +813,7 @@ var emails = {
     <!-- Header -->
     <tr>
       <td style="background:linear-gradient(135deg,#1a2235 0%,#0f172a 100%);border:1px solid #27354f;border-radius:16px 16px 0 0;padding:28px 36px;text-align:center;">
-        <img src="https://repositpower.com/hubfs/Reposit%20Logo/Reposit_logo_white.svg" alt="Reposit" width="140" style="display:block;margin:0 auto 16px;" />
+        <img src="https://repositpower.com/hubfs/Reposit%20Logo/Reposit_logo_white.svg" alt="Reposit" width="140" height="36" style="display:block;margin:0 auto 16px;" />
         <p style="margin:0;font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#f59e0b;">Smart battery optimisation</p>
       </td>
     </tr>
@@ -738,9 +837,9 @@ var emails = {
         <!-- Highlight box -->
         <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:28px;">
           <tr>
-            <td style="background:rgba(0,212,160,0.08);border:1px solid rgba(0,212,160,0.3);border-radius:10px;padding:16px 20px;">
-              <p style="margin:0 0 4px;font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#00d4a0;">Same hardware. More value.</p>
-              <p style="margin:0;font-size:1rem;font-weight:800;color:#e4ecf7;">Your personalised offer is ready. Held for 24 hours.</p>
+            <td style="background:rgba(25,195,125,0.1);border:1px solid rgba(25,195,125,0.35);border-radius:10px;padding:16px 20px;">
+              <p style="margin:0 0 4px;font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#19c37d;">Same hardware. More value.</p>
+              <p style="margin:0;font-size:1rem;font-weight:800;color:#e4ecf7;">Your personalised offer is ready and based on your latest energy profile.</p>
             </td>
           </tr>
         </table>
@@ -754,7 +853,7 @@ var emails = {
           </tr>
         </table>
 
-        <p style="margin:0 0 28px;font-size:0.8rem;color:#8899b3;text-align:center;line-height:1.5;">No commitment until you choose &nbsp;·&nbsp; Offer held 24 hours &nbsp;·&nbsp; Cancel anytime before install</p>
+        <p style="margin:0 0 28px;font-size:0.8rem;color:#8899b3;text-align:center;line-height:1.5;">No commitment until you choose &nbsp;·&nbsp; Based on your latest energy profile &nbsp;·&nbsp; Cancel anytime before install</p>
 
         <hr style="border:none;border-top:1px solid #27354f;margin:0 0 20px;" />
 
@@ -787,8 +886,11 @@ var emails = {
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <title>Your fixed price is ready</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet" />
 </head>
-<body style="margin:0;padding:0;background:#f8fafc;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+<body style="margin:0;padding:0;background:#f8fafc;font-family:Geist,'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
 <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f8fafc;">
 <tr><td align="center" style="padding:32px 16px;">
 
@@ -797,7 +899,7 @@ var emails = {
     <!-- Header -->
     <tr>
       <td style="background:linear-gradient(135deg,#2b78a7 0%,#265f87 42%,#4f5f69 75%,#8c6647 100%);border-radius:16px 16px 0 0;padding:28px 36px;text-align:center;">
-        <img src="https://repositpower.com/hubfs/Reposit%20Logo/Reposit_logo_white.svg" alt="Reposit" width="140" style="display:block;margin:0 auto 16px;" />
+        <img src="https://repositpower.com/hubfs/Reposit%20Logo/Reposit_logo_white.svg" alt="Reposit" width="140" height="36" style="display:block;margin:0 auto 16px;" />
         <p style="margin:0;font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.7);">Smart energy certainty</p>
       </td>
     </tr>
@@ -823,7 +925,7 @@ var emails = {
           <tr>
             <td style="background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:10px;padding:16px 20px;">
               <p style="margin:0 0 4px;font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#166534;">You cannot control the market.</p>
-              <p style="margin:0;font-size:1rem;font-weight:800;color:#0f172a;">You can control your bill. Your offer is held for 24 hours.</p>
+              <p style="margin:0;font-size:1rem;font-weight:800;color:#0f172a;">You can control your bill. Your personalised offer is ready.</p>
             </td>
           </tr>
         </table>
@@ -837,7 +939,7 @@ var emails = {
           </tr>
         </table>
 
-        <p style="margin:0 0 28px;font-size:0.8rem;color:#94a3b8;text-align:center;line-height:1.5;">No commitment until you choose &nbsp;·&nbsp; Offer held 24 hours &nbsp;·&nbsp; Cancel anytime before install</p>
+        <p style="margin:0 0 28px;font-size:0.8rem;color:#94a3b8;text-align:center;line-height:1.5;">No commitment until you choose &nbsp;·&nbsp; Based on your latest energy profile &nbsp;·&nbsp; Cancel anytime before install</p>
 
         <hr style="border:none;border-top:1px solid #f1f5f9;margin:0 0 20px;" />
 
@@ -870,8 +972,11 @@ var emails = {
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <title>Your offer is ready - one fixed monthly amount</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet" />
 </head>
-<body style="margin:0;padding:0;background:#f8fafc;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+<body style="margin:0;padding:0;background:#f8fafc;font-family:Geist,'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
 <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f8fafc;">
 <tr><td align="center" style="padding:32px 16px;">
 
@@ -880,7 +985,7 @@ var emails = {
     <!-- Header -->
     <tr>
       <td style="background:linear-gradient(135deg,#1e3a5f 0%,#1e40af 100%);border-radius:16px 16px 0 0;padding:28px 36px;text-align:center;">
-        <img src="https://repositpower.com/hubfs/Reposit%20Logo/Reposit_logo_white.svg" alt="Reposit" width="140" style="display:block;margin:0 auto 16px;" />
+        <img src="https://repositpower.com/hubfs/Reposit%20Logo/Reposit_logo_white.svg" alt="Reposit" width="140" height="36" style="display:block;margin:0 auto 16px;" />
         <p style="margin:0;font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.7);">Predictable home energy</p>
       </td>
     </tr>
@@ -906,7 +1011,7 @@ var emails = {
           <tr>
             <td style="background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:10px;padding:18px 22px;">
               <p style="margin:0 0 4px;font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#1d4ed8;">Ready for you</p>
-              <p style="margin:0;font-size:1rem;font-weight:800;color:#0f172a;line-height:1.5;">Your offer is prepared and held for 24 hours. There is no commitment until you choose to proceed.</p>
+              <p style="margin:0;font-size:1rem;font-weight:800;color:#0f172a;line-height:1.5;">Your offer is prepared from your latest energy profile. There is no commitment until you choose to proceed.</p>
             </td>
           </tr>
         </table>
@@ -953,8 +1058,11 @@ var emails = {
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <title>Your offer is ready - savings and impact, together</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet" />
 </head>
-<body style="margin:0;padding:0;background:#f8fafc;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+<body style="margin:0;padding:0;background:#f8fafc;font-family:Geist,'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
 <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f8fafc;">
 <tr><td align="center" style="padding:32px 16px;">
 
@@ -963,7 +1071,7 @@ var emails = {
     <!-- Header -->
     <tr>
       <td style="background:linear-gradient(135deg,#064e3b 0%,#065f46 50%,#047857 100%);border-radius:16px 16px 0 0;padding:28px 36px;text-align:center;">
-        <img src="https://repositpower.com/hubfs/Reposit%20Logo/Reposit_logo_white.svg" alt="Reposit" width="140" style="display:block;margin:0 auto 16px;" />
+        <img src="https://repositpower.com/hubfs/Reposit%20Logo/Reposit_logo_white.svg" alt="Reposit" width="140" height="36" style="display:block;margin:0 auto 16px;" />
         <p style="margin:0;font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.7);">Smart energy, cleaner grid</p>
       </td>
     </tr>
@@ -978,7 +1086,7 @@ var emails = {
           We've analysed your battery and energy data, and your personalised plan is ready.
         </p>
         <p style="margin:0 0 16px;font-size:0.95rem;color:#374151;line-height:1.65;">
-          When you join the Reposit fleet, your battery works alongside 2,000+ others - absorbing peak demand, storing surplus solar, and reducing the need for fossil backup. The value that creates comes back to you as a fixed monthly fee below your current spend.
+          When you join Reposit, you join 6,000+ customers using smarter home energy - with batteries helping absorb peak demand, store surplus solar, and reduce the need for fossil backup. The value that creates comes back to you as a fixed monthly fee below your current spend.
         </p>
         <p style="margin:0 0 24px;font-size:0.95rem;color:#374151;line-height:1.65;">
           One battery helps one home. Thousands change the grid.
@@ -989,7 +1097,7 @@ var emails = {
           <tr>
             <td style="background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:10px;padding:16px 20px;">
               <p style="margin:0 0 4px;font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#166534;">Fleet status</p>
-              <p style="margin:0;font-size:1rem;font-weight:800;color:#0f172a;">2,000+ batteries active. Yours is ready to join. Offer held 24 hours.</p>
+              <p style="margin:0;font-size:1rem;font-weight:800;color:#0f172a;">6,000+ Reposit customers. Your personalised offer is ready.</p>
             </td>
           </tr>
         </table>
@@ -1003,7 +1111,7 @@ var emails = {
           </tr>
         </table>
 
-        <p style="margin:0 0 28px;font-size:0.8rem;color:#94a3b8;text-align:center;line-height:1.5;">No commitment until you choose &nbsp;·&nbsp; Offer held 24 hours &nbsp;·&nbsp; Cancel before install at no cost</p>
+        <p style="margin:0 0 28px;font-size:0.8rem;color:#94a3b8;text-align:center;line-height:1.5;">No commitment until you choose &nbsp;·&nbsp; Based on your latest energy profile &nbsp;·&nbsp; Cancel before install at no cost</p>
 
         <hr style="border:none;border-top:1px solid #f1f5f9;margin:0 0 20px;" />
 
@@ -1036,8 +1144,11 @@ var emails = {
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <title>Done. Your offer is ready.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet" />
 </head>
-<body style="margin:0;padding:0;background:#f8fafc;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+<body style="margin:0;padding:0;background:#f8fafc;font-family:Geist,'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
 <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f8fafc;">
 <tr><td align="center" style="padding:32px 16px;">
 
@@ -1046,7 +1157,7 @@ var emails = {
     <!-- Header -->
     <tr>
       <td style="background:linear-gradient(135deg,#0f172a 0%,#1e1b4b 50%,#0f172a 100%);border-radius:16px 16px 0 0;padding:28px 36px;text-align:center;">
-        <img src="https://repositpower.com/hubfs/Reposit%20Logo/Reposit_logo_white.svg" alt="Reposit" width="140" style="display:block;margin:0 auto 16px;" />
+        <img src="https://repositpower.com/hubfs/Reposit%20Logo/Reposit_logo_white.svg" alt="Reposit" width="140" height="36" style="display:block;margin:0 auto 16px;" />
         <p style="margin:0;font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.5);">Smart energy on autopilot</p>
       </td>
     </tr>
@@ -1093,7 +1204,7 @@ var emails = {
           </tr>
         </table>
 
-        <p style="margin:0 0 28px;font-size:0.8rem;color:#94a3b8;text-align:center;line-height:1.5;">Offer held 24 hours &nbsp;·&nbsp; No commitment until you choose</p>
+        <p style="margin:0 0 28px;font-size:0.8rem;color:#94a3b8;text-align:center;line-height:1.5;">Personalised offer ready &nbsp;·&nbsp; No commitment until you choose</p>
 
         <hr style="border:none;border-top:1px solid #f1f5f9;margin:0 0 20px;" />
 
@@ -1197,6 +1308,131 @@ window.addEventListener('resize', function() {
   Object.keys(emails).forEach(resizePreviewIframe);
 });
 
+/* ── Landing + display ads (thumbnails and library links) ── */
+var AD_LIBRARY_PERSONAS = './ImageLibrary/Ads/Personas/';
+var AD_LIBRARY_PMAX_SIG = './ImageLibrary/Ads/PMax/sigenergy/';
+var AD_LIBRARY_PMAX_SOL = './ImageLibrary/Ads/PMax/solax/';
+
+var ALL_PERSONA_SLUGS = [
+  'battery-roi',
+  'energy-uncertainty',
+  'fixed-income',
+  'green-impact',
+  'set-and-forget'
+];
+
+var PERSONA_SLUG_FOR_HUB = {
+  roi: 'battery-roi',
+  uncert: 'energy-uncertainty',
+  fixed: 'fixed-income',
+  green: 'green-impact',
+  forget: 'set-and-forget'
+};
+
+var LANDING_LINKS_FOR_HUB = {
+  base: [
+    { href: './Retrofit_CVP_Landing.html', label: 'CVP landing (chooser)' },
+    { href: './Retrofit_CVP_GET_Offer.html', label: 'GET offer page shell' }
+  ],
+  roi: [{ href: './Retrofit_CVP_Landing_BatteryROI.html', label: 'Battery ROI landing' }],
+  uncert: [{ href: './Retrofit_CVP_Landing_EnergyUncertainty.html', label: 'Energy uncertainty landing' }],
+  fixed: [{ href: './Retrofit_CVP_Landing_FixedIncome.html', label: 'Fixed income landing' }],
+  green: [{ href: './Retrofit_CVP_Landing_GreenImpact.html', label: 'Green impact landing' }],
+  forget: [{ href: './Retrofit_CVP_Landing_SetAndForget.html', label: 'Set and forget landing' }]
+};
+
+function padTwo(n) {
+  return (n < 10 ? '0' : '') + n;
+}
+
+function personaBannerSrc(slug) {
+  return AD_LIBRARY_PERSONAS + 'google-ad_persona-' + slug + '.png';
+}
+
+function pmaxSrc(slug, brand, variant) {
+  var dir = brand === 'sigenergy' ? AD_LIBRARY_PMAX_SIG : AD_LIBRARY_PMAX_SOL;
+  return dir + 'pmax_' + slug + '_' + brand + '_' + padTwo(variant) + '.png';
+}
+
+function buildPersonaThumbStrip(slugs) {
+  var h = '';
+  h += '<div class="ad-thumb-caption">Google Ads · persona banners (1200×628)</div>';
+  h += '<div class="ad-thumb-strip">';
+  var s;
+  for (s = 0; s < slugs.length; s++) {
+    var slug = slugs[s];
+    var src = personaBannerSrc(slug);
+    h += '<a class="thumb-wrap" href="' + src + '" target="_blank" rel="noopener noreferrer">';
+    h += '<img src="' + src + '" alt="Persona banner ' + slug + '" loading="lazy" width="220" /></a>';
+  }
+  return h + '</div>';
+}
+
+function buildPmaxStrip(slug, brand, count) {
+  var labelBrand = brand === 'sigenergy' ? 'Sigenergy' : 'Solax';
+  var h = '';
+  h += '<div class="ad-thumb-caption">Performance Max · ' + labelBrand + '</div>';
+  h += '<div class="ad-thumb-strip">';
+  var i;
+  for (i = 1; i <= count; i++) {
+    var src = pmaxSrc(slug, brand, i);
+    h += '<a class="thumb-wrap" href="' + src + '" target="_blank" rel="noopener noreferrer">';
+    h +=
+      '<img src="' +
+      src +
+      '" alt="PMax ' +
+      labelBrand +
+      ' ' +
+      slug +
+      ' ' +
+      padTwo(i) +
+      '" loading="lazy" width="220" /></a>';
+  }
+  return h + '</div>';
+}
+
+function hydrateCampaignAssetPanels() {
+  var hubKeys = ['base', 'roi', 'uncert', 'fixed', 'green', 'forget'];
+  var hi;
+  for (hi = 0; hi < hubKeys.length; hi++) {
+    var hub = hubKeys[hi];
+    var mount = document.getElementById('campaign-assets-' + hub);
+    if (!mount) continue;
+    var links = LANDING_LINKS_FOR_HUB[hub];
+    var parts = '';
+    parts += '<div class="campaign-assets-inner">';
+    parts += '<div class="pane-label">Landing pages and ads</div>';
+
+    parts += '<div class="campaign-asset-links">';
+    var li;
+    for (li = 0; li < links.length; li++) {
+      parts += '<a href="' + links[li].href + '">' + links[li].label + '</a>';
+    }
+    parts += '</div>';
+
+    parts += '<div class="campaign-asset-links">';
+    parts += '<a href="' + AD_LIBRARY_PERSONAS + '">Ads library · Persona PNG folder</a>';
+    parts += '<a href="' + AD_LIBRARY_PMAX_SIG + '">Ads library · PMax Sigenergy</a>';
+    parts += '<a href="' + AD_LIBRARY_PMAX_SOL + '">Ads library · PMax Solax</a>';
+    parts += '</div>';
+
+    if (hub === 'base') {
+      parts += buildPersonaThumbStrip(ALL_PERSONA_SLUGS);
+      parts +=
+        '<p style="margin:14px 0 0;font-size:0.8rem;line-height:1.55;color:#64748b">Performance Max creatives are segmented by persona and battery brand. Use the tabs Battery ROI through Set and Forget for the matching Sigenergy and Solax image strips.</p>';
+    } else {
+      var slug = PERSONA_SLUG_FOR_HUB[hub];
+      parts += buildPersonaThumbStrip([slug]);
+      parts += buildPmaxStrip(slug, 'sigenergy', 3);
+      parts += buildPmaxStrip(slug, 'solax', 5);
+    }
+
+    parts += '</div>';
+    mount.innerHTML = parts;
+  }
+}
+
+hydrateCampaignAssetPanels();
 showPersona(getPersonaFromUrl());
 
 /* ── Copy button ── */

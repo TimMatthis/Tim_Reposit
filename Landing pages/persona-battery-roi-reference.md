@@ -88,7 +88,7 @@ Proof requirements:
 - Current annual spend and proposed fixed fee.
 - Explanation of how the value is created.
 - Personalised offer based on actual usage and battery capacity.
-- Clear disclaimers that trading revenue varies with market conditions.
+- Clear context on long-form surfaces: personalised offers reflect actual usage data and eligibility; deeper trading dynamics belong on the landing or offer page, not as a cramped acquisition-ad footer strip.
 
 ## Messaging Hierarchy
 
@@ -143,7 +143,7 @@ Conversion:
 
 - Keep the form short and economically purposeful.
 - "60 seconds to connect. Personalised offer in about 15 minutes. No commitment until you choose."
-- The 24-hour held offer works well because this customer understands market-based pricing.
+- Avoid false expiry pressure; this customer responds better to clear market logic and a current personalised estimate.
 
 Onboarding:
 

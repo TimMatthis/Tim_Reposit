@@ -66,7 +66,7 @@ Decision triggers:
 - Peak demand drives gas peaker use.
 - Solar curtailment wastes clean energy.
 - Distributed batteries are key to decarbonisation.
-- 2,000+ batteries already work together in the Reposit fleet.
+- 6,000+ customers already work together in the Reposit fleet.
 
 Emotional drivers:
 
@@ -85,7 +85,7 @@ Risk perception:
 Proof requirements:
 
 - Mechanism: peak demand, solar surplus, coordinated batteries.
-- Fleet proof: 2,000+ batteries.
+- Fleet proof: 6,000+ customers.
 - Impact language tied to grid conditions.
 - Honest caveat that emissions impact depends on grid conditions and fleet dispatch.
 
@@ -102,7 +102,7 @@ Primary benefits:
 
 - Gas peakers displaced: real impact.
 - One fixed fee: save money while supporting a cleaner grid.
-- Fleet size: 2,000+ batteries working together.
+- Fleet size: 6,000+ customers working together.
 
 Supporting proof points:
 

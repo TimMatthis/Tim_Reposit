@@ -89,7 +89,7 @@ Proof requirements:
 - Proposed fixed monthly fee.
 - Clear statement of what is included.
 - "No commitment until you choose."
-- Personalised offer held for 24 hours.
+- Personalised offer based on the latest energy profile.
 
 ## Messaging Hierarchy
 
@@ -161,7 +161,7 @@ Retention:
 
 "What is the catch?"
 
-- Be explicit about inclusions, term, fees, and what happens after the offer expires.
+- Be explicit about inclusions, term, fees, and what happens if their usage or battery setup changes.
 
 "What if my usage changes?"
 
@@ -201,4 +201,4 @@ Do not:
 - Manual bill upload should feel like a normal fallback, not a failure.
 - Offer cards should make the fixed monthly fee visually dominant.
 - Confirmation should use "lock in my fixed fee" language.
-- Follow-up emails should focus on the fixed-fee offer and its expiry.
+- Follow-up emails should focus on the fixed-fee offer, why it is personalised, and the benefit of booking while the estimate is current.

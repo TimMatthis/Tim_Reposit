@@ -110,7 +110,7 @@ Supporting proof points:
 - Fixed-income households need fixed costs.
 - Reposit reads usage to size a personalised offer.
 - Reposit trades the battery and passes value back through a predictable monthly number.
-- The offer is held for 24 hours and there is no commitment until choosing.
+- The offer is based on the latest energy profile and there is no commitment until choosing.
 
 CTA language:
 
