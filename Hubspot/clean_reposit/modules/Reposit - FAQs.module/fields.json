@@ -1,0 +1,735 @@
+[ {
+  "id" : "ce24acd8-8e08-478f-2a7d-f06f7343a679",
+  "name" : "col_1",
+  "label" : "Heading:",
+  "required" : false,
+  "locked" : false,
+  "children" : [ {
+    "id" : "338f5692-593b-c49e-05ca-d843cbdc0446",
+    "name" : "width",
+    "label" : "Width Ratio",
+    "required" : false,
+    "locked" : false,
+    "display" : "slider",
+    "min" : 0,
+    "max" : 100,
+    "step" : 1,
+    "suffix" : "%",
+    "display_width" : null,
+    "type" : "number",
+    "default" : 50
+  }, {
+    "id" : "78ab6ed3-11d2-80c5-d3ce-9301a08b49a3",
+    "name" : "eyebrow",
+    "label" : "Eyebrow Heading",
+    "required" : false,
+    "locked" : false,
+    "children" : [ {
+      "id" : "cea9b1f8-7ca9-b81a-cf8b-15f8dc8f5e6e",
+      "name" : "display_as",
+      "label" : "Display as",
+      "required" : true,
+      "locked" : false,
+      "display" : "select",
+      "choices" : [ [ "h1", "H1" ], [ "h2", "H2" ], [ "h3", "H3" ], [ "h4", "H4" ], [ "h5", "H5" ], [ "h6", "H6" ], [ "p", "Paragraph" ] ],
+      "multiple" : false,
+      "reordering_enabled" : true,
+      "preset" : null,
+      "display_width" : null,
+      "type" : "choice",
+      "default" : "h2"
+    }, {
+      "id" : "75089563-43f1-0a8e-cb29-529a739458ae",
+      "name" : "text",
+      "label" : "Text",
+      "required" : false,
+      "locked" : false,
+      "allow_new_line" : false,
+      "display_width" : null,
+      "type" : "text",
+      "default" : "FAQ"
+    }, {
+      "id" : "7fa7f2b8-e23a-546a-af0a-e54f477c7595",
+      "name" : "text_color",
+      "label" : "Text Color",
+      "required" : false,
+      "locked" : false,
+      "display_width" : null,
+      "type" : "color",
+      "default" : {
+        "color" : "#1f2a44",
+        "opacity" : 100
+      }
+    }, {
+      "id" : "6af1f241-797f-eb39-83ba-f33a74bb4d39",
+      "name" : "bottom_space",
+      "label" : "Bottom Space",
+      "required" : false,
+      "locked" : false,
+      "display" : "text",
+      "min" : 0,
+      "max" : 100,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 12
+    } ],
+    "tab" : "CONTENT",
+    "expanded" : false,
+    "group_occurrence_meta" : null,
+    "display_width" : null,
+    "type" : "group",
+    "default" : {
+      "display_as" : "h2",
+      "text" : "FAQ",
+      "text_color" : {
+        "color" : "#1f2a44",
+        "opacity" : 100
+      },
+      "bottom_space" : 12
+    }
+  }, {
+    "id" : "1fed1e51-a274-793e-8a6d-d18a6f8a83cd",
+    "name" : "title",
+    "label" : "Title",
+    "required" : false,
+    "locked" : false,
+    "children" : [ {
+      "id" : "cc88456f-a947-51af-9017-7bc774ef8a77",
+      "name" : "display_as",
+      "label" : "Display as",
+      "required" : true,
+      "locked" : false,
+      "display" : "select",
+      "choices" : [ [ "h1", "H1" ], [ "h2", "H2" ], [ "h3", "H3" ], [ "h4", "H4" ], [ "h5", "H5" ], [ "h6", "H6" ], [ "p", "Paragraph" ] ],
+      "multiple" : false,
+      "reordering_enabled" : true,
+      "preset" : null,
+      "display_width" : null,
+      "type" : "choice",
+      "default" : "p"
+    }, {
+      "id" : "1c6813b5-de8d-32be-7d98-535037772966",
+      "name" : "text",
+      "label" : "Text",
+      "required" : false,
+      "locked" : false,
+      "allow_new_line" : false,
+      "display_width" : null,
+      "type" : "text",
+      "default" : "Common questions for those considering Reposit No Bill™"
+    }, {
+      "id" : "ca242a9e-0a07-54b2-3b35-9602065392bd",
+      "name" : "text_color",
+      "label" : "Text Color",
+      "required" : false,
+      "locked" : false,
+      "display_width" : null,
+      "type" : "color",
+      "default" : {
+        "color" : "#4698cb",
+        "opacity" : 100
+      }
+    }, {
+      "id" : "d9e5ea94-4571-d96c-22a8-cf4e5e20ace3",
+      "name" : "highlight_text",
+      "label" : "Highlighted Text",
+      "required" : false,
+      "locked" : false,
+      "allow_new_line" : false,
+      "display_width" : null,
+      "type" : "text",
+      "default" : ""
+    }, {
+      "id" : "2baaeaee-f13e-d770-1da0-b1e9ba098c81",
+      "name" : "highlight_color",
+      "label" : "Highlight Color",
+      "required" : false,
+      "locked" : false,
+      "display_width" : null,
+      "type" : "color",
+      "default" : {
+        "color" : "#4698CB",
+        "opacity" : 100
+      }
+    }, {
+      "id" : "f52918ab-ff3a-0de1-3c67-61df4ed7e92f",
+      "name" : "bottom_space",
+      "label" : "Bottom Space",
+      "required" : false,
+      "locked" : false,
+      "display" : "text",
+      "min" : 0,
+      "max" : 100,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 48
+    } ],
+    "tab" : "CONTENT",
+    "expanded" : false,
+    "group_occurrence_meta" : null,
+    "display_width" : null,
+    "type" : "group",
+    "default" : {
+      "display_as" : "p",
+      "text" : "Common questions for those considering Reposit No Bill™",
+      "text_color" : {
+        "color" : "#4698cb",
+        "opacity" : 100
+      },
+      "highlight_text" : "",
+      "highlight_color" : {
+        "color" : "#4698CB",
+        "opacity" : 100
+      },
+      "bottom_space" : 48
+    }
+  }, {
+    "id" : "abb7ac37-43a8-b4cd-02ca-6d4e5b824b2f",
+    "name" : "text_area",
+    "label" : "Text Area",
+    "required" : false,
+    "locked" : false,
+    "children" : [ {
+      "id" : "6d28c089-dee6-ad2f-b09a-494686be585f",
+      "name" : "content",
+      "label" : "Content",
+      "required" : false,
+      "locked" : false,
+      "display_width" : null,
+      "type" : "richtext",
+      "default" : ""
+    }, {
+      "id" : "b3a1260b-79a2-3c7a-a36a-e9e13031e08f",
+      "name" : "bottom_space",
+      "label" : "Bottom Space",
+      "required" : false,
+      "locked" : false,
+      "display" : "text",
+      "min" : 0,
+      "max" : 100,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number"
+    } ],
+    "tab" : "CONTENT",
+    "expanded" : false,
+    "group_occurrence_meta" : null,
+    "display_width" : null,
+    "type" : "group",
+    "default" : {
+      "content" : ""
+    }
+  }, {
+    "id" : "252952b9-f977-d88c-552a-21953f362eec",
+    "name" : "button",
+    "label" : "Button",
+    "required" : false,
+    "locked" : false,
+    "occurrence" : {
+      "min" : 0,
+      "max" : 4,
+      "sorting_label_field" : null,
+      "default" : null
+    },
+    "children" : [ {
+      "id" : "b58f759a-f253-aa42-9dc8-2e78383b1284",
+      "name" : "use_cta",
+      "label" : "Use CTA",
+      "required" : false,
+      "locked" : false,
+      "display" : "toggle",
+      "display_width" : null,
+      "type" : "boolean",
+      "default" : false
+    }, {
+      "id" : "bb7dbe0e-82f2-43be-2077-92ff68ea487e",
+      "name" : "guid",
+      "label" : "CTA",
+      "required" : false,
+      "locked" : false,
+      "visibility" : {
+        "controlling_field" : null,
+        "controlling_field_path" : "col_1.button.use_cta",
+        "controlling_value_regex" : "true",
+        "property" : null,
+        "operator" : "EQUAL",
+        "access" : null
+      },
+      "display_width" : null,
+      "type" : "cta"
+    }, {
+      "id" : "05f896af-3a8f-5168-f34e-80c19f13fac0",
+      "name" : "style_option",
+      "label" : "Style Option",
+      "required" : true,
+      "locked" : false,
+      "visibility" : {
+        "controlling_field" : null,
+        "controlling_field_path" : "col_1.button.use_cta",
+        "controlling_value_regex" : "false",
+        "property" : null,
+        "operator" : "EQUAL",
+        "access" : null
+      },
+      "display" : "select",
+      "choices" : [ [ "cta-primary", "Primary" ], [ "cta-secondary", "Secondary" ], [ "cta-tertiary", "Tertiary" ] ],
+      "multiple" : false,
+      "reordering_enabled" : true,
+      "preset" : null,
+      "display_width" : null,
+      "type" : "choice",
+      "default" : "cta-primary"
+    }, {
+      "id" : "5694363d-f2f2-a7cb-6908-903c7d47a411",
+      "name" : "text",
+      "label" : "Text",
+      "required" : false,
+      "locked" : false,
+      "visibility" : {
+        "controlling_field" : null,
+        "controlling_field_path" : "col_1.button.use_cta",
+        "controlling_value_regex" : "false",
+        "property" : null,
+        "operator" : "EQUAL",
+        "access" : null
+      },
+      "allow_new_line" : false,
+      "display_width" : null,
+      "type" : "text"
+    }, {
+      "id" : "a8187136-b20c-d4d4-bd50-c015d869254f",
+      "name" : "use_arrow_icon",
+      "label" : "Use Arrow Icon",
+      "required" : false,
+      "locked" : false,
+      "visibility" : {
+        "controlling_field" : null,
+        "controlling_field_path" : "col_1.button.use_cta",
+        "controlling_value_regex" : "false",
+        "property" : null,
+        "operator" : "EQUAL",
+        "access" : null
+      },
+      "display" : "checkbox",
+      "display_width" : null,
+      "type" : "boolean",
+      "default" : true
+    }, {
+      "id" : "28a304cd-266e-a045-151f-4beb44861e3b",
+      "name" : "url",
+      "label" : "URL",
+      "required" : false,
+      "locked" : false,
+      "visibility" : {
+        "controlling_field" : null,
+        "controlling_field_path" : "col_1.button.use_cta",
+        "controlling_value_regex" : "false",
+        "property" : null,
+        "operator" : "EQUAL",
+        "access" : null
+      },
+      "supported_types" : [ "EXTERNAL", "CONTENT", "FILE", "EMAIL_ADDRESS", "BLOG", "PHONE_NUMBER" ],
+      "display_width" : null,
+      "type" : "url",
+      "default" : {
+        "content_id" : null,
+        "href" : "",
+        "type" : "EXTERNAL"
+      }
+    }, {
+      "id" : "7c9a24af-c31e-095c-4de2-f6b1a1bf62b5",
+      "name" : "open_link_in_new_tab",
+      "label" : "Open link in new tab",
+      "required" : false,
+      "locked" : false,
+      "visibility" : {
+        "controlling_field" : null,
+        "controlling_field_path" : "col_1.button.use_cta",
+        "controlling_value_regex" : "false",
+        "property" : null,
+        "operator" : "EQUAL",
+        "access" : null
+      },
+      "display" : "toggle",
+      "display_width" : null,
+      "type" : "boolean",
+      "default" : false
+    } ],
+    "tab" : "CONTENT",
+    "expanded" : false,
+    "group_occurrence_meta" : null,
+    "display_width" : null,
+    "type" : "group",
+    "default" : [ ]
+  } ],
+  "tab" : "CONTENT",
+  "expanded" : false,
+  "group_occurrence_meta" : null,
+  "display_width" : null,
+  "type" : "group",
+  "default" : {
+    "width" : 50,
+    "eyebrow" : {
+      "display_as" : "h2",
+      "text" : "FAQ",
+      "text_color" : {
+        "color" : "#1f2a44",
+        "opacity" : 100
+      },
+      "bottom_space" : 12
+    },
+    "title" : {
+      "display_as" : "p",
+      "text" : "Common questions for those considering Reposit No Bill™",
+      "text_color" : {
+        "color" : "#4698cb",
+        "opacity" : 100
+      },
+      "highlight_text" : "",
+      "highlight_color" : {
+        "color" : "#4698CB",
+        "opacity" : 100
+      },
+      "bottom_space" : 48
+    },
+    "text_area" : {
+      "content" : ""
+    },
+    "button" : [ ]
+  }
+}, {
+  "id" : "ba2c0761-cfc7-c02c-7f91-db1842086796",
+  "name" : "style_opts",
+  "label" : "Style",
+  "required" : false,
+  "locked" : false,
+  "children" : [ {
+    "id" : "e9793abf-01a0-691c-3a29-cd968e456990",
+    "name" : "test",
+    "label" : "Test:",
+    "inline_help_text" : "This is currently a test. Please disregard.",
+    "required" : false,
+    "locked" : false,
+    "display" : "checkbox",
+    "display_width" : null,
+    "type" : "boolean",
+    "default" : false
+  } ],
+  "tab" : "STYLE",
+  "expanded" : false,
+  "group_occurrence_meta" : null,
+  "display_width" : null,
+  "type" : "group",
+  "default" : {
+    "test" : false
+  }
+}, {
+  "id" : "8e2439dc-afdc-581d-3db7-b554a9877f90",
+  "name" : "faq_accordion",
+  "label" : "FAQ Accordion:",
+  "required" : false,
+  "locked" : false,
+  "children" : [ {
+    "id" : "f34c373e-f21a-20e0-c731-eba79f6b27bd",
+    "name" : "faq",
+    "label" : "FAQs:",
+    "required" : false,
+    "locked" : false,
+    "occurrence" : {
+      "min" : null,
+      "max" : null,
+      "sorting_label_field" : null,
+      "default" : 3
+    },
+    "children" : [ {
+      "id" : "f6e7ac3e-aafc-ba9e-f234-5cf340716615",
+      "name" : "question",
+      "label" : "Question",
+      "required" : false,
+      "locked" : false,
+      "allow_new_line" : false,
+      "display_width" : null,
+      "type" : "text",
+      "default" : "How do you calculate my energy usage over the next seven years to guarantee me No Bills and what is the baseline and fair use cap?"
+    }, {
+      "id" : "ba6f7985-3658-5220-18da-a2e9f9dc537e",
+      "name" : "answer",
+      "label" : "Answer",
+      "required" : false,
+      "locked" : false,
+      "display_width" : null,
+      "type" : "richtext",
+      "default" : "<div id=\"content-1-1\" class=\"hhs-accordion-content\" aria-hidden=\"true\">\n<p><span>Our sales consultants will work with you to understand your current and future energy needs. They'll review your past electricity bills and ask about any upcoming changes to your home, like converting gas appliances to electric, getting an Electric Vehicle, or installing energy-efficient upgrades like a heat pump hot water heater or double-glazed windows.</span><br><br><span>This information helps us create a personalised No Bill system that meets your specific energy requirements and guarantees 100% electricity savings for seven years.</span><br><br><span>The baseline figure represents your expected energy usage over the next seven years. It's carefully calculated based on your current consumption patterns and any future plans you share with us. This figure ensures you have enough energy to power your home comfortably.</span><br><br><span>On top of your baseline figure, you receive an additional 20% of energy usage at no cost. This is called the Fair Use Cap. It provides you with peace of mind, knowing you have a buffer for unexpected energy needs.</span><br><span>For example, if your average electricity usage is 9000 kWh per year, with the extra 20% Fair Use Cap, you can use up to 10,800kWh per year.</span></p>\n</div>"
+    } ],
+    "tab" : "CONTENT",
+    "expanded" : false,
+    "group_occurrence_meta" : null,
+    "display_width" : null,
+    "type" : "group",
+    "default" : [ {
+      "question" : "How do you calculate my energy usage over the next seven years to guarantee me No Bills and what is the baseline and fair use cap?",
+      "answer" : "<div id=\"content-1-1\" class=\"hhs-accordion-content\" aria-hidden=\"true\">\n<p><span>Our sales consultants will work with you to understand your current and future energy needs. They'll review your past electricity bills and ask about any upcoming changes to your home, like converting gas appliances to electric, getting an Electric Vehicle, or installing energy-efficient upgrades like a heat pump hot water heater or double-glazed windows.</span><br><br><span>This information helps us create a personalised No Bill system that meets your specific energy requirements and guarantees 100% electricity savings for seven years.</span><br><br><span>The baseline figure represents your expected energy usage over the next seven years. It's carefully calculated based on your current consumption patterns and any future plans you share with us. This figure ensures you have enough energy to power your home comfortably.</span><br><br><span>On top of your baseline figure, you receive an additional 20% of energy usage at no cost. This is called the Fair Use Cap. It provides you with peace of mind, knowing you have a buffer for unexpected energy needs.</span><br><span>For example, if your average electricity usage is 9000 kWh per year, with the extra 20% Fair Use Cap, you can use up to 10,800kWh per year.</span></p>\n</div>"
+    }, {
+      "question" : "How do you calculate my energy usage over the next seven years to guarantee me No Bills and what is the baseline and fair use cap?",
+      "answer" : "<div id=\"content-1-1\" class=\"hhs-accordion-content\" aria-hidden=\"true\">\n<p><span>Our sales consultants will work with you to understand your current and future energy needs. They'll review your past electricity bills and ask about any upcoming changes to your home, like converting gas appliances to electric, getting an Electric Vehicle, or installing energy-efficient upgrades like a heat pump hot water heater or double-glazed windows.</span><br><br><span>This information helps us create a personalised No Bill system that meets your specific energy requirements and guarantees 100% electricity savings for seven years.</span><br><br><span>The baseline figure represents your expected energy usage over the next seven years. It's carefully calculated based on your current consumption patterns and any future plans you share with us. This figure ensures you have enough energy to power your home comfortably.</span><br><br><span>On top of your baseline figure, you receive an additional 20% of energy usage at no cost. This is called the Fair Use Cap. It provides you with peace of mind, knowing you have a buffer for unexpected energy needs.</span><br><span>For example, if your average electricity usage is 9000 kWh per year, with the extra 20% Fair Use Cap, you can use up to 10,800kWh per year.</span></p>\n</div>"
+    }, {
+      "question" : "How do you calculate my energy usage over the next seven years to guarantee me No Bills and what is the baseline and fair use cap?",
+      "answer" : "<div id=\"content-1-1\" class=\"hhs-accordion-content\" aria-hidden=\"true\">\n<p><span>Our sales consultants will work with you to understand your current and future energy needs. They'll review your past electricity bills and ask about any upcoming changes to your home, like converting gas appliances to electric, getting an Electric Vehicle, or installing energy-efficient upgrades like a heat pump hot water heater or double-glazed windows.</span><br><br><span>This information helps us create a personalised No Bill system that meets your specific energy requirements and guarantees 100% electricity savings for seven years.</span><br><br><span>The baseline figure represents your expected energy usage over the next seven years. It's carefully calculated based on your current consumption patterns and any future plans you share with us. This figure ensures you have enough energy to power your home comfortably.</span><br><br><span>On top of your baseline figure, you receive an additional 20% of energy usage at no cost. This is called the Fair Use Cap. It provides you with peace of mind, knowing you have a buffer for unexpected energy needs.</span><br><span>For example, if your average electricity usage is 9000 kWh per year, with the extra 20% Fair Use Cap, you can use up to 10,800kWh per year.</span></p>\n</div>"
+    } ]
+  }, {
+    "id" : "68e1c4fa-2f5a-840f-daa9-f17e21fcde79",
+    "name" : "bg_color",
+    "label" : "Background Color",
+    "required" : false,
+    "locked" : false,
+    "display_width" : null,
+    "type" : "color",
+    "default" : {
+      "color" : "#F7F7F7",
+      "opacity" : 100
+    }
+  }, {
+    "id" : "59ca9376-c5ad-01ee-3232-d1905a80c0ef",
+    "name" : "bg_hover_color",
+    "label" : "Background Hover Color",
+    "required" : false,
+    "locked" : false,
+    "display_width" : null,
+    "type" : "color",
+    "default" : {
+      "color" : "#FAFAFA",
+      "opacity" : 100
+    }
+  } ],
+  "tab" : "CONTENT",
+  "expanded" : false,
+  "group_occurrence_meta" : null,
+  "display_width" : null,
+  "type" : "group",
+  "default" : {
+    "faq" : [ {
+      "question" : "How do you calculate my energy usage over the next seven years to guarantee me No Bills and what is the baseline and fair use cap?",
+      "answer" : "<div id=\"content-1-1\" class=\"hhs-accordion-content\" aria-hidden=\"true\">\n<p><span>Our sales consultants will work with you to understand your current and future energy needs. They'll review your past electricity bills and ask about any upcoming changes to your home, like converting gas appliances to electric, getting an Electric Vehicle, or installing energy-efficient upgrades like a heat pump hot water heater or double-glazed windows.</span><br><br><span>This information helps us create a personalised No Bill system that meets your specific energy requirements and guarantees 100% electricity savings for seven years.</span><br><br><span>The baseline figure represents your expected energy usage over the next seven years. It's carefully calculated based on your current consumption patterns and any future plans you share with us. This figure ensures you have enough energy to power your home comfortably.</span><br><br><span>On top of your baseline figure, you receive an additional 20% of energy usage at no cost. This is called the Fair Use Cap. It provides you with peace of mind, knowing you have a buffer for unexpected energy needs.</span><br><span>For example, if your average electricity usage is 9000 kWh per year, with the extra 20% Fair Use Cap, you can use up to 10,800kWh per year.</span></p>\n</div>"
+    }, {
+      "question" : "How do you calculate my energy usage over the next seven years to guarantee me No Bills and what is the baseline and fair use cap?",
+      "answer" : "<div id=\"content-1-1\" class=\"hhs-accordion-content\" aria-hidden=\"true\">\n<p><span>Our sales consultants will work with you to understand your current and future energy needs. They'll review your past electricity bills and ask about any upcoming changes to your home, like converting gas appliances to electric, getting an Electric Vehicle, or installing energy-efficient upgrades like a heat pump hot water heater or double-glazed windows.</span><br><br><span>This information helps us create a personalised No Bill system that meets your specific energy requirements and guarantees 100% electricity savings for seven years.</span><br><br><span>The baseline figure represents your expected energy usage over the next seven years. It's carefully calculated based on your current consumption patterns and any future plans you share with us. This figure ensures you have enough energy to power your home comfortably.</span><br><br><span>On top of your baseline figure, you receive an additional 20% of energy usage at no cost. This is called the Fair Use Cap. It provides you with peace of mind, knowing you have a buffer for unexpected energy needs.</span><br><span>For example, if your average electricity usage is 9000 kWh per year, with the extra 20% Fair Use Cap, you can use up to 10,800kWh per year.</span></p>\n</div>"
+    }, {
+      "question" : "How do you calculate my energy usage over the next seven years to guarantee me No Bills and what is the baseline and fair use cap?",
+      "answer" : "<div id=\"content-1-1\" class=\"hhs-accordion-content\" aria-hidden=\"true\">\n<p><span>Our sales consultants will work with you to understand your current and future energy needs. They'll review your past electricity bills and ask about any upcoming changes to your home, like converting gas appliances to electric, getting an Electric Vehicle, or installing energy-efficient upgrades like a heat pump hot water heater or double-glazed windows.</span><br><br><span>This information helps us create a personalised No Bill system that meets your specific energy requirements and guarantees 100% electricity savings for seven years.</span><br><br><span>The baseline figure represents your expected energy usage over the next seven years. It's carefully calculated based on your current consumption patterns and any future plans you share with us. This figure ensures you have enough energy to power your home comfortably.</span><br><br><span>On top of your baseline figure, you receive an additional 20% of energy usage at no cost. This is called the Fair Use Cap. It provides you with peace of mind, knowing you have a buffer for unexpected energy needs.</span><br><span>For example, if your average electricity usage is 9000 kWh per year, with the extra 20% Fair Use Cap, you can use up to 10,800kWh per year.</span></p>\n</div>"
+    } ],
+    "bg_color" : {
+      "color" : "#F7F7F7",
+      "opacity" : 100
+    },
+    "bg_hover_color" : {
+      "color" : "#FAFAFA",
+      "opacity" : 100
+    }
+  }
+}, {
+  "id" : "33b5fb92-72f5-b489-98e9-2722f4d865bf",
+  "name" : "section",
+  "label" : "Section:",
+  "required" : false,
+  "locked" : false,
+  "children" : [ {
+    "id" : "9b60d909-d360-401d-86fa-34e2115f6db1",
+    "name" : "overlap_section",
+    "label" : "Overlap the section above",
+    "required" : false,
+    "locked" : false,
+    "display" : "checkbox",
+    "display_width" : null,
+    "type" : "boolean",
+    "default" : false
+  }, {
+    "id" : "150509df-1b44-b489-fe2a-4ee65c4aa9dc",
+    "name" : "bg_color",
+    "label" : "Background Color",
+    "required" : true,
+    "locked" : false,
+    "display_width" : null,
+    "type" : "color",
+    "default" : {
+      "color" : "#FFFFFF",
+      "opacity" : 100
+    }
+  }, {
+    "id" : "18e4a718-54fd-a264-9830-84a3edbc9520",
+    "name" : "spacing",
+    "label" : "Spacing",
+    "required" : false,
+    "locked" : false,
+    "children" : [ {
+      "id" : "91141cf7-39d4-5b61-b9ec-741bfa39bfe9",
+      "name" : "top",
+      "label" : "Top (Desktop)",
+      "required" : false,
+      "locked" : false,
+      "display" : "slider",
+      "min" : 0,
+      "max" : 500,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 0
+    }, {
+      "id" : "0c1623e9-47c6-0f6c-da4c-74c10ddaa84b",
+      "name" : "bottom",
+      "label" : "Bottom (Desktop)",
+      "required" : false,
+      "locked" : false,
+      "display" : "slider",
+      "min" : 0,
+      "max" : 500,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 250
+    }, {
+      "id" : "7fef51ec-2b24-4695-8c05-85bb26e872c1",
+      "name" : "top_sm",
+      "label" : "Top (Mobile)",
+      "required" : false,
+      "locked" : false,
+      "display" : "slider",
+      "min" : 0,
+      "max" : 500,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 0
+    }, {
+      "id" : "ac8f9d13-a0ec-bf39-2e00-ea13e8982079",
+      "name" : "bottom_sm",
+      "label" : "Bottom (Mobile)",
+      "required" : false,
+      "locked" : false,
+      "display" : "slider",
+      "min" : 0,
+      "max" : 500,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 120
+    } ],
+    "tab" : "CONTENT",
+    "expanded" : false,
+    "group_occurrence_meta" : null,
+    "display_width" : null,
+    "type" : "group",
+    "default" : {
+      "top" : 0,
+      "bottom" : 250,
+      "top_sm" : 0,
+      "bottom_sm" : 120
+    }
+  }, {
+    "id" : "b86e7b01-1952-9450-3570-c219dc2c3590",
+    "name" : "round_corners",
+    "label" : "Round Corners",
+    "required" : false,
+    "locked" : false,
+    "children" : [ {
+      "id" : "2c8512e1-d1c7-31a1-6358-5ef852d6bc92",
+      "name" : "top_corners",
+      "label" : "Top Corners (Desktop)",
+      "required" : true,
+      "locked" : false,
+      "display" : "slider",
+      "min" : 0,
+      "max" : 100,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 0
+    }, {
+      "id" : "8c03a073-b773-730b-17f8-daeb40929359",
+      "name" : "bottom_corners",
+      "label" : "Bottom Corners (Desktop)",
+      "required" : true,
+      "locked" : false,
+      "display" : "slider",
+      "min" : 0,
+      "max" : 100,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 0
+    }, {
+      "id" : "c088a32f-6378-3238-d41d-28bdf8d2d5cd",
+      "name" : "top_corners_sm",
+      "label" : "Top Corners (Mobile)",
+      "required" : true,
+      "locked" : false,
+      "display" : "slider",
+      "min" : 0,
+      "max" : 100,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 0
+    }, {
+      "id" : "f8597850-3a8d-1df0-3f43-39b8d47354fd",
+      "name" : "bottom_corners_sm",
+      "label" : "Bottom Corners (Mobile)",
+      "required" : true,
+      "locked" : false,
+      "display" : "slider",
+      "min" : 0,
+      "max" : 100,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 0
+    } ],
+    "tab" : "CONTENT",
+    "expanded" : false,
+    "group_occurrence_meta" : null,
+    "display_width" : null,
+    "type" : "group",
+    "default" : {
+      "top_corners" : 0,
+      "bottom_corners" : 0,
+      "top_corners_sm" : 0,
+      "bottom_corners_sm" : 0
+    }
+  } ],
+  "tab" : "CONTENT",
+  "expanded" : false,
+  "group_occurrence_meta" : null,
+  "display_width" : null,
+  "type" : "group",
+  "default" : {
+    "overlap_section" : false,
+    "bg_color" : {
+      "color" : "#FFFFFF",
+      "opacity" : 100
+    },
+    "spacing" : {
+      "top" : 0,
+      "bottom" : 250,
+      "top_sm" : 0,
+      "bottom_sm" : 120
+    },
+    "round_corners" : {
+      "top_corners" : 0,
+      "bottom_corners" : 0,
+      "top_corners_sm" : 0,
+      "bottom_corners_sm" : 0
+    }
+  }
+} ]

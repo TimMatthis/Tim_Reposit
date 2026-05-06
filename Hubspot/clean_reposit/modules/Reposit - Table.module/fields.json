@@ -1,0 +1,824 @@
+[ {
+  "id" : "ce24acd8-8e08-478f-2a7d-f06f7343a679",
+  "name" : "col_1",
+  "label" : "Heading:",
+  "required" : false,
+  "locked" : false,
+  "children" : [ {
+    "id" : "338f5692-593b-c49e-05ca-d843cbdc0446",
+    "name" : "width",
+    "label" : "Width Ratio",
+    "required" : false,
+    "locked" : false,
+    "display" : "slider",
+    "min" : 0,
+    "max" : 100,
+    "step" : 1,
+    "suffix" : "%",
+    "display_width" : null,
+    "type" : "number"
+  }, {
+    "id" : "78ab6ed3-11d2-80c5-d3ce-9301a08b49a3",
+    "name" : "eyebrow",
+    "label" : "Eyebrow Heading",
+    "required" : false,
+    "locked" : false,
+    "children" : [ {
+      "id" : "cea9b1f8-7ca9-b81a-cf8b-15f8dc8f5e6e",
+      "name" : "display_as",
+      "label" : "Display as",
+      "required" : true,
+      "locked" : false,
+      "display" : "select",
+      "choices" : [ [ "h1", "H1" ], [ "h2", "H2" ], [ "h3", "H3" ], [ "h4", "H4" ], [ "h5", "H5" ], [ "h6", "H6" ], [ "p", "Paragraph" ] ],
+      "multiple" : false,
+      "reordering_enabled" : true,
+      "preset" : null,
+      "display_width" : null,
+      "type" : "choice",
+      "default" : "p"
+    }, {
+      "id" : "75089563-43f1-0a8e-cb29-529a739458ae",
+      "name" : "text",
+      "label" : "Text",
+      "required" : false,
+      "locked" : false,
+      "allow_new_line" : false,
+      "display_width" : null,
+      "type" : "text",
+      "default" : "Confidently Compare Us"
+    }, {
+      "id" : "7fa7f2b8-e23a-546a-af0a-e54f477c7595",
+      "name" : "text_color",
+      "label" : "Text Color",
+      "required" : false,
+      "locked" : false,
+      "display_width" : null,
+      "type" : "color",
+      "default" : {
+        "color" : "#4698CB",
+        "opacity" : 100
+      }
+    }, {
+      "id" : "6af1f241-797f-eb39-83ba-f33a74bb4d39",
+      "name" : "bottom_space",
+      "label" : "Bottom Space",
+      "required" : false,
+      "locked" : false,
+      "display" : "text",
+      "min" : 0,
+      "max" : 100,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 12
+    } ],
+    "tab" : "CONTENT",
+    "expanded" : false,
+    "group_occurrence_meta" : null,
+    "display_width" : null,
+    "type" : "group",
+    "default" : {
+      "display_as" : "p",
+      "text" : "Confidently Compare Us",
+      "text_color" : {
+        "color" : "#4698CB",
+        "opacity" : 100
+      },
+      "bottom_space" : 12
+    }
+  }, {
+    "id" : "1fed1e51-a274-793e-8a6d-d18a6f8a83cd",
+    "name" : "title",
+    "label" : "Title",
+    "required" : false,
+    "locked" : false,
+    "children" : [ {
+      "id" : "cc88456f-a947-51af-9017-7bc774ef8a77",
+      "name" : "display_as",
+      "label" : "Display as",
+      "required" : true,
+      "locked" : false,
+      "display" : "select",
+      "choices" : [ [ "h1", "H1" ], [ "h2", "H2" ], [ "h3", "H3" ], [ "h4", "H4" ], [ "h5", "H5" ], [ "h6", "H6" ], [ "p", "Paragraph" ] ],
+      "multiple" : false,
+      "reordering_enabled" : true,
+      "preset" : null,
+      "display_width" : null,
+      "type" : "choice",
+      "default" : "h2"
+    }, {
+      "id" : "1c6813b5-de8d-32be-7d98-535037772966",
+      "name" : "text",
+      "label" : "Text",
+      "required" : false,
+      "locked" : false,
+      "allow_new_line" : false,
+      "display_width" : null,
+      "type" : "text",
+      "default" : ""
+    }, {
+      "id" : "ca242a9e-0a07-54b2-3b35-9602065392bd",
+      "name" : "text_color",
+      "label" : "Text Color",
+      "required" : false,
+      "locked" : false,
+      "display_width" : null,
+      "type" : "color",
+      "default" : {
+        "color" : null,
+        "opacity" : 100
+      }
+    }, {
+      "id" : "d9e5ea94-4571-d96c-22a8-cf4e5e20ace3",
+      "name" : "highlight_text",
+      "label" : "Highlighted Text",
+      "required" : false,
+      "locked" : false,
+      "allow_new_line" : false,
+      "display_width" : null,
+      "type" : "text",
+      "default" : ""
+    }, {
+      "id" : "2baaeaee-f13e-d770-1da0-b1e9ba098c81",
+      "name" : "highlight_color",
+      "label" : "Highlight Color",
+      "required" : false,
+      "locked" : false,
+      "display_width" : null,
+      "type" : "color",
+      "default" : {
+        "color" : "#4698CB",
+        "opacity" : 100
+      }
+    }, {
+      "id" : "f52918ab-ff3a-0de1-3c67-61df4ed7e92f",
+      "name" : "bottom_space",
+      "label" : "Bottom Space",
+      "required" : false,
+      "locked" : false,
+      "display" : "text",
+      "min" : 0,
+      "max" : 100,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 48
+    } ],
+    "tab" : "CONTENT",
+    "expanded" : false,
+    "group_occurrence_meta" : null,
+    "display_width" : null,
+    "type" : "group",
+    "default" : {
+      "display_as" : "h2",
+      "text" : "",
+      "text_color" : {
+        "color" : null,
+        "opacity" : 100
+      },
+      "highlight_text" : "",
+      "highlight_color" : {
+        "color" : "#4698CB",
+        "opacity" : 100
+      },
+      "bottom_space" : 48
+    }
+  }, {
+    "id" : "abb7ac37-43a8-b4cd-02ca-6d4e5b824b2f",
+    "name" : "text_area",
+    "label" : "Text Area",
+    "required" : false,
+    "locked" : false,
+    "children" : [ {
+      "id" : "6d28c089-dee6-ad2f-b09a-494686be585f",
+      "name" : "content",
+      "label" : "Content",
+      "required" : false,
+      "locked" : false,
+      "display_width" : null,
+      "type" : "richtext",
+      "default" : "<h2>Thousands of <span style=\"color: #4698cb;\">Australian Homes</span> Have Reposit</h2>"
+    }, {
+      "id" : "b3a1260b-79a2-3c7a-a36a-e9e13031e08f",
+      "name" : "bottom_space",
+      "label" : "Bottom Space",
+      "required" : false,
+      "locked" : false,
+      "display" : "text",
+      "min" : 0,
+      "max" : 100,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 70
+    } ],
+    "tab" : "CONTENT",
+    "expanded" : false,
+    "group_occurrence_meta" : null,
+    "display_width" : null,
+    "type" : "group",
+    "default" : {
+      "content" : "<h2>Thousands of <span style=\"color: #4698cb;\">Australian Homes</span> Have Reposit</h2>",
+      "bottom_space" : 70
+    }
+  }, {
+    "id" : "252952b9-f977-d88c-552a-21953f362eec",
+    "name" : "button",
+    "label" : "Button",
+    "required" : false,
+    "locked" : false,
+    "occurrence" : {
+      "min" : 0,
+      "max" : 4,
+      "sorting_label_field" : null,
+      "default" : null
+    },
+    "children" : [ {
+      "id" : "789196b7-4901-fca2-78ba-0b7603b812eb",
+      "name" : "use_cta",
+      "label" : "Use CTA",
+      "required" : false,
+      "locked" : false,
+      "display" : "toggle",
+      "display_width" : null,
+      "type" : "boolean",
+      "default" : false
+    }, {
+      "id" : "a5e9fa00-41aa-cf80-61b5-66be91fee67a",
+      "name" : "guid",
+      "label" : "CTA",
+      "required" : false,
+      "locked" : false,
+      "visibility" : {
+        "controlling_field" : null,
+        "controlling_field_path" : "col_1.button.use_cta",
+        "controlling_value_regex" : "true",
+        "property" : null,
+        "operator" : "EQUAL",
+        "access" : null
+      },
+      "display_width" : null,
+      "type" : "cta"
+    }, {
+      "id" : "05f896af-3a8f-5168-f34e-80c19f13fac0",
+      "name" : "style_option",
+      "label" : "Style Option",
+      "required" : true,
+      "locked" : false,
+      "visibility" : {
+        "controlling_field" : null,
+        "controlling_field_path" : "col_1.button.use_cta",
+        "controlling_value_regex" : "false",
+        "property" : null,
+        "operator" : "EQUAL",
+        "access" : null
+      },
+      "display" : "select",
+      "choices" : [ [ "cta-primary", "Primary" ], [ "cta-secondary", "Secondary" ], [ "cta-tertiary", "Tertiary" ] ],
+      "multiple" : false,
+      "reordering_enabled" : true,
+      "preset" : null,
+      "display_width" : null,
+      "type" : "choice",
+      "default" : "cta-primary"
+    }, {
+      "id" : "5694363d-f2f2-a7cb-6908-903c7d47a411",
+      "name" : "text",
+      "label" : "Text",
+      "required" : false,
+      "locked" : false,
+      "visibility" : {
+        "controlling_field" : null,
+        "controlling_field_path" : "col_1.button.use_cta",
+        "controlling_value_regex" : "false",
+        "property" : null,
+        "operator" : "EQUAL",
+        "access" : null
+      },
+      "allow_new_line" : false,
+      "display_width" : null,
+      "type" : "text"
+    }, {
+      "id" : "a8187136-b20c-d4d4-bd50-c015d869254f",
+      "name" : "use_arrow_icon",
+      "label" : "Use Arrow Icon",
+      "required" : false,
+      "locked" : false,
+      "visibility" : {
+        "controlling_field" : null,
+        "controlling_field_path" : "col_1.button.use_cta",
+        "controlling_value_regex" : "false",
+        "property" : null,
+        "operator" : "EQUAL",
+        "access" : null
+      },
+      "display" : "checkbox",
+      "display_width" : null,
+      "type" : "boolean",
+      "default" : true
+    }, {
+      "id" : "28a304cd-266e-a045-151f-4beb44861e3b",
+      "name" : "url",
+      "label" : "URL",
+      "required" : false,
+      "locked" : false,
+      "visibility" : {
+        "controlling_field" : null,
+        "controlling_field_path" : "col_1.button.use_cta",
+        "controlling_value_regex" : "false",
+        "property" : null,
+        "operator" : "EQUAL",
+        "access" : null
+      },
+      "supported_types" : [ "EXTERNAL", "CONTENT", "FILE", "EMAIL_ADDRESS", "BLOG", "PHONE_NUMBER" ],
+      "display_width" : null,
+      "type" : "url",
+      "default" : {
+        "content_id" : null,
+        "href" : "",
+        "type" : "EXTERNAL"
+      }
+    }, {
+      "id" : "7c9a24af-c31e-095c-4de2-f6b1a1bf62b5",
+      "name" : "open_link_in_new_tab",
+      "label" : "Open link in new tab",
+      "required" : false,
+      "locked" : false,
+      "visibility" : {
+        "controlling_field" : null,
+        "controlling_field_path" : "col_1.button.use_cta",
+        "controlling_value_regex" : "false",
+        "property" : null,
+        "operator" : "EQUAL",
+        "access" : null
+      },
+      "display" : "toggle",
+      "display_width" : null,
+      "type" : "boolean",
+      "default" : false
+    } ],
+    "tab" : "CONTENT",
+    "expanded" : false,
+    "group_occurrence_meta" : null,
+    "display_width" : null,
+    "type" : "group",
+    "default" : [ ]
+  } ],
+  "tab" : "CONTENT",
+  "expanded" : false,
+  "group_occurrence_meta" : null,
+  "display_width" : null,
+  "type" : "group",
+  "default" : {
+    "eyebrow" : {
+      "display_as" : "p",
+      "text" : "Confidently Compare Us",
+      "text_color" : {
+        "color" : "#4698CB",
+        "opacity" : 100
+      },
+      "bottom_space" : 12
+    },
+    "title" : {
+      "display_as" : "h2",
+      "text" : "",
+      "text_color" : {
+        "color" : null,
+        "opacity" : 100
+      },
+      "highlight_text" : "",
+      "highlight_color" : {
+        "color" : "#4698CB",
+        "opacity" : 100
+      },
+      "bottom_space" : 48
+    },
+    "text_area" : {
+      "content" : "<h2>Thousands of <span style=\"color: #4698cb;\">Australian Homes</span> Have Reposit</h2>",
+      "bottom_space" : 70
+    },
+    "button" : [ ]
+  }
+}, {
+  "id" : "ba2c0761-cfc7-c02c-7f91-db1842086796",
+  "name" : "style_opts",
+  "label" : "Style",
+  "required" : false,
+  "locked" : false,
+  "children" : [ {
+    "id" : "e9793abf-01a0-691c-3a29-cd968e456990",
+    "name" : "test",
+    "label" : "Test:",
+    "inline_help_text" : "This is currently a test. Please disregard.",
+    "required" : false,
+    "locked" : false,
+    "display" : "checkbox",
+    "display_width" : null,
+    "type" : "boolean",
+    "default" : false
+  } ],
+  "tab" : "STYLE",
+  "expanded" : false,
+  "group_occurrence_meta" : null,
+  "display_width" : null,
+  "type" : "group",
+  "default" : {
+    "test" : false
+  }
+}, {
+  "id" : "f34c373e-f21a-20e0-c731-eba79f6b27bd",
+  "name" : "table",
+  "label" : "Table:",
+  "required" : false,
+  "locked" : false,
+  "children" : [ {
+    "id" : "8f4f3221-dd72-87e8-6756-1d0622543a65",
+    "name" : "table_headings",
+    "label" : "Table Headings",
+    "required" : false,
+    "locked" : false,
+    "occurrence" : {
+      "min" : null,
+      "max" : null,
+      "sorting_label_field" : null,
+      "default" : null
+    },
+    "children" : [ {
+      "id" : "17bc7d12-6b59-9586-e4bf-69ac2b59ca33",
+      "name" : "title",
+      "label" : "Title",
+      "required" : false,
+      "locked" : false,
+      "allow_new_line" : false,
+      "display_width" : null,
+      "type" : "text"
+    }, {
+      "id" : "4cad1dc8-c79f-7fe0-1f98-bc2eda5ce39e",
+      "name" : "add_img",
+      "label" : "Add an image",
+      "required" : false,
+      "locked" : false,
+      "display" : "checkbox",
+      "display_width" : null,
+      "type" : "boolean",
+      "default" : false
+    }, {
+      "id" : "21da2bd7-66b2-f4ba-74c8-742581c6d99b",
+      "name" : "img",
+      "label" : "Image",
+      "required" : false,
+      "locked" : false,
+      "visibility" : {
+        "controlling_field" : null,
+        "controlling_field_path" : "table.table_headings.add_img",
+        "controlling_value_regex" : "true",
+        "property" : null,
+        "operator" : "EQUAL",
+        "access" : null
+      },
+      "responsive" : true,
+      "resizable" : true,
+      "show_loading" : false,
+      "display_width" : null,
+      "type" : "image",
+      "default" : {
+        "size_type" : "auto",
+        "src" : "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/s_icon.png",
+        "alt" : "s_icon",
+        "loading" : "lazy",
+        "width" : 28,
+        "height" : 28,
+        "max_width" : 28,
+        "max_height" : 28
+      }
+    } ],
+    "tab" : "CONTENT",
+    "expanded" : false,
+    "group_occurrence_meta" : null,
+    "display_width" : null,
+    "type" : "group",
+    "default" : [ ]
+  }, {
+    "id" : "58c0122f-4298-b779-11c5-4863f829576a",
+    "name" : "table_rows",
+    "label" : "Table Rows",
+    "required" : false,
+    "locked" : false,
+    "occurrence" : {
+      "min" : null,
+      "max" : null,
+      "sorting_label_field" : null,
+      "default" : null
+    },
+    "children" : [ {
+      "id" : "42cbccbe-1398-3c7d-da25-e58221bdff6c",
+      "name" : "table_data",
+      "label" : "Table Data",
+      "required" : false,
+      "locked" : false,
+      "occurrence" : {
+        "min" : null,
+        "max" : null,
+        "sorting_label_field" : "a19d7ddb-f7f1-1335-860b-fe59042a1f72",
+        "default" : null
+      },
+      "children" : [ {
+        "id" : "a5f34c83-11e2-3502-c851-9d3454535041",
+        "name" : "data_type",
+        "label" : "Data Content Type",
+        "required" : true,
+        "locked" : false,
+        "display" : "select",
+        "choices" : [ [ "text", "Plain Text" ], [ "img", "Image" ], [ "none", "None" ] ],
+        "multiple" : false,
+        "reordering_enabled" : true,
+        "preset" : null,
+        "display_width" : null,
+        "type" : "choice",
+        "default" : "text"
+      }, {
+        "id" : "a19d7ddb-f7f1-1335-860b-fe59042a1f72",
+        "name" : "text",
+        "label" : "Text",
+        "required" : false,
+        "locked" : false,
+        "visibility" : {
+          "controlling_field" : null,
+          "controlling_field_path" : "table.table_rows.table_data.data_type",
+          "controlling_value_regex" : "text",
+          "property" : null,
+          "operator" : "EQUAL",
+          "access" : null
+        },
+        "allow_new_line" : false,
+        "display_width" : null,
+        "type" : "text"
+      }, {
+        "id" : "561b9412-f600-7517-0298-58773bdebfff",
+        "name" : "img",
+        "label" : "Image",
+        "required" : false,
+        "locked" : false,
+        "visibility" : {
+          "controlling_field" : null,
+          "controlling_field_path" : "table.table_rows.table_data.data_type",
+          "controlling_value_regex" : "img",
+          "property" : null,
+          "operator" : "EQUAL",
+          "access" : null
+        },
+        "responsive" : true,
+        "resizable" : true,
+        "show_loading" : false,
+        "display_width" : null,
+        "type" : "image",
+        "default" : {
+          "size_type" : "auto",
+          "src" : "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/check.png",
+          "alt" : "check",
+          "loading" : "lazy",
+          "width" : 32,
+          "height" : 32,
+          "max_width" : 32,
+          "max_height" : 32
+        }
+      } ],
+      "tab" : "CONTENT",
+      "expanded" : false,
+      "group_occurrence_meta" : null,
+      "display_width" : null,
+      "type" : "group",
+      "default" : [ ]
+    } ],
+    "tab" : "CONTENT",
+    "expanded" : false,
+    "group_occurrence_meta" : null,
+    "display_width" : null,
+    "type" : "group",
+    "default" : [ ]
+  }, {
+    "id" : "8689a3f0-efec-399a-23b0-2bc4465cdc5c",
+    "name" : "footnote",
+    "label" : "Footnote",
+    "required" : false,
+    "locked" : false,
+    "display_width" : null,
+    "type" : "richtext",
+    "default" : "Additional or ongoing costs: <strong>None</strong><br>Joining, exit or early termination fees: <strong>None</strong><br><br><strong>References:</strong><br>*Others: Tesla, Sonnen, ShineHub, Social Energy, Evergen, Local Solar Installer.<br>*All information correct as of 21-March-2022.<br>*\"Electricity bills” means the periodic statement of account from your electricity retailer.<br>*Fears proposal to charge households with solar panels to export electricity will kill demand for solar energy"
+  } ],
+  "tab" : "CONTENT",
+  "expanded" : false,
+  "group_occurrence_meta" : null,
+  "display_width" : null,
+  "type" : "group",
+  "default" : {
+    "table_headings" : [ ],
+    "table_rows" : [ ],
+    "footnote" : "Additional or ongoing costs: <strong>None</strong><br>Joining, exit or early termination fees: <strong>None</strong><br><br><strong>References:</strong><br>*Others: Tesla, Sonnen, ShineHub, Social Energy, Evergen, Local Solar Installer.<br>*All information correct as of 21-March-2022.<br>*\"Electricity bills” means the periodic statement of account from your electricity retailer.<br>*Fears proposal to charge households with solar panels to export electricity will kill demand for solar energy"
+  }
+}, {
+  "id" : "33b5fb92-72f5-b489-98e9-2722f4d865bf",
+  "name" : "section",
+  "label" : "Section:",
+  "required" : false,
+  "locked" : false,
+  "children" : [ {
+    "id" : "bc6e6d1a-1cf7-5e37-a5ae-d7a1bf29dc14",
+    "name" : "overlap_section",
+    "label" : "Overlap the section above",
+    "required" : false,
+    "locked" : false,
+    "display" : "checkbox",
+    "display_width" : null,
+    "type" : "boolean",
+    "default" : false
+  }, {
+    "id" : "150509df-1b44-b489-fe2a-4ee65c4aa9dc",
+    "name" : "bg_color",
+    "label" : "Background Color",
+    "required" : true,
+    "locked" : false,
+    "display_width" : null,
+    "type" : "color",
+    "default" : {
+      "color" : "#FFFFFF",
+      "opacity" : 100
+    }
+  }, {
+    "id" : "18e4a718-54fd-a264-9830-84a3edbc9520",
+    "name" : "spacing",
+    "label" : "Spacing",
+    "required" : false,
+    "locked" : false,
+    "children" : [ {
+      "id" : "91141cf7-39d4-5b61-b9ec-741bfa39bfe9",
+      "name" : "top",
+      "label" : "Top (Desktop)",
+      "required" : false,
+      "locked" : false,
+      "display" : "slider",
+      "min" : 0,
+      "max" : 500,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 150
+    }, {
+      "id" : "0c1623e9-47c6-0f6c-da4c-74c10ddaa84b",
+      "name" : "bottom",
+      "label" : "Bottom (Desktop)",
+      "required" : false,
+      "locked" : false,
+      "display" : "slider",
+      "min" : 0,
+      "max" : 500,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 250
+    }, {
+      "id" : "7fef51ec-2b24-4695-8c05-85bb26e872c1",
+      "name" : "top_sm",
+      "label" : "Top (Mobile)",
+      "required" : false,
+      "locked" : false,
+      "display" : "slider",
+      "min" : 0,
+      "max" : 500,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 80
+    }, {
+      "id" : "ac8f9d13-a0ec-bf39-2e00-ea13e8982079",
+      "name" : "bottom_sm",
+      "label" : "Bottom (Mobile)",
+      "required" : false,
+      "locked" : false,
+      "display" : "slider",
+      "min" : 0,
+      "max" : 500,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 120
+    } ],
+    "tab" : "CONTENT",
+    "expanded" : false,
+    "group_occurrence_meta" : null,
+    "display_width" : null,
+    "type" : "group",
+    "default" : {
+      "top" : 150,
+      "bottom" : 250,
+      "top_sm" : 80,
+      "bottom_sm" : 120
+    }
+  }, {
+    "id" : "b86e7b01-1952-9450-3570-c219dc2c3590",
+    "name" : "round_corners",
+    "label" : "Round Corners",
+    "required" : false,
+    "locked" : false,
+    "children" : [ {
+      "id" : "2c8512e1-d1c7-31a1-6358-5ef852d6bc92",
+      "name" : "top_corners",
+      "label" : "Top Corners (Desktop)",
+      "required" : true,
+      "locked" : false,
+      "display" : "slider",
+      "min" : 0,
+      "max" : 100,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 64
+    }, {
+      "id" : "8c03a073-b773-730b-17f8-daeb40929359",
+      "name" : "bottom_corners",
+      "label" : "Bottom Corners (Desktop)",
+      "required" : true,
+      "locked" : false,
+      "display" : "slider",
+      "min" : 0,
+      "max" : 100,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 0
+    }, {
+      "id" : "c088a32f-6378-3238-d41d-28bdf8d2d5cd",
+      "name" : "top_corners_sm",
+      "label" : "Top Corners (Mobile)",
+      "required" : true,
+      "locked" : false,
+      "display" : "slider",
+      "min" : 0,
+      "max" : 100,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 42
+    }, {
+      "id" : "f8597850-3a8d-1df0-3f43-39b8d47354fd",
+      "name" : "bottom_corners_sm",
+      "label" : "Bottom Corners (Mobile)",
+      "required" : true,
+      "locked" : false,
+      "display" : "slider",
+      "min" : 0,
+      "max" : 100,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 0
+    } ],
+    "tab" : "CONTENT",
+    "expanded" : false,
+    "group_occurrence_meta" : null,
+    "display_width" : null,
+    "type" : "group",
+    "default" : {
+      "top_corners" : 64,
+      "bottom_corners" : 0,
+      "top_corners_sm" : 42,
+      "bottom_corners_sm" : 0
+    }
+  } ],
+  "tab" : "CONTENT",
+  "expanded" : false,
+  "group_occurrence_meta" : null,
+  "display_width" : null,
+  "type" : "group",
+  "default" : {
+    "overlap_section" : false,
+    "bg_color" : {
+      "color" : "#FFFFFF",
+      "opacity" : 100
+    },
+    "spacing" : {
+      "top" : 150,
+      "bottom" : 250,
+      "top_sm" : 80,
+      "bottom_sm" : 120
+    },
+    "round_corners" : {
+      "top_corners" : 64,
+      "bottom_corners" : 0,
+      "top_corners_sm" : 42,
+      "bottom_corners_sm" : 0
+    }
+  }
+} ]

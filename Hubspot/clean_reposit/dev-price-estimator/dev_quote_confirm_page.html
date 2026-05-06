@@ -1,0 +1,584 @@
+<!--
+  templateType: "page"
+  label: "Reposit - System Confirmation"
+  isAvailableForNewContent: true
+-->
+<!--
+  DEVELOPER NOTES - System Confirmation Page
+
+  Path: /confirm
+  Shown after the customer completes SolaX OAuth on dev-customer.repositpower.com.
+
+  Styled to match the wizard overlay in retrofit_draft.html so it feels like a
+  continuous flow even though it is a separate URL.
+
+  DATA SOURCE
+  GET https://dev-customer.repositpower.com/site (with credentials) — returns
+    { uid, solax_email, email, email_source, plant_name, address,
+      battery_capacity_kwh, solar_capacity_kw, inverter_model, system_type }
+  The quote_session cookie is HttpOnly + Domain=.repositpower.com so the
+  browser auto-attaches it.
+
+  EMAIL OVERRIDE
+  The customer can choose to identify with a different email than the SolaX
+  login email. Toggling the override field reveals an input pre-filled with
+  solax_email; submitting with a changed value sends { email_override }
+  in the POST body to /confirm.
+
+  BUTTONS
+  "CONFIRM and GET OFFER" — POST to /confirm (with optional email_override).
+    Backend publishes Pub/Sub message and returns { redirect_url }.
+  "CANCEL" — redirects to HUBSPOT_ERROR_PAGE.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reposit Power - Confirm Your System</title>
+  {{ standard_header_includes }}
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green:        #19c37d;
+      --green-glow:   rgba(25, 195, 125, 0.28);
+      --blue:         #2a6b94;
+      --ink:          #0f172a;
+      --muted:        #374151;
+      --line:         #d7e3f4;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.55;
+      color: var(--ink);
+    }
+
+    /* ── Full-screen wizard chrome (matches wizard-overlay in landing page) ── */
+    .wizard-shell {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      background:
+        url(https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/noise.png),
+        radial-gradient(130% 110% at 18% 24%, #2b78a7 0%, #265f87 42%, #4f5f69 64%, #8c6647 82%, #b27a4b 100%);
+      background-blend-mode: multiply;
+      overflow-y: auto;
+    }
+
+    /* ── Header ── */
+    .wizard-header {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .wizard-back {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 8px;
+      color: rgba(255,255,255,0.85);
+      padding: 7px 14px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .wizard-back:hover { background: rgba(255,255,255,0.2); color: #fff; }
+
+    .wizard-logo-img {
+      width: 132px;
+      height: auto;
+      display: block;
+    }
+
+    /* ── Progress bar ── */
+    .wizard-progress-bar {
+      flex-shrink: 0;
+      padding: 12px 24px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      max-width: 640px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .wizard-prog-step {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .wizard-prog-bar {
+      width: 100%;
+      height: 4px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .wizard-prog-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--green);
+      border-radius: 4px;
+      transition: width 0.6s ease;
+    }
+
+    .wizard-prog-step.is-done  .wizard-prog-fill { width: 100%; }
+    .wizard-prog-step.is-active .wizard-prog-fill { width: 50%; }
+
+    .wizard-prog-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: rgba(255,255,255,0.5);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      transition: color 0.3s;
+    }
+
+    .wizard-prog-step.is-active .wizard-prog-label { color: rgba(255,255,255,0.9); }
+    .wizard-prog-step.is-done   .wizard-prog-label { color: var(--green); }
+
+    /* ── Body / card ── */
+    .wizard-body {
+      flex: 1;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 24px 16px 40px;
+    }
+
+    .wiz-step {
+      width: 100%;
+      max-width: 520px;
+      animation: wizFadeIn 0.3s ease forwards;
+    }
+
+    @keyframes wizFadeIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .wiz-card {
+      background: rgba(255,255,255,0.97);
+      border-radius: 20px;
+      padding: 36px 40px;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.3);
+    }
+
+    .wiz-eyebrow {
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--blue);
+      margin-bottom: 6px;
+    }
+
+    .wiz-title {
+      font-size: clamp(1.4rem, 2.4vw, 1.8rem);
+      font-weight: 900;
+      color: var(--ink);
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+
+    .wiz-body-text {
+      font-size: 0.92rem;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 22px;
+    }
+
+    /* ── System detail rows ── */
+    .detail-block {
+      background: #f6f9fc;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin-bottom: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .detail-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      flex-shrink: 0;
+    }
+
+    .detail-value {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--ink);
+      text-align: right;
+    }
+
+    .detail-divider {
+      border: none;
+      border-top: 1px solid var(--line);
+      margin: 0;
+    }
+
+    /* ── Buttons ── */
+    .wiz-btn-row {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .wiz-btn-primary {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #F68D26 0%, #2a6b94 100%);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: filter 0.2s, transform 0.2s;
+    }
+
+    .wiz-btn-primary:hover {
+      filter: brightness(1.07);
+      transform: translateY(-2px);
+    }
+
+    .wiz-btn-secondary {
+      background: transparent;
+      border: none;
+      color: #6b7280;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: underline;
+      padding: 4px;
+      text-align: center;
+    }
+
+    /* ── Thank-you card (hidden until confirm clicked) ── */
+    .wiz-card--loading {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.16);
+      text-align: center;
+      padding: 60px 40px;
+      color: #fff;
+    }
+
+    .wiz-loading-icon {
+      font-size: 3rem;
+      margin-bottom: 16px;
+      animation: wiz-pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes wiz-pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.6; transform: scale(0.92); }
+    }
+
+    .wiz-card--loading .wiz-title {
+      color: #fff;
+      font-size: 1.5rem;
+      margin-bottom: 12px;
+    }
+
+    .wiz-card--loading .wiz-body-text {
+      color: rgba(255,255,255,0.75);
+      margin-bottom: 0;
+    }
+
+    @media (max-width: 480px) {
+      .wiz-card { padding: 28px 20px; }
+      .detail-row { flex-direction: column; gap: 2px; }
+      .detail-value { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="wizard-shell">
+
+  <!-- Header -->
+  <header class="wizard-header">
+    <a class="wizard-back" href="/dev-price-estimator-get-quote">← Back to overview</a>
+    <div>
+      <img class="wizard-logo-img"
+           src="https://repositpower.com/hubfs/Reposit%20Logo/Reposit_logo_white.svg"
+           alt="Reposit">
+    </div>
+  </header>
+
+  <!-- Progress bar — step 1 done, step 2 active -->
+  <div class="wizard-progress-bar" id="progressBar" role="list" aria-label="Assessment steps">
+    <div class="wizard-prog-step is-done" id="prog1" role="listitem">
+      <div class="wizard-prog-bar"><div class="wizard-prog-fill"></div></div>
+      <span class="wizard-prog-label">Connect</span>
+    </div>
+    <div class="wizard-prog-step is-active" id="prog2" role="listitem">
+      <div class="wizard-prog-bar"><div class="wizard-prog-fill"></div></div>
+      <span class="wizard-prog-label">Verify</span>
+    </div>
+    <div class="wizard-prog-step" id="prog3" role="listitem">
+      <div class="wizard-prog-bar"><div class="wizard-prog-fill"></div></div>
+      <span class="wizard-prog-label">Your offers</span>
+    </div>
+    <div class="wizard-prog-step" id="prog4" role="listitem">
+      <div class="wizard-prog-bar"><div class="wizard-prog-fill"></div></div>
+      <span class="wizard-prog-label">Confirm</span>
+    </div>
+  </div>
+
+  <div class="wizard-body">
+
+    <!-- ── Confirm step ── -->
+    <div class="wiz-step" id="stepConfirm">
+      <div class="wiz-card">
+        <p class="wiz-eyebrow">Step 2 of 4 — Verify your details</p>
+        <h1 class="wiz-title" id="cardTitle">Confirm your details</h1>
+        <p class="wiz-body-text" id="cardBody">
+          We found the following details linked to your account.
+          We'll send your personalised offer to the email below — please confirm before we run your analysis.
+        </p>
+
+        <div class="detail-block" id="detailBlock">
+          <div class="detail-row">
+            <span class="detail-label">Offer sent to</span>
+            <span class="detail-value">
+              <span id="detEmail">—</span>
+              <input type="email" id="emailOverrideInput"
+                     style="display:none;text-align:right;border:none;border-bottom:2px solid var(--blue);font-size:0.92rem;font-weight:600;color:var(--ink);background:transparent;padding:2px 0;width:100%;outline:none;">
+            </span>
+          </div>
+          <hr class="detail-divider">
+          <div class="detail-row">
+            <span class="detail-label">Address</span>
+            <span class="detail-value" id="detAddress">—</span>
+          </div>
+        </div>
+
+        <div style="margin-bottom:16px;">
+          <p id="overrideError" style="display:none;font-size:0.82rem;color:#991b1b;margin:0 0 8px;"></p>
+          <button type="button" id="btnChangeEmail"
+                  style="font-size:0.82rem;color:var(--blue);background:none;border:none;cursor:pointer;text-decoration:underline;padding:0;font-weight:600;">
+            Use a different email
+          </button>
+          <span id="emailEditActions" style="display:none;gap:8px;align-items:center;">
+            <button type="button" id="btnSaveEmail"
+                    style="font-size:0.92rem;color:#fff;background:var(--green);border:none;cursor:pointer;padding:9px 20px;border-radius:8px;font-weight:700;">
+              Save
+            </button>
+            <button type="button" id="btnCancelEmail"
+                    style="font-size:0.92rem;color:#6b7280;background:none;border:none;cursor:pointer;text-decoration:underline;padding:0;font-weight:600;">
+              Cancel
+            </button>
+          </span>
+        </div>
+
+        <div class="wiz-btn-row">
+          <button type="button" class="wiz-btn-primary" id="btnConfirm">CONFIRM and GET OFFER</button>
+          <button type="button" class="wiz-btn-secondary" id="btnNotMe">This isn't me</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Processing step (shown after confirm) ── -->
+    <div class="wiz-step" id="stepProcessing" style="display:none;">
+      <div class="wiz-card wiz-card--loading">
+        <div class="wiz-loading-icon">⚡</div>
+        <h2 class="wiz-title">Building your personalised offer…</h2>
+        <p class="wiz-body-text">
+          We're analysing your energy data now.<br>
+          This usually takes around 10–15 minutes.<br><br>
+          We'll email you when your personalised quote is ready.<br><br>
+          While you wait, <a href="https://repositpower.com/about-us"
+            style="color:rgba(255,255,255,0.9);font-weight:700;"
+            target="_blank" rel="noopener">learn more about Reposit →</a>
+        </p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{{ standard_footer_includes }}
+
+<script>
+  (function () {
+    var API_BASE   = 'https://dev-customer.repositpower.com';
+    var ERROR_PAGE = 'https://info.repositpower.com/dev-price-estimator-confirm';
+    var EMAIL_RE   = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    function setText(id, value) {
+      var el = document.getElementById(id);
+      if (el) el.textContent = value || '—';
+    }
+
+    var siteData = null;
+
+    function showNotFound(message) {
+      setText('cardTitle', "We couldn't find your system details");
+      setText(
+        'cardBody',
+        message || "Please try again, or contact your battery provider to ensure your account is set up correctly."
+      );
+      document.getElementById('detailBlock').style.display = 'none';
+      document.getElementById('btnChangeEmail').style.display = 'none';
+      document.getElementById('btnConfirm').style.display = 'none';
+      var notMe = document.getElementById('btnNotMe');
+      notMe.textContent = 'Try again';
+      notMe.style.textDecoration = 'none';
+      notMe.onclick = function () { window.location.href = '/dev-price-estimator-get-quote'; };
+    }
+
+    // ── Fetch /site to populate the page ──
+    fetch(API_BASE + '/site', { credentials: 'include' })
+      .then(function (resp) {
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        return resp.json();
+      })
+      .then(function (data) {
+        siteData = data;
+        var email = data.email || data.solax_email || '';
+        setText('detEmail', email || 'Unknown');
+        setText('detAddress', data.address || 'Unknown');
+
+        var input = document.getElementById('emailOverrideInput');
+        if (input && email) input.value = email;
+      })
+      .catch(function () { showNotFound(); });
+
+    // ── Email override toggle ──
+    var btnChangeEmail   = document.getElementById('btnChangeEmail');
+    var emailEditActions = document.getElementById('emailEditActions');
+    var btnSaveEmail     = document.getElementById('btnSaveEmail');
+    var btnCancelEmail   = document.getElementById('btnCancelEmail');
+    var detEmailSpan     = document.getElementById('detEmail');
+    var overrideInput    = document.getElementById('emailOverrideInput');
+    var overrideError    = document.getElementById('overrideError');
+    var savedOverride    = '';
+
+    function openEmailEdit() {
+      detEmailSpan.style.display = 'none';
+      overrideInput.style.display = '';
+      btnChangeEmail.style.display = 'none';
+      emailEditActions.style.display = 'inline-flex';
+      overrideInput.focus();
+    }
+
+    function closeEmailEdit() {
+      overrideInput.style.display = 'none';
+      detEmailSpan.style.display = '';
+      emailEditActions.style.display = 'none';
+      btnChangeEmail.style.display = '';
+      if (overrideError) overrideError.style.display = 'none';
+    }
+
+    btnChangeEmail.addEventListener('click', openEmailEdit);
+
+    btnSaveEmail.addEventListener('click', function () {
+      var v = (overrideInput.value || '').trim();
+      if (!v || !EMAIL_RE.test(v)) {
+        overrideError.textContent = 'Please enter a valid email address.';
+        overrideError.style.display = 'block';
+        return;
+      }
+      var original = siteData ? (siteData.email || siteData.solax_email || '') : '';
+      savedOverride = (v === original) ? '' : v;
+      detEmailSpan.textContent = v;
+      closeEmailEdit();
+    });
+
+    btnCancelEmail.addEventListener('click', function () {
+      overrideInput.value = detEmailSpan.textContent;
+      closeEmailEdit();
+    });
+
+    function getOverrideEmail() {
+      return savedOverride;
+    }
+
+    // ── Confirm button ──
+    document.getElementById('btnConfirm').addEventListener('click', function () {
+      var override = getOverrideEmail();
+      if (override && !EMAIL_RE.test(override)) {
+        if (overrideError) {
+          overrideError.textContent = 'Please enter a valid email address.';
+          overrideError.style.display = 'block';
+        }
+        return;
+      }
+      if (overrideError) overrideError.style.display = 'none';
+
+      var body = override ? JSON.stringify({ email_override: override }) : null;
+      var btn = document.getElementById('btnConfirm');
+      btn.disabled = true;
+      btn.textContent = 'Submitting…';
+
+      fetch(API_BASE + '/confirm', {
+        method:  'POST',
+        credentials: 'include',
+        headers: body ? { 'Content-Type': 'application/json' } : {},
+        body:    body,
+      })
+        .then(function (resp) {
+          if (!resp.ok) throw new Error('HTTP ' + resp.status);
+          return resp.json();
+        })
+        .then(function (data) {
+          // Advance progress: step 2 done, step 3 active.
+          document.getElementById('prog2').classList.remove('is-active');
+          document.getElementById('prog2').classList.add('is-done');
+          document.getElementById('prog3').classList.add('is-active');
+
+          document.getElementById('stepConfirm').style.display = 'none';
+          document.getElementById('stepProcessing').style.display = 'block';
+
+          if (data && data.redirect_url) {
+            setTimeout(function () {
+              window.location.href = data.redirect_url;
+            }, 1500);
+          }
+        })
+        .catch(function () {
+          btn.disabled = false;
+          btn.textContent = 'CONFIRM and GET OFFER';
+          if (overrideError) {
+            overrideError.textContent = 'Something went wrong. Please try again.';
+            overrideError.style.display = 'block';
+          }
+        });
+    });
+
+    // ── Not me button ──
+    document.getElementById('btnNotMe').addEventListener('click', function () {
+      window.location.href = ERROR_PAGE;
+    });
+  })();
+</script>
+
+</body>
+</html>

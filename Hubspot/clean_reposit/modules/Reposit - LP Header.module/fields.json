@@ -1,0 +1,304 @@
+[ {
+  "id" : "208c99fe-575d-a4a3-b8b3-852db864d41f",
+  "name" : "start",
+  "label" : "- START HERE ⇨",
+  "required" : false,
+  "locked" : false,
+  "children" : [ {
+    "id" : "2d3fd5e6-c857-3986-38cb-c92de1e9c205",
+    "name" : "use_sticky_header",
+    "label" : "Use Sticky Header",
+    "required" : false,
+    "locked" : false,
+    "display" : "checkbox",
+    "display_width" : null,
+    "type" : "boolean",
+    "default" : true
+  } ],
+  "tab" : "CONTENT",
+  "expanded" : false,
+  "group_occurrence_meta" : null,
+  "display_width" : null,
+  "type" : "group",
+  "default" : {
+    "use_sticky_header" : true
+  }
+}, {
+  "id" : "4dfd83ef-2ef3-9659-a9d9-144e392832d4",
+  "name" : "primary_header",
+  "label" : "Primary Header:",
+  "required" : false,
+  "locked" : false,
+  "children" : [ {
+    "id" : "59615366-d36b-dd54-e288-ced510aceb98",
+    "name" : "bg_color",
+    "label" : "Background Color",
+    "required" : false,
+    "locked" : false,
+    "display_width" : null,
+    "type" : "color",
+    "default" : {
+      "color" : null,
+      "opacity" : 0
+    }
+  }, {
+    "id" : "2e5ee374-4247-0c38-ae12-c0fbf1bdf864",
+    "name" : "drop_shadow",
+    "label" : "Drop Shadow",
+    "required" : false,
+    "locked" : false,
+    "display" : "checkbox",
+    "display_width" : null,
+    "type" : "boolean",
+    "default" : false
+  }, {
+    "id" : "deec3892-54f9-0931-615e-adfd78dbb68b",
+    "name" : "logo",
+    "label" : "Logo:",
+    "required" : false,
+    "locked" : false,
+    "children" : [ {
+      "id" : "72c43fe8-7e76-0c18-ce8e-672d2809c941",
+      "name" : "override_default_logo",
+      "label" : "Override default logo",
+      "required" : false,
+      "locked" : false,
+      "display" : "toggle",
+      "display_width" : null,
+      "type" : "boolean",
+      "default" : true
+    }, {
+      "id" : "8006d373-b065-d990-5c0d-d67612ac9c33",
+      "name" : "logo_img",
+      "label" : "Logo Image",
+      "required" : false,
+      "locked" : false,
+      "visibility" : {
+        "controlling_field" : null,
+        "controlling_field_path" : "primary_header.logo.override_default_logo",
+        "controlling_value_regex" : "true",
+        "property" : null,
+        "operator" : "EQUAL",
+        "access" : null
+      },
+      "responsive" : true,
+      "resizable" : true,
+      "show_loading" : false,
+      "display_width" : null,
+      "type" : "image",
+      "default" : {
+        "size_type" : "auto",
+        "src" : "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Reposit%20Logo/Reposit_logo_white.svg",
+        "alt" : "Reposit_logo_white",
+        "loading" : "lazy",
+        "width" : 181,
+        "height" : 46,
+        "max_width" : 181,
+        "max_height" : 46
+      }
+    } ],
+    "tab" : "CONTENT",
+    "expanded" : false,
+    "group_occurrence_meta" : null,
+    "display_width" : null,
+    "type" : "group",
+    "default" : {
+      "override_default_logo" : true,
+      "logo_img" : {
+        "size_type" : "auto",
+        "src" : "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Reposit%20Logo/Reposit_logo_white.svg",
+        "alt" : "Reposit_logo_white",
+        "loading" : "lazy",
+        "width" : 181,
+        "height" : 46,
+        "max_width" : 181,
+        "max_height" : 46
+      }
+    }
+  } ],
+  "tab" : "CONTENT",
+  "expanded" : false,
+  "group_occurrence_meta" : null,
+  "display_width" : null,
+  "type" : "group",
+  "default" : {
+    "bg_color" : {
+      "color" : null,
+      "opacity" : 0
+    },
+    "drop_shadow" : false,
+    "logo" : {
+      "override_default_logo" : true,
+      "logo_img" : {
+        "size_type" : "auto",
+        "src" : "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Reposit%20Logo/Reposit_logo_white.svg",
+        "alt" : "Reposit_logo_white",
+        "loading" : "lazy",
+        "width" : 181,
+        "height" : 46,
+        "max_width" : 181,
+        "max_height" : 46
+      }
+    }
+  }
+}, {
+  "id" : "e1cc040e-519b-1c97-d895-5fa2850b9c0c",
+  "name" : "sticky_header",
+  "label" : "Sticky Header:",
+  "required" : false,
+  "locked" : false,
+  "visibility" : {
+    "controlling_field" : null,
+    "controlling_field_path" : "start.use_sticky_header",
+    "controlling_value_regex" : "true",
+    "property" : null,
+    "operator" : "EQUAL",
+    "access" : null
+  },
+  "children" : [ {
+    "id" : "22537ef1-ae4d-524a-c5fd-7f67806f3e2e",
+    "name" : "bg_color",
+    "label" : "Background Color",
+    "required" : false,
+    "locked" : false,
+    "display_width" : null,
+    "type" : "color",
+    "default" : {
+      "color" : "#FFFFFF",
+      "opacity" : 100
+    }
+  }, {
+    "id" : "257b7121-b15b-7b12-fdb9-5e99668d2403",
+    "name" : "drop_shadow",
+    "label" : "Drop Shadow",
+    "required" : false,
+    "locked" : false,
+    "display" : "checkbox",
+    "display_width" : null,
+    "type" : "boolean",
+    "default" : true
+  }, {
+    "id" : "3266b139-9382-317d-c300-fa82b337fb01",
+    "name" : "logo",
+    "label" : "Logo:",
+    "required" : false,
+    "locked" : false,
+    "visibility" : {
+      "controlling_field" : null,
+      "controlling_field_path" : "start.use_sticky_header",
+      "controlling_value_regex" : "true",
+      "property" : null,
+      "operator" : "EQUAL",
+      "access" : null
+    },
+    "children" : [ {
+      "id" : "b6871cbb-69ab-cfa2-26a2-d54569e1d15b",
+      "name" : "override_default_logo",
+      "label" : "Override default logo",
+      "required" : false,
+      "locked" : false,
+      "display" : "toggle",
+      "display_width" : null,
+      "type" : "boolean",
+      "default" : false
+    }, {
+      "id" : "6b048935-3d35-2f75-aa2e-abad4cbb1966",
+      "name" : "logo_img",
+      "label" : "Logo Image",
+      "required" : false,
+      "locked" : false,
+      "visibility" : {
+        "controlling_field" : null,
+        "controlling_field_path" : "sticky_header.logo.override_default_logo",
+        "controlling_value_regex" : "true",
+        "property" : null,
+        "operator" : "EQUAL",
+        "access" : null
+      },
+      "responsive" : true,
+      "resizable" : true,
+      "show_loading" : false,
+      "display_width" : null,
+      "type" : "image",
+      "default" : {
+        "size_type" : "auto",
+        "src" : "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Reposit%20Logo/Reposit_logo_white.svg",
+        "alt" : "Reposit_logo_white",
+        "loading" : "lazy",
+        "width" : 181,
+        "height" : 46,
+        "max_width" : 181,
+        "max_height" : 46
+      }
+    } ],
+    "tab" : "CONTENT",
+    "expanded" : false,
+    "group_occurrence_meta" : null,
+    "display_width" : null,
+    "type" : "group",
+    "default" : {
+      "override_default_logo" : false,
+      "logo_img" : {
+        "size_type" : "auto",
+        "src" : "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Reposit%20Logo/Reposit_logo_white.svg",
+        "alt" : "Reposit_logo_white",
+        "loading" : "lazy",
+        "width" : 181,
+        "height" : 46,
+        "max_width" : 181,
+        "max_height" : 46
+      }
+    }
+  } ],
+  "tab" : "CONTENT",
+  "expanded" : false,
+  "group_occurrence_meta" : null,
+  "display_width" : null,
+  "type" : "group",
+  "default" : {
+    "bg_color" : {
+      "color" : "#FFFFFF",
+      "opacity" : 100
+    },
+    "drop_shadow" : true,
+    "logo" : {
+      "override_default_logo" : false,
+      "logo_img" : {
+        "size_type" : "auto",
+        "src" : "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Reposit%20Logo/Reposit_logo_white.svg",
+        "alt" : "Reposit_logo_white",
+        "loading" : "lazy",
+        "width" : 181,
+        "height" : 46,
+        "max_width" : 181,
+        "max_height" : 46
+      }
+    }
+  }
+}, {
+  "id" : "ba2c0761-cfc7-c02c-7f91-db1842086796",
+  "name" : "style_opts",
+  "label" : "Style",
+  "required" : false,
+  "locked" : false,
+  "children" : [ {
+    "id" : "e9793abf-01a0-691c-3a29-cd968e456990",
+    "name" : "test",
+    "label" : "Test:",
+    "inline_help_text" : "This is currently a test. Please disregard.",
+    "required" : false,
+    "locked" : false,
+    "display" : "checkbox",
+    "display_width" : null,
+    "type" : "boolean",
+    "default" : false
+  } ],
+  "tab" : "STYLE",
+  "expanded" : false,
+  "group_occurrence_meta" : null,
+  "display_width" : null,
+  "type" : "group",
+  "default" : {
+    "test" : false
+  }
+} ]

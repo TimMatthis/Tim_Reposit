@@ -1,0 +1,11 @@
+{
+  "global" : false,
+  "content_types" : [ "CASE_STUDY", "LANDING_PAGE", "SITE_PAGE", "BLOG_LISTING", "BLOG_POST" ],
+  "master_language" : "en",
+  "categories" : [ "media" ],
+  "host_template_types" : [ "PAGE", "BLOG_LISTING", "BLOG_POST", "CASE_STUDY" ],
+  "module_id" : 189214283436,
+  "label" : "Reposit - Logo Grid",
+  "icon" : "../../../mV0_d-web-default-modules_hubspot/img/icon/image-grid-icon.svg",
+  "is_available_for_new_content" : true
+}

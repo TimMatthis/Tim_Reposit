@@ -1,0 +1,193 @@
+{
+  "isAvailableForNewContent" : true,
+  "templateType" : 18,
+  "attachedStylesheets" : [ ],
+  "attachedJs" : [ ],
+  "customHead" : "",
+  "customFooter" : "",
+  "bodyClass" : "",
+  "bodyCss" : "",
+  "bodyEditable" : false,
+  "layoutData" : {
+    "x" : 0,
+    "w" : 12,
+    "name" : "",
+    "label" : "",
+    "type" : "cell",
+    "params" : { },
+    "rows" : [ {
+      "0" : {
+        "x" : 0,
+        "w" : 12,
+        "name" : "module_1507107865693141",
+        "label" : "Footer Wrapper",
+        "type" : "cell",
+        "params" : {
+          "css_class" : "custom-footer-wrapper",
+          "css_id" : "",
+          "css_id_str" : "",
+          "css_style" : "",
+          "overrideable" : false,
+          "per_widget_wrapper_html" : "",
+          "wrapping_html" : ""
+        },
+        "rows" : [ {
+          "0" : {
+            "x" : 0,
+            "w" : 12,
+            "name" : "module_1388499702410506",
+            "label" : "Page Center",
+            "type" : "cell",
+            "params" : {
+              "cell" : false,
+              "cells" : [ ],
+              "css_class" : "page-center",
+              "css_id" : "",
+              "css_id_str" : "",
+              "css_style" : "",
+              "ending_html" : "",
+              "overrideable" : false,
+              "root" : false,
+              "row" : false,
+              "starting_html" : "",
+              "value" : "",
+              "wrapping_html" : ""
+            },
+            "rows" : [ {
+              "0" : {
+                "x" : 0,
+                "w" : 4,
+                "name" : "module_1388499827397609",
+                "label" : "Contact Us",
+                "type" : "rich_text",
+                "params" : {
+                  "cell" : false,
+                  "cells" : [ ],
+                  "css_class" : "custom-contact-us",
+                  "css_id" : "",
+                  "css_id_str" : "",
+                  "css_style" : "",
+                  "ending_html" : "",
+                  "html" : "<h3>Contact Us</h3>\n<p>1800 773 851</p>\n<p>info@repositpower.com</p>",
+                  "overrideable" : false,
+                  "root" : false,
+                  "row" : false,
+                  "starting_html" : ""
+                },
+                "rows" : [ ],
+                "rowMetaData" : [ ],
+                "cells" : [ ],
+                "cssId" : "",
+                "cssClass" : "",
+                "cssStyle" : "",
+                "styles" : null,
+                "widgets" : [ ]
+              },
+              "4" : {
+                "x" : 4,
+                "w" : 3,
+                "name" : "module_1507106691788130",
+                "label" : "Connect with Us",
+                "type" : "raw_html",
+                "params" : {
+                  "css_class" : "custom-connect-us",
+                  "css_id" : "",
+                  "css_id_str" : "",
+                  "css_style" : "",
+                  "overrideable" : false,
+                  "per_widget_wrapper_html" : "",
+                  "value" : "<h3>Connect with Us</h3>\n<ul>\n\t<li>\n\t    <a href=\"https://www.facebook.com/RepositPower/\" target=\"_blank\"><i class=\"fa fa-facebook-official\" aria-hidden=\"true\"></i> Facebook </a>\n\t</li>\n\t<li>\n\t    <a href=\"https://twitter.com/RepositPower\" target=\"_blank\"><i class=\"fa fa-twitter\" aria-hidden=\"true\"></i> Twitter </a>\n\t</li>\n\t<li>\n\t    <a href=\"mailto:info@repositpower.com\" target=\"_blank\"><i class=\"fa fa-envelope\" aria-hidden=\"true\"></i> Email </a>\n\t</li>\n</ul>",
+                  "wrapping_html" : ""
+                },
+                "rows" : [ ],
+                "rowMetaData" : [ ],
+                "cells" : [ ],
+                "cssId" : "",
+                "cssClass" : "",
+                "cssStyle" : "",
+                "styles" : null,
+                "widgets" : [ ]
+              },
+              "7" : {
+                "x" : 7,
+                "w" : 5,
+                "name" : "module_139575399545412",
+                "label" : "Site Map",
+                "type" : "rich_text",
+                "params" : {
+                  "cell" : false,
+                  "cells" : [ ],
+                  "css_class" : "custom-footer-sitemap",
+                  "css_id" : "",
+                  "css_id_str" : "",
+                  "css_style" : "",
+                  "ending_html" : "",
+                  "html" : "<h3>Site Map</h3>\n<ul>\n<li><a href=\"https://repositpower.com/\" target=\"\">Home</a></li>\n<li><a href=\"https://repositpower.com/reduce-your-bill/\">Reduce your bill</a></li>\n<li><a href=\"https://repositpower.com/how-it-works/\">How it works</a><a href=\"https://repositpower.com/the-app/\"></a></li>\n<li><a href=\"https://repositpower.com/the-app/\">The App</a></li>\n<li><a href=\"https://repositpower.com/gridcredits/\">GridCredits®</a><a href=\"https://repositpower.com/about/\"></a></li>\n<li><a href=\"https://repositpower.com/about/\">About us</a><a href=\"https://blog.repositpower.com/\"></a><a href=\"https://repositpower.com/get-reposit/\"></a></li>\n<li><a href=\"https://repositpower.com/get-reposit/\">Get Reposit</a></li>\n<li><a href=\"https://blog.repositpower.com/\">Blog</a></li>\n<li><a href=\"https://repositpower.com/faqs/\">FAQs</a></li>\n<li><a href=\"https://repositpower.com/partners/\">Our Energy Saving&nbsp;Partners</a></li>\n<li><a href=\"https://repositpower.com/solar-panel-guide/\">Solar Panels Guide&nbsp;</a></li>\n<li><a href=\"https://repositpower.com/solar-battery-guide/\">Solar Battery Guide&nbsp;</a></li>\n<li><a href=\"https://repositpower.com/news-and-media/\">News and Media</a></li>\n<li><a href=\"https://repositpower.com/reposit-ifttt/\">Reposit and IFTTT</a></li>\n<li><a href=\"https://repositpower.com/disclaimer/\" target=\"\">Disclaimer</a></li>\n</ul>",
+                  "overrideable" : false,
+                  "root" : false,
+                  "row" : false,
+                  "starting_html" : ""
+                },
+                "rows" : [ ],
+                "rowMetaData" : [ ],
+                "cells" : [ ],
+                "cssId" : "",
+                "cssClass" : "",
+                "cssStyle" : "",
+                "styles" : null,
+                "widgets" : [ ]
+              }
+            }, {
+              "0" : {
+                "x" : 0,
+                "w" : 12,
+                "name" : "module_1496851117404109",
+                "label" : "HubSpot Javascript - DO NOT REMOVE",
+                "type" : "raw_html",
+                "params" : {
+                  "css_class" : "",
+                  "css_id" : "",
+                  "css_id_str" : "",
+                  "css_style" : "min-height: 0px;",
+                  "ending_html" : "",
+                  "overrideable" : false,
+                  "starting_html" : "",
+                  "value" : "<!-- HubSpot Main JS -->\n<script src=\"{{ get_public_template_url('Coded files/Custom/page/Reposit_October2017-theme/Reposit_October2017-main.js') }}\"></script>"
+                },
+                "rows" : [ ],
+                "rowMetaData" : [ ],
+                "cells" : [ ],
+                "cssId" : "",
+                "cssClass" : "",
+                "cssStyle" : "",
+                "styles" : null,
+                "widgets" : [ ]
+              }
+            } ],
+            "rowMetaData" : [ ],
+            "cells" : [ ],
+            "cssId" : "",
+            "cssClass" : "",
+            "cssStyle" : "",
+            "styles" : null,
+            "widgets" : [ ]
+          }
+        } ],
+        "rowMetaData" : [ ],
+        "cells" : [ ],
+        "cssId" : "",
+        "cssClass" : "",
+        "cssStyle" : "",
+        "styles" : null,
+        "widgets" : [ ]
+      }
+    } ],
+    "rowMetaData" : [ ],
+    "cells" : [ ],
+    "cssId" : "",
+    "cssClass" : "",
+    "cssStyle" : "",
+    "styles" : null,
+    "widgets" : [ ]
+  }
+}

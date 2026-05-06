@@ -1,0 +1,378 @@
+[ {
+  "id" : "ba2c0761-cfc7-c02c-7f91-db1842086796",
+  "name" : "style_opts",
+  "label" : "Style",
+  "required" : false,
+  "locked" : false,
+  "children" : [ {
+    "id" : "e9793abf-01a0-691c-3a29-cd968e456990",
+    "name" : "test",
+    "label" : "Test:",
+    "inline_help_text" : "This is currently a test. Please disregard.",
+    "required" : false,
+    "locked" : false,
+    "display" : "checkbox",
+    "display_width" : null,
+    "type" : "boolean",
+    "default" : false
+  } ],
+  "tab" : "STYLE",
+  "expanded" : false,
+  "group_occurrence_meta" : null,
+  "display_width" : null,
+  "type" : "group",
+  "default" : {
+    "test" : false
+  }
+}, {
+  "id" : "54380eb4-d127-96d6-55ea-b0fbc584b176",
+  "name" : "col_1",
+  "label" : "Column 1:",
+  "required" : false,
+  "locked" : false,
+  "children" : [ {
+    "id" : "c8161c54-f807-aae3-add3-51de380033f5",
+    "name" : "logo",
+    "label" : "Logo:",
+    "required" : false,
+    "locked" : false,
+    "children" : [ {
+      "id" : "63f975da-5fbf-98da-10bc-e4df5dd56605",
+      "name" : "img",
+      "label" : "Image",
+      "required" : false,
+      "locked" : false,
+      "responsive" : true,
+      "resizable" : true,
+      "show_loading" : false,
+      "display_width" : null,
+      "type" : "image",
+      "default" : {
+        "size_type" : "auto",
+        "src" : "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Reposit%20Logo/Reposit_logo_white.svg",
+        "alt" : "Reposit_logo_white",
+        "loading" : "lazy",
+        "width" : 181,
+        "height" : 46,
+        "max_width" : 181,
+        "max_height" : 46
+      }
+    }, {
+      "id" : "61f544d4-a372-5d8b-3e2e-44ed818ce349",
+      "name" : "width",
+      "label" : "Width",
+      "required" : false,
+      "locked" : false,
+      "display" : "slider",
+      "min" : 0,
+      "max" : 1000,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 181
+    }, {
+      "id" : "eb983730-384f-abff-c017-67485b1a269c",
+      "name" : "bottom_space",
+      "label" : "Bottom Space",
+      "required" : false,
+      "locked" : false,
+      "display" : "slider",
+      "min" : 0,
+      "max" : 100,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 48
+    } ],
+    "tab" : "CONTENT",
+    "expanded" : false,
+    "group_occurrence_meta" : null,
+    "display_width" : null,
+    "type" : "group",
+    "default" : {
+      "img" : {
+        "size_type" : "auto",
+        "src" : "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Reposit%20Logo/Reposit_logo_white.svg",
+        "alt" : "Reposit_logo_white",
+        "loading" : "lazy",
+        "width" : 181,
+        "height" : 46,
+        "max_width" : 181,
+        "max_height" : 46
+      },
+      "width" : 181,
+      "bottom_space" : 48
+    }
+  } ],
+  "tab" : "CONTENT",
+  "expanded" : false,
+  "group_occurrence_meta" : null,
+  "display_width" : null,
+  "type" : "group",
+  "default" : {
+    "logo" : {
+      "img" : {
+        "size_type" : "auto",
+        "src" : "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Reposit%20Logo/Reposit_logo_white.svg",
+        "alt" : "Reposit_logo_white",
+        "loading" : "lazy",
+        "width" : 181,
+        "height" : 46,
+        "max_width" : 181,
+        "max_height" : 46
+      },
+      "width" : 181,
+      "bottom_space" : 48
+    }
+  }
+}, {
+  "id" : "5e6aacb8-8e18-bff0-1118-9763d81e588e",
+  "name" : "copyright",
+  "label" : "Copyright:",
+  "required" : false,
+  "locked" : false,
+  "children" : [ {
+    "id" : "4c69709e-119d-9c7a-adb7-8db451cebecd",
+    "name" : "text",
+    "label" : "Text",
+    "required" : false,
+    "locked" : false,
+    "allow_new_line" : false,
+    "display_width" : null,
+    "type" : "text",
+    "default" : "Reposit Power. All rights reserved."
+  }, {
+    "id" : "8a64d9a8-662f-65c5-474f-50041191dd7d",
+    "name" : "text_color",
+    "label" : "Text Color",
+    "required" : false,
+    "locked" : false,
+    "display_width" : null,
+    "type" : "color",
+    "default" : {
+      "color" : "#FFFFFF",
+      "opacity" : 100
+    }
+  } ],
+  "tab" : "CONTENT",
+  "expanded" : false,
+  "group_occurrence_meta" : null,
+  "display_width" : null,
+  "type" : "group",
+  "default" : {
+    "text" : "Reposit Power. All rights reserved.",
+    "text_color" : {
+      "color" : "#FFFFFF",
+      "opacity" : 100
+    }
+  }
+}, {
+  "id" : "f49b873a-25fa-88fb-8b1d-2cfbf1f1f77a",
+  "name" : "social_media",
+  "label" : "Social Media:",
+  "required" : false,
+  "locked" : false,
+  "occurrence" : {
+    "min" : null,
+    "max" : null,
+    "sorting_label_field" : null,
+    "default" : 4
+  },
+  "children" : [ {
+    "id" : "babd41ce-c0b2-e973-ac58-af9d52e27294",
+    "name" : "icon",
+    "label" : "Icon",
+    "required" : false,
+    "locked" : false,
+    "display" : "select",
+    "choices" : [ [ "facebook", "Facebook" ], [ "instagram", "Instagram" ], [ "x-twitter", "X (Twitter)" ], [ "youtube", "Youtube" ], [ "linkedin", "LinkedIn" ], [ "tiktok", "Tiktok " ] ],
+    "multiple" : false,
+    "reordering_enabled" : true,
+    "preset" : null,
+    "display_width" : null,
+    "type" : "choice",
+    "default" : "facebook"
+  }, {
+    "id" : "f067b830-b05b-073d-56f1-5e63c70e103e",
+    "name" : "color",
+    "label" : "Color",
+    "required" : false,
+    "locked" : false,
+    "display_width" : null,
+    "type" : "color",
+    "default" : {
+      "color" : "#DBE2E9",
+      "opacity" : 100
+    }
+  }, {
+    "id" : "56322c0b-01bc-4cad-6e17-96b97e6c33d6",
+    "name" : "url",
+    "label" : "URL",
+    "required" : false,
+    "locked" : false,
+    "allow_new_line" : false,
+    "display_width" : null,
+    "type" : "text",
+    "default" : "https://www.facebook.com/RepositPower/"
+  }, {
+    "id" : "cccf0b4f-965e-4624-45fd-5cb7739953a7",
+    "name" : "open_links_in_new_tab",
+    "label" : "Open links in new tab",
+    "required" : false,
+    "locked" : false,
+    "display" : "toggle",
+    "display_width" : null,
+    "type" : "boolean",
+    "default" : true
+  } ],
+  "tab" : "CONTENT",
+  "expanded" : false,
+  "group_occurrence_meta" : null,
+  "display_width" : null,
+  "type" : "group",
+  "default" : [ {
+    "icon" : "facebook",
+    "url" : "https://www.facebook.com/RepositPower/",
+    "open_links_in_new_tab" : true,
+    "color" : {
+      "color" : "#DBE2E9",
+      "opacity" : 100
+    }
+  }, {
+    "icon" : "facebook",
+    "url" : "https://www.facebook.com/RepositPower/",
+    "open_links_in_new_tab" : true,
+    "color" : {
+      "color" : "#DBE2E9",
+      "opacity" : 100
+    }
+  }, {
+    "icon" : "facebook",
+    "url" : "https://www.facebook.com/RepositPower/",
+    "open_links_in_new_tab" : true,
+    "color" : {
+      "color" : "#DBE2E9",
+      "opacity" : 100
+    }
+  }, {
+    "icon" : "facebook",
+    "color" : {
+      "color" : "#DBE2E9",
+      "opacity" : 100
+    },
+    "url" : "https://www.facebook.com/RepositPower/",
+    "open_links_in_new_tab" : true
+  } ]
+}, {
+  "id" : "33b5fb92-72f5-b489-98e9-2722f4d865bf",
+  "name" : "section",
+  "label" : "Section:",
+  "required" : false,
+  "locked" : false,
+  "children" : [ {
+    "id" : "150509df-1b44-b489-fe2a-4ee65c4aa9dc",
+    "name" : "bg_color",
+    "label" : "Background Color",
+    "required" : true,
+    "locked" : false,
+    "display_width" : null,
+    "type" : "color",
+    "default" : {
+      "color" : "#1f2a44",
+      "opacity" : 100
+    }
+  }, {
+    "id" : "18e4a718-54fd-a264-9830-84a3edbc9520",
+    "name" : "spacing",
+    "label" : "Spacing",
+    "required" : false,
+    "locked" : false,
+    "children" : [ {
+      "id" : "91141cf7-39d4-5b61-b9ec-741bfa39bfe9",
+      "name" : "top",
+      "label" : "Top (Desktop)",
+      "required" : false,
+      "locked" : false,
+      "display" : "slider",
+      "min" : 0,
+      "max" : 500,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 150
+    }, {
+      "id" : "0c1623e9-47c6-0f6c-da4c-74c10ddaa84b",
+      "name" : "bottom",
+      "label" : "Bottom (Desktop)",
+      "required" : false,
+      "locked" : false,
+      "display" : "slider",
+      "min" : 0,
+      "max" : 500,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 150
+    }, {
+      "id" : "7fef51ec-2b24-4695-8c05-85bb26e872c1",
+      "name" : "top_sm",
+      "label" : "Top (Mobile)",
+      "required" : false,
+      "locked" : false,
+      "display" : "slider",
+      "min" : 0,
+      "max" : 500,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 80
+    }, {
+      "id" : "ac8f9d13-a0ec-bf39-2e00-ea13e8982079",
+      "name" : "bottom_sm",
+      "label" : "Bottom (Mobile)",
+      "required" : false,
+      "locked" : false,
+      "display" : "slider",
+      "min" : 0,
+      "max" : 500,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 80
+    } ],
+    "tab" : "CONTENT",
+    "expanded" : false,
+    "group_occurrence_meta" : null,
+    "display_width" : null,
+    "type" : "group",
+    "default" : {
+      "top" : 150,
+      "bottom" : 150,
+      "top_sm" : 80,
+      "bottom_sm" : 80
+    }
+  } ],
+  "tab" : "CONTENT",
+  "expanded" : false,
+  "group_occurrence_meta" : null,
+  "display_width" : null,
+  "type" : "group",
+  "default" : {
+    "bg_color" : {
+      "color" : "#1f2a44",
+      "opacity" : 100
+    },
+    "spacing" : {
+      "top" : 150,
+      "bottom" : 150,
+      "top_sm" : 80,
+      "bottom_sm" : 80
+    }
+  }
+} ]

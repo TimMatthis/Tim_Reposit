@@ -1,0 +1,863 @@
+<!--
+  templateType: page
+  isAvailableForNewContent: true
+  screenshotPath: ../images/no_bill_screen.png
+  label: Reposit - No Bill
+-->
+{% extends "./layouts/base.html" %}
+
+{% block body %}
+  {% dnd_area "dnd_area" class='body-container', label='Main section' %}
+
+ <!-----------------------  HERO BANNER  ----------------------->
+    {% dnd_section
+      padding={
+        'top': 0,
+        'bottom': 0,
+        'left': 0,
+        'right': 0
+      },
+      full_width='true',
+      vertical_alignment='MIDDLE'
+    %}
+      {% dnd_module "reposit_hero"
+        path="../modules/Reposit - Hero",
+        label="Reposit - Hero",
+        offset=0
+      %}
+        {% module_attribute "col_1" is_json=True %} 
+        {
+          "eyebrow": {
+            "text": "REPOSIT NO BILL™"
+          },
+          "title": {
+            "text": "The End of Your Electricity Bill",
+            "highlight_text": "Starts Here"
+          },
+          "bottom_text": {
+            "content": "<p>Guaranteed No Electricity Bills for Seven Years or More</p>"
+          }
+        }
+        {% end_module_attribute %}
+        {% module_attribute "background" is_json=True %} 
+          {
+            "bg_gradient_angle": "bottom right"
+          }
+        {% end_module_attribute %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+  
+  <!----------------------- LOGO GRID  ----------------------->
+    {% dnd_section
+      padding={
+        'top': 0,
+        'bottom': 0,
+        'left': 0,
+        'right': 0
+      },
+      full_width='true',
+      vertical_alignment='MIDDLE'
+    %}
+      {% dnd_module "reposit_logo_grid"
+        path="../modules/Reposit - Logo Grid",
+        label="Reposit - Logo Grid",
+        offset=0
+      %}
+        {% module_attribute "eyebrow" is_json=True %} 
+        {
+          "text": "Awards and Memberships"
+        }
+        {% end_module_attribute %}
+        {% module_attribute "group_logos" is_json=True %}
+        [
+          { "logo": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/engineering_excellence.png", "alt": "engineering excellence" } },
+          { "logo": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/clean_energy_council.png", "alt": "clean energy council" } },
+          { "logo": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/new_energy_tech.png", "alt": "new energy tech" } },
+          { "logo": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/clean_energy_council2.png", "alt": "clean energy council" } },
+          { "logo": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/energy_network.png", "alt": "energy network" } }
+        ]
+        {% end_module_attribute %}
+        {% module_attribute "section" is_json=True %} 
+        {
+          "overlap_section": "ture"
+        }
+        {% end_module_attribute %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+  
+  <!----------------------- TEXT AND MEDIA  ----------------------->
+    {% dnd_section
+      padding={
+        'top': 0,
+        'bottom': 0,
+        'left': 0,
+        'right': 0
+      },
+      full_width='true',
+      vertical_alignment='MIDDLE'
+    %}
+      {% dnd_module "reposit_text_media"
+        path="../modules/Reposit - Text and Media",
+        label="Reposit - Text and Media",
+        offset=0
+      %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+  
+  <!----------------------- TEXT AND CARDS  ----------------------->
+    {% dnd_section
+      padding={
+        'top': 0,
+        'bottom': 0,
+        'left': 0,
+        'right': 0
+      },
+      full_width='true',
+      vertical_alignment='MIDDLE'
+    %}
+      {% dnd_module "reposit_text_cards"
+        path="../modules/Reposit - Text and Cards",
+        label="Reposit - Text and Cards",
+        offset=0
+      %}
+        {% module_attribute "col_1" is_json=True %} 
+        {
+          "eyebrow": {
+            "text": "About Us"
+          },
+          "title": {
+            "text": "Australia's Smartest Home Energy Solution."
+          }
+        }
+        {% end_module_attribute %}
+        {% module_attribute "col_2" is_json=True %}
+        {
+          "direction": "vertical",
+          "cards": [
+            {
+              "bg_color": {
+                "color": "#1F2A44",
+                "opacity": 100
+              },
+              "title": {
+                "display_as": "h3",
+                "text": "7 Year No Bill™ Guarantee",
+                "text_color": {
+                  "color": "#FFF",
+                  "opacity": 100
+                 },
+                "bottom_space": 12,
+                "add_underline": true
+              },
+              "text_area": {
+                "content": "<p style='color: #fff;'>Forget about electricity bills for the next 7 years - guaranteed</p>"
+              },
+              "button": {
+                "style_option": "cta-tertiary",
+                "text": "Learn More",
+                "use_arrow_icon": true
+              },
+              "inner_space": {
+                "top": 24,
+                "bottom": 24,
+                "left": 24,
+                "right": 24
+              },
+              "round_corners": 20
+            },
+            {
+              "bg_color": {
+                "color": "#1F2A44",
+                "opacity": 100
+              },
+              "title": {
+                "display_as": "h3",
+                "text": "No Ongoing Costs, No Lock-ins",
+                "text_color": {
+                  "color": "#FFF",
+                  "opacity": 100
+                 },
+                "bottom_space": 12,
+                "add_underline": true
+              },
+              "text_area": {
+                "content": "<p style='color: #fff;'>You will pay no electricity costs for 7 years. Even when electricity prices jump. Leave Reposit No Bill™ any time with no exit fees or other charges.</p>"
+              },
+              "button": {
+                "style_option": "cta-tertiary",
+                "text": "Learn More",
+                "use_arrow_icon": true
+              },
+              "inner_space": {
+                "top": 24,
+                "bottom": 24,
+                "left": 24,
+                "right": 24
+              },
+              "round_corners": 20
+            },
+            {
+              "bg_color": {
+                "color": "#1F2A44",
+                "opacity": 100
+              },
+              "title": {
+                "display_as": "h3",
+                "text": "Tried and Trusted",
+                "text_color": {
+                  "color": "#FFF",
+                  "opacity": 100
+                 },
+                "bottom_space": 12,
+                "add_underline": true
+              },
+              "text_area": {
+                "content": "<p style='color: #fff;'>Since 2012, we’ve helped over 6000 Australian homes manage their electricity costs with our Reposit Smart Controller.</p>"
+              },
+              "button": {
+                "style_option": "cta-tertiary",
+                "text": "Learn More",
+                "use_arrow_icon": true
+              },
+              "inner_space": {
+                "top": 24,
+                "bottom": 24,
+                "left": 24,
+                "right": 24
+              },
+              "round_corners": 20
+            }
+          ]
+        }
+        {% end_module_attribute %}
+        {% module_attribute "section" is_json=True %} 
+        {
+          "bg_color": {
+            "color": "#FFFFFF",
+            "opacity": 100
+           },
+           "spacing": {
+            "top": 250,
+            "bottom": 150,
+            "top_sm": 120,
+            "bottom_sm": 80
+           },
+           "round_corners": {
+            "top_corners": 0,
+            "bottom_corners": 64,
+            "top_corners_sm": 0,
+            "bottom_corners_sm": 42
+           }
+        }
+        {% end_module_attribute %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+  
+  <!----------------------- TEXT WITH COUNTER  ----------------------->
+    {% dnd_section
+      padding={
+        'top': 0,
+        'bottom': 0,
+        'left': 0,
+        'right': 0
+      },
+      full_width='true',
+      vertical_alignment='MIDDLE'
+    %}
+      {% dnd_module "reposit_text_counter"
+        path="../modules/Reposit - Text with Counter",
+        label="Reposit - Text with Counter",
+        offset=0
+      %}
+        {% module_attribute "col_1" is_json=True %} 
+        {
+          "eyebrow": {
+            "text": "Our Hardware and Technology"
+          },
+          "title": {
+            "text": "Reliable Hardware Installed Properly"
+          }
+        }
+        {% end_module_attribute %}
+        {% module_attribute "col_2" is_json=True %}
+        {
+          "richtext": "<p><span style='color: #ffffff;'>Our Site Engineers will right-size and design a solar and battery package that guarantees you no electricity bills when operated by the Reposit Smart Controller.</span><br><br><span style='color: #ffffff;'>Reposit works with leading manufacturers of the equipment we sell and install to unlock its full potential.</span><br><br><span style='color: #ffffff;'>A No Bill™ plan is a partnership with Reposit. Because Reposit pays your bills regardless of the health of your No Bill system, we make sure that we choose reliable hardware and a quality installer for your home.</span></p>"
+        }
+        {% end_module_attribute %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+
+  <!----------------------- SLIDER  ----------------------->
+    {% dnd_section
+      padding={
+        'top': 0,
+        'bottom': 0,
+        'left': 0,
+        'right': 0
+      },
+      full_width='true',
+      vertical_alignment='MIDDLE'
+    %}
+      {% dnd_module "reposit_slider"
+        path="../modules/Reposit - Slider",
+        label="Reposit - Slider",
+        offset=0
+      %}
+        {% module_attribute "start" is_json=True %} 
+        {
+          "num_cols": 1
+        }
+        {% end_module_attribute %}
+        {% module_attribute "col_1" is_json=True %} 
+        {
+          "eyebrow": {
+            "text": ""
+          },
+          "title": {
+            "text": "",
+            "highlight_text": ""
+          },
+          "text_area": {
+            "content": "<h2><span style='color: #ffffff;'>Meet the <span style='color: #4698cb;'>Technology</span> Behind Zero Bills</span></h2>"
+          }
+        }
+        {% end_module_attribute %}
+        {% module_attribute "slides" is_json=True %}
+        [
+          {
+            "title": "Reposit Smart Controller",
+            "subtitle": "Unlocks the full potential of solar and batteries to guarantee you no electricity bills for 7 years.",
+            "show_slide_num": false,
+            "img": {
+              "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Slider%20Images/reposit_box.svg",
+              "alt": "Reposit Box"
+            },
+            "active_img": {
+              "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Slider%20Images/reposit_box.svg",
+              "alt": "Reposit Box"
+            },
+            "full_width_img": false
+          },
+          {
+            "title": "Solar Battery",
+            "subtitle": "The solar battery stores electricity when it is abundant and releases it when it is needed.",
+            "note": "Storage capacity: 11.6-70 kWh*",
+            "show_slide_num": false,
+            "img": {
+              "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Slider%20Images/battery.svg",
+              "alt": "Solar Battery"
+            },
+            "active_img": {
+              "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Slider%20Images/battery.svg",
+              "alt": "Solar Battery"
+            },
+            "full_width_img": false
+          },
+          {
+            "title": "Inverter",
+            "subtitle": "The Inverter connects the power from your solar panels and battery to your home and the grid.",
+            "note": "Hybrid Inverter power output: 5-30 kW*",
+            "show_slide_num": false,
+            "img": {
+              "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Slider%20Images/inverter.svg",
+              "alt": "Inverter"
+            },
+            "active_img": {
+              "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Slider%20Images/inverter.svg",
+              "alt": "Inverter"
+            },
+            "full_width_img": false
+          },
+          {
+            "title": "Solar Panels",
+            "subtitle": "Solar panels are installed on your roof and generate electricity from sunshine.",
+            "note": "Tier 1 Solar panels minimum power: 6.6 kW*",
+            "show_slide_num": false,
+            "img": {
+              "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Slider%20Images/solar_panels_2.svg",
+              "alt": "Solar Panels"
+            },
+            "active_img": {
+              "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Slider%20Images/solar_panels_2.svg",
+              "alt": "Solar Panels"
+            },
+            "full_width_img": false
+          }
+        ]
+        {% end_module_attribute %}
+        {% module_attribute "slider_set" is_json=True %} 
+        {
+          "slide_num_large": 2.7,
+          "bg_color": {
+            "color": "#12192a",
+            "opacity": 36
+          },
+          "content_color": {
+            "color": "#FFF",
+            "opacity": 100
+          },
+          "arrow_color": {
+            "color": "#FFF",
+            "opacity": 100
+          }
+        }
+        {% end_module_attribute %}
+        {% module_attribute "section" is_json=True %} 
+        {
+          "bg_color": {
+            "color": "#1f2a44",
+            "opacity": 100
+           },
+           "spacing": {
+            "top": 0,
+            "bottom": 200,
+            "top_sm": 0,
+            "bottom_sm": 100
+           },
+           "round_corners": {
+            "top_corners": 0,
+            "bottom_corners": 0,
+            "top_corners_sm": 0,
+            "bottom_corners_sm": 0
+           }
+        }
+        {% end_module_attribute %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+  
+  <!----------------------- TABLE  ----------------------->
+    {% dnd_section
+      padding={
+        'top': 0,
+        'bottom': 0,
+        'left': 0,
+        'right': 0
+      },
+      full_width='true',
+      vertical_alignment='MIDDLE'
+    %}
+      {% dnd_module "reposit_table"
+        path="../modules/Reposit - Table",
+        label="Reposit - Table",
+        offset=0
+      %}
+        {% module_attribute "table" is_json=True %}
+        {
+          "table_headings": [
+            {
+              "title": "",
+              "add_img": false
+            },
+            {
+              "title": "No Bill Power Plan",
+              "add_img": true,
+              "img": {
+                "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/s_icon.png",
+                "alt": "small reposit icon"
+              }
+            },
+            {
+              "title": "Others",
+              "add_img": false
+            }
+          ],
+          "table_rows": [
+            {
+              "table_data": [
+                {
+                  "data_type": "text",
+                  "text": "Can I get solar and battery as a package?"
+                },
+                {
+                  "data_type": "img",
+                  "img": {
+                    "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/check.png",
+                    "alt": "Check mark"
+                  }
+                },
+                {
+                  "data_type": "img",
+                  "img": {
+                    "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/question.png",
+                    "alt": "Question mark"
+                  }
+                }
+              ]
+            },
+            {
+              "table_data": [
+                {
+                  "data_type": "text",
+                  "text": "What is the product warranty?"
+                },
+                {
+                  "data_type": "text",
+                  "text": "10 years on all hardware"
+                },
+                {
+                  "data_type": "text",
+                  "text": "10 years on battery only"
+                }
+              ]
+            },
+            {
+              "table_data": [
+                {
+                  "data_type": "text",
+                  "text": "Will my electricity bills be gone for 7 years, guaranteed?"
+                },
+                {
+                  "data_type": "img",
+                  "img": {
+                    "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/check.png",
+                    "alt": "Check mark"
+                  }
+                },
+                {
+                  "data_type": "img",
+                  "img": {
+                    "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/question.png",
+                    "alt": "Question mark"
+                  }
+                }
+              ]
+            },
+            {
+              "table_data": [
+                {
+                  "data_type": "text",
+                  "text": "What will my electricity bill savings be?"
+                },
+                {
+                  "data_type": "text",
+                  "text": "100% of your current costs"
+                },
+                {
+                  "data_type": "text",
+                  "text": "Variable"
+                }
+              ]
+            },
+            {
+              "table_data": [
+                {
+                  "data_type": "text",
+                  "text": "Are my cost savings guaranteed?"
+                },
+                {
+                  "data_type": "img",
+                  "img": {
+                    "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/check.png",
+                    "alt": "Check mark"
+                  }
+                },
+                {
+                  "data_type": "img",
+                  "img": {
+                    "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/question.png",
+                    "alt": "Question mark"
+                  }
+                }
+              ]
+            },
+            {
+              "table_data": [
+                {
+                  "data_type": "text",
+                  "text": "Who looks after the ongoing performance of my system?"
+                },
+                {
+                  "data_type": "text",
+                  "text": "Reposit"
+                },
+                {
+                  "data_type": "text",
+                  "text": "You"
+                }
+              ]
+            },
+            {
+              "table_data": [
+                {
+                  "data_type": "text",
+                  "text": "Will you fix my system if something goes wrong?"
+                },
+                {
+                  "data_type": "img",
+                  "img": {
+                    "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/check.png",
+                    "alt": "Check mark"
+                  }
+                },
+                {
+                  "data_type": "img",
+                  "img": {
+                    "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/question.png",
+                    "alt": "Question mark"
+                  }
+                }
+              ]
+            },
+            {
+              "table_data": [
+                {
+                  "data_type": "text",
+                  "text": "Can I start wth Reposit today?"
+                },
+                {
+                  "data_type": "img",
+                  "img": {
+                    "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/check.png",
+                    "alt": "Check mark"
+                  }
+                },
+                {
+                  "data_type": "img",
+                  "img": {
+                    "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/question.png",
+                    "alt": "Question mark"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+        {% end_module_attribute %}
+
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+  
+  <!----------------------- TESTIMONIAL CARDS  ----------------------->
+    {% dnd_section
+      padding={
+        'top': 0,
+        'bottom': 0,
+        'left': 0,
+        'right': 0
+      },
+      full_width='true',
+      vertical_alignment='MIDDLE'
+    %}
+      {% dnd_module "reposit_testimonial"
+        path="../modules/Reposit - Testimonial Cards",
+        label="Reposit - Testimonial Cards",
+        offset=0
+      %}
+        {% module_attribute "testimonials" is_json=True %}
+        [
+          {
+            "name_field": "Nathaniel",
+            "title": "Manar, NSW",
+            "quote": "Best Customer Service! Within 8 weeks they did the site inspection, reviewed all the regulatory requirements for my area, and put together a no-fuss Proposal and quote for me to review. Once accepted, they were able to schedule the install for the following fortnight and it was completed perfectly within the day.",
+            "star_rating": "5",
+            "bg_color": {
+              "color": "#FAFAFA",
+              "opacity": 100
+            },
+            "round_corners": 20
+          },
+          {
+            "name_field": "Rob",
+            "title": "Canberra, ACT",
+            "quote": "So simple and big savings with No Bills. We had been meaning to switch to solar for a while, but every time we had gone to organise quotes, make decisions on panels, battery sizes etc it always just got too hard and complicated. The team were great and took care of everything.",
+            "star_rating": "5",
+            "bg_color": {
+              "color": "#FAFAFA",
+              "opacity": 100
+            },
+            "round_corners": 20
+          },
+          {
+            "name_field": "Greg",
+            "title": "Flynn, ACT",
+            "quote": "It is just on 2 years since the install of Reposit's No Bill system and it has been all smooth sailing. Reposit managed the install on time and efficiently. We gradually went all-electric over a number of years and having no energy bills at all for 2 years in a large 5/6 bedroom house has been great.",
+            "star_rating": "5",
+            "bg_color": {
+              "color": "#FAFAFA",
+              "opacity": 100
+            },
+            "round_corners": 20
+          },
+          {
+            "name_field": "Sean",
+            "title": "Winmalee, NSW",
+            "quote": "The Reposit team has been easy to deal with from sales to installation. We really like the App that allows us to see our ongoing power usage and the savings in both dollars and Co2. We would recommend Reposit.",
+            "star_rating": "5",
+            "bg_color": {
+              "color": "#FAFAFA",
+              "opacity": 100
+            },
+            "round_corners": 20
+          },
+          {
+            "name_field": "Steve",
+            "title": "Wandana Heights, VIC",
+            "quote": "We’ve been Reposit customers for just over a year part of the No Bill VPP. Their service has always been on point. The installation was very professional and done in an extremely efficient way.",
+            "star_rating": "5",
+            "bg_color": {
+              "color": "#FAFAFA",
+              "opacity": 100
+            },
+            "round_corners": 20
+          },
+          {
+            "name_field": "Joanne",
+            "title": "Forrest, ACT",
+            "quote": "No guesswork, No fuss, NO BILL! Generating all our household energy needs both day and night without worrying about tariffs, cloudy days or long showers is an absolute win/win, for my family and the planet.",
+            "star_rating": "5",
+            "bg_color": {
+              "color": "#FAFAFA",
+              "opacity": 100
+            },
+            "round_corners": 20
+          }
+        ]
+        {% end_module_attribute %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+  
+  <!----------------------- FAQs  ----------------------->
+    {% dnd_section
+      padding={
+        'top': 0,
+        'bottom': 0,
+        'left': 0,
+        'right': 0
+      },
+      full_width='true',
+      vertical_alignment='MIDDLE'
+    %}
+      {% dnd_module "reposit_faq"
+        path="../modules/Reposit - FAQs",
+        label="Reposit - FAQs",
+        offset=0
+      %}
+        {% module_attribute "faq_accordion" is_json=True %}
+        {
+          "faq":
+          [
+            {
+              "question": "How do you calculate my energy usage over the next seven years to guarantee me No Bills and what is the baseline and fair use cap?",
+              "answer": "<p>Our sales consultants will work with you to understand your current and future energy needs. They'll review your past electricity bills and ask about any upcoming changes to your home, like converting gas appliances to electric, getting an Electric Vehicle, or installing energy-efficient upgrades like a heat pump hot water heater or double-glazed windows.<br><br>This information helps us create a personalised No Bill system that meets your specific energy requirements and guarantees 100% electricity savings for seven years.<br><br>The baseline figure represents your expected energy usage over the next seven years. It's carefully calculated based on your current consumption patterns and any future plans you share with us. This figure ensures you have enough energy to power your home comfortably.<br><br>On top of your baseline figure, you receive an additional 20% of energy usage at no cost. This is called the Fair Use Cap. It provides you with peace of mind, knowing you have a buffer for unexpected energy needs.<br>For example, if your average electricity usage is 9000 kWh per year, with the extra 20% Fair Use Cap, you can use up to 10,800kWh per year.</p>"
+            },
+            {
+              "question": "How do I monitor my energy usage compared to my Fair Use Cap?",
+              "answer": "<p>Once your system is installed, you will need to download the Reposit No Bill App. It will show you how much energy you have used in a given month and clearly display the percentage of energy used compared to the seasonally adjusted Fair Use Cap. The Fair Use Cap takes into consideration your entire energy consumption, regardless of whether it comes from solar, battery or the grid.</p>"
+            },
+            {
+              "question": "How does Reposit calculate and adjust the Fair Use Cap for different energy usage each month?",
+              "answer": "<p>We understand that every home is unique and uses different amounts of energy each month. When you purchase a No Bill system, your sales consultant will calculate your baseline and Fair Use Cap. Your Fair Use Cap is then adjusted for each month of the year to ensure you have enough energy when you need it. As we gather more detailed information about your usage habits, your monthly Fair Use Cap may be further refined to reduce the likelihood of you exceeding your cap.</p>"
+            },
+            {
+              "question": "What happens if I go over the Fair Use Cap?",
+              "answer": "<p><span>Your Fair Use Cap is 20% more energy than the amount calculated by your sales consultant, based on your historical energy usage and any changes you plan to make. This is a considerable amount of extra energy, so it's highly unlikely you'll ever go over your cap if your energy consumption patterns continue as they were.</span><br><br><span>If you do go over your Fair Use Cap, the first thing we'll do is check to make sure everything is working correctly and the data we're looking at is accurate. Next, we'll look at your seasonal energy profile. For example, you might be using a little more energy in a particular month of the year. If your seasonal energy profile is no longer a good fit for your home, we'll create a new profile with the goal that you remain under your monthly and annual Cap.</span><br><br><span>If, after making all possible seasonal adjustments, you are still using more energy than your Fair Use Cap, then it is likely you have added additional energy loads to your home, such as an Electric Vehicle, replaced a gas ducted heating system with a Reverse Cycle heating system, installed a pool or a spa, or had friends or family move in.</span><br><br><span>The system works like this: you have three strikes in a rolling three-year period. Each time you breach your Cap, you may receive a strike. If, after three strikes and all possible seasonal adjustments have been made, you continue to exceed your Cap, we may need to discontinue your No Bill status.</span><br><br><span>Our highest priority is to keep you on the No Bill plan, and we will do everything possible to help you remain on the plan. However, if it's not possible with your current system and you want to continue to have no electricity bills, you can expand your system with a combination of additional solar and/or battery. With the data we have on your consumption, we can provide very accurate information on what expansion is required and the cost.</span><br><br><span>Going off the No Bill plan isn't the end of the world. You completely own your system, and it continues to be covered by its warranty. If you have any issues with your system, you still call Reposit. We can continue to manage your battery to maximise your savings. You will get an electricity bill, but you can still expect to save 60 to 70% on your electricity costs, just like any other solar and battery system. You will need to download the Reposit Grid Credit App, from which you can monitor your solar production, energy consumption, energy to and from the grid, and the state of charge of your battery.</span></p>"
+            },
+            {
+              "question": "What is the process for Reposit to receive and manage my electricity bill?",
+              "answer": "<p>We will help you in transferring your electricity bill to us, so you won’t have to see it again for at least 7 years. Our process works with all electricity retailers and in most cases can be completed in less than 30 minutes.</p>"
+            },
+            {
+              "question": "Does the use of my battery - trading and sharing energy affect the capacity or the warranty on my battery?",
+              "answer": "<p><span>Your battery comes with a 70% capacity warranty after ten years or 6,000 cycles, whichever comes first. This is an industry-leading warranty, with most high-end batteries offering a similar warranty, while some only cover 60% after 10 years.</span><br><br><span>On average, your battery will experience about 1.2 cycles per day, totalling approximately 4,380 cycles over a 10-year period. This means your battery will still be performing well beyond the warranty period.</span></p>"
+            },
+            {
+              "question": "Am I locked into Reposit Power and can my system operate without the Reposit Controller?",
+              "answer": "<p><span>Reposit Power is contractually committed to saving you 100% of your electricity costs for seven years by covering any bills where your system doesn't meet your energy needs. This is described in detail in the contract you sign with us.</span><br><br><span>If you choose to leave the No Bill plan, and opt to receive electricity bills again. You can still have Reposit manage your system through the Reposit GridCredits plan. Or if you choose to disconnect the Reposit Smart Controller, your system can operate in SolaX's standard maximum self-consumption mode. You can monitor your system through the SolaX App and web portal. Please note that your hardware warranty remains unaffected, and you can contact Reposit for support if you experience any issues.</span></p>"
+            },
+            {
+              "question": "Can I expand the system in the future and is Reposit future-proofed to manage changing battery technology?",
+              "answer": "<p><span>Yes, your Reposit system is designed for future expansion and compatibility. Our controller is capable of managing a mix of solar and battery systems at a single home, regardless of the technology partner Reposit chooses. If you choose to expand your system in the future, you can seamlessly expand it as if it were all one.</span><br><br><span>This future-proofing and the ability to add solar and or batteries to existing batteries is critical for long term savings. Tesla and SolarEdge’s new batteries are not compatible with their old batteries. Customers who have invested in these technologies are unable to expand their batteries capacity. With Reposit, you can rest assured that your system will be compatible with future innovations and batteries, maximising the lifespan of your investment.</span></p>"
+            },
+            {
+              "question": "What happens at the end of seven years?",
+              "answer": "<p><span>We understand that no one wants to go back to paying electricity bills after enjoying seven years of No Bill. At Reposit, we're thinking beyond the initial seven years, looking ahead to the next seven and beyond. At the end of your initial seven-year period, we'll work with you to review your system and provide detailed information about your historial usage and your expected energy costs for the next seven years. This allows you to make an informed decision about what's best for you.</span><br><br><span>Your options include:</span><br><br><span>1. Rolling over for another three years: If your energy usage and battery capacity are sufficient in 7 years time, you can extend your No Bill plan for another three years - up to the 10 year warranty period of your battery.</span><br><br><span>2. Re-investing in new batteries: You can choose to invest in new batteries and expand your battery system at a fraction of the initial cost as battery prices come down and battery technology improves. This option will give you another seven years of No Bills and provide an even better return on investment, as the majority of the infrastructure is already there, noting your solar panels have a 25-year warranty.</span><br><br><span>3. Exiting the No Bill plan: You can opt out of the No Bill plan. You own your system and it will continue to save you 60 to 70% of your electricity costs. Your inverter and battery has a 10 year warranty and if you have any issues you can contact Reposit for support.</span></p>"
+            },
+            {
+              "question": "How do I know you will be around for seven years to guarantee me 100% electricity savings?",
+              "answer": "<p><span>While no company can guarantee its future, Reposit has a strong track record of success and is built for longevity. We've been operating since 2012 and have over 6,000 systems in our fleet, which continues to grow. Our No Bill systems, managed by our Smart Controller, generate revenue from grid services, ensuring a steady income stream. It is this income stream that pays the electricity bill when your system doesn’t provide enough energy to your home. The technology we've developed is powerful and valuable, allowing us to attract high-quality investment backing to support our growth.</span><br><br><span>In the unlikely event that Reposit were to stop trading, your solar and battery system remains in your ownership. Your SolaX system will function in maximum self-consumption mode, without Reposit, just like any other solar and battery system. SolaX, a global leader in solar and battery systems, has sold hundreds of thousands of systems throughout Europe, the US and Australia. While you wouldn't have the No Bill guarantee, you'd still be able to save around 70% of your energy costs.</span></p>"
+            },
+            {
+              "question": "Who maintains the system and who do I call if I have an issue with my system? What is the warranty on my system?",
+              "answer": "<p><span>You own your system and it comes with a 10-year parts and labor warranty. The inverter and batteries have a 10-year warranty and your solar panels have a 25-year warranty. This is a statutory warranty by law, meaning it applies regardless of whether you're on the No Bill plan.</span><br><br><span>While you're on the No Bill plan, Reposit actively monitors your system. We consider it part of our No Bill trading fleet, so it's in our best interest to ensure all components are fully operational. If we detect any issues, we'll arrange for a technician to resolve the problem and contact you. If your system is down and not providing power to your home, Reposit will cover your electricity costs—a guarantee no other installer offers.</span><br><br><span>If you choose to leave the No Bill plan, you're still covered by the 10-year statutory warranty. Simply monitor your system and contact us if you experience any issues. We'll arrange for a technician to visit your home and resolve the problem.</span></p>"
+            },
+            {
+              "question": "Why is a DC coupled battery system more efficient than an AC coupled battery system?",
+              "answer": "<p><span>As the energy market evolves, managing the battery isn't enough. We need to control both the battery and solar generation to maximize savings for homeowners. In the future, electricity distributors will start charging customers for exporting energy back to the grid at certain times of the year and day. This is because the price of electricity during the day can be negative, meaning electricity companies get paid when electricity is used in the home but are charged for exporting energy to the grid.</span><br><br><span>An AC coupled battery system can't control the energy production of the inverter because it has no direct connection to it. This means the inverter export limit has to be set on the inverter itself. Solar inverters don't have the level of control to set dynamic export limiting, so it's an all-or-nothing approach. The Reposit controller dynamically changes the export limit depending on the time of year and the time of day, maximises exports to the grid when allowable or when there are feed in tariffs available, and limits exports there is a charge to feed energy into the grid.</span><br><br><span>A DC coupled system is more efficient because it only converts DC energy from the solar panels to AC energy once; when it's used in the home. An AC coupled battery has another inverter in it that takes AC energy from your solar inverter and converts it to DC to charge the battery, then converts it back to AC when the home needs it. Each conversion results in energy loss.</span></p>"
+            }
+          ]
+        }
+        {% end_module_attribute %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+  
+  <!----------------------- CTA  ----------------------->
+    {% dnd_section
+      padding={
+        'top': 0,
+        'bottom': 0,
+        'left': 0,
+        'right': 0
+      },
+      full_width='true',
+      vertical_alignment='MIDDLE'
+    %}
+      {% dnd_module "reposit_cta"
+        path="../modules/Reposit - CTA",
+        label="Reposit - CTA",
+        offset=0
+      %}
+        {% module_attribute "col_1" is_json=True %} 
+        {
+          "width": "",
+          "eyebrow": {
+            "text": ""
+          },
+          "title": {
+            "text": "Ready to Get Started?",
+            "highlight_text": ""
+          },
+          "text_area": {
+            "content": "<p>Reposit No Bill™ is Australia's Smartest Home Energy Solution.</p>"
+          },
+          "add_a_text_quote": true,
+          "text_quote": "<p>For more information, please check out our <em><strong>Frequently Asked Questions</strong>.</em></p>",
+          "button": [
+            {
+              "text": "Get Instant Quote",
+              "style_option": "cta-secondary",
+              "use_arrow_icon": true
+            }
+          ]
+          
+        }
+        {% end_module_attribute %}
+        {% module_attribute "col_2" is_json=True %} 
+        {
+          "content_type": "none"
+        }
+        {% end_module_attribute %}
+        {% module_attribute "section" is_json=True %} 
+        {
+          "bg_color": {
+            "color": "#FFFFFF",
+            "opacity": 100
+           },
+           "spacing": {
+            "top": 0,
+            "bottom": 150,
+            "top_sm": 0,
+            "bottom_sm": 80
+           },
+           "round_corners": {
+            "top_corners": 0,
+            "bottom_corners": 64,
+            "top_corners_sm": 0,
+            "bottom_corners_sm": 42
+           }
+        }
+        {% end_module_attribute %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+
+  {% end_dnd_area %}
+{% endblock body %}

@@ -1,0 +1,20 @@
+<div class="ridge-page-hero">
+    <h1>{{ widget.heading }}</h1>
+    <p>{{ widget.sub_heading }}</p>
+  <p>{{ widget.sub_heading_copy }}</p>
+</div>
+
+
+{% if widget.background_image.src %}
+
+    {% require_css %}
+    <style>
+        .header-container-wrapper {
+            background-image: url('{{ widget.background_image.src }}') !important;
+            background-size: cover !important;
+            background-color: #1f2a44;
+        }
+    </style>
+    {% end_require_css %}
+
+{% endif %}

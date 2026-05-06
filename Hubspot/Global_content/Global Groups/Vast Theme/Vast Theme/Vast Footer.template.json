@@ -1,0 +1,409 @@
+{
+  "isAvailableForNewContent" : true,
+  "templateType" : 18,
+  "attachedStylesheets" : [ ],
+  "attachedJs" : [ ],
+  "customHead" : "",
+  "customFooter" : "",
+  "bodyClass" : "",
+  "bodyCss" : "",
+  "bodyEditable" : false,
+  "layoutData" : {
+    "x" : 0,
+    "w" : 12,
+    "name" : "",
+    "label" : "",
+    "type" : "cell",
+    "params" : { },
+    "rows" : [ {
+      "0" : {
+        "x" : 0,
+        "w" : 12,
+        "name" : "module_14059809065251785",
+        "label" : "Footer Background",
+        "type" : "cell",
+        "params" : {
+          "css_class" : "footer-background padding40tb",
+          "value" : "",
+          "css_id" : "",
+          "overrideable" : false,
+          "css_style" : "",
+          "wrapping_html" : ""
+        },
+        "rows" : [ {
+          "0" : {
+            "x" : 0,
+            "w" : 12,
+            "name" : "module_1388499702410506",
+            "label" : "Page Center",
+            "type" : "cell",
+            "params" : {
+              "css_class" : "page-center",
+              "value" : "",
+              "css_id" : "",
+              "overrideable" : false,
+              "css_style" : "",
+              "wrapping_html" : ""
+            },
+            "rows" : [ {
+              "0" : {
+                "x" : 0,
+                "w" : 6,
+                "name" : "module_14059809430352455",
+                "label" : "About Us",
+                "type" : "cell",
+                "params" : {
+                  "css_class" : "about-us",
+                  "value" : "",
+                  "css_id" : "",
+                  "overrideable" : false,
+                  "css_style" : "",
+                  "wrapping_html" : ""
+                },
+                "rows" : [ {
+                  "0" : {
+                    "x" : 0,
+                    "w" : 12,
+                    "name" : "module_14059809700903086",
+                    "label" : "About Us Header",
+                    "type" : "header",
+                    "params" : {
+                      "header_tag" : "h4",
+                      "overrideable" : false,
+                      "value" : "About Us"
+                    },
+                    "rows" : [ ],
+                    "rowMetaData" : [ ],
+                    "cells" : [ ],
+                    "cssId" : "",
+                    "cssClass" : "",
+                    "cssStyle" : "",
+                    "styles" : null,
+                    "widgets" : [ ]
+                  }
+                }, {
+                  "0" : {
+                    "x" : 0,
+                    "w" : 12,
+                    "name" : "module_14059809430362456",
+                    "label" : "About Us Text",
+                    "type" : "rich_text",
+                    "params" : {
+                      "html" : "<p><span style=\"color: #ffffff;\">Use this little footer to reinforce your message about who you are and why people love working with you. And since this is a global module, you only have to edit it once to make the changes across every page it appears on.</span></p>\n<p><a href=\"//www.hubspot.com\">Learn More</a></p>",
+                      "overrideable" : false
+                    },
+                    "rows" : [ ],
+                    "rowMetaData" : [ ],
+                    "cells" : [ ],
+                    "cssId" : "",
+                    "cssClass" : "",
+                    "cssStyle" : "",
+                    "styles" : null,
+                    "widgets" : [ ]
+                  }
+                } ],
+                "rowMetaData" : [ ],
+                "cells" : [ ],
+                "cssId" : "",
+                "cssClass" : "",
+                "cssStyle" : "",
+                "styles" : null,
+                "widgets" : [ ]
+              },
+              "6" : {
+                "x" : 6,
+                "w" : 3,
+                "name" : "module_14059810377953994",
+                "label" : "More Links",
+                "type" : "cell",
+                "params" : {
+                  "css_class" : "more-links",
+                  "value" : "",
+                  "css_id" : "",
+                  "overrideable" : false,
+                  "css_style" : "",
+                  "wrapping_html" : ""
+                },
+                "rows" : [ {
+                  "0" : {
+                    "x" : 0,
+                    "w" : 12,
+                    "name" : "module_14059810612504546",
+                    "label" : "Links Header",
+                    "type" : "header",
+                    "params" : {
+                      "header_tag" : "h4",
+                      "overrideable" : false,
+                      "value" : "Links"
+                    },
+                    "rows" : [ ],
+                    "rowMetaData" : [ ],
+                    "cells" : [ ],
+                    "cssId" : "",
+                    "cssClass" : "",
+                    "cssStyle" : "",
+                    "styles" : null,
+                    "widgets" : [ ]
+                  }
+                }, {
+                  "0" : {
+                    "x" : 0,
+                    "w" : 12,
+                    "name" : "module_14060531315264509",
+                    "label" : "Simple Menu",
+                    "type" : "simple_menu",
+                    "params" : {
+                      "menu_tree" : [ ],
+                      "overrideable" : false,
+                      "orientation" : "vertical",
+                      "css_class" : "footer-nav"
+                    },
+                    "rows" : [ ],
+                    "rowMetaData" : [ ],
+                    "cells" : [ ],
+                    "cssId" : "",
+                    "cssClass" : "",
+                    "cssStyle" : "",
+                    "styles" : null,
+                    "widgets" : [ ]
+                  }
+                } ],
+                "rowMetaData" : [ ],
+                "cells" : [ ],
+                "cssId" : "",
+                "cssClass" : "",
+                "cssStyle" : "",
+                "styles" : null,
+                "widgets" : [ ]
+              },
+              "9" : {
+                "x" : 9,
+                "w" : 3,
+                "name" : "module_14059811507295247",
+                "label" : "Contact Us",
+                "type" : "cell",
+                "params" : {
+                  "css_class" : "contact-us",
+                  "value" : "",
+                  "css_id" : "",
+                  "overrideable" : false,
+                  "css_style" : "",
+                  "wrapping_html" : ""
+                },
+                "rows" : [ {
+                  "0" : {
+                    "x" : 0,
+                    "w" : 12,
+                    "name" : "module_14059811780685868",
+                    "label" : "Contact Us Header",
+                    "type" : "header",
+                    "params" : {
+                      "header_tag" : "h4",
+                      "overrideable" : false,
+                      "value" : "Contact Us"
+                    },
+                    "rows" : [ ],
+                    "rowMetaData" : [ ],
+                    "cells" : [ ],
+                    "cssId" : "",
+                    "cssClass" : "",
+                    "cssStyle" : "",
+                    "styles" : null,
+                    "widgets" : [ ]
+                  }
+                }, {
+                  "0" : {
+                    "x" : 0,
+                    "w" : 12,
+                    "name" : "module_14139868072584787",
+                    "label" : "Contact Us Information",
+                    "type" : "raw_jinja",
+                    "params" : {
+                      "overrideable" : false,
+                      "value" : "<div class=\"icon phone-icon\">\n    <i class=\"fa fa-phone\"></i>\n    <div class=\"contact-info\">\n    {{ site_settings.company_phone }}\n    </div>\n</div>\n<tr>\n<div class=\"icon envelope-icon\">\n    <i class=\"fa fa-envelope\"></i>\n    <div class=\"contact-info\">\n    <a href=\"mailto:yourname@company.com\">yourname@company.com</a>\n    </div>\n</div>\n<div class=\"icon home-icon\">\n    <i class=\"fa fa-home\"></i>\n    <div class=\"contact-info\">\n    {{site_settings.company_street_address_1}}{% unless site_settings.company_street_address_2 == \"\" %},<br />{{site_settings.company_street_address_2}} {% endunless %}<br />\n    {{site_settings.company_city}}, {{ site_settings.company_state}} {{site_settings.company_zip}}\n    </div>\n</div>"
+                    },
+                    "rows" : [ ],
+                    "rowMetaData" : [ ],
+                    "cells" : [ ],
+                    "cssId" : "",
+                    "cssClass" : "",
+                    "cssStyle" : "",
+                    "styles" : null,
+                    "widgets" : [ ]
+                  }
+                } ],
+                "rowMetaData" : [ ],
+                "cells" : [ ],
+                "cssId" : "",
+                "cssClass" : "",
+                "cssStyle" : "",
+                "styles" : null,
+                "widgets" : [ ]
+              }
+            } ],
+            "rowMetaData" : [ ],
+            "cells" : [ ],
+            "cssId" : "",
+            "cssClass" : "",
+            "cssStyle" : "",
+            "styles" : null,
+            "widgets" : [ ]
+          }
+        } ],
+        "rowMetaData" : [ ],
+        "cells" : [ ],
+        "cssId" : "",
+        "cssClass" : "",
+        "cssStyle" : "",
+        "styles" : null,
+        "widgets" : [ ]
+      }
+    }, {
+      "0" : {
+        "x" : 0,
+        "w" : 12,
+        "name" : "module_14059812216796808",
+        "label" : "Footer Copyright",
+        "type" : "cell",
+        "params" : {
+          "css_class" : "footer-copyright",
+          "value" : "",
+          "css_id" : "",
+          "overrideable" : false,
+          "css_style" : "",
+          "wrapping_html" : ""
+        },
+        "rows" : [ {
+          "0" : {
+            "x" : 0,
+            "w" : 12,
+            "name" : "module_14059812241317021",
+            "label" : "Page Center",
+            "type" : "cell",
+            "params" : {
+              "css_class" : "page-center",
+              "value" : "",
+              "css_id" : "",
+              "overrideable" : false,
+              "css_style" : "",
+              "wrapping_html" : ""
+            },
+            "rows" : [ {
+              "0" : {
+                "x" : 0,
+                "w" : 8,
+                "name" : "module_14059812915848150",
+                "label" : "Footer Copyright and Credit",
+                "type" : "text",
+                "params" : {
+                  "css_class" : "copyright-text",
+                  "overrideable" : false,
+                  "css_style" : "",
+                  "value" : "Copyright {{ year }} | Designed with  <i class=\"fa fa-heart\"></i>  by <a href=\"http://www.hubspot.com\">HubSpot</a>",
+                  "wrapping_html" : ""
+                },
+                "rows" : [ ],
+                "rowMetaData" : [ ],
+                "cells" : [ ],
+                "cssId" : "",
+                "cssClass" : "",
+                "cssStyle" : "",
+                "styles" : null,
+                "widgets" : [ ]
+              },
+              "8" : {
+                "x" : 8,
+                "w" : 4,
+                "name" : "module_14400060521574435",
+                "label" : "Follow Me",
+                "type" : "follow_me",
+                "params" : {
+                  "css_class" : "footer-follow-me",
+                  "title" : "",
+                  "overrideable" : false,
+                  "css_style" : "",
+                  "wrapping_html" : ""
+                },
+                "rows" : [ ],
+                "rowMetaData" : [ ],
+                "cells" : [ ],
+                "cssId" : "",
+                "cssClass" : "",
+                "cssStyle" : "",
+                "styles" : null,
+                "widgets" : [ ]
+              }
+            } ],
+            "rowMetaData" : [ ],
+            "cells" : [ ],
+            "cssId" : "",
+            "cssClass" : "",
+            "cssStyle" : "",
+            "styles" : null,
+            "widgets" : [ ]
+          }
+        } ],
+        "rowMetaData" : [ ],
+        "cells" : [ ],
+        "cssId" : "",
+        "cssClass" : "",
+        "cssStyle" : "",
+        "styles" : null,
+        "widgets" : [ ]
+      }
+    }, {
+      "0" : {
+        "x" : 0,
+        "w" : 12,
+        "name" : "module_14059813226059030",
+        "label" : "Back to Top",
+        "type" : "raw_html",
+        "params" : {
+          "css_class" : "back-to-top",
+          "overrideable" : false,
+          "value" : "<a href=\"#\"><i class=\"fa fa-chevron-up\"></i></a>",
+          "css_style" : "",
+          "wrapping_html" : ""
+        },
+        "rows" : [ ],
+        "rowMetaData" : [ ],
+        "cells" : [ ],
+        "cssId" : "",
+        "cssClass" : "",
+        "cssStyle" : "",
+        "styles" : null,
+        "widgets" : [ ]
+      }
+    }, {
+      "0" : {
+        "x" : 0,
+        "w" : 12,
+        "name" : "module_1418317755985657",
+        "label" : "Javascript - DO NOT REMOVE",
+        "type" : "raw_html",
+        "params" : {
+          "css_class" : "footer-js",
+          "overrideable" : false,
+          "css_style" : "min-height: 0",
+          "value" : "<!-- main js -->\n<script type=\"text/javascript\" src=\"{{ get_public_template_url('Coded files/Custom/page/Vast_Theme/vast-main.js') }}\"></script>\n",
+          "wrapping_html" : ""
+        },
+        "rows" : [ ],
+        "rowMetaData" : [ ],
+        "cells" : [ ],
+        "cssId" : "",
+        "cssClass" : "",
+        "cssStyle" : "",
+        "styles" : null,
+        "widgets" : [ ]
+      }
+    } ],
+    "rowMetaData" : [ ],
+    "cells" : [ ],
+    "cssId" : "",
+    "cssClass" : "",
+    "cssStyle" : "",
+    "styles" : null,
+    "widgets" : [ ]
+  }
+}

@@ -1,0 +1,268 @@
+<!--
+  templateType: "email"
+  isAvailableForNewContent: true
+-->
+<!DOCTYPE html>
+<html bgcolor="{{ background_color }}" style="margin: 0; padding: 0; background-color: {{ background_color }}">
+    <head>
+        <title>{% if content.html_title and content.html_title != '' %}{{ content.html_title }}{% else %}{{ content.body.subject }}{% endif %}</title>
+        <meta property="og:title" content="{% if content.html_title and content.html_title != '' %}{{ content.html_title }}{% else %}{{ content.body.subject }}{% endif %}">
+        <meta name="twitter:title" content="{% if content.html_title and content.html_title != '' %}{{ content.html_title }}{% else %}{{ content.body.subject }}{% endif %}">
+        {% if content.meta_description %}<meta name="description" content="{{ content.meta_description }}" />{% endif %}
+        <style type="text/css">
+        /*<![CDATA[*/
+            /* iOS automatically adds a link to addresses */
+            /* Style the footer with the same color as the footer text */
+            #footer a {
+                color: {{ secondary_font_color }};
+                -webkit-text-size-adjust: none;
+                text-decoration: underline;
+                font-weight: normal
+            }
+
+            {% if email_main_body_box_shadow_css and email_main_body_box_shadow_css != '' %}
+            #main_body {
+                box-shadow: {{ email_main_body_box_shadow_css }};
+            }
+            {% endif %}            
+
+        /*]]>*/
+        </style>
+        <!-- extra whitespace to ensure email renders properly on ipad                                                           -->
+        <!--                                                                                                                     -->
+        <!--                                                                                                                     -->
+        <!--                            _/    _/            _/          _/_/_/                        _/                         -->
+        <!--                           _/    _/  _/    _/  _/_/_/    _/        _/_/_/      _/_/    _/_/_/_/                      -->
+        <!--                          _/_/_/_/  _/    _/  _/    _/    _/_/    _/    _/  _/    _/    _/                           -->
+        <!--                         _/    _/  _/    _/  _/    _/        _/  _/    _/  _/    _/    _/                            -->
+        <!--                        _/    _/    _/_/_/  _/_/_/    _/_/_/    _/_/_/      _/_/        _/_/                         -->
+        <!--                                                               _/                                                    -->
+        <!--                                                              _/                                                     -->
+        <!--                                                                                                                     -->
+        <!--                                                 Extra White Space!                                                  -->
+        <!--                                                                                                                     -->
+        <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+        <style>
+#main_body {
+    box-shadow: none !important;
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+}
+td {
+    /*padding: 0 !important;*/
+    vertical-align: middle !important;
+}
+    /*body > table > tbody > tr > td {
+        background: linear-gradient(to bottom, #4698cb 0%,#4698cb 25%,#4698cb 25%,#DBE2E9 25%,#DBE2E9 100%);
+    }
+    */
+</style>
+    </head>
+    <body class="" bgcolor="{{ background_color }}" style="margin: 0; padding: 0; background-color: {{ background_color }} "" marginheight="0" marginwidth="0" topmargin="0">
+
+        <!-- Preview text (text which appears right after subject) -->
+        <div id="preview_text" style="display:none;font-size:1px;color:{{background_color}};line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;">
+            {% text "preview_text" label="Preview Text <span class=help-text>This will be used as the preview text that displays in some email clients</span>", value="", no_wrapper=True %}
+        </div>
+
+        <!-- start container -->
+        <table bgcolor="{{ background_color }}" style="background-color: {{ background_color }}; -webkit-font-smoothing: antialiased; -webkit-text-size-adjust: none" cellpadding="0" cellspacing="0" border="0" width="100%">
+             <tr>
+                <td bgcolor="{{ background_color }}" style="background-color: {{ background_color }};">
+                    <div align="center">
+                        <table cellpadding="0" width="{{ email_body_width }}" cellspacing="0" border="0">
+                            <tr>
+                                <td align="center" bgcolor="{{ background_color }}" style="background-color: {{ background_color }}">
+                                    <!-- start header section -->
+                                    <div class="header-container-wrapper">
+<table class="wrappertable" cellpadding="0" cellspacing="0" border="0" width="{{ email_body_width }}">
+<tr class="scaffold" style="font-size:0; height: 0px" height="0"><td colspan="1" height="0" width="8.33%" style="line-height: 0px; font-size: 0px; height: 0px">&nbsp;</td><td colspan="1" height="0" width="8.33%" style="line-height: 0px; font-size: 0px; height: 0px">&nbsp;</td><td colspan="1" height="0" width="8.33%" style="line-height: 0px; font-size: 0px; height: 0px">&nbsp;</td><td colspan="1" height="0" width="8.33%" style="line-height: 0px; font-size: 0px; height: 0px">&nbsp;</td><td colspan="1" height="0" width="8.33%" style="line-height: 0px; font-size: 0px; height: 0px">&nbsp;</td><td colspan="1" height="0" width="8.33%" style="line-height: 0px; font-size: 0px; height: 0px">&nbsp;</td><td colspan="1" height="0" width="8.33%" style="line-height: 0px; font-size: 0px; height: 0px">&nbsp;</td><td colspan="1" height="0" width="8.33%" style="line-height: 0px; font-size: 0px; height: 0px">&nbsp;</td><td colspan="1" height="0" width="8.33%" style="line-height: 0px; font-size: 0px; height: 0px">&nbsp;</td><td colspan="1" height="0" width="8.33%" style="line-height: 0px; font-size: 0px; height: 0px">&nbsp;</td><td colspan="1" height="0" width="8.33%" style="line-height: 0px; font-size: 0px; height: 0px">&nbsp;</td><td colspan="1" height="0" width="8.33%" style="line-height: 0px; font-size: 0px; height: 0px">&nbsp;</td></tr>
+
+<tr>
+<td valign="top" colspan=12 width="100.0%" class="" style="width:100.0%; text-align: left; padding: 0; font-family: {{ primary_font }}; font-size: {{ primary_font_size }}; line-height: 1.5em; color: {{ primary_font_color }}; ">
+
+<div class="widget-span widget-type-email_view_as_web_page " style="color:#ffffff;" data-widget-type="email_view_as_web_page">
+{% if content.create_page %}
+<div style="padding-top: 15px; font-family: Geneva, Verdana, Arial, Helvetica, sans-serif; font-size: 9px; line-height: 1.34em; text-align: center; color: #53565a;">Not rendering correctly? View this email as a web page&nbsp;<a target="_blank" href="{{ view_as_page_url }}" style="color: #53565a; text-decoration: underline; white-space: nowrap" data-viewaswebpage="true">here</a>.</div>
+{% endif %}
+</div><!--end widget-span -->
+   </td>
+</tr>
+</div><!--end header wrapper -->
+                                    <!-- end header section -->
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td bgcolor="{{ background_color }}" style="padding: 10px 20px; background-color: {{ background_color }}">
+                    <div align="center">
+                        <table cellpadding="0" width="{{ email_body_width }}" cellspacing="0" border="0">
+                            <tr>
+                                <td id="main_body" width="{{ email_body_width }}" bgcolor="{{ body_color }}" style="padding: {{ email_body_padding }}px; background-color: {{ body_color }}; {{ email_body_border_css }}; border-radius: 4px">
+                                    <div align="center">
+                                        <table cellpadding="0" width="{{ email_body_width }}" cellspacing="0" border="0">
+                                            <!-- start content -->
+                                            <tr>
+                                                <td style="padding: 0; background-color: {{ body_color }}">
+                                                    <div align="center">
+                                                        <table cellpadding="0" cellspacing="0" border="0" width="100%" style="font-family: {{ primary_font }}; font-size: {{ primary_font_size }}; line-height: 1.5em; color: {{ primary_font_color }}">
+                                                            <tr>
+                                                                <td>
+                                                                    <div align="center">
+                                                                        <!-- start body section -->
+                                                                        <div class="body-container-wrapper">
+<table class="wrappertable" cellpadding="0" cellspacing="0" border="0" width="{{ email_body_width }}">
+<tr class="scaffold" style="font-size:0; height: 0px" height="0"><td colspan="1" height="0" width="8.33%" style="line-height: 0px; font-size: 0px; height: 0px">&nbsp;</td><td colspan="1" height="0" width="8.33%" style="line-height: 0px; font-size: 0px; height: 0px">&nbsp;</td><td colspan="1" height="0" width="8.33%" style="line-height: 0px; font-size: 0px; height: 0px">&nbsp;</td><td colspan="1" height="0" width="8.33%" style="line-height: 0px; font-size: 0px; height: 0px">&nbsp;</td><td colspan="1" height="0" width="8.33%" style="line-height: 0px; font-size: 0px; height: 0px">&nbsp;</td><td colspan="1" height="0" width="8.33%" style="line-height: 0px; font-size: 0px; height: 0px">&nbsp;</td><td colspan="1" height="0" width="8.33%" style="line-height: 0px; font-size: 0px; height: 0px">&nbsp;</td><td colspan="1" height="0" width="8.33%" style="line-height: 0px; font-size: 0px; height: 0px">&nbsp;</td><td colspan="1" height="0" width="8.33%" style="line-height: 0px; font-size: 0px; height: 0px">&nbsp;</td><td colspan="1" height="0" width="8.33%" style="line-height: 0px; font-size: 0px; height: 0px">&nbsp;</td><td colspan="1" height="0" width="8.33%" style="line-height: 0px; font-size: 0px; height: 0px">&nbsp;</td><td colspan="1" height="0" width="8.33%" style="line-height: 0px; font-size: 0px; height: 0px">&nbsp;</td></tr>
+
+<tr>
+<td valign="top" colspan=12 width="100.0%" class="" style="width:100.0%; text-align: left; padding: 0; font-family: {{ primary_font }}; font-size: {{ primary_font_size }}; line-height: 1.5em; color: {{ primary_font_color }}; background-color:#4698cb;padding:25px 20px 25px 20px;color:#ffffff;">
+
+<table cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+<td valign="top" colspan=4 width="33.33333333333333%" class="" style="width:33.33333333333333%; text-align: left; padding: 0; font-family: {{ primary_font }}; font-size: {{ primary_font_size }}; line-height: 1.5em; color: {{ primary_font_color }}; ">
+
+<div class="widget-span widget-type-linked_image " style="" data-widget-type="linked_image">
+<div class="layout-widget-wrapper">
+{% linked_image "module_151258116811219" wrapping_html='', per_widget_wrapper_html='', overrideable=true, src='https://cdn2.hubspot.net/hubfs/3445699/reposit_logo_white.png', original_width=279, original_height=70, img_alt='reposit_logo_white.png', img_load_error=false, width=175, height=44, alt='reposit_logo_white.png', link='http://www.repositpower.com/', open_in_new_tab=false, label='Logo'%}
+</div><!--end layout-widget-wrapper -->
+</div><!--end widget-span -->
+       </td>
+<td valign="top" colspan=8 width="66.66666666666666%" class="" style="width:66.66666666666666%; text-align: left; padding: 0; font-family: {{ primary_font }}; font-size: {{ primary_font_size }}; line-height: 1.5em; color: {{ primary_font_color }}; ">
+
+<div class="widget-span widget-type-text " style="text-align: right;color:#ffffff;" data-widget-type="text">
+<div class="layout-widget-wrapper">
+{% text "module_151258196965773" wrapping_html='', per_widget_wrapper_html='', overrideable=true, value='Email subject appears here', label='Subject'%}
+</div><!--end layout-widget-wrapper -->
+</div><!--end widget-span -->
+       </td>
+   </tr>
+</table>
+   </td>
+</tr>
+<tr>
+<td valign="top" colspan=12 width="100.0%" class="" style="width:100.0%; text-align: left; padding: 0; font-family: {{ primary_font }}; font-size: {{ primary_font_size }}; line-height: 1.5em; color: {{ primary_font_color }}; ">
+
+<table cellpadding="0" cellspacing="0" width="100%" style=" " class=""><tr><td class="widget-span widget-type-email_body" style="text-align: left; padding: 0; font-family: {{ primary_font }}; font-size: {{ primary_font_size }}; line-height: 1.5em; color: {{ primary_font_color }};  padding:50px 50px 50px 50px;color:#53565a;" data-widget-type="email_body" valign="top">
+{% content_attribute "email_body" %}<p><span style="font-size: 30px; color: #4698cb; font-family: arial, helvetica, sans-serif;">Dear&nbsp;{{contact.firstname}},</span></p>
+<p><span style="font-family: arial, helvetica, sans-serif; font-size: 16px;">Congratulations and welcome to Reposit. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Congratulations and welcome to Reposit. Lorem ipsum dolor sit amet, consectetur adipisicing elit.</span></p>
+<p>&nbsp;</p>
+<hr>
+<p>&nbsp;</p>
+<p><span style="color: #4698cb; font-family: arial, helvetica, sans-serif;"><strong>Heading Level 2</strong></span></p>
+<p><span style="font-family: arial, helvetica, sans-serif;">Congratulations and welcome to Reposit. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</span></p>
+<ul>
+<li><span style="font-family: arial, helvetica, sans-serif;">This is a bullet style</span></li>
+<li><span style="font-family: arial, helvetica, sans-serif;">This is a bullet style ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</span></li>
+</ul>
+<p><span style="font-family: arial, helvetica, sans-serif;">Congratulations and welcome to Reposit. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</span></p>
+<ol>
+<li><span style="font-family: arial, helvetica, sans-serif;">This is a step style</span></li>
+<li><span style="font-family: arial, helvetica, sans-serif;">This is a step style ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</span></li>
+<li><span style="font-family: arial, helvetica, sans-serif;">This is a step style ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt.</span></li>
+</ol>{% end_content_attribute %}
+</td></tr></table><!--end widget-table -->
+   </td>
+</tr>
+</div><!--end body wrapper -->
+                                                                        <!-- end body section -->
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <!-- end content -->
+                                        </table>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td bgcolor="{{ background_color }}" style="background-color: {{ background_color }}; padding: 13px {{ email_body_padding }}px">
+                    <div align="center">
+                        <table cellpadding="0" width="{{ email_body_width }}" cellspacing="0" border="0">
+                            <tr>
+                                <td align="center" bgcolor="{{ background_color }}" style="background-color: {{ background_color }}">
+                                    <!-- start footer section -->
+                                    <div class="footer-container-wrapper">
+<table class="wrappertable" cellpadding="0" cellspacing="0" border="0" width="{{ email_body_width }}">
+<tr class="scaffold" style="font-size:0; height: 0px" height="0"><td colspan="1" height="0" width="8.33%" style="line-height: 0px; font-size: 0px; height: 0px">&nbsp;</td><td colspan="1" height="0" width="8.33%" style="line-height: 0px; font-size: 0px; height: 0px">&nbsp;</td><td colspan="1" height="0" width="8.33%" style="line-height: 0px; font-size: 0px; height: 0px">&nbsp;</td><td colspan="1" height="0" width="8.33%" style="line-height: 0px; font-size: 0px; height: 0px">&nbsp;</td><td colspan="1" height="0" width="8.33%" style="line-height: 0px; font-size: 0px; height: 0px">&nbsp;</td><td colspan="1" height="0" width="8.33%" style="line-height: 0px; font-size: 0px; height: 0px">&nbsp;</td><td colspan="1" height="0" width="8.33%" style="line-height: 0px; font-size: 0px; height: 0px">&nbsp;</td><td colspan="1" height="0" width="8.33%" style="line-height: 0px; font-size: 0px; height: 0px">&nbsp;</td><td colspan="1" height="0" width="8.33%" style="line-height: 0px; font-size: 0px; height: 0px">&nbsp;</td><td colspan="1" height="0" width="8.33%" style="line-height: 0px; font-size: 0px; height: 0px">&nbsp;</td><td colspan="1" height="0" width="8.33%" style="line-height: 0px; font-size: 0px; height: 0px">&nbsp;</td><td colspan="1" height="0" width="8.33%" style="line-height: 0px; font-size: 0px; height: 0px">&nbsp;</td></tr>
+
+<tr>
+<td valign="top" colspan=12 width="100.0%" class="" style="width:100.0%; text-align: left; padding: 0; font-family: {{ primary_font }}; font-size: {{ primary_font_size }}; line-height: 1.5em; color: {{ primary_font_color }}; padding:50px 50px 0px 50px;">
+
+<table cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+<td valign="top" colspan=4 width="33.33333333333333%" class="" style="width:33.33333333333333%; text-align: left; padding: 0; font-family: {{ primary_font }}; font-size: {{ primary_font_size }}; line-height: 1.5em; color: {{ primary_font_color }}; ">
+
+<div class="widget-span widget-type-logo " style="" data-widget-type="logo">
+<div class="layout-widget-wrapper">
+{% logo "module_151258188389571" wrapping_html='', per_widget_wrapper_html='', overrideable=true, src='https://cdn2.hubspot.net/hubfs/3445699/Reposit_logo.png', original_width=399, original_height=100, img_alt='Reposit Power', width=175, height=44, img_load_error=false, suppress_company_name=false, override_inherited_src=true, alt='Reposit Power', link='null', open_in_new_tab=false, label='Logo'%}
+</div><!--end layout-widget-wrapper -->
+</div><!--end widget-span -->
+       </td>
+<td valign="top" colspan=8 width="66.66666666666666%" class="" style="width:66.66666666666666%; text-align: left; padding: 0; font-family: {{ primary_font }}; font-size: {{ primary_font_size }}; line-height: 1.5em; color: {{ primary_font_color }}; ">
+
+<table cellpadding="0" cellspacing="0" width="100%" style=" " class=""><tr><td class="widget-span widget-type-rich_text" style="text-align: left; padding: 0; font-family: {{ primary_font }}; font-size: {{ primary_font_size }}; line-height: 1.5em; color: {{ primary_font_color }};  padding:0px 0px 0px 10px;" data-widget-type="rich_text" valign="top">
+<div class="layout-widget-wrapper">
+{% widget_block rich_text "module_1512583163009156" wrapping_html='', per_widget_wrapper_html='', overrideable=false, label='Social Links' %}
+{% widget_attribute "html" %}<table style="float: right;" align="right">
+<tbody>
+<tr>
+<td style="padding: 0 5px; vertical-align: middle;"><a href="https://twitter.com/RepositPower"><img src="https://cdn2.hubspot.net/hubfs/3445699/Twitter_Dark.png" alt="" title="Twitter_Dark.png" width="23" height="18" align="right"></a></td>
+<td style="padding-left: 5px; ; vertical-align: middle;"><a href="https://www.facebook.com/RepositPower/"><img src="https://cdn2.hubspot.net/hubfs/3445699/Facebook_Dark.png" alt="" title="Facebook_Dark.png" width="9" height="18px" align="right"></a></td>
+</tr>
+</tbody>
+</table>{% end_widget_attribute %}
+  {% end_widget_block %}
+</div><!--end layout-widget-wrapper -->
+</td></tr></table><!--end widget-table -->
+       </td>
+   </tr>
+    <tr>
+<td valign="top" colspan=12 width="100.0%" class="" style="width:100.0%; text-align: left; padding: 0; font-family: {{ primary_font }}; font-size: {{ primary_font_size }}; line-height: 1.5em; color: {{ primary_font_color }}; padding:15px 0px 15px 0px;">
+
+<table cellpadding="0" cellspacing="0" width="100%" style=" background-color:#bcc8d5;" class=""><tr><td class="widget-span widget-type-space" style="text-align: left; padding: 0; font-family: {{ primary_font }}; font-size: {{ primary_font_size }}; line-height: 1.5em; color: {{ primary_font_color }}; padding:0 !important;height:2px; padding:2px 0px 0px 0px;" data-widget-type="space" valign="top">
+<div class="layout-widget-wrapper">
+{% space "module_151258476866179" wrapping_html='', per_widget_wrapper_html='', overrideable=false, label='Horizontal Spacer'%}
+</div><!--end layout-widget-wrapper -->
+</td></tr></table><!--end widget-table -->
+       </td>
+   </tr>
+    <tr>
+<td valign="top" colspan=12 width="100.0%" class="" style="width:100.0%; text-align: left; padding: 0; font-family: {{ primary_font }}; font-size: {{ primary_font_size }}; line-height: 1.5em; color: {{ primary_font_color }}; ">
+
+<div class="widget-span widget-type-email_can_spam " style="" data-widget-type="email_can_spam">
+<p><span style="font-size: 12px; line-height: 1em;">Copyright&nbsp;© {{ year }} Reposit Power, All rights reserved.</span></p>
+<p style="line-height: 1em;"><span style="font-size: 12px;">Hey there - You are receiving this email because you have made <g class="gr_ gr_11 gr-alert gr_spell gr_inline_cards gr_disable_anim_appear ContextualSpelling multiReplace" id="11" data-gr-id="11">enquiries</g> about installing Reposit or work for an installation business.</span></p>
+<p style="line-height: 1em;"><span style="font-size: 12px;"><strong>Our mailing address is:</strong></span><br><span style="font-size: 12px;">{{site_settings.company_name}}</span><br><span style="font-size: 12px;">{{site_settings.company_street_address_1}}</span><br><span style="font-size: 12px;">{{site_settings.company_street_address_2}}</span><span style="font-size: 12px;">{{site_settings.company_city}},&nbsp;{{site_settings.company_state}}&nbsp;{{site_settings.company_zip}}</span><br><span style="font-size: 12px;">{{site_settings.company_country}}</span></p>
+<p><span style="font-size: 12px; line-height: 1em;"></span><span style="font-size: 12px; line-height: 1em;"><a target="_blank" href="{{ unsubscribe_link }}" style="text-decoration: underline; whitespace: nowrap; color: {{ secondary_font_color }};" data-unsubscribe="true">Want to change how you receive these emails?</a></span><br><span style="font-size: 12px; line-height: 1em;">You <g class="gr_ gr_9 gr-alert gr_gramm gr_inline_cards gr_run_anim Style multiReplace" id="9" data-gr-id="9">can&nbsp;</g><a target="_blank" href="{{ unsubscribe_link }}" style="text-decoration: underline; whitespace: nowrap; color: {{ secondary_font_color }};" data-unsubscribe="true">update your preferences</a><g class="gr_ gr_9 gr-alert gr_gramm gr_inline_cards gr_disable_anim_appear Style multiReplace" id="9" data-gr-id="9">&nbsp;</g><g class="gr_ gr_10 gr-alert gr_gramm gr_inline_cards gr_run_anim Style multiReplace" id="10" data-gr-id="10"><g class="gr_ gr_9 gr-alert gr_gramm gr_inline_cards gr_disable_anim_appear Style multiReplace" id="9" data-gr-id="9">or</g>&nbsp;</g><a target="_blank" href="{{ unsubscribe_link_all }}" style="text-decoration: underline; whitespace: nowrap; color: {{ secondary_font_color }};" data-unsubscribe="true">unsubscribe</a><g class="gr_ gr_10 gr-alert gr_gramm gr_inline_cards gr_disable_anim_appear Style multiReplace" id="10" data-gr-id="10">&nbsp;from</g> this list.&nbsp;</span></p>
+</div><!--end widget-span -->
+       </td>
+   </tr>
+</table>
+   </td>
+</tr>
+</div><!--end footer wrapper -->
+                                    <!-- end footer section -->
+                                </td>
+                            </tr>
+                            <tr>
+                                {% hubspot_footer %}
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <!-- end container -->
+    </body>
+</html>

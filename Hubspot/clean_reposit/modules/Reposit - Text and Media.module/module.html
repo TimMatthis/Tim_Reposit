@@ -1,0 +1,348 @@
+{% import "../macros/icon.html" as icon %}
+
+{% require_css %}
+<style>
+  #{{name}} {
+    {% if module.section.overlap_section %}margin-top: -10vh;{% endif %}
+    background-color: {{ module.section.bg_color.rgba or 'transparent' }};
+    border-radius: {{ module.section.round_corners.top_corners or 0 }}px {{ module.section.round_corners.top_corners or 0 }}px {{ module.section.round_corners.bottom_corners or 0 }}px {{ module.section.round_corners.bottom_corners or 0 }}px;
+    padding: {{ module.section.spacing.top or 0 }}px 0 {{ module.section.spacing.bottom or 0 }}px 0;
+  }
+  
+  #{{name}} .flex-container {
+    justify-content: space-between;
+    align-items: center;
+    {% if module.media.media_pos == 'right' %}
+    flex-direction: row-reverse;
+    {% endif %}
+  }
+
+  {# HEADING #}
+  #{{name}} .heading {
+    width: {{ module.col_1.width or 100 }}%;
+  }
+  
+  #{{name}} .heading .eyebrow {
+    margin-bottom: {{ module.col_1.eyebrow.bottom_space or 0 }}px;
+    {{ 'color: ' ~ module.col_1.eyebrow.text_color.rgba ~ ';' if module.col_1.eyebrow.text_color.rgba }}
+  }
+  
+  #{{name}} .heading .title {
+    margin-bottom: {{ module.col_1.title.bottom_space or 0 }}px;
+    {{ 'color: ' ~ module.col_1.title.text_color.rgba ~ ';' if module.col_1.title.text_color.rgba }}
+  }
+  
+  #{{name}} .heading .highlight {
+    color: {{ module.col_1.title.highlight_color.rgba }};
+  }
+  
+  #{{name}} .heading .text-container {
+    margin-bottom: {{ module.col_1.text_area.bottom_space or 0 }}px;
+  }
+ 
+  #{{name}} .btn-container {
+    display: flex;
+    justify-content: start;
+  }
+  
+  {# MEDIA #}
+  #{{name}} .media-area {
+    width: {{ module.media.width or 100 }}%;
+    display: flex;
+    position: relative;
+  }
+  
+  #{{name}} .media-img {
+    margin: 0;
+  }
+  
+  #{{name}} .media-img img,
+  #{{name}} .media-area video,
+  #{{name}} .media-area iframe {
+    border-radius: {{ module.media.round_corners or 0 }}px;
+  }
+
+  #{{name}} .media-area #play-btn {
+    display: flex;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    cursor: pointer;
+  }
+
+  #{{name}} .media-area #play-btn i {
+    color: #fff;
+    font-size: 100px;
+    transition: all 0.3s;
+  }
+  
+  #{{name}} .media-area #play-btn:hover i {
+    transform: scale(1.1);
+  }
+  
+  {# Video Overlay #}
+  #{{name}} #video-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 1001;
+    background-color: rgba(0, 0, 0, 0.9);
+    opacity: 0;
+    visibility: hidden;
+    transition: all .3s;
+    display: grid;
+    place-items: center;
+    transform: translateY(100%);
+    cursor: pointer;
+  }
+
+  #{{name}} #video-overlay.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  #{{name}} #video-overlay .popup-video {
+    width: 80%;
+    height: auto;
+  }
+  
+  #{{name}} .media-area iframe {
+    border: 0;
+    min-height: 350px;
+  }
+  
+  {# TEXT AREA #}
+  #{{name}} .text-area {
+    width: {{ module.text_area.width or 100 }}%;
+  }
+  
+  #{{name}} .text-area .eyebrow {
+    margin-bottom: {{ module.text_area.eyebrow.bottom_space or 0 }}px;
+    {{ 'color: ' ~ module.text_area.eyebrow.text_color.rgba ~ ';' if module.text_area.eyebrow.text_color.rgba }}
+  }
+  
+  #{{name}} .text-area .title {
+    margin-bottom: {{ module.text_area.title.bottom_space or 0 }}px;
+    {{ 'color: ' ~ module.text_area.title.text_color.rgba ~ ';' if module.text_area.title.text_color.rgba }}
+  }
+  
+  #{{name}} .text-area .highlight {
+    color: {{ module.text_area.title.highlight_color.rgba }};
+  }
+  
+  #{{name}} .text-area .text-container {
+    margin-bottom: {{ module.text_area.text_area.bottom_space or 0 }}px;
+  }
+
+
+  {# MOBILE #}
+  @media (max-width: {{ theme.layout.style_opts.slim_width }}px) {
+    #{{name}} {
+      border-radius: {{ module.section.round_corners.top_corners_sm or 0 }}px {{ module.section.round_corners.top_corners_sm or 0 }}px {{ module.section.round_corners.bottom_corners_sm or 0 }}px {{ module.section.round_corners.bottom_corners_sm or 0 }}px;
+      {{ 'padding-top: ' ~ module.section.spacing.top_sm ~ 'px;' if module.section.spacing.top_sm }}
+      {{ 'padding-bottom: ' ~ module.section.spacing.bottom_sm ~ 'px;' if module.section.spacing.bottom_sm }}
+    }
+    
+    #{{name}} .flex-container {
+      flex-direction: {% if module.media.media_pos == 'right' %}column-reverse{% else %}column{% endif %};
+      align-items: start;
+      gap: 24px;
+    }
+    
+    #{{name}} .heading, #{{name}} .flex-content {
+      width: 100%;
+    }
+    
+    #{{name}} .heading .title, #{{name}} .text-area .title, #{{name}} .text-area .text-container {
+      margin-bottom: 24px;
+    }
+    
+    #{{name}} #video-overlay .popup-video {
+      width: 100%;
+      border-radius: 0;
+    }
+  }
+  
+  @media (max-width: 499px) {
+    #{{name}} .media-area iframe {
+      min-height: 250px;
+    }
+  }
+</style>
+{% end_require_css %}
+
+{### HTML ###}
+<div id="{{name}}">
+  <div class="container">
+
+    <div class="heading">
+      {# EYEBROW #}
+      {% if module.col_1.eyebrow.text %}
+      <div class="eyebrow-container">
+        <{{ module.col_1.eyebrow.display_as }} class="eyebrow">
+          {{ module.col_1.eyebrow.text }}
+        </{{ module.col_1.eyebrow.display_as }}>
+      </div>
+      {% endif %}
+
+      {# TITLE #}
+      {% if module.col_1.title.text or module.col_1.title.highlight_text %}
+      <div class="title-container">
+        <{{ module.col_1.title.display_as }} class="title">
+          {{ module.col_1.title.text }} {{ '<span class="highlight"> ' ~ module.col_1.title.highlight_text ~ '</span>' if module.col_1.title.highlight_text }}
+        </{{ module.col_1.title.display_as }}>
+      </div>
+      {% endif %}
+
+      {# TEXT CONTAINER #}
+      {% if module.col_1.text_area.content %}
+      <div class="text-container">
+        {{ module.col_1.text_area.content }}
+      </div>
+      {% endif %}
+
+      {# BUTTONS #}
+      <div class="btn-container">
+      {% for button in module.col_1.button %}
+        {% if button.use_cta %}
+          {% cta guid='{{ button.guid }}' %}
+        {% else %}
+          {% if button.text %}
+            <a class="button {{ button.style_option }}"
+           {% if button.url.href %}href = "{% if button.url.type == 'EMAIL_ADDRESS' %}mailto: {% elif button.url.type == 'PHONE_NUMBER' %}tel: {% endif %}{{ button.url.href }}"{% endif %}
+           {% if button.open_link_in_new_tab %}target="_blank"{% endif %}
+             >{{ button.text }}{% if button.use_arrow_icon %}<span>{{ icon.btn_arrow() }}</span>{% endif %}</a>
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+      </div>
+
+    </div> {# /.heading #}
+
+    <div class="flex-container">
+      {# MEADIA #}
+      <div class="flex-content media-area">
+      {% if (module.media.media_type == 'video') and (module.media.video.video_type == 'file') %}
+        {% if module.media.video.show_play_btn %}
+        <div id="play-btn">
+          <i class="fa-solid fa-play"></i>
+        </div>
+        {% endif %}
+
+        <video muted {% if module.media.video.autoplay %}autoplay{% endif %} playsinline loop preload="metadata" {% if module.media.video.thumbnail.src %}poster="{{ module.media.video.thumbnail.src }}"{% endif %}>
+          <source src="{{ module.media.video.video }}" type="video/mp4">
+        </video>
+        
+        {# Popup Video #}
+        <div id="video-overlay">
+          <video controls playsinline preload="none" class="popup-video">
+            <source src="{{ module.media.video.video }}" type="video/mp4">
+          </video>
+        </div>
+
+      {% elif (module.media.media_type == 'video') and (module.media.video.video_type == 'embed') %}
+        {#<iframe width="100%" height="100%" src="{{ module.media.video.video_url }}"></iframe>#}
+        {{ module.media.video.video_url }}
+
+      {% else %}
+        {% if module.media.img.src %}
+        <figure class="media-img">
+          <img src="{{ module.media.img.src }}" alt="{{ module.media.img.alt }}" loading="{{ module.media.img.loading }}" />
+        </figure>
+        {% endif %}
+      {% endif %}
+      </div> {# /.media-container #}
+
+      {# TEXT AREA #}
+      <div class="flex-content text-area">
+        {% if module.text_area.eyebrow.text %}
+        <div class="eyebrow-container">
+          <{{ module.text_area.eyebrow.display_as }} class="eyebrow">
+            {{ module.text_area.eyebrow.text }}
+          </{{ module.text_area.eyebrow.display_as }}>
+        </div>
+        {% endif %}
+
+        {# TITLE #}
+        {% if module.text_area.title.text or module.text_area.title.highlight_text %}
+        <div class="title-container">
+          <{{ module.text_area.title.display_as }} class="title">
+            {{ module.text_area.title.text }} {{ '<span class="highlight"> ' ~ module.text_area.title.highlight_text ~ '</span>' if module.text_area.title.highlight_text }}
+          </{{ module.text_area.title.display_as }}>
+        </div>
+        {% endif %}
+
+        {# TEXT CONTAINER #}
+        {% if module.text_area.text_area.content %}
+        <div class="text-container">
+          {{ module.text_area.text_area.content }}
+        </div>
+        {% endif %}
+
+        {# BUTTONS #}
+        <div class="btn-container">
+        {% for button in module.text_area.button %}
+          {% if button.use_cta %}
+            {% cta guid='{{ button.guid }}' %}
+          {% else %}
+            {% if button.text %}
+              <a class="button {{ button.style_option }}"
+             {% if button.url.href %}href = "{% if button.url.type == 'EMAIL_ADDRESS' %}mailto: {% elif button.url.type == 'PHONE_NUMBER' %}tel: {% endif %}{{ button.url.href }}"{% endif %}
+             {% if button.open_link_in_new_tab %}target="_blank"{% endif %}
+               >{{ button.text }}{% if button.use_arrow_icon %}<span>{{ icon.btn_arrow() }}</span>{% endif %}</a>
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+        </div>
+      </div> {# /.text-container #}
+    </div> {# /.flex #}
+  </div>
+  
+</div>
+
+{% require_js %}
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const playBtn = document.querySelector("#{{name}} #play-btn");
+    const overlay = document.querySelector("#{{name}} #video-overlay");
+
+    if (!overlay) {
+      return;
+    }
+
+    const video = overlay.querySelector(".popup-video");
+
+    if (!video) {
+      return;
+    }
+    
+    video.volume = 0.4;
+
+    if (playBtn) {
+      playBtn.addEventListener("click", function() {
+        if (!video.paused) return;
+        video.play();
+        overlay.classList.add("active");
+        video.classList.add("active");
+        document.body.style.overflow = "hidden";
+      });
+    }
+
+    if (overlay) {
+      overlay.addEventListener("click", function(event) {
+        if (event.target === overlay) {
+          video.pause();
+          overlay.classList.remove("active");
+          video.classList.remove("active");
+          document.body.style.overflow = "";
+        }
+      });
+    }
+  });
+</script>
+{% end_require_js %}

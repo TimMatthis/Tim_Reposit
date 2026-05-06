@@ -1,0 +1,293 @@
+{% import "../macros/icon.html" as icon %}
+
+{% macro star() %}
+ <svg xmlns="http://www.w3.org/2000/svg" width="20" height="19" viewBox="0 0 20 19" fill="none">
+  <path d="M10 1L12.6702 6.7878L19 7.53881L14.3202 11.8659L15.5624 18.1182L10 15.005L4.43758 18.1191L5.67979 11.8668L1 7.53795L7.33063 6.78694L10 1Z" fill="#4698CB" stroke="#4698CB" stroke-width="1.29038" stroke-linejoin="round"/>
+</svg>
+{% endmacro %}
+
+{% require_css %}
+<style>
+  #{{name}} {
+    {% if module.section.overlap_section %}margin-top: -10vh;{% endif %}
+    background-color: {{ module.section.bg_color.rgba or 'transparent' }};
+    border-radius: {{ module.section.round_corners.top_corners or 0 }}px {{ module.section.round_corners.top_corners or 0 }}px {{ module.section.round_corners.bottom_corners or 0 }}px {{ module.section.round_corners.bottom_corners or 0 }}px;
+    padding: {{ module.section.spacing.top or 0 }}px 0 {{ module.section.spacing.bottom or 0 }}px 0;
+  }
+  
+  #{{name}} p {
+    margin: 0;
+    font-size: 16px;
+    font-style: normal;
+  }
+
+  {% if module.col_1.max_width %}
+  #{{name}} .heading {
+    max-width: {{ module.col_1.max_width }}px;
+  }
+  {% endif %}
+  
+  #{{name}} .heading .eyebrow {
+    margin-bottom: {{ module.col_1.eyebrow.bottom_space or 0 }}px;
+    {{ 'color: ' ~ module.col_1.eyebrow.text_color.rgba ~ ';' if module.col_1.eyebrow.text_color.rgba }}
+  }
+  
+  #{{name}} .heading .title {
+    margin-bottom: {{ module.col_1.title.bottom_space or 0 }}px;
+    {{ 'color: ' ~ module.col_1.title.text_color.rgba ~ ';' if module.col_1.title.text_color.rgba }}
+  }
+  
+  #{{name}} .heading .highlight {
+    color: {{ module.col_1.title.highlight_color.rgba }};
+  }
+  
+  #{{name}} .text-container {
+    margin-bottom: {{ module.col_1.text_area.bottom_space or 0 }}px;
+  }
+  
+  {# CARD #}
+  #{{name}} .testimonials .cards {
+    display: grid;
+    grid-template-columns: repeat({{ module.start.num_col }}, 1fr);
+    column-gap: 24px;
+  }
+
+  #{{name}} .testimonials .card {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 24px;
+    flex-shrink: 0;
+    margin-bottom: 24px;
+    max-height: auto;
+    opacity: 1;
+    visibility: visible;
+    transition: all 0.3s;
+  }
+  
+  #{{name}} .card.hidden {
+    max-height: 0;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-bottom: 0;
+  }
+  
+  #{{name}} .testimonials .card.hover:hover {
+    transform: translateY(-10px);
+  }
+  
+  #{{name}} .testimonials .quote {
+    font-weight: 300;
+    line-height: 150%;
+  }
+  
+  #{{name}} .testimonials .name {
+    font-weight: 500;
+    line-height: 120%
+  }
+  
+  #{{name}} .testimonials .title {
+    color: #4698CB;
+    font-weight: 300;
+    line-height: 120%
+  }
+  
+  {# BOTTOM BTN #}
+  #{{name}} .bottom-area .btn-container {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    gap: 36px;
+  }
+  
+  #{{name}} .bottom-area .btn-container .plain {
+    color: #4698CB;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: 110%;
+  }
+
+
+  {# MOBILE #}
+  @media (max-width: {{ theme.layout.style_opts.slim_width }}px) {
+    #{{name}} {
+      border-radius: {{ module.section.round_corners.top_corners_sm or 0 }}px {{ module.section.round_corners.top_corners_sm or 0 }}px {{ module.section.round_corners.bottom_corners_sm or 0 }}px {{ module.section.round_corners.bottom_corners_sm or 0 }}px;
+      {{ 'padding-top: ' ~ module.section.spacing.top_sm ~ 'px;' if module.section.spacing.top_sm }}
+      {{ 'padding-bottom: ' ~ module.section.spacing.bottom_sm ~ 'px;' if module.section.spacing.bottom_sm }}
+    }
+    
+    #{{name}} .heading .title, #{{name}} .text-container {
+      margin-bottom: 24px;
+    }
+
+    #{{name}} .testimonials .cards {
+      grid-template-columns: 1fr;
+    }
+    
+    #{{name}} .testimonials .card:not(.hidden) {
+      margin-bottom: 20px;
+    }
+
+    #{{name}} .testimonials .card.hover:hover {
+      transform: translateY(0);
+    }
+
+    #{{name}} .bottom-area .btn-container {
+      flex-direction: column;
+      justify-content: center;
+      gap: 24px;
+      padding-top: 6px;
+    }
+  }
+</style>
+{% end_require_css %}
+
+{### HTML ###}
+<div id="{{name}}">
+  <div class="container">
+
+    {# HEADING #}
+    <div class="heading">
+      {# EYEBROW #}
+      {% if module.col_1.eyebrow.text %}
+      <div class="eyebrow-container">
+        <{{ module.col_1.eyebrow.display_as }} class="eyebrow">
+          {{ module.col_1.eyebrow.text }}
+        </{{ module.col_1.eyebrow.display_as }}>
+      </div>
+      {% endif %}
+
+      {# TITLE #}
+      {% if module.col_1.title.text or module.col_1.title.highlight_text %}
+      <div class="title-container">
+        <{{ module.col_1.title.display_as }} class="title">
+          {{ module.col_1.title.text }} {{ '<span class="highlight"> ' ~ module.col_1.title.highlight_text ~ '</span>' if module.col_1.title.highlight_text }}
+        </{{ module.col_1.title.display_as }}>
+        </div>
+      {% endif %}
+
+      {# TEXT CONTAINER #}
+      {% if module.col_1.text_area.content %}
+      <div class="text-container">
+        {{ module.col_1.text_area.content }}
+      </div>
+      {% endif %}
+
+      {# BUTTONS #}
+      <div class="btn-container">
+      {% for button in module.col_1.button %}
+        {% if button.use_cta %}
+          {% cta guid='{{ button.guid }}' %}
+        {% else %}
+          {% if button.text %}
+            <a class="button {{ button.style_option }}"
+           {% if button.url.href %}href = "{% if button.url.type == 'EMAIL_ADDRESS' %}mailto: {% elif button.url.type == 'PHONE_NUMBER' %}tel: {% endif %}{{ button.url.href }}"{% endif %}
+           {% if button.open_link_in_new_tab %}target="_blank"{% endif %}
+             >{{ button.text }}{% if button.use_arrow_icon %}<span>{{ icon.btn_arrow() }}</span>{% endif %}</a>
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+      </div>
+
+    </div> {# /.heading #}
+
+    {# TESTIMONIALS #}
+    <div class="testimonials">
+      <div class="cards">
+        {% for card in module.testimonials %}
+        <a {% if card.url.href %}href="{{ card.url.href }}"{% endif %} {% if card.open_link_in_new_tab %}target="_blank"{% endif %}
+           class="card{% if card.url.href %} hover{% endif %}{% if module.start.limit_number_of_cards_to_show and loop.index > module.start.num_cards %} hidden{% endif %}"
+           {% if card.bg_color.rgba or card.round_corners %}style="background-color: {{ card.bg_color.rgba or 'transparent' }}; border-radius: {{ card.round_corners or 0 }}px;"{% endif %}
+         >
+          {# STARS #}
+          {% if card.star_rating != 'none' %}
+          <span class="star">
+            {% for i in range(0, card.star_rating) %}
+            {{ star() }}
+            {% endfor %}
+          </span>
+          {% endif %}
+
+          {# QUOTE #}
+          {% if card.quote %}
+          <p class="quote">{{ card.quote }}</p>
+          {% endif %}
+
+          {# NAME #}
+          <div class="name-container">
+            {% if card.name_field %}
+            <p class="name">{{ card.name_field }}</p>
+            {% endif %}
+
+            {# TITLE #}
+            {% if card.title %}
+            <p class="title">{{ card.title }}</p>
+            {% endif %}
+          </div>
+
+        </a> {# /.card #}
+      {% endfor %}
+      </div>
+
+    </div> {# /.testimonials #}
+
+    <div class="bottom-area">
+        {# BUTTONS #}
+        <div class="btn-container">
+          {% if module.start.limit_number_of_cards_to_show %}
+          <a class="button plain">Show All Testimonies</a>
+          {% endif %}
+
+          {% for button in module.button %}
+            {% if button.use_cta %}
+              {% cta guid='{{ button.guid }}' %}
+            {% else %}
+              {% if button.text %}
+                <a class="button {{ button.style_option }}"
+               {% if button.url.href %}href = "{% if button.url.type == 'EMAIL_ADDRESS' %}mailto: {% elif button.url.type == 'PHONE_NUMBER' %}tel: {% endif %}{{ button.url.href }}"{% endif %}
+               {% if button.open_link_in_new_tab %}target="_blank"{% endif %}
+                 >{{ button.text }}{% if button.use_arrow_icon %}<span>{{ icon.btn_arrow() }}</span>{% endif %}</a>
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+
+  </div> {# /.container #}
+</div>
+
+{% require_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const btnCon = document.querySelector('#{{name}} .bottom-area');
+  const btn = btnCon.querySelector('.plain');
+  const cards = document.querySelectorAll('#{{name}} .testimonials .card');
+  const initialLimit = {{ module.start.num_cards }};
+  let isExpanded = false;
+
+  if (btn) {
+    btn.addEventListener("click", function (event) {
+      event.preventDefault();
+
+      cards.forEach((card, index) => {
+        if (isExpanded && index >= initialLimit) {
+          card.classList.add('hidden');
+        } else {
+          card.classList.remove('hidden');
+        }
+      });
+
+      // Toggle button text
+      isExpanded = !isExpanded;
+      btn.textContent = isExpanded ? 'Hide Testimonies' : 'Show All Testimonies';
+    });
+  }
+});
+</script>
+{% end_require_js %}

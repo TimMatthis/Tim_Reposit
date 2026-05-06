@@ -1,0 +1,116 @@
+{% import "../macros/icon.html" as icon %}
+
+{% require_css %}
+<style>
+  #{{name}} {
+    background-color: {{ module.section.bg_color.rgba }};
+    padding: {{ module.section.spacing.top or 0 }}px 0 {{ module.section.spacing.bottom or 0 }}px 0;
+  }
+  
+  #{{name}} figure {
+    margin: 0;
+  }
+  
+  #{{name}} img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  #{{name}} .flex-container {
+    justify-content: space-between;
+    align-items: end;
+    gap: 5%;
+  }
+  
+  #{{name}} .flex-content {
+    width: auto;
+  }
+
+  #{{name}} .footer-logo {
+    margin-bottom: {{ module.col_1.logo.bottom_space or 0 }}px;
+    {{ 'width: ' ~ module.col_1.logo.width ~ 'px;' if module.col_1.logo.width }};
+  }
+  
+  #{{name}} .footer-base {
+    margin-top: 110px;
+  }
+
+  {# Copyright #}
+  #{{name}} .copyright {
+    {{ 'color: ' ~ module.copyright.text_color.rgba ~ ';' if module.copyright.text_color.rgba  }};
+    margin: 0;
+  }
+
+
+  {# MOBILE #}
+  @media (max-width: {{ theme.layout.style_opts.slim_width }}px) {
+    #{{name}} {
+      {{ 'padding-top: ' ~ module.section.spacing.top_sm ~ 'px;' if module.section.spacing.top_sm }}
+      {{ 'padding-bottom: ' ~ module.section.spacing.bottom_sm ~ 'px;' if module.section.spacing.bottom_sm }}
+    }
+    
+    #{{name}} .flex-container {
+      flex-direction: column;
+      align-items: start;
+    }
+    
+    #{{name}} .parent-container {
+      gap: 48px;
+    }
+    
+    #{{name}} .footer-base {
+      margin-top: 68px;
+      gap: 12px;
+    }
+    
+    #{{name}} .flex-content {
+      width: 100%;
+    }
+    
+    #{{name}} .social-container {
+      justify-content: start;
+    }
+  }
+</style>
+{% end_require_css %}
+
+{### HTML ###}
+<footer id="{{name}}">
+  <div class="container">
+
+    <div class="flex-container parent-container">
+      {# COLUMN 1 #}
+      <div class="flex-content column-1">
+        {% if module.col_1.logo.img.src %}
+        <figure class="footer-logo">
+          <img src="{{ module.col_1.logo.img.src }}" alt="{{ module.col_1.logo.img.alt }}" loading="{{ module.col_1.logo.img.loading }}" />
+        </figure>
+        {% endif %}
+      </div>
+    </div>
+    
+    <div class="footer-base flex-container">
+      {% if module.copyright.text %}
+      <div class="flex-content column-1">
+        <p class="copyright">
+          © {{year}} {{ module.copyright.text }}
+        </p>
+      </div>
+      {% endif %}
+
+      <div class="flex-content column-2">
+        <div class="social-container">
+          {% for social in module.social_media %}
+          {% if social.icon  %}
+          <a href="{{ social.url }}" {% if social.open_links_in_new_tab %}target="_blank"{% endif %}>
+            <i class="fa-brands fa-{{ social.icon }}" {% if social.color.rgba %}style="color: {{ social.color.rgba }};"{% endif %}></i>
+          </a>
+          {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+  </div> {# /.container #}
+</footer>

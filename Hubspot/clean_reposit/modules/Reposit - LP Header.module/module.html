@@ -1,0 +1,118 @@
+{% require_css %}
+<style>
+  #{{name}} {
+    {% if module.start.use_sticky_header %}
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+    transition: all .5s;
+    {% endif %}
+    {{ 'background-colr: ' ~ module.primary_header.bg_color.rgba ~ ';' if module.primary_header.bg_color.rgba }}
+    {% if module.primary_header.drop_shadow %}box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;{% endif %}
+  }
+
+  #{{name}} .container {
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+  
+  #{{name}} .flex-container {
+    align-items: center;
+    justify-content: space-between;
+    gap: 10%;
+  }
+  
+  {# LOGO #}
+  #{{name}} .header-logo, #{{name}} .logo-link {
+    width: 181px;
+  }
+  
+  #{{name}} .header-logo {
+    flex-grow: 2;
+  }
+
+  #{{name}} .logo-link {
+    display: flex;
+  }
+  
+  #{{name}} .logo-link img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  {# MOBILE #}
+  @media (max-width: {{ theme.layout.style_opts.slim_width }}px) {
+    #{{name}} .header-logo, #{{name}} .logo-link {
+      width: 161px;
+    }
+  }
+</style>
+{% end_require_css %}
+
+{### HTML ###}
+<header id="{{name}}">
+  <a href="#main-content" class="screen-reader-text">Skip to content</a>
+
+  <div class="container">
+
+    <div class="flex-container">
+      {# LOGO #}
+      <div class="header-logo">
+        {% if module.primary_header.logo.override_default_logo and module.primary_header.logo.logo_img.src %}
+        <a href= "/" class="logo-link">
+          <img class="custom-logo" src="{{ module.primary_header.logo.logo_img.src }}" alt="{{ module.primary_header.logo.logo_img.alt }}" />
+        </a>
+        {% elif !module.primary_header.logo.override_default_logo and !module.primary_header.logo.logo_img.src and brandSettings.primaryLogo %}
+        <a href="{% if brandSettings.primaryLogo.link %}{{ brandSettings.primaryLogo.link }}{% else %}/{% endif %}" class="logo-link">
+          <img class="brand-logo" src="{{ brandSettings.primaryLogo.src }}" alt="{{ brandSettings.primaryLogo.alt }}" width="{{ brandSettings.primaryLogo.width }}" />
+        </a>
+        {% else %}
+        {% logo "hs_logo_widget"
+             link="{{ link }}",
+             loading="{{ loadingAttr }}"
+           %}
+        {% endif %}
+      </div>
+    </div> {# /.flex #}
+  </div> {# /.container #}
+</header>
+
+{% require_js %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const header = document.getElementById('{{name}}');
+  const header_imags = header.querySelectorAll('.logo-link img');
+
+  {# STICKY HEADER #}
+  function setHeaderState({
+      bgColor,
+      dropShadow,
+      logoSrc
+  }) {
+    header.style.backgroundColor = bgColor;
+  
+    header.style.boxShadow = dropShadow;
+
+    header_imags.forEach(img => img.src = logoSrc);
+  }
+
+  const stickyState = {
+    bgColor: '{{ module.sticky_header.bg_color.rgba or null }}',
+    dropShadow: '{{ 'rgba(149, 157, 165, 0.2) 0px 8px 24px' if module.sticky_header.drop_shadow else 'none' }}',
+    logoSrc: '{{ module.sticky_header.logo.logo_img.src if module.sticky_header.logo.override_default_logo else brandSettings.primaryLogo.src }}'
+  };
+
+  const defaultState = {
+    bgColor: '{{ module.primary_header.bg_color.rgba or null }}',
+    dropShadow: '{{ 'rgba(149, 157, 165, 0.2) 0px 8px 24px' if module.primary_header.drop_shadow else 'none' }}',
+    logoSrc: '{{ module.primary_header.logo.logo_img.src if module.primary_header.logo.override_default_logo else brandSettings.primaryLogo.src }}'
+  };
+
+  window.addEventListener('scroll', function() {
+    const scrollPosition = window.scrollY || document.documentElement.scrollTop;
+    setHeaderState(scrollPosition > 10 ? stickyState : defaultState);
+  });
+});
+</script>
+{% end_require_js %}

@@ -1,0 +1,768 @@
+<!--
+  templateType: page
+  isAvailableForNewContent: true
+  screenshotPath: ../images/no_bill_screen.png
+  label: Reposit - Battery Boost
+  description: Battery Boost product page for existing battery owners. Uses the No Bill page structure with retrofit-specific copy.
+-->
+{% extends "./layouts/base.html" %}
+
+{% block body %}
+  {% dnd_area "dnd_area" class='body-container', label='Main section' %}
+
+ <!-----------------------  HERO BANNER  ----------------------->
+    {% dnd_section
+      padding={
+        'top': 0,
+        'bottom': 0,
+        'left': 0,
+        'right': 0
+      },
+      full_width='true',
+      vertical_alignment='MIDDLE'
+    %}
+      {% dnd_module "reposit_hero"
+        path="../modules/Reposit - Hero",
+        label="Reposit - Hero",
+        offset=0
+      %}
+        {% module_attribute "col_1" is_json=True %}
+        {
+          "eyebrow": {
+            "text": "REPOSIT BATTERY BOOST"
+          },
+          "title": {
+            "text": "Your Battery Is Already Powerful.",
+            "highlight_text": "Battery Boost Makes It Pay Its Way."
+          },
+          "text_area": {
+            "content": "<p style='color: #FFF;'>You already made the smart move by installing a battery. Battery Boost adds Reposit intelligence, market trading, and fixed-fee certainty to the system you already own.</p>"
+          },
+          "button": [
+            {
+              "text": "Get My Battery Boost Offer",
+              "style_option": "cta-primary",
+              "use_arrow_icon": true
+            }
+          ],
+          "bottom_text": {
+            "content": "<p>For compatible existing battery owners. Personalised offer in about 15 minutes.</p>"
+          }
+        }
+        {% end_module_attribute %}
+        {% module_attribute "background" is_json=True %}
+          {
+            "bg_gradient_angle": "bottom right"
+          }
+        {% end_module_attribute %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+
+  <!----------------------- LOGO GRID  ----------------------->
+    {% dnd_section
+      padding={
+        'top': 0,
+        'bottom': 0,
+        'left': 0,
+        'right': 0
+      },
+      full_width='true',
+      vertical_alignment='MIDDLE'
+    %}
+      {% dnd_module "reposit_logo_grid"
+        path="../modules/Reposit - Logo Grid",
+        label="Reposit - Logo Grid",
+        offset=0
+      %}
+        {% module_attribute "eyebrow" is_json=True %}
+        {
+          "text": "Trusted Technology and Industry Partners"
+        }
+        {% end_module_attribute %}
+        {% module_attribute "group_logos" is_json=True %}
+        [
+          { "logo": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/engineering_excellence.png", "alt": "engineering excellence" } },
+          { "logo": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/clean_energy_council.png", "alt": "clean energy council" } },
+          { "logo": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/new_energy_tech.png", "alt": "new energy tech" } },
+          { "logo": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/clean_energy_council2.png", "alt": "clean energy council" } },
+          { "logo": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/energy_network.png", "alt": "energy network" } }
+        ]
+        {% end_module_attribute %}
+        {% module_attribute "section" is_json=True %}
+        {
+          "overlap_section": "true"
+        }
+        {% end_module_attribute %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+
+  <!----------------------- TEXT AND MEDIA  ----------------------->
+    {% dnd_section
+      padding={
+        'top': 0,
+        'bottom': 0,
+        'left': 0,
+        'right': 0
+      },
+      full_width='true',
+      vertical_alignment='MIDDLE'
+    %}
+      {% dnd_module "reposit_text_media"
+        path="../modules/Reposit - Text and Media",
+        label="Reposit - Text and Media",
+        offset=0
+      %}
+        {% module_attribute "col_1" is_json=True %}
+        {
+          "eyebrow": {
+            "text": "Battery Boost"
+          },
+          "title": {
+            "text": "For Homes That Already Have a Battery"
+          },
+          "text_area": {
+            "content": "<p style='color: #FFF;'>A standard battery stores your solar and powers your home. Battery Boost goes further by letting Reposit manage your battery against market signals, creating value that helps replace bill uncertainty with one fixed monthly fee.</p>"
+          },
+          "button": [
+            {
+              "text": "Get My Battery Boost Offer",
+              "style_option": "cta-secondary",
+              "use_arrow_icon": true
+            }
+          ]
+        }
+        {% end_module_attribute %}
+        {% module_attribute "text_area" is_json=True %}
+        {
+          "width": 48,
+          "eyebrow": {
+            "text": "Same hardware. Smarter outcome."
+          },
+          "text_area": {
+            "content": "<h2><span style='color: #ffffff;'>Your battery gains <span style='color: #4698cb;'>market intelligence</span></span></h2><p style='color: #fff;'>You keep the battery already installed at your home. We add Reposit's control layer, trading capability, and active performance management.</p>"
+          }
+        }
+        {% end_module_attribute %}
+        {% module_attribute "media" is_json=True %}
+        {
+          "media_type": "img",
+          "media_pos": "right",
+          "width": 48,
+          "round_corners": 20,
+          "img": {
+            "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Slider%20Images/battery.svg",
+            "alt": "Battery Boost existing battery"
+          }
+        }
+        {% end_module_attribute %}
+        {% module_attribute "section" is_json=True %}
+        {
+          "bg_color": {
+            "color": "#1F2A44",
+            "opacity": 100
+          },
+          "spacing": {
+            "top": 120,
+            "bottom": 150,
+            "top_sm": 80,
+            "bottom_sm": 80
+          },
+          "round_corners": {
+            "top_corners": 0,
+            "bottom_corners": 0,
+            "top_corners_sm": 0,
+            "bottom_corners_sm": 0
+          }
+        }
+        {% end_module_attribute %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+
+  <!----------------------- TEXT AND CARDS  ----------------------->
+    {% dnd_section
+      padding={
+        'top': 0,
+        'bottom': 0,
+        'left': 0,
+        'right': 0
+      },
+      full_width='true',
+      vertical_alignment='MIDDLE'
+    %}
+      {% dnd_module "reposit_text_cards"
+        path="../modules/Reposit - Text and Cards",
+        label="Reposit - Text and Cards",
+        offset=0
+      %}
+        {% module_attribute "col_1" is_json=True %}
+        {
+          "eyebrow": {
+            "text": "Why Battery Boost"
+          },
+          "title": {
+            "text": "Your Battery Should Do More Than Sit on the Wall."
+          }
+        }
+        {% end_module_attribute %}
+        {% module_attribute "col_2" is_json=True %}
+        {
+          "direction": "vertical",
+          "cards": [
+            {
+              "bg_color": {
+                "color": "#1F2A44",
+                "opacity": 100
+              },
+              "title": {
+                "display_as": "h3",
+                "text": "One Fixed Monthly Fee",
+                "text_color": {
+                  "color": "#FFF",
+                  "opacity": 100
+                 },
+                "bottom_space": 12,
+                "add_underline": true
+              },
+              "text_area": {
+                "content": "<p style='color: #fff;'>Move away from unpredictable electricity bills and into a fixed monthly fee set below your current average spend.</p>"
+              },
+              "button": {
+                "style_option": "cta-tertiary",
+                "text": "Learn More",
+                "use_arrow_icon": true
+              },
+              "inner_space": {
+                "top": 24,
+                "bottom": 24,
+                "left": 24,
+                "right": 24
+              },
+              "round_corners": 20
+            },
+            {
+              "bg_color": {
+                "color": "#1F2A44",
+                "opacity": 100
+              },
+              "title": {
+                "display_as": "h3",
+                "text": "Keep Your Existing Battery",
+                "text_color": {
+                  "color": "#FFF",
+                  "opacity": 100
+                 },
+                "bottom_space": 12,
+                "add_underline": true
+              },
+              "text_area": {
+                "content": "<p style='color: #fff;'>No rip and replace. Battery Boost is built for households that already have compatible battery hardware installed.</p>"
+              },
+              "button": {
+                "style_option": "cta-tertiary",
+                "text": "Learn More",
+                "use_arrow_icon": true
+              },
+              "inner_space": {
+                "top": 24,
+                "bottom": 24,
+                "left": 24,
+                "right": 24
+              },
+              "round_corners": 20
+            },
+            {
+              "bg_color": {
+                "color": "#1F2A44",
+                "opacity": 100
+              },
+              "title": {
+                "display_as": "h3",
+                "text": "Managed by Reposit",
+                "text_color": {
+                  "color": "#FFF",
+                  "opacity": 100
+                 },
+                "bottom_space": 12,
+                "add_underline": true
+              },
+              "text_area": {
+                "content": "<p style='color: #fff;'>We actively monitor and manage your battery as part of our fleet so the system keeps working toward your fixed-fee outcome.</p>"
+              },
+              "button": {
+                "style_option": "cta-tertiary",
+                "text": "Learn More",
+                "use_arrow_icon": true
+              },
+              "inner_space": {
+                "top": 24,
+                "bottom": 24,
+                "left": 24,
+                "right": 24
+              },
+              "round_corners": 20
+            }
+          ]
+        }
+        {% end_module_attribute %}
+        {% module_attribute "section" is_json=True %}
+        {
+          "bg_color": {
+            "color": "#FFFFFF",
+            "opacity": 100
+           },
+           "spacing": {
+            "top": 250,
+            "bottom": 150,
+            "top_sm": 120,
+            "bottom_sm": 80
+           },
+           "round_corners": {
+            "top_corners": 0,
+            "bottom_corners": 64,
+            "top_corners_sm": 0,
+            "bottom_corners_sm": 42
+           }
+        }
+        {% end_module_attribute %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+
+  <!----------------------- TEXT WITH COUNTER  ----------------------->
+    {% dnd_section
+      padding={
+        'top': 0,
+        'bottom': 0,
+        'left': 0,
+        'right': 0
+      },
+      full_width='true',
+      vertical_alignment='MIDDLE'
+    %}
+      {% dnd_module "reposit_text_counter"
+        path="../modules/Reposit - Text with Counter",
+        label="Reposit - Text with Counter",
+        offset=0
+      %}
+        {% module_attribute "col_1" is_json=True %}
+        {
+          "eyebrow": {
+            "text": "Proven Battery Control"
+          },
+          "title": {
+            "text": "The Reposit Intelligence Behind Battery Boost"
+          }
+        }
+        {% end_module_attribute %}
+        {% module_attribute "col_2" is_json=True %}
+        {
+          "richtext": "<p><span style='color: #ffffff;'>Reposit has been helping Australian homes manage electricity costs since 2012.</span><br><br><span style='color: #ffffff;'>Battery Boost applies that experience to households that already own a compatible battery, giving the system a smarter job in a volatile energy market.</span></p>",
+          "counters": [
+            {
+              "number": "6000",
+              "text": "Homes and counting"
+            },
+            {
+              "number": "10",
+              "text": "Years of experience"
+            }
+          ]
+        }
+        {% end_module_attribute %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+
+  <!----------------------- SLIDER  ----------------------->
+    {% dnd_section
+      padding={
+        'top': 0,
+        'bottom': 0,
+        'left': 0,
+        'right': 0
+      },
+      full_width='true',
+      vertical_alignment='MIDDLE'
+    %}
+      {% dnd_module "reposit_slider"
+        path="../modules/Reposit - Slider",
+        label="Reposit - Slider",
+        offset=0
+      %}
+        {% module_attribute "start" is_json=True %}
+        {
+          "num_cols": 1
+        }
+        {% end_module_attribute %}
+        {% module_attribute "col_1" is_json=True %}
+        {
+          "eyebrow": {
+            "text": ""
+          },
+          "title": {
+            "text": "",
+            "highlight_text": ""
+          },
+          "text_area": {
+            "content": "<h2><span style='color: #ffffff;'>How <span style='color: #4698cb;'>Battery Boost</span> Works</span></h2>"
+          }
+        }
+        {% end_module_attribute %}
+        {% module_attribute "slides" is_json=True %}
+        [
+          {
+            "title": "Connect Your Battery Data",
+            "subtitle": "Use the same account you already use for your battery app so we can securely assess your real usage.",
+            "show_slide_num": false,
+            "img": {
+              "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Slider%20Images/reposit_box.svg",
+              "alt": "Reposit Box"
+            },
+            "active_img": {
+              "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Slider%20Images/reposit_box.svg",
+              "alt": "Reposit Box"
+            },
+            "full_width_img": false
+          },
+          {
+            "title": "We Analyse Your Current Bill",
+            "subtitle": "Battery Boost uses your real usage profile to compare your current energy costs with a fixed-fee Reposit plan.",
+            "note": "Personalised offer in about 15 minutes",
+            "show_slide_num": false,
+            "img": {
+              "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Slider%20Images/battery.svg",
+              "alt": "Solar Battery"
+            },
+            "active_img": {
+              "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Slider%20Images/battery.svg",
+              "alt": "Solar Battery"
+            },
+            "full_width_img": false
+          },
+          {
+            "title": "Reposit Activates Trading",
+            "subtitle": "Your battery can respond to market signals and earn value beyond basic self-consumption.",
+            "show_slide_num": false,
+            "img": {
+              "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Slider%20Images/inverter.svg",
+              "alt": "Inverter"
+            },
+            "active_img": {
+              "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Slider%20Images/inverter.svg",
+              "alt": "Inverter"
+            },
+            "full_width_img": false
+          },
+          {
+            "title": "Your Costs Become Predictable",
+            "subtitle": "Move from variable quarterly bills to one fixed monthly fee designed around your household.",
+            "show_slide_num": false,
+            "img": {
+              "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Slider%20Images/solar_panels_2.svg",
+              "alt": "Solar Panels"
+            },
+            "active_img": {
+              "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Slider%20Images/solar_panels_2.svg",
+              "alt": "Solar Panels"
+            },
+            "full_width_img": false
+          }
+        ]
+        {% end_module_attribute %}
+        {% module_attribute "slider_set" is_json=True %}
+        {
+          "slide_num_large": 2.7,
+          "bg_color": {
+            "color": "#12192a",
+            "opacity": 36
+          },
+          "content_color": {
+            "color": "#FFF",
+            "opacity": 100
+          },
+          "arrow_color": {
+            "color": "#FFF",
+            "opacity": 100
+          }
+        }
+        {% end_module_attribute %}
+        {% module_attribute "section" is_json=True %}
+        {
+          "bg_color": {
+            "color": "#1f2a44",
+            "opacity": 100
+           },
+           "spacing": {
+            "top": 0,
+            "bottom": 200,
+            "top_sm": 0,
+            "bottom_sm": 100
+           },
+           "round_corners": {
+            "top_corners": 0,
+            "bottom_corners": 0,
+            "top_corners_sm": 0,
+            "bottom_corners_sm": 0
+           }
+        }
+        {% end_module_attribute %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+
+  <!----------------------- TABLE  ----------------------->
+    {% dnd_section
+      padding={
+        'top': 0,
+        'bottom': 0,
+        'left': 0,
+        'right': 0
+      },
+      full_width='true',
+      vertical_alignment='MIDDLE'
+    %}
+      {% dnd_module "reposit_table"
+        path="../modules/Reposit - Table",
+        label="Reposit - Table",
+        offset=0
+      %}
+        {% module_attribute "table" is_json=True %}
+        {
+          "table_headings": [
+            {
+              "title": "",
+              "add_img": false
+            },
+            {
+              "title": "Battery Boost",
+              "add_img": true,
+              "img": {
+                "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/s_icon.png",
+                "alt": "small reposit icon"
+              }
+            },
+            {
+              "title": "Standard Battery",
+              "add_img": false
+            }
+          ],
+          "table_rows": [
+            {
+              "table_data": [
+                { "data_type": "text", "text": "Can I use my existing battery?" },
+                { "data_type": "img", "img": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/check.png", "alt": "Check mark" } },
+                { "data_type": "img", "img": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/check.png", "alt": "Check mark" } }
+              ]
+            },
+            {
+              "table_data": [
+                { "data_type": "text", "text": "Can my battery trade in the market for value?" },
+                { "data_type": "img", "img": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/check.png", "alt": "Check mark" } },
+                { "data_type": "img", "img": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/question.png", "alt": "Question mark" } }
+              ]
+            },
+            {
+              "table_data": [
+                { "data_type": "text", "text": "Do I get one fixed monthly fee?" },
+                { "data_type": "img", "img": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/check.png", "alt": "Check mark" } },
+                { "data_type": "text", "text": "No, bills remain variable" }
+              ]
+            },
+            {
+              "table_data": [
+                { "data_type": "text", "text": "Who monitors ongoing battery performance?" },
+                { "data_type": "text", "text": "Reposit" },
+                { "data_type": "text", "text": "Usually you" }
+              ]
+            },
+            {
+              "table_data": [
+                { "data_type": "text", "text": "How quickly can I see my offer?" },
+                { "data_type": "text", "text": "About 15 minutes" },
+                { "data_type": "text", "text": "Not available" }
+              ]
+            }
+          ]
+        }
+        {% end_module_attribute %}
+
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+
+  <!----------------------- TESTIMONIAL CARDS  ----------------------->
+    {% dnd_section
+      padding={
+        'top': 0,
+        'bottom': 0,
+        'left': 0,
+        'right': 0
+      },
+      full_width='true',
+      vertical_alignment='MIDDLE'
+    %}
+      {% dnd_module "reposit_testimonial"
+        path="../modules/Reposit - Testimonial Cards",
+        label="Reposit - Testimonial Cards",
+        offset=0
+      %}
+        {% module_attribute "testimonials" is_json=True %}
+        [
+          {
+            "name_field": "Rob",
+            "title": "Canberra, ACT",
+            "quote": "So simple and big savings with No Bills. We had been meaning to switch to solar for a while, but every time we had gone to organise quotes, make decisions on panels, battery sizes etc it always just got too hard and complicated. The team were great and took care of everything.",
+            "star_rating": "5",
+            "bg_color": {
+              "color": "#FAFAFA",
+              "opacity": 100
+            },
+            "round_corners": 20
+          },
+          {
+            "name_field": "Sean",
+            "title": "Winmalee, NSW",
+            "quote": "The Reposit team has been easy to deal with from sales to installation. We really like the App that allows us to see our ongoing power usage and the savings in both dollars and CO2. We would recommend Reposit.",
+            "star_rating": "5",
+            "bg_color": {
+              "color": "#FAFAFA",
+              "opacity": 100
+            },
+            "round_corners": 20
+          },
+          {
+            "name_field": "Steve",
+            "title": "Wandana Heights, VIC",
+            "quote": "We've been Reposit customers for just over a year as part of the No Bill VPP. Their service has always been on point. The installation was very professional and done in an extremely efficient way.",
+            "star_rating": "5",
+            "bg_color": {
+              "color": "#FAFAFA",
+              "opacity": 100
+            },
+            "round_corners": 20
+          }
+        ]
+        {% end_module_attribute %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+
+  <!----------------------- FAQs  ----------------------->
+    {% dnd_section
+      padding={
+        'top': 0,
+        'bottom': 0,
+        'left': 0,
+        'right': 0
+      },
+      full_width='true',
+      vertical_alignment='MIDDLE'
+    %}
+      {% dnd_module "reposit_faq"
+        path="../modules/Reposit - FAQs",
+        label="Reposit - FAQs",
+        offset=0
+      %}
+        {% module_attribute "faq_accordion" is_json=True %}
+        {
+          "faq":
+          [
+            {
+              "question": "Who is Battery Boost for?",
+              "answer": "<p>Battery Boost is for households that already have a compatible home battery and want Reposit to help turn that battery into a managed, market-aware system.</p>"
+            },
+            {
+              "question": "Do I need to replace my current battery?",
+              "answer": "<p>No. Battery Boost is designed around using the battery you already own, where the system is compatible with Reposit control and data requirements.</p>"
+            },
+            {
+              "question": "What does Battery Boost change?",
+              "answer": "<p>A standard battery usually charges from solar and discharges to your home. Battery Boost adds Reposit's trading and control layer so your battery can respond to market opportunities and help support a fixed monthly fee.</p>"
+            },
+            {
+              "question": "How do you calculate my offer?",
+              "answer": "<p>We use your real battery and energy usage data to estimate how Battery Boost would perform for your home. That lets us present a personalised fixed-fee offer rather than a generic estimate.</p>"
+            },
+            {
+              "question": "How long does it take to get an offer?",
+              "answer": "<p>The first step takes about 60 seconds. Once your data is connected, a personalised offer is usually ready in about 15 minutes.</p>"
+            },
+            {
+              "question": "Will I still own my battery?",
+              "answer": "<p>Yes. You keep ownership of your battery. Battery Boost is about improving how that battery is managed and how it contributes to your household energy costs.</p>"
+            },
+            {
+              "question": "Who monitors the system?",
+              "answer": "<p>Reposit monitors and manages the Battery Boost system as part of our operating fleet so performance issues can be identified and addressed.</p>"
+            }
+          ]
+        }
+        {% end_module_attribute %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+
+  <!----------------------- CTA  ----------------------->
+    {% dnd_section
+      padding={
+        'top': 0,
+        'bottom': 0,
+        'left': 0,
+        'right': 0
+      },
+      full_width='true',
+      vertical_alignment='MIDDLE'
+    %}
+      {% dnd_module "reposit_cta"
+        path="../modules/Reposit - CTA",
+        label="Reposit - CTA",
+        offset=0
+      %}
+        {% module_attribute "col_1" is_json=True %}
+        {
+          "width": "",
+          "eyebrow": {
+            "text": ""
+          },
+          "title": {
+            "text": "Ready to Boost Your Battery?",
+            "highlight_text": ""
+          },
+          "text_area": {
+            "content": "<p>Battery Boost is built for homes that already have a battery and want more certainty from it.</p>"
+          },
+          "add_a_text_quote": true,
+          "text_quote": "<p>Start with a free assessment and see your personalised offer in about 15 minutes.</p>",
+          "button": [
+            {
+              "text": "Get My Battery Boost Offer",
+              "style_option": "cta-secondary",
+              "use_arrow_icon": true
+            }
+          ]
+        }
+        {% end_module_attribute %}
+        {% module_attribute "col_2" is_json=True %}
+        {
+          "content_type": "none"
+        }
+        {% end_module_attribute %}
+        {% module_attribute "section" is_json=True %}
+        {
+          "bg_color": {
+            "color": "#FFFFFF",
+            "opacity": 100
+           },
+           "spacing": {
+            "top": 0,
+            "bottom": 150,
+            "top_sm": 0,
+            "bottom_sm": 80
+           },
+           "round_corners": {
+            "top_corners": 0,
+            "bottom_corners": 64,
+            "top_corners_sm": 0,
+            "bottom_corners_sm": 42
+           }
+        }
+        {% end_module_attribute %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+
+  {% end_dnd_area %}
+{% endblock body %}

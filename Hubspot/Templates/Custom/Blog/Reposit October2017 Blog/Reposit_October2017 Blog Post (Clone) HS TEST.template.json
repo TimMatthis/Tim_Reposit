@@ -1,0 +1,509 @@
+{
+  "isAvailableForNewContent" : true,
+  "templateType" : 6,
+  "attachedStylesheets" : [ {
+    "type" : "cos_extension_resource",
+    "path" : "/Coded files/Custom/page/Reposit_October2017-theme/Reposit_October2017-style.css"
+  }, {
+    "type" : "cos_extension_resource",
+    "path" : "/Coded files/Custom/blog/Custom_Search/CustomSearch.css"
+  } ],
+  "attachedJs" : [ ],
+  "customHead" : "",
+  "customFooter" : "",
+  "bodyClass" : "blog",
+  "bodyCss" : "",
+  "bodyEditable" : false,
+  "layoutData" : {
+    "x" : 0,
+    "w" : 12,
+    "name" : "",
+    "label" : "",
+    "type" : "cell",
+    "params" : { },
+    "rows" : [ {
+      "0" : {
+        "x" : 0,
+        "w" : 12,
+        "name" : "HubSpot_Boilerplate Theme/Header",
+        "label" : "HubSpot_Boilerplate Theme/Header",
+        "type" : "global_group",
+        "params" : {
+          "overrideable" : false,
+          "cell" : false,
+          "cells" : [ ],
+          "css_class" : "",
+          "css_id" : "",
+          "css_id_str" : "",
+          "css_style" : "",
+          "ending_html" : "",
+          "root" : false,
+          "row" : false,
+          "starting_html" : "",
+          "path" : "/Global content/Global Groups/Reposit_October2017 Theme/Reposit_October2017 Theme/Reposit_October2017 Header.template.json"
+        },
+        "rows" : [ ],
+        "rowMetaData" : [ ],
+        "cells" : [ ],
+        "cssId" : "",
+        "cssClass" : "",
+        "cssStyle" : "",
+        "styles" : null,
+        "widgets" : [ ]
+      }
+    }, {
+      "0" : {
+        "x" : 0,
+        "w" : 12,
+        "name" : "module_13965353164592562",
+        "label" : "Blog Banner Area",
+        "type" : "raw_jinja",
+        "params" : {
+          "overrideable" : false,
+          "cell" : false,
+          "cells" : [ ],
+          "css_class" : "",
+          "css_id" : "",
+          "css_id_str" : "",
+          "css_style" : "",
+          "ending_html" : "",
+          "root" : false,
+          "row" : false,
+          "starting_html" : "",
+          "value" : "<div class=\"custom-blog-banner\">\n    <div class=\"page-center\">\n        <div class=\"blog-title\">\n            <h1>{{ content.name }}</h1>\n        </div>\n    </div>\n</div>\n",
+          "wrapping_html" : ""
+        },
+        "rows" : [ ],
+        "rowMetaData" : [ ],
+        "cells" : [ ],
+        "cssId" : "",
+        "cssClass" : "",
+        "cssStyle" : "",
+        "styles" : null,
+        "widgets" : [ ]
+      }
+    }, {
+      "0" : {
+        "x" : 0,
+        "w" : 12,
+        "name" : "",
+        "label" : "",
+        "type" : "section_delimiter",
+        "params" : {
+          "cell" : false,
+          "cells" : [ ],
+          "css_class" : "",
+          "css_id" : "",
+          "css_id_str" : "",
+          "css_style" : "",
+          "ending_html" : "",
+          "root" : false,
+          "row" : false,
+          "starting_html" : ""
+        },
+        "rows" : [ ],
+        "rowMetaData" : [ ],
+        "cells" : [ ],
+        "cssId" : "",
+        "cssClass" : "",
+        "cssStyle" : "",
+        "styles" : null,
+        "widgets" : [ ]
+      }
+    }, {
+      "0" : {
+        "x" : 0,
+        "w" : 12,
+        "name" : "module_13885129496421879",
+        "label" : "Page Center, Content Wrapper",
+        "type" : "cell",
+        "params" : {
+          "overrideable" : false,
+          "cell" : false,
+          "cells" : [ ],
+          "css_class" : "page-center content-wrapper",
+          "css_id" : "",
+          "css_id_str" : "",
+          "css_style" : "",
+          "ending_html" : "",
+          "root" : false,
+          "row" : false,
+          "starting_html" : "",
+          "value" : "",
+          "wrapping_html" : ""
+        },
+        "rows" : [ {
+          "0" : {
+            "x" : 0,
+            "w" : 3,
+            "name" : "module_1507192823370169",
+            "label" : "Blog Sidebar",
+            "type" : "cell",
+            "params" : {
+              "css_class" : "blog-sidebar",
+              "css_id" : "",
+              "css_id_str" : "",
+              "css_style" : "",
+              "wrapping_html" : "",
+              "per_widget_wrapper_html" : "",
+              "overrideable" : false
+            },
+            "rows" : [ {
+              "0" : {
+                "x" : 0,
+                "w" : 12,
+                "name" : "module_1513099798453190",
+                "label" : "Search",
+                "type" : "raw_html",
+                "params" : {
+                  "css_class" : "",
+                  "css_id" : "",
+                  "css_id_str" : "",
+                  "css_style" : "",
+                  "wrapping_html" : "",
+                  "per_widget_wrapper_html" : "",
+                  "overrideable" : false,
+                  "value" : "<a id=\"cos-search\" href=\"#cos-search\">Search</a>\n<p id=\"last\"></p>\n\n<style>\n    #cos-search{\n        display: inline-block;\n        width: 100%;\n        background-color: #edf0f4;\n        border: none;\n        border-radius: 3px;\n        box-shadow: none;\n        padding: 14px 10px;\n        font-family: inherit;\n        font-size: 1rem;\n        font-weight: normal;\n        line-height: 1.2;\n        color: #0a0a0a;\n        transition: box-shadow 0.5s, border-color 0.25s ease-in-out;\n        margin: 0 0 1rem;\n        outline: none;\n        color: #cacaca;\n    }\n\n</style>"
+                },
+                "rows" : [ ],
+                "rowMetaData" : [ ],
+                "cells" : [ ],
+                "cssId" : "",
+                "cssClass" : "",
+                "cssStyle" : "",
+                "styles" : null,
+                "widgets" : [ ]
+              }
+            }, {
+              "0" : {
+                "x" : 0,
+                "w" : 12,
+                "name" : "module_1512699977284125",
+                "label" : "Form",
+                "type" : "form",
+                "params" : {
+                  "css_class" : "",
+                  "css_id" : "",
+                  "css_id_str" : "",
+                  "css_style" : "",
+                  "wrapping_html" : "",
+                  "per_widget_wrapper_html" : "",
+                  "overrideable" : true,
+                  "title" : "Subscribe to our newsletter",
+                  "form_to_use" : "437132a8-891e-42d8-ae86-3d0f01473f7f",
+                  "response_response_type" : "redirect",
+                  "response_redirect_url" : "",
+                  "response_message" : "Thanks for submitting the form.",
+                  "notifications_are_overridden" : false,
+                  "notifications_override_email_addresses" : "",
+                  "sfdc_campaign" : "",
+                  "gotowebinar_webinar_key" : ""
+                },
+                "rows" : [ ],
+                "rowMetaData" : [ ],
+                "cells" : [ ],
+                "cssId" : "",
+                "cssClass" : "",
+                "cssStyle" : "",
+                "styles" : null,
+                "widgets" : [ ]
+              }
+            }, {
+              "0" : {
+                "x" : 0,
+                "w" : 12,
+                "name" : "module_1507192721202167",
+                "label" : "Categories",
+                "type" : "raw_jinja",
+                "params" : {
+                  "css_class" : "",
+                  "css_id" : "",
+                  "css_id_str" : "",
+                  "css_style" : "",
+                  "wrapping_html" : "",
+                  "per_widget_wrapper_html" : "",
+                  "overrideable" : false,
+                  "value" : "{% if content.tag_list %}\n     <div class=\"custom-sidebar-categories\" > \n     <p class=\"blog-category\">Blog</p>\n        {% for tag in content.tag_list %}\n            <p class=\"topic-link\">{{ tag.name }}</p>\n        {% endfor %}\n     </div>\n{% endif %}"
+                },
+                "rows" : [ ],
+                "rowMetaData" : [ ],
+                "cells" : [ ],
+                "cssId" : "",
+                "cssClass" : "",
+                "cssStyle" : "",
+                "styles" : null,
+                "widgets" : [ ]
+              }
+            }, {
+              "0" : {
+                "x" : 0,
+                "w" : 12,
+                "name" : "module_1507193108569172",
+                "label" : "Published Date & Author",
+                "type" : "raw_jinja",
+                "params" : {
+                  "css_class" : "",
+                  "css_id" : "",
+                  "css_id_str" : "",
+                  "css_style" : "",
+                  "wrapping_html" : "",
+                  "per_widget_wrapper_html" : "",
+                  "overrideable" : false,
+                  "value" : "<div id=\"hubspot-author_data\" class=\"hubspot-editable\" data-hubspot-form-id=\"author_data\" data-hubspot-name=\"Blog Author\" >\n    Published {{ content.publish_date_local_time.strftime('%e') }} {{ content.publish_date_local_time.strftime('%B') }}, {{ content.publish_date_local_time.strftime('%Y') }}\n    {% if content.blog_post_author %}\n    <span class=\"hs-author-label\"> by\n        {{ content.blog_post_author.display_name }}</a>\n    </span>\n    {% endif %}\n</div>"
+                },
+                "rows" : [ ],
+                "rowMetaData" : [ ],
+                "cells" : [ ],
+                "cssId" : "",
+                "cssClass" : "",
+                "cssStyle" : "",
+                "styles" : null,
+                "widgets" : [ ]
+              }
+            }, {
+              "0" : {
+                "x" : 0,
+                "w" : 12,
+                "name" : "module_1507192935033170",
+                "label" : "Social Share",
+                "type" : "raw_jinja",
+                "params" : {
+                  "css_class" : "",
+                  "css_id" : "",
+                  "css_id_str" : "",
+                  "css_style" : "",
+                  "wrapping_html" : "",
+                  "per_widget_wrapper_html" : "",
+                  "overrideable" : false,
+                  "value" : "<div id=\"fb-root\"></div>\n\n<script>(function (d, s, id) {\n\n        var js, fjs = d.getElementsByTagName(s)[0];\n\n        if (d.getElementById(id)) return;\n\n        js = d.createElement(s);\n\njs.id = id;\n\n        js.src = \"https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.10\";\n\n        fjs.parentNode.insertBefore(js, fjs);\n\n    }(document, 'script', 'facebook-jssdk'));</script>\n\n<div class=\"fb-share-button\" data-href=\"<?php get_permalink(); ?>\" data-layout=\"button\"\n\n     data-size=\"large\" data-mobile-iframe=\"true\">\n\n    <a class=\"fb-xfbml-parse-ignore\" target=\"_blank\" href=\"https://www.facebook.com/sharer/sharer.php?u=https%253A%252F%252Fdevelopers.facebook.com%252Fdocs%252Fplugins%252F&src=sdkpreparse\"></a>\n\n</div>\n\n<a href=\"https://twitter.com/share\" class=\"twitter-share-button\" data-size=\"large\"\n\n   data-show-count=\"false\">Tweet</a>\n\n<script async src=\"platform.twitter.com/widgets.js\" charset=\"utf-8\"></script>\n\n<script async defer src=\"https://assets.pinterest.com/js/pinit.js\"></script>\n\n<a data-pin-do=\"buttonBookmark\" data-pin-tall=\"true\" data-pin-save=\"true\"\n\n   href=\"https://au.pinterest.com/pin/create/button\"></a>"
+                },
+                "rows" : [ ],
+                "rowMetaData" : [ ],
+                "cells" : [ ],
+                "cssId" : "",
+                "cssClass" : "",
+                "cssStyle" : "",
+                "styles" : null,
+                "widgets" : [ ]
+              }
+            } ],
+            "rowMetaData" : [ ],
+            "cells" : [ ],
+            "cssId" : "",
+            "cssClass" : "blog-sidebar",
+            "cssStyle" : "",
+            "styles" : null,
+            "widgets" : [ ]
+          },
+          "3" : {
+            "x" : 3,
+            "w" : 9,
+            "name" : "deduplicated_cell_138851284969979",
+            "label" : "Blog Content",
+            "type" : "cell",
+            "params" : {
+              "overrideable" : false,
+              "cell" : false,
+              "cells" : [ ],
+              "css_class" : "blog-content",
+              "css_id" : "",
+              "css_id_str" : "",
+              "css_style" : "",
+              "ending_html" : "",
+              "root" : false,
+              "row" : false,
+              "starting_html" : "",
+              "value" : "",
+              "wrapping_html" : ""
+            },
+            "rows" : [ {
+              "0" : {
+                "x" : 0,
+                "w" : 12,
+                "name" : "module_1507178617246127",
+                "label" : "Blog Content",
+                "type" : "blog_content",
+                "params" : {
+                  "css_class" : "",
+                  "css_id" : "",
+                  "css_id_str" : "",
+                  "css_style" : "",
+                  "wrapping_html" : "",
+                  "per_widget_wrapper_html" : "",
+                  "overrideable" : false,
+                  "blog_listing_source" : "<!-- this blog uses separate master template for Post page  --> ",
+                  "blog_post_source" : " <div class=\"blog-section\">\n    <div class=\"blog-post-wrapper cell-wrapper\">\n        <div class=\"section post-body\">\n            {{ content.post_body }}\n        </div>\n        \n    </div>\n</div>\n"
+                },
+                "rows" : [ ],
+                "rowMetaData" : [ ],
+                "cells" : [ ],
+                "cssId" : "",
+                "cssClass" : "",
+                "cssStyle" : "",
+                "styles" : null,
+                "widgets" : [ ]
+              }
+            }, {
+              "0" : {
+                "x" : 0,
+                "w" : 12,
+                "name" : "module_1513310679448195",
+                "label" : "Slide in CTA",
+                "type" : "raw_html",
+                "params" : {
+                  "css_class" : "",
+                  "css_id" : "",
+                  "css_id_str" : "",
+                  "css_style" : "",
+                  "wrapping_html" : "",
+                  "per_widget_wrapper_html" : "",
+                  "overrideable" : true,
+                  "value" : " <p id=\"last\">&nbsp;</p>\n\n<script type=\"text/javascript\">\n$(function() {\n  var slidecta = $('#slidecta');\n  if (slidecta) {\n    $(window).scroll(function(){\n        var distanceTop = $('#last').offset().top - $(window).height();\n        if  ($(window).scrollTop() > distanceTop)\n            slidecta.animate({'right':'0px'},300);\n        else\n            slidecta.stop(true).animate({'right':'-430px'},100);\n    });\n    $('#slidecta .close').on('click',function(){\n        $(this).parent().remove();\n    });\n  }\n});\n</script>\n\n<div id=\"slidecta\"><a class=\"close\">&nbsp;</a> <!--HubSpot Call-to-Action Code --><span class=\"hs-cta-wrapper\" id=\"hs-cta-wrapper-1abfd1d9-3581-45ee-be2a-acd692fb2353\"><span class=\"hs-cta-node hs-cta-1abfd1d9-3581-45ee-be2a-acd692fb2353\" id=\"hs-cta-1abfd1d9-3581-45ee-be2a-acd692fb2353\"><!--[if lte IE 8]><div id=\"hs-cta-ie-element\"></div><![endif]--><a href=\"https://cta-redirect.hubspot.com/cta/redirect/3445699/1abfd1d9-3581-45ee-be2a-acd692fb2353\" ><img class=\"hs-cta-img\" id=\"hs-cta-img-1abfd1d9-3581-45ee-be2a-acd692fb2353\" style=\"border-width:0px;\" height=\"176\" width=\"400\" src=\"https://no-cache.hubspot.com/cta/default/3445699/1abfd1d9-3581-45ee-be2a-acd692fb2353.png\"  alt=\"Energy saving tips\"/></a></span><script charset=\"utf-8\" src=\"https://js.hscta.net/cta/current.js\"></script><script type=\"text/javascript\"> hbspt.cta.load(3445699, '1abfd1d9-3581-45ee-be2a-acd692fb2353', {}); </script></span><!-- end HubSpot Call-to-Action Code --></a></div>\n\n"
+                },
+                "rows" : [ ],
+                "rowMetaData" : [ ],
+                "cells" : [ ],
+                "cssId" : "",
+                "cssClass" : "",
+                "cssStyle" : "",
+                "styles" : null,
+                "widgets" : [ ]
+              }
+            } ],
+            "rowMetaData" : [ ],
+            "cells" : [ ],
+            "cssId" : "",
+            "cssClass" : "blog-content",
+            "cssStyle" : "",
+            "styles" : null,
+            "widgets" : [ ]
+          }
+        } ],
+        "rowMetaData" : [ ],
+        "cells" : [ ],
+        "cssId" : "",
+        "cssClass" : "page-center content-wrapper",
+        "cssStyle" : "",
+        "styles" : null,
+        "widgets" : [ ]
+      }
+    }, {
+      "0" : {
+        "x" : 0,
+        "w" : 12,
+        "name" : "module_150719482420758",
+        "label" : "Related Post Slider",
+        "type" : "raw_jinja",
+        "params" : {
+          "css_class" : "",
+          "css_id" : "",
+          "css_id_str" : "",
+          "css_style" : "",
+          "wrapping_html" : "",
+          "per_widget_wrapper_html" : "",
+          "overrideable" : false,
+          "value" : "<div class=\"recent-post-wrapper\">\r\n<div class=\"page-center\">\r\n    {% if content.topic_list %}\r\n      <h3>Related posts</h3>\r\n      <div class=\"owl-carousel\">\r\n      {% set max_posts = 10 %}{# Set the max number of related posts to be output to the page here #}\r\n      {% set post_list = [] %}\r\n      {% for topic in content.topic_list %}\r\n        {% set post_list = post_list + blog_recent_topic_posts('default', topic.slug, max_posts + 1 ) %}\r\n        {% if loop.last %}\r\n          {% set post_list = post_list|sort(true, false, 'publish_date')|unique('name') %}\r\n          {% set i = 0 %}\r\n          {% for post in post_list %}\r\n            {% if content.absolute_url != post.absolute_url and i < max_posts %}\r\n            <div class=\"item\">\r\n              <div class=\"related-post-item {% if not post.featured_image %} no-image {% endif %}\">\r\n                  <a href=\"{{post.absolute_url}}\">\r\n                    <div class=\"related-image {% if not post.featured_image %} no-image {% endif %}\" style=\"background-image: url({{ post.featured_image }})\"></div>\r\n                    <div class=\"post-content\">\r\n                        <h2 class=\"related-title\">{{ post.name}}</h2>\r\n                        <div class=\"hs-post-date\">\r\n                            {{ post.publish_date_local_time.strftime('%e') }} {{ post.publish_date_local_time.strftime('%B') }} {{ post.publish_date_local_time.strftime('%Y') }}\r\n                        </div>\r\n                    </div>\r\n                </a>\r\n              </div>\r\n            </div>\r\n              {% set i = i + 1 %}\r\n            {% endif %}\r\n          {% endfor %}\r\n        {% endif %}\r\n      {% endfor %}\r\n      </div>\r\n    {% endif %}\r\n</div>\r\n</div>\r\n\r\n\r\n{{ require_css(\"//cdn2.hubspot.net/hubfs/3445699/Reposit%20October2017%20Theme/Css/owl.carousel.min.css\") }}\r\n{{ require_css(\"//cdn2.hubspot.net/hubfs/3445699/Reposit%20October2017%20Theme/Css/owl.theme.default.min1.css\") }}\r\n\r\n<!-- javascript -->\r\n{{ require_js(\"//cdn2.hubspot.net/hubfs/3445699/Reposit%20October2017%20Theme/JS/owl.carousel.js\") }}\r\n{% require_js %}\r\n<script type=\"text/javascript\">\r\n$( document ).ready(function() {\r\n    $('.owl-carousel').owlCarousel({\r\n        loop:true,\r\n        margin:10,\r\n        nav:true,\r\n        autoplay:true,\r\n        dots:false,\r\n\t\tresponsive:{\r\n\t\t\t0:{\r\n\t\t\t\titems:1\r\n\t\t\t},\r\n\t\t\t768:{\r\n\t\t\t\titems:3\r\n\t\t\t},\r\n\t\t\t1023:{\r\n\t\t\t\titems:4\r\n\t\t\t}\r\n\t\t}\r\n\t});\r\n});\r\n</script>\r\n{% end_require_js %} \r\n"
+        },
+        "rows" : [ ],
+        "rowMetaData" : [ ],
+        "cells" : [ ],
+        "cssId" : "",
+        "cssClass" : "",
+        "cssStyle" : "",
+        "styles" : null,
+        "widgets" : [ ]
+      }
+    }, {
+      "0" : {
+        "x" : 0,
+        "w" : 12,
+        "name" : "",
+        "label" : "",
+        "type" : "section_delimiter",
+        "params" : {
+          "cell" : false,
+          "cells" : [ ],
+          "css_class" : "",
+          "css_id" : "",
+          "css_id_str" : "",
+          "css_style" : "",
+          "ending_html" : "",
+          "root" : false,
+          "row" : false,
+          "starting_html" : ""
+        },
+        "rows" : [ ],
+        "rowMetaData" : [ ],
+        "cells" : [ ],
+        "cssId" : "",
+        "cssClass" : "",
+        "cssStyle" : "",
+        "styles" : null,
+        "widgets" : [ ]
+      }
+    }, {
+      "0" : {
+        "x" : 0,
+        "w" : 12,
+        "name" : "HubSpot_Boilerplate Theme/Footer",
+        "label" : "HubSpot_Boilerplate Theme/Footer",
+        "type" : "global_group",
+        "params" : {
+          "overrideable" : false,
+          "cell" : false,
+          "cells" : [ ],
+          "css_class" : "",
+          "css_id" : "",
+          "css_id_str" : "",
+          "css_style" : "",
+          "ending_html" : "",
+          "root" : false,
+          "row" : false,
+          "starting_html" : "",
+          "path" : "/Global content/Global Groups/Reposit_October2017 Theme/Reposit_October2017 Footer.template.json"
+        },
+        "rows" : [ ],
+        "rowMetaData" : [ ],
+        "cells" : [ ],
+        "cssId" : "",
+        "cssClass" : "",
+        "cssStyle" : "",
+        "styles" : null,
+        "widgets" : [ ]
+      }
+    }, {
+      "0" : {
+        "x" : 0,
+        "w" : 12,
+        "name" : "module_1513099980318192",
+        "label" : "Custom HTML",
+        "type" : "raw_html",
+        "params" : {
+          "css_class" : "",
+          "css_id" : "",
+          "css_id_str" : "",
+          "css_style" : "",
+          "wrapping_html" : "",
+          "per_widget_wrapper_html" : "",
+          "overrideable" : false,
+          "value" : "<style>\n    .hs_email label{\n        display: none;\n    }\n</style>\n\n<script src=\"https://blog.repositpower.com/hubfs/Reposit%20October2017%20Theme/JS/customsearch.js\"></script>\n"
+        },
+        "rows" : [ ],
+        "rowMetaData" : [ ],
+        "cells" : [ ],
+        "cssId" : "",
+        "cssClass" : "",
+        "cssStyle" : "",
+        "styles" : null,
+        "widgets" : [ ]
+      }
+    } ],
+    "rowMetaData" : [ ],
+    "cells" : [ ],
+    "cssId" : "",
+    "cssClass" : "",
+    "cssStyle" : "",
+    "styles" : null,
+    "widgets" : [ ]
+  }
+}

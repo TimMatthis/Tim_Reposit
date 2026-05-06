@@ -1,0 +1,692 @@
+[ {
+  "id" : "faa1d7af-fbe6-563f-0aa8-4cc0f95c1b15",
+  "name" : "col_1",
+  "label" : "Heading:",
+  "required" : false,
+  "locked" : false,
+  "children" : [ {
+    "id" : "88c5521f-2f4f-b87e-49c6-c9cd3010fc67",
+    "name" : "width",
+    "label" : "Width",
+    "required" : false,
+    "locked" : false,
+    "display" : "slider",
+    "min" : 0,
+    "max" : 100,
+    "step" : 1,
+    "suffix" : "%",
+    "display_width" : null,
+    "type" : "number"
+  }, {
+    "id" : "7c9eab28-c0ee-011e-65e4-aed6cf616910",
+    "name" : "eyebrow",
+    "label" : "Eyebrow Heading",
+    "required" : false,
+    "locked" : false,
+    "children" : [ {
+      "id" : "ec25d311-442f-f65d-5ef7-cdd1c74a62a3",
+      "name" : "display_as",
+      "label" : "Display as",
+      "required" : true,
+      "locked" : false,
+      "display" : "select",
+      "choices" : [ [ "h1", "H1" ], [ "h2", "H2" ], [ "h3", "H3" ], [ "h4", "H4" ], [ "h5", "H5" ], [ "h6", "H6" ], [ "p", "Paragraph" ] ],
+      "multiple" : false,
+      "reordering_enabled" : true,
+      "preset" : null,
+      "display_width" : null,
+      "type" : "choice",
+      "default" : "p"
+    }, {
+      "id" : "750cd20a-14e2-614b-c1c0-a626fc5b2a44",
+      "name" : "text",
+      "label" : "Text",
+      "required" : false,
+      "locked" : false,
+      "allow_new_line" : false,
+      "display_width" : null,
+      "type" : "text",
+      "default" : "We’re Here to Help"
+    }, {
+      "id" : "bda2e039-8da4-4546-cb01-8e6859b09908",
+      "name" : "text_color",
+      "label" : "Text_Color",
+      "required" : false,
+      "locked" : false,
+      "display_width" : null,
+      "type" : "color",
+      "default" : {
+        "color" : "#4698CB",
+        "opacity" : 100
+      }
+    }, {
+      "id" : "ec2314ce-c36d-15e3-5c62-dc2e7e64440a",
+      "name" : "bottom_space",
+      "label" : "Bottom Space",
+      "required" : false,
+      "locked" : false,
+      "display" : "text",
+      "min" : 0,
+      "max" : 100,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 12
+    } ],
+    "tab" : "CONTENT",
+    "expanded" : false,
+    "group_occurrence_meta" : null,
+    "display_width" : null,
+    "type" : "group",
+    "default" : {
+      "display_as" : "p",
+      "text" : "We’re Here to Help",
+      "text_color" : {
+        "color" : "#4698CB",
+        "opacity" : 100
+      },
+      "bottom_space" : 12
+    }
+  }, {
+    "id" : "3c08d0c5-7d26-9a05-088b-14996594f281",
+    "name" : "title",
+    "label" : "Title",
+    "required" : false,
+    "locked" : false,
+    "children" : [ {
+      "id" : "48c4adb0-ef0d-7234-8e09-561027fc39c5",
+      "name" : "display_as",
+      "label" : "Display as",
+      "required" : true,
+      "locked" : false,
+      "display" : "select",
+      "choices" : [ [ "h1", "H1" ], [ "h2", "H2" ], [ "h3", "H3" ], [ "h4", "H4" ], [ "h5", "H5" ], [ "h6", "H6" ], [ "p", "Paragraph" ] ],
+      "multiple" : false,
+      "reordering_enabled" : true,
+      "preset" : null,
+      "display_width" : null,
+      "type" : "choice",
+      "default" : "h2"
+    }, {
+      "id" : "e9442f2b-0b84-df8a-f890-e697fbc0e032",
+      "name" : "text",
+      "label" : "Text",
+      "required" : false,
+      "locked" : false,
+      "allow_new_line" : false,
+      "display_width" : null,
+      "type" : "text",
+      "default" : "Get in Touch by Filling the Form Below"
+    }, {
+      "id" : "12643eed-e489-c73e-e5d1-e20a61d3ed02",
+      "name" : "text_color",
+      "label" : "Text_Color",
+      "required" : false,
+      "locked" : false,
+      "display_width" : null,
+      "type" : "color",
+      "default" : {
+        "color" : null,
+        "opacity" : 100
+      }
+    }, {
+      "id" : "c768743e-4fb7-0bee-515b-9771f7d384cc",
+      "name" : "highlight_text",
+      "label" : "Highlighted Text",
+      "required" : false,
+      "locked" : false,
+      "allow_new_line" : false,
+      "display_width" : null,
+      "type" : "text",
+      "default" : ""
+    }, {
+      "id" : "1ec59e32-3f49-db48-9484-10624119aa39",
+      "name" : "highlight_color",
+      "label" : "Highlight_Color",
+      "required" : false,
+      "locked" : false,
+      "display_width" : null,
+      "type" : "color",
+      "default" : {
+        "color" : "#4698CB",
+        "opacity" : 100
+      }
+    }, {
+      "id" : "dc7b0f76-2d12-362b-9676-672a1625a5ba",
+      "name" : "bottom_space",
+      "label" : "Bottom Space",
+      "required" : false,
+      "locked" : false,
+      "display" : "text",
+      "min" : 0,
+      "max" : 100,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 48
+    } ],
+    "tab" : "CONTENT",
+    "expanded" : false,
+    "group_occurrence_meta" : null,
+    "display_width" : null,
+    "type" : "group",
+    "default" : {
+      "display_as" : "h2",
+      "text" : "Get in Touch by Filling the Form Below",
+      "text_color" : {
+        "color" : null,
+        "opacity" : 100
+      },
+      "highlight_text" : "",
+      "highlight_color" : {
+        "color" : "#4698CB",
+        "opacity" : 100
+      },
+      "bottom_space" : 48
+    }
+  }, {
+    "id" : "a52daf89-96aa-2d6d-aa97-7ce534d6fef8",
+    "name" : "text_area",
+    "label" : "Text Area",
+    "required" : false,
+    "locked" : false,
+    "children" : [ {
+      "id" : "40d9bf4e-a08b-d1b4-dda6-7063e898fa70",
+      "name" : "content",
+      "label" : "Content",
+      "required" : false,
+      "locked" : false,
+      "display_width" : null,
+      "type" : "richtext"
+    }, {
+      "id" : "9da85039-e1f8-5537-b1e9-52dd1b60ffe2",
+      "name" : "bottom_space",
+      "label" : "Bottom Space",
+      "required" : false,
+      "locked" : false,
+      "display" : "text",
+      "min" : 0,
+      "max" : 100,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number"
+    } ],
+    "tab" : "CONTENT",
+    "expanded" : false,
+    "group_occurrence_meta" : null,
+    "display_width" : null,
+    "type" : "group",
+    "default" : { }
+  }, {
+    "id" : "6f680ad7-171d-b267-66f7-c4eb963357ed",
+    "name" : "button",
+    "label" : "Button",
+    "required" : false,
+    "locked" : false,
+    "occurrence" : {
+      "min" : null,
+      "max" : 4,
+      "sorting_label_field" : null,
+      "default" : null
+    },
+    "children" : [ {
+      "id" : "4f2248a2-f730-4814-cf00-902c18c44aca",
+      "name" : "use_cta",
+      "label" : "Use CTA",
+      "required" : false,
+      "locked" : false,
+      "display" : "toggle",
+      "display_width" : null,
+      "type" : "boolean",
+      "default" : false
+    }, {
+      "id" : "74badd09-6020-ce0d-bf79-2ad2832abefa",
+      "name" : "guid",
+      "label" : "CTA",
+      "required" : false,
+      "locked" : false,
+      "visibility" : {
+        "controlling_field" : null,
+        "controlling_field_path" : "col_1.button.use_cta",
+        "controlling_value_regex" : "true",
+        "property" : null,
+        "operator" : "EQUAL",
+        "access" : null
+      },
+      "display_width" : null,
+      "type" : "cta"
+    }, {
+      "id" : "57272496-9e4f-3d26-f178-ab6eb5f1ef1c",
+      "name" : "style_option",
+      "label" : "Style Option",
+      "required" : true,
+      "locked" : false,
+      "visibility" : {
+        "controlling_field" : null,
+        "controlling_field_path" : "col_1.button.use_cta",
+        "controlling_value_regex" : "true",
+        "property" : null,
+        "operator" : "NOT_EQUAL",
+        "access" : null
+      },
+      "display" : "select",
+      "choices" : [ [ "cta-primary", "Primary" ], [ "cta-secondary", "Secondary" ], [ "cta-tertiary", "Tertiary" ] ],
+      "multiple" : false,
+      "reordering_enabled" : true,
+      "preset" : null,
+      "display_width" : null,
+      "type" : "choice",
+      "default" : "cta-secondary"
+    }, {
+      "id" : "11a18831-9aa4-3e0b-9474-958a7bec6c2f",
+      "name" : "text",
+      "label" : "Text",
+      "required" : false,
+      "locked" : false,
+      "visibility" : {
+        "controlling_field" : null,
+        "controlling_field_path" : "col_1.button.use_cta",
+        "controlling_value_regex" : "true",
+        "property" : null,
+        "operator" : "NOT_EQUAL",
+        "access" : null
+      },
+      "allow_new_line" : false,
+      "display_width" : null,
+      "type" : "text"
+    }, {
+      "id" : "03004576-16f1-5cb7-22cf-1317300728a3",
+      "name" : "use_arrow_icon",
+      "label" : "Use Arrow Icon",
+      "required" : false,
+      "locked" : false,
+      "visibility" : {
+        "controlling_field" : null,
+        "controlling_field_path" : "col_1.button.use_cta",
+        "controlling_value_regex" : "true",
+        "property" : null,
+        "operator" : "NOT_EQUAL",
+        "access" : null
+      },
+      "display" : "checkbox",
+      "display_width" : null,
+      "type" : "boolean",
+      "default" : true
+    }, {
+      "id" : "0cd861db-e7b9-43da-7271-30a9fa9a0c03",
+      "name" : "url",
+      "label" : "URL",
+      "required" : false,
+      "locked" : false,
+      "visibility" : {
+        "controlling_field" : null,
+        "controlling_field_path" : "col_1.button.use_cta",
+        "controlling_value_regex" : "true",
+        "property" : null,
+        "operator" : "NOT_EQUAL",
+        "access" : null
+      },
+      "supported_types" : [ "EXTERNAL", "CONTENT", "FILE", "EMAIL_ADDRESS", "BLOG", "PHONE_NUMBER" ],
+      "display_width" : null,
+      "type" : "url",
+      "default" : {
+        "content_id" : null,
+        "href" : "",
+        "type" : "EXTERNAL"
+      }
+    }, {
+      "id" : "ce72e1b5-ce0c-debf-3d56-ba68beb3814e",
+      "name" : "open_link_in_new_tab",
+      "label" : "Open link in new tab",
+      "required" : false,
+      "locked" : false,
+      "visibility" : {
+        "controlling_field" : null,
+        "controlling_field_path" : "col_1.button.use_cta",
+        "controlling_value_regex" : "true",
+        "property" : null,
+        "operator" : "NOT_EQUAL",
+        "access" : null
+      },
+      "display" : "toggle",
+      "display_width" : null,
+      "type" : "boolean",
+      "default" : false
+    } ],
+    "tab" : "CONTENT",
+    "expanded" : false,
+    "group_occurrence_meta" : null,
+    "display_width" : null,
+    "type" : "group",
+    "default" : [ ]
+  } ],
+  "tab" : "CONTENT",
+  "expanded" : false,
+  "group_occurrence_meta" : null,
+  "display_width" : null,
+  "type" : "group",
+  "default" : {
+    "eyebrow" : {
+      "display_as" : "p",
+      "text" : "We’re Here to Help",
+      "text_color" : {
+        "color" : "#4698CB",
+        "opacity" : 100
+      },
+      "bottom_space" : 12
+    },
+    "title" : {
+      "display_as" : "h2",
+      "text" : "Get in Touch by Filling the Form Below",
+      "text_color" : {
+        "color" : null,
+        "opacity" : 100
+      },
+      "highlight_text" : "",
+      "highlight_color" : {
+        "color" : "#4698CB",
+        "opacity" : 100
+      },
+      "bottom_space" : 48
+    },
+    "text_area" : { },
+    "button" : [ ]
+  }
+}, {
+  "id" : "e355a361-931b-ac2a-d06f-244ef8e3a1ca",
+  "name" : "title",
+  "label" : "Form Title",
+  "required" : false,
+  "locked" : false,
+  "allow_new_line" : false,
+  "display_width" : null,
+  "type" : "text",
+  "default" : ""
+}, {
+  "id" : "e4adbe47-d462-2396-c7e7-62d52c812966",
+  "name" : "form",
+  "label" : "Form",
+  "required" : false,
+  "locked" : false,
+  "embed_versions" : [ "v2", "v4" ],
+  "support_all_webinar_types" : true,
+  "display_width" : null,
+  "type" : "form",
+  "default" : {
+    "form_id" : "",
+    "response_type" : "redirect",
+    "message" : "Thanks for submitting the form.",
+    "redirect_id" : null,
+    "redirect_url" : "http://www.google.com"
+  }
+}, {
+  "id" : "96a2942d-c746-0299-c0a9-6b16d7a20c1d",
+  "name" : "notifications_are_overridden",
+  "label" : "Send form notifications to specified email addresses instead of the form defaults",
+  "required" : false,
+  "locked" : false,
+  "visibility" : {
+    "controlling_field" : "e4adbe47-d462-2396-c7e7-62d52c812966",
+    "controlling_field_path" : null,
+    "controlling_value_regex" : "^((?!\\\"form_type\\\":\\\"TICKET_FORM\\\").)*$",
+    "property" : null,
+    "operator" : "MATCHES_REGEX",
+    "access" : null
+  },
+  "display" : "checkbox",
+  "display_width" : null,
+  "type" : "boolean",
+  "default" : false
+}, {
+  "id" : "e496f0fb-4c96-8a5f-5fa3-54a5838f02a2",
+  "name" : "notifications_override_email_addresses",
+  "label" : "Email Addresses",
+  "required" : false,
+  "locked" : false,
+  "visibility" : {
+    "controlling_field" : "96a2942d-c746-0299-c0a9-6b16d7a20c1d",
+    "controlling_field_path" : null,
+    "controlling_value_regex" : "true",
+    "property" : null,
+    "operator" : "MATCHES_REGEX",
+    "access" : null
+  },
+  "allow_custom_email_addresses" : false,
+  "display_width" : null,
+  "type" : "email"
+}, {
+  "id" : "072ce88d-62f2-604d-feab-f8199eeb40f7",
+  "name" : "follow_up_type_simple",
+  "label" : "Send a follow-up email",
+  "help_text" : "To send a follow-up email, make sure the 'Set contacts created as marketing contacts’ setting is turned on. You can manage this in options. <a href='https://knowledge.hubspot.com/contacts/set-contacts-as-marketing#set-the-default-marketing-status-for-new-contacts'>Learn more</a>",
+  "required" : false,
+  "locked" : false,
+  "visibility" : {
+    "controlling_field" : null,
+    "controlling_field_path" : null,
+    "controlling_value_regex" : null,
+    "property" : null,
+    "operator" : null,
+    "access" : {
+      "operator" : "HAS_NONE",
+      "scopes" : [ ],
+      "gates" : [ "ContextualAutomation:FormsEmailsAccess" ]
+    }
+  },
+  "display" : "checkbox",
+  "display_width" : null,
+  "type" : "boolean",
+  "default" : false
+}, {
+  "id" : "82375ac5-e902-3628-b674-1eb8f5397c41",
+  "name" : "sfdc_campaign",
+  "label" : "Salesforce campaign",
+  "required" : false,
+  "locked" : false,
+  "display_width" : null,
+  "type" : "salesforcecampaign"
+}, {
+  "id" : "da96f4ac-776c-3ddd-5e42-8d42b5e8c518",
+  "name" : "section",
+  "label" : "Section:",
+  "required" : false,
+  "locked" : false,
+  "children" : [ {
+    "id" : "5dea2c6c-100b-ee25-a509-f9af2a47c4ce",
+    "name" : "overlap_section",
+    "label" : "Overlap the section above",
+    "required" : false,
+    "locked" : false,
+    "display" : "checkbox",
+    "display_width" : null,
+    "type" : "boolean",
+    "default" : false
+  }, {
+    "id" : "e503e0a5-fecf-32e2-c158-affe4a1b1b89",
+    "name" : "bg_color",
+    "label" : "Background Color",
+    "required" : false,
+    "locked" : false,
+    "display_width" : null,
+    "type" : "color",
+    "default" : {
+      "color" : "#FFFFFF",
+      "opacity" : 100
+    }
+  }, {
+    "id" : "97547ed2-2a43-1efc-fa8b-21d93949d39d",
+    "name" : "spacing",
+    "label" : "Spacing",
+    "required" : false,
+    "locked" : false,
+    "children" : [ {
+      "id" : "ae7304d8-00c1-f64f-0b16-678bf657e33d",
+      "name" : "top",
+      "label" : "Top (Desktop)",
+      "required" : false,
+      "locked" : false,
+      "display" : "slider",
+      "min" : 0,
+      "max" : 500,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 150
+    }, {
+      "id" : "46b35a58-9d48-9b52-11f2-cd7325239f90",
+      "name" : "bottom",
+      "label" : "Bottom (Desktop)",
+      "required" : false,
+      "locked" : false,
+      "display" : "slider",
+      "min" : 0,
+      "max" : 500,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 250
+    }, {
+      "id" : "934991d4-8d93-bbce-e909-61a8afb15998",
+      "name" : "top_sm",
+      "label" : "Top (Mobile)",
+      "required" : false,
+      "locked" : false,
+      "display" : "slider",
+      "min" : 0,
+      "max" : 500,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 80
+    }, {
+      "id" : "6389fca5-d04f-544a-8fe0-c0bd7ae6141d",
+      "name" : "bottom_sm",
+      "label" : "Bottom (Mobile)",
+      "required" : false,
+      "locked" : false,
+      "display" : "slider",
+      "min" : 0,
+      "max" : 500,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 120
+    } ],
+    "tab" : "CONTENT",
+    "expanded" : false,
+    "group_occurrence_meta" : null,
+    "display_width" : null,
+    "type" : "group",
+    "default" : {
+      "top" : 150,
+      "bottom" : 250,
+      "top_sm" : 80,
+      "bottom_sm" : 120
+    }
+  }, {
+    "id" : "6b8df9c6-6353-dd6c-06a3-bf8f491448d9",
+    "name" : "round_corners",
+    "label" : "Round Corners",
+    "required" : false,
+    "locked" : false,
+    "children" : [ {
+      "id" : "7661517d-81be-9df0-cd9a-b0d79ea0004c",
+      "name" : "top_corners",
+      "label" : "Top Corners (Desktop)",
+      "required" : true,
+      "locked" : false,
+      "display" : "slider",
+      "min" : 0,
+      "max" : 100,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 64
+    }, {
+      "id" : "c9ae63fc-f361-81c3-7469-fac0b454d93e",
+      "name" : "bottom_corners",
+      "label" : "Bottom Corners (Desktop)",
+      "required" : true,
+      "locked" : false,
+      "display" : "slider",
+      "min" : 0,
+      "max" : 100,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 0
+    }, {
+      "id" : "fc2e5884-fb34-b778-33ac-208277423822",
+      "name" : "top_corners_sm",
+      "label" : "Top Corners (Mobile)",
+      "required" : true,
+      "locked" : false,
+      "display" : "slider",
+      "min" : 0,
+      "max" : 100,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 42
+    }, {
+      "id" : "9c06c809-516b-ea0f-64e3-3715b4e2d5d4",
+      "name" : "bottom_corners_sm",
+      "label" : "Bottom Corners (Mobile)",
+      "required" : true,
+      "locked" : false,
+      "display" : "slider",
+      "min" : 0,
+      "max" : 100,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 0
+    } ],
+    "tab" : "CONTENT",
+    "expanded" : false,
+    "group_occurrence_meta" : null,
+    "display_width" : null,
+    "type" : "group",
+    "default" : {
+      "top_corners" : 64,
+      "bottom_corners" : 0,
+      "top_corners_sm" : 42,
+      "bottom_corners_sm" : 0
+    }
+  } ],
+  "tab" : "CONTENT",
+  "expanded" : false,
+  "group_occurrence_meta" : null,
+  "display_width" : null,
+  "type" : "group",
+  "default" : {
+    "overlap_section" : false,
+    "bg_color" : {
+      "color" : "#FFFFFF",
+      "opacity" : 100
+    },
+    "spacing" : {
+      "top" : 150,
+      "bottom" : 250,
+      "top_sm" : 80,
+      "bottom_sm" : 120
+    },
+    "round_corners" : {
+      "top_corners" : 64,
+      "bottom_corners" : 0,
+      "top_corners_sm" : 42,
+      "bottom_corners_sm" : 0
+    }
+  }
+} ]

@@ -314,6 +314,36 @@
     </div>
 
   </div>
+  <p class="section-label">HubSpot</p>
+  <div class="grid">
+
+    <div class="card hs-files-card">
+      <div class="card-head">
+        <div class="card-title-wrap">
+          <div class="card-title">HubSpot files to deploy</div>
+          <div class="card-desc">All templates in <code>Hubspot/clean_reposit/</code>. New and modified files are highlighted. Copy the upload command then run it from the repo root.</div>
+          <span class="badge node"><span class="badge-dot"></span>hs CLI</span>
+        </div>
+      </div>
+
+      <div class="card-links">
+        <div class="hs-cmd-row">
+          <code class="hs-cmd" id="hs-upload-cmd">hs upload Hubspot/clean_reposit clean_reposit --portal=tim</code>
+          <button type="button" class="hs-copy-btn" id="hs-copy-btn" title="Copy command">Copy</button>
+        </div>
+
+        <div class="hs-file-list" id="hs-file-list">
+          <span class="hs-loading">Loading file list…</span>
+        </div>
+
+        <button type="button" class="link-item hs-refresh-btn" id="hs-refresh-btn">
+          <span class="link-item-label">Refresh file list</span>
+          <span class="link-item-arrow">↺</span>
+        </button>
+      </div>
+    </div>
+
+  </div>
   </main>
 
   <footer>
@@ -859,6 +889,76 @@
     }
 
     document.getElementById('btn-nem-weather').onclick = launchNemWeather;
+
+    // ── HubSpot file list ──────────────────────────────────────────────────
+    const STATUS_LABELS = { new: 'new', modified: 'modified', unchanged: '' };
+    const TYPE_LABELS   = { template: 'template', module: 'module', theme: 'theme' };
+
+    async function loadHubspotFiles() {
+      const list = document.getElementById('hs-file-list');
+      list.innerHTML = '<span class="hs-loading">Loading…</span>';
+      try {
+        const r = await fetch(`${API}/api/hubspot/files`);
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        const data = await r.json();
+        if (!data.ok) throw new Error(data.error || 'API error');
+
+        document.getElementById('hs-upload-cmd').textContent = data.uploadCommand;
+
+        if (!data.files || data.files.length === 0) {
+          list.innerHTML = '<span class="hs-loading">No files found.</span>';
+          return;
+        }
+
+        list.innerHTML = '';
+        for (const f of data.files) {
+          const row = document.createElement('a');
+          row.href = '/' + f.rel;
+          row.target = '_blank';
+          row.rel = 'noopener noreferrer';
+          row.className = 'hs-file-row' + (f.status !== 'unchanged' ? ' hs-file-row--changed' : '');
+          row.title = 'Open in browser: ' + f.rel;
+
+          const name = document.createElement('span');
+          name.className = 'hs-file-name';
+          name.textContent = f.name;
+
+          const badges = document.createElement('span');
+          badges.className = 'hs-file-badges';
+
+          if (f.status !== 'unchanged') {
+            const sb = document.createElement('span');
+            sb.className = 'hs-badge hs-badge--' + f.status;
+            sb.textContent = f.status;
+            badges.appendChild(sb);
+          }
+
+          const tb = document.createElement('span');
+          tb.className = 'hs-badge hs-badge--type';
+          tb.textContent = f.type;
+          badges.appendChild(tb);
+
+          row.appendChild(name);
+          row.appendChild(badges);
+          list.appendChild(row);
+        }
+      } catch (e) {
+        list.innerHTML = '<span class="hs-loading hs-loading--error">Could not load file list — is utility_api running? (' + e.message + ')</span>';
+      }
+    }
+
+    document.getElementById('hs-copy-btn').addEventListener('click', () => {
+      const cmd = document.getElementById('hs-upload-cmd').textContent;
+      navigator.clipboard.writeText(cmd).then(() => {
+        const btn = document.getElementById('hs-copy-btn');
+        btn.textContent = 'Copied!';
+        setTimeout(() => { btn.textContent = 'Copy'; }, 1800);
+      });
+    });
+
+    document.getElementById('hs-refresh-btn').addEventListener('click', loadHubspotFiles);
+
+    loadHubspotFiles();
 
     (async () => {
       try {

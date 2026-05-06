@@ -1,0 +1,172 @@
+{
+  "isAvailableForNewContent" : true,
+  "templateType" : 18,
+  "attachedStylesheets" : [ ],
+  "attachedJs" : [ ],
+  "customHead" : "",
+  "customFooter" : "",
+  "bodyClass" : "subscribe-form padding40tb",
+  "bodyCss" : "",
+  "bodyEditable" : false,
+  "layoutData" : {
+    "x" : 0,
+    "w" : 12,
+    "name" : "",
+    "label" : "",
+    "type" : "cell",
+    "params" : { },
+    "rows" : [ {
+      "0" : {
+        "x" : 0,
+        "w" : 12,
+        "name" : "module_140603800507125220",
+        "label" : "Page Center",
+        "type" : "cell",
+        "params" : {
+          "css_class" : "subscribe-form page-center",
+          "value" : "",
+          "css_id" : "",
+          "overrideable" : false,
+          "css_style" : "",
+          "wrapping_html" : ""
+        },
+        "rows" : [ {
+          "0" : {
+            "x" : 0,
+            "w" : 12,
+            "name" : "module_14060379394978",
+            "label" : "Header",
+            "type" : "header",
+            "params" : {
+              "header_tag" : "h2",
+              "css_class" : "text-center",
+              "value" : "Your website. Your blog. Your HubTheme.",
+              "overrideable" : false,
+              "css_style" : "",
+              "wrapping_html" : ""
+            },
+            "rows" : [ ],
+            "rowMetaData" : [ ],
+            "cells" : [ ],
+            "cssId" : "",
+            "cssClass" : "",
+            "cssStyle" : "",
+            "styles" : null,
+            "widgets" : [ ]
+          }
+        }, {
+          "0" : {
+            "x" : 0,
+            "w" : 12,
+            "name" : "module_14060379394989",
+            "label" : "One Line of Text",
+            "type" : "text",
+            "params" : {
+              "css_class" : "text-center",
+              "overrideable" : false,
+              "css_style" : "",
+              "value" : "Blog subscribers get email updates daily, weekly, or monthly. Automagically.",
+              "wrapping_html" : ""
+            },
+            "rows" : [ ],
+            "rowMetaData" : [ ],
+            "cells" : [ ],
+            "cssId" : "",
+            "cssClass" : "",
+            "cssStyle" : "",
+            "styles" : null,
+            "widgets" : [ ]
+          }
+        }, {
+          "0" : {
+            "x" : 0,
+            "w" : 3,
+            "name" : "module_1486736036553497",
+            "label" : "Horizontal Spacer",
+            "type" : "space",
+            "params" : {
+              "overrideable" : false,
+              "css_class" : "",
+              "css_id" : "",
+              "css_id_str" : "",
+              "css_style" : "",
+              "ending_html" : "",
+              "starting_html" : ""
+            },
+            "rows" : [ ],
+            "rowMetaData" : [ ],
+            "cells" : [ ],
+            "cssId" : "",
+            "cssClass" : "",
+            "cssStyle" : "",
+            "styles" : null,
+            "widgets" : [ ]
+          },
+          "3" : {
+            "x" : 3,
+            "w" : 6,
+            "name" : "module_140603793949810",
+            "label" : "Blog Email Subscription",
+            "type" : "blog_subscribe",
+            "params" : {
+              "select_blog" : "default",
+              "title" : "",
+              "css_class" : "text-center padding10tb",
+              "response_message" : "Thanks for subscribing to our blog. You're awesome.",
+              "overrideable" : false,
+              "css_style" : "",
+              "wrapping_html" : "",
+              "edit_form_link" : "<a href=\"http://app.hubspot.com/forms/414391/964a93a8-2661-4f9d-b2f1-a8492e7e614f/edit/\" target=\"_blank\">Edit Subscription Form</a>"
+            },
+            "rows" : [ ],
+            "rowMetaData" : [ ],
+            "cells" : [ ],
+            "cssId" : "",
+            "cssClass" : "",
+            "cssStyle" : "",
+            "styles" : null,
+            "widgets" : [ ]
+          },
+          "9" : {
+            "x" : 9,
+            "w" : 3,
+            "name" : "module_1486736034815496",
+            "label" : "Horizontal Spacer",
+            "type" : "space",
+            "params" : {
+              "overrideable" : false,
+              "css_class" : "",
+              "css_id" : "",
+              "css_id_str" : "",
+              "css_style" : "",
+              "ending_html" : "",
+              "starting_html" : ""
+            },
+            "rows" : [ ],
+            "rowMetaData" : [ ],
+            "cells" : [ ],
+            "cssId" : "",
+            "cssClass" : "",
+            "cssStyle" : "",
+            "styles" : null,
+            "widgets" : [ ]
+          }
+        } ],
+        "rowMetaData" : [ ],
+        "cells" : [ ],
+        "cssId" : "",
+        "cssClass" : "",
+        "cssStyle" : "",
+        "styles" : null,
+        "widgets" : [ ]
+      }
+    } ],
+    "rowMetaData" : [ ],
+    "cells" : [ ],
+    "cssId" : "",
+    "cssClass" : "",
+    "cssStyle" : "",
+    "styles" : null,
+    "widgets" : [ ]
+  }
+}

@@ -1,0 +1,10 @@
+[ {
+  "id" : "5301890d-57eb-a944-7a0a-a90b8d270e54",
+  "name" : "row_class",
+  "label" : "Row Class",
+  "required" : false,
+  "locked" : false,
+  "allow_new_line" : false,
+  "display_width" : null,
+  "type" : "text"
+} ]

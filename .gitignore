@@ -31,3 +31,4 @@ Optisizer data/calculator/.summary_cache/
 
 # Census bulk downloads (large)
 Cluster/*.zip
+hubspot.config.yml

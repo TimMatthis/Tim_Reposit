@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Optisizer fleet — catan_results &amp; catan_no_vic</title>
+  <title>Optisizer fleet — export sets</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
@@ -101,8 +101,8 @@
         <summary class="collapsible-section__summary">About the data &amp; detected folders</summary>
         <div class="collapsible-section__body">
       <p>
-        Two Catan export sets live under <code class="mono">Optisizer data/</code>:
-        <strong>catan_results</strong> (full fleet) and <strong>catan_no_vic</strong> (homes with VIC removed for this export).
+        Export sets live under <code class="mono">Optisizer data/</code>:
+        <strong>catan_results</strong> (full fleet), <strong>catan_no_vic</strong> (homes with VIC removed for this export), and <strong>CleanFleet</strong>.
         Each home is <code class="mono">&lt;export-set&gt;/&lt;house id&gt;/optimisation_intervals.csv</code>.
         Sums use the <strong>net_cost</strong> column only. Choose a set below before <strong>Run analysis</strong>.
       </p>
@@ -117,7 +117,7 @@
       {% if vic_blocklist.active %}
       <p class="status-line vic-blocklist-note">
         Excluding <strong>{{ vic_blocklist.n_uids }}</strong> site(s) listed in
-        <code class="mono">{{ vic_blocklist.file }}</code> from both Catan scans (folder UUID must match each row).
+        <code class="mono">{{ vic_blocklist.file }}</code> from detected scans (folder UUID must match each row).
       </p>
       {% endif %}
         </div>
@@ -129,7 +129,7 @@
         <summary class="collapsible-section__summary">Run</summary>
         <div class="collapsible-section__body">
       <fieldset class="catan-source-fieldset">
-        <legend class="catan-source-legend">Catan export set (catan_results vs catan_no_vic)</legend>
+        <legend class="catan-source-legend">Export set</legend>
         {% for s in catan_sources %}
         <label class="catan-source-option">
           <input

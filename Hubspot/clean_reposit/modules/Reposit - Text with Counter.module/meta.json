@@ -1,0 +1,13 @@
+{
+  "global" : false,
+  "content_types" : [ "LANDING_PAGE", "SITE_PAGE", "BLOG_LISTING", "BLOG_POST" ],
+  "host_template_types" : [ "PAGE" ],
+  "module_id" : 189465275465,
+  "css_assets" : [ {
+    "autoload" : true,
+    "path" : "../../../@marketplace/Helpful_Hero/CLEAN-6-1-theme/css/modules/hero-banner.css",
+    "name" : "hero-banner.css"
+  } ],
+  "label" : "Reposit - Text with Counter",
+  "is_available_for_new_content" : true
+}

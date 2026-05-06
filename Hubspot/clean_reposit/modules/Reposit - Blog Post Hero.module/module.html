@@ -1,0 +1,218 @@
+{% import "../macros/icon.html" as icon %}
+
+{% require_css %}
+<style>
+  #{{name}} {
+    background-color: {{ theme.blog.post_page.header.bg_color.rbga }};
+    background-color: {{ module.background.bg_color_1.rgba }};
+    {% if theme.blog.post_page.header.post_feat_img and content.featured_image %}
+    background: url({{ content.featured_image }}) no-repeat center center / cover{% if theme.blog.post_page.header.overlay_color.rbga %}, {{ theme.blog.post_page.header.overlay_color.rbga }}{% endif %};
+    {% else %}
+    background: -moz-radial-gradient(circle at {{ module.background.bg_gradient_angle }}, rgba({{ module.background.bg_color_1.color|convert_rgb }},{% if module.background.bg_color_1.opacity == '100' %}1{% else %}0.{{ module.background.bg_color_1.opacity }}{% endif %}) 5%, rgba({{ module.background.bg_color_2.color|convert_rgb }},{% if module.background.bg_color_2.opacity == '100' %}1{% else %} 0.{{ module.background.bg_color_2.opacity }}{% endif %}) 20%, rgba({{ module.background.bg_color_3.color|convert_rgb }},{% if module.background.bg_color_3.opacity == '100' %}1{% else %}0.{{ module.background.bg_color_3.opacity }}{% endif %}) 60%, rgba({{ module.background.bg_color_4.color|convert_rgb }},{% if module.background.bg_color_4.opacity == '100' %}1{% else %}0.{{ module.background.bg_color_4.opacity }}{% endif %}) 100%){% if theme.blog.post_page.header.post_feat_img and content.featured_image %}, url({{ content.featured_image }}){% elif module.background.img.src %}, url({{ module.background.img.src }}){% endif %};
+    background: -webkit-radial-gradient(circle at {{ module.background.bg_gradient_angle }}, rgba({{ module.background.bg_color_1.color|convert_rgb }},{% if module.background.bg_color_1.opacity == '100' %}1{% else %}0.{{ module.background.bg_color_1.opacity }}{% endif %}) 5%, rgba({{ module.background.bg_color_2.color|convert_rgb }},{% if module.background.bg_color_2.opacity == '100' %}1{% else %} 0.{{ module.background.bg_color_2.opacity }}{% endif %}) 20%, rgba({{ module.background.bg_color_3.color|convert_rgb }},{% if module.background.bg_color_3.opacity == '100' %}1{% else %}0.{{ module.background.bg_color_3.opacity }}{% endif %}) 60%, rgba({{ module.background.bg_color_4.color|convert_rgb }},{% if module.background.bg_color_4.opacity == '100' %}1{% else %}0.{{ module.background.bg_color_4.opacity }}{% endif %}) 100%){% if theme.blog.post_page.header.post_feat_img and content.featured_image %}, url({{ content.featured_image }}){% elif module.background.img.src %}, url({{ module.background.img.src }}){% endif %};
+    background: radial-gradient(circle at {{ module.background.bg_gradient_angle }}, rgba({{ module.background.bg_color_1.color|convert_rgb }},{% if module.background.bg_color_1.opacity == '100' %}1{% else %}0.{{ module.background.bg_color_1.opacity }}{% endif %}) 5%, rgba({{ module.background.bg_color_2.color|convert_rgb }},{% if module.background.bg_color_2.opacity == '100' %}1{% else %} 0.{{ module.background.bg_color_2.opacity }}{% endif %}) 20%, rgba({{ module.background.bg_color_3.color|convert_rgb }},{% if module.background.bg_color_3.opacity == '100' %}1{% else %}0.{{ module.background.bg_color_3.opacity }}{% endif %}) 60%, rgba({{ module.background.bg_color_4.color|convert_rgb }},{% if module.background.bg_color_4.opacity == '100' %}1{% else %}0.{{ module.background.bg_color_4.opacity }}{% endif %}) 100%){% if theme.blog.post_page.header.post_feat_img and content.featured_image %}, url({{ content.featured_image }}){% elif module.background.img.src %}, url({{ module.background.img.src }}){% endif %};
+    {% endif %}
+    background-blend-mode: multiply;
+  }
+
+  #{{name}} {
+    background-color: {{ theme.blog.listing_page.header.bg_color.rbga }};
+    background-color: {{ module.background.bg_color_1.rgba }};
+    {% if theme.blog.post_page.header.post_feat_img and content.featured_image and theme.blog.post_page.header.overlay_color.rbga %}
+    background: url({{ content.featured_image }}) no-repeat center center / cover, {{ theme.blog.post_page.header.overlay_color.rbga }};
+    {% else %}
+    background: -moz-radial-gradient(circle at {{ module.background.bg_gradient_angle }}, rgba({{ module.background.bg_color_1.color|convert_rgb }},{% if module.background.bg_color_1.opacity == '100' %}1{% else %}0.{{ module.background.bg_color_1.opacity }}{% endif %}) 5%, rgba({{ module.background.bg_color_2.color|convert_rgb }},{% if module.background.bg_color_2.opacity == '100' %}1{% else %} 0.{{ module.background.bg_color_2.opacity }}{% endif %}) 20%, rgba({{ module.background.bg_color_3.color|convert_rgb }},{% if module.background.bg_color_3.opacity == '100' %}1{% else %}0.{{ module.background.bg_color_3.opacity }}{% endif %}) 60%, rgba({{ module.background.bg_color_4.color|convert_rgb }},{% if module.background.bg_color_4.opacity == '100' %}1{% else %}0.{{ module.background.bg_color_4.opacity }}{% endif %}) 100%){% if theme.blog.post_page.header.post_feat_img and content.featured_image %}, url({{ content.featured_image }}){% elif module.background.img.src %}, url({{ module.background.img.src }}){% endif %};
+    background: -webkit-radial-gradient(circle at {{ module.background.bg_gradient_angle }}, rgba({{ module.background.bg_color_1.color|convert_rgb }},{% if module.background.bg_color_1.opacity == '100' %}1{% else %}0.{{ module.background.bg_color_1.opacity }}{% endif %}) 5%, rgba({{ module.background.bg_color_2.color|convert_rgb }},{% if module.background.bg_color_2.opacity == '100' %}1{% else %} 0.{{ module.background.bg_color_2.opacity }}{% endif %}) 20%, rgba({{ module.background.bg_color_3.color|convert_rgb }},{% if module.background.bg_color_3.opacity == '100' %}1{% else %}0.{{ module.background.bg_color_3.opacity }}{% endif %}) 60%, rgba({{ module.background.bg_color_4.color|convert_rgb }},{% if module.background.bg_color_4.opacity == '100' %}1{% else %}0.{{ module.background.bg_color_4.opacity }}{% endif %}) 100%){% if theme.blog.post_page.header.post_feat_img and content.featured_image %}, url({{ content.featured_image }}){% elif module.background.img.src %}, url({{ module.background.img.src }}){% endif %};
+    background: radial-gradient(circle at {{ module.background.bg_gradient_angle }}, rgba({{ module.background.bg_color_1.color|convert_rgb }},{% if module.background.bg_color_1.opacity == '100' %}1{% else %}0.{{ module.background.bg_color_1.opacity }}{% endif %}) 5%, rgba({{ module.background.bg_color_2.color|convert_rgb }},{% if module.background.bg_color_2.opacity == '100' %}1{% else %} 0.{{ module.background.bg_color_2.opacity }}{% endif %}) 20%, rgba({{ module.background.bg_color_3.color|convert_rgb }},{% if module.background.bg_color_3.opacity == '100' %}1{% else %}0.{{ module.background.bg_color_3.opacity }}{% endif %}) 60%, rgba({{ module.background.bg_color_4.color|convert_rgb }},{% if module.background.bg_color_4.opacity == '100' %}1{% else %}0.{{ module.background.bg_color_4.opacity }}{% endif %}) 100%){% if theme.blog.post_page.header.post_feat_img and content.featured_image %}, url({{ content.featured_image }}){% elif module.background.img.src %}, url({{ module.background.img.src }}){% endif %};
+    {% endif %}
+    background-blend-mode: multiply;
+  }
+  
+  #{{name}} .flex-container {
+    align-items: center;
+    position: relative;
+    height: 110vh; {# Add +10vh to stack the second section on top #}
+  }
+
+  #{{name}} .column-1 {
+    max-width: 906px;
+  }
+  
+  #{{name}} .eyebrow {
+    color: {{ theme.blog.post_page.header.read_time_color.rgba }};
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: 150%;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  #{{name}} .blog-bottom {
+    position: absolute;
+    left: 0;
+    bottom: 140px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  #{{name}} .author-image {
+    width: 64px;
+    height: 64px !important;
+    object-fit: cover;
+    border-radius: 64px;
+    
+  }
+  
+  #{{name}} .author a {
+    display: inline-block;
+  }
+  
+  #{{name}} .timestamp-wrapper {
+    display: grid;
+  }
+  
+  #{{name}} .timestamp-wrapper a {
+    color: {{ theme.blog.post_page.header.author_color.rgba }};
+    font-size: 22px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 110%;
+    display: inline-block;
+  }
+
+  #{{name}} .timestamp-wrapper a:hover {
+    color: #fff;
+  }
+
+  #{{name}} .timestamp {
+    color: {{ theme.blog.post_page.header.pub_date_color.rgba }};
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: 150%;
+  }
+  
+  #{{name}} .tags-container {
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  #{{name}} .tag-link {
+    color: {{ theme.blog.post_page.header.tag_text_color.rgba }};
+    background-color: {{ theme.blog.post_page.header.tag_bg_color.rgba }};
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: 150%;
+    display: inline-flex;
+    padding: 7px 20px;
+    align-items: center;
+    gap: 12px;
+    border-radius: 43px;
+    border: 1px solid {{ theme.blog.post_page.header.tag_text_color.rgba }};
+  }
+  
+  #{{name}} .tag-link:hover {
+    color: {{ theme.blog.post_page.header.tag_text_color_hover.rgba }};
+    border: 1px solid {{ theme.blog.post_page.header.tag_text_color_hover.rgba }};
+    background-color: {{ theme.blog.post_page.header.tag_bg_color_hover.rgba }};
+  }
+
+  {# MOBILE #}
+  @media (max-width: {{ theme.layout.style_opts.slim_width }}px) {
+    #{{name}} .flex-container {
+      height: 90vh;
+      flex-direction: column;
+      align-items: start;
+      justify-content: center;
+      gap: 24px;
+    }
+    
+    #{{name}} .flex-content {
+      width: 100%;
+    }
+    
+    #{{name}} .timestamp-wrapper a {
+      font-size: 18px;
+    }
+  }
+  
+   @media (max-width: 599px) {
+    #{{name}} .blog-bottom {
+      bottom: 76px;
+    }
+  }
+</style>
+{% end_require_css %}
+
+{### HTML ###}
+<div id="{{name}}">
+  <div class="container">
+
+    <div class="flex-container">
+      {# COLUMN 1 #}
+      <div class="flex-content column-1">
+        {# EYEBROW #}
+        {% if theme.blog.post_page.header.read_time %}
+        <div class="eyebrow-container">
+          <p class="eyebrow reading-minutes">
+            {% set initialPostWords = content.post_body|striptags|wordcount %}
+            {% set calculatedPostWords = (initialPostWords/100) * 100 %}
+            {% set finishedPostWords = calculatedPostWords|divide(300)|round(2) %}
+            {% set number = finishedPostWords|round %}
+            {% if number < 1 %}
+
+            {% else %}
+            {{ finishedPostWords|round }} {{ read_time }}
+            {% endif %}
+          </p>
+        </div>
+        {% endif %}
+
+        {# TITLE #}
+        <div class="title-container">
+          <h1 class="blog-post__title">
+            {{ content.name }}
+          </h1>
+        </div>
+
+        {# TAGS #}
+        {% if content.tag_list %}
+        <div class="tags-container">
+          {% for tag in content.tag_list %}
+          <a class="tag-link" href="{{ blog_tag_url(group.id, tag.slug) }}">{{ tag.name }}</a>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        {# TEXT BOTTOM #}
+        <div class="blog-bottom">
+          {% if theme.blog.post_page.header.author %}
+            <span class="author"> 
+              <a href="{{ group.absolute_url }}/author/{{ content.blog_post_author.slug }}">
+                {% if content.blog_author.avatar %}<img class="author-image" src="{{ content.blog_author.avatar }}" loading="eager" alt="Picture of {{ content.blog_author.display_name }}">{% endif %}
+              </a>
+            </span>
+          {% endif %}
+            <span class="timestamp-wrapper">
+              {% if theme.blog.post_page.header.author %}
+              <a href="{{ group.absolute_url }}/author/{{ content.blog_post_author.slug }}">
+                {{ content.blog_post_author.display_name }}
+              </a>
+              {% endif %}
+              {% if theme.blog.post_page.header.pub_date %}
+              <span class="timestamp">
+                {{ content.publish_date|format_date('MMM d, yyyy') }}
+              </span>
+              {% endif %}
+            </span>
+        </div>
+      </div> {# /.column-1 #}
+
+    </div> {# /.flex #}
+  </div> {# /.container #}
+</div>

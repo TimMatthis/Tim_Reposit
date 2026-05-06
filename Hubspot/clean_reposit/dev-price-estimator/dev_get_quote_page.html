@@ -1,0 +1,1526 @@
+<!--
+  templateType: "page"
+  label: "Reposit - Get Quote Landing"
+  isAvailableForNewContent: true
+-->
+<!--
+  DEVELOPER NOTES - Get Quote Landing Page
+
+  Path: /get-quote
+  Entry point for the customer quote journey.
+
+  FLOW
+  Customer scrolls the landing page, clicks "Get My Free Assessment",
+  the wizard overlay opens with Step 1 (single CTA, no email entry).
+  Click on "Connect my battery app" reads the visitor's hubspotutk
+  cookie via JS and redirects to:
+    https://dev-customer.repositpower.com/quote/start?hutk=<utk>
+  (or without ?hutk= when the visitor has no tracking cookie). The API
+  initiates SolaX OAuth; on callback it derives the email from SolaX,
+  upserts a HubSpot contact (using the email), uses hs_object_id as
+  uid, fires a fire-and-forget Forms Submissions API call to attach
+  the hutk to the contact, sets the quote_session cookie, and
+  redirects to /confirm (dev_quote_confirm_page.html).
+
+  DEPLOYMENT CHECKLIST
+  1. Publish this page at path /get-quote in HubSpot.
+  2. standard_header_includes / standard_footer_includes load HubSpot
+     analytics and cookie tools - keep both tags. The HubSpot tracking
+     script is what seeds the hubspotutk cookie that the JS reads.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reposit Power - No Bill Retrofit</title>
+  {{ standard_header_includes }}
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green:        #19c37d;
+      --green-glow:   rgba(25, 195, 125, 0.28);
+      --blue:         #2a6b94;
+      --ink:          #0f172a;
+      --muted:        #374151;
+      --line:         #d7e3f4;
+      --glass:        rgba(255, 255, 255, 0.15);
+      --glass-border: rgba(255, 255, 255, 0.26);
+      --card-bg:      rgba(255, 255, 255, 0.97);
+      --shadow:       0 10px 32px rgba(10, 20, 40, 0.2);
+      --shadow-lg:    0 16px 48px rgba(10, 20, 40, 0.3);
+    }
+
+    html { scroll-behavior: smooth; overflow: hidden; }
+
+    body {
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.55;
+      color: var(--ink);
+      background:
+        url(https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/noise.png),
+        radial-gradient(130% 110% at 18% 24%, #2b78a7 0%, #265f87 42%, #4f5f69 64%, #8c6647 82%, #b27a4b 100%);
+      background-blend-mode: multiply;
+      overflow: hidden;
+      height: 100dvh;
+    }
+
+    /* ─── PAGER SCROLL CONTAINER ─────────────── */
+    .page {
+      height: 100dvh;
+      overflow-y: scroll;
+      scroll-snap-type: y mandatory;
+      scroll-behavior: smooth;
+    }
+
+    .container { max-width: 1180px; margin: 0 auto; width: 100%; }
+
+    /* ─── SECTION BASE ───────────────────────── */
+    .section {
+      scroll-snap-align: start;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 48px 20px 60px;
+      position: relative;
+      box-sizing: border-box;
+    }
+
+    /* ─── SECTION PROGRESS DOTS ─────────────── */
+    .section-dots {
+      position: fixed;
+      right: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .section-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.28);
+      border: 1.5px solid rgba(255,255,255,0.4);
+      cursor: pointer;
+      padding: 0;
+      transition: transform 0.25s, background 0.25s, height 0.25s;
+      display: block;
+      position: relative;
+    }
+
+    .section-dot:hover { background: rgba(255,255,255,0.6); transform: scale(1.3); }
+
+    .section-dot.is-active {
+      background: #fff;
+      transform: scale(1.25);
+      border-color: #fff;
+      height: 22px;
+      border-radius: 4px;
+    }
+
+    .section-dot-label {
+      position: absolute;
+      right: calc(100% + 10px);
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: rgba(255,255,255,0.85);
+      background: rgba(0,0,0,0.45);
+      border-radius: 6px;
+      padding: 3px 8px;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .section-dot:hover .section-dot-label { opacity: 1; }
+
+    /* ─── SCROLL HINT ────────────────────────── */
+    .scroll-hint {
+      position: absolute;
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      color: rgba(255,255,255,0.45);
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      text-align: center;
+      transition: color 0.2s;
+      white-space: nowrap;
+    }
+
+    .scroll-hint:hover { color: rgba(255,255,255,0.8); }
+
+    .scroll-hint-arrow {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      animation: hintBounce 2.2s ease-in-out infinite;
+    }
+
+    @keyframes hintBounce {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(5px); }
+    }
+
+    /* ─── TYPOGRAPHY ─────────────────────────── */
+    h1 {
+      font-size: clamp(2.1rem, 3.6vw, 3.2rem);
+      line-height: 1.08;
+      font-weight: 900;
+      color: #fff;
+      text-wrap: balance;
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      font-size: clamp(1.5rem, 2.6vw, 2.1rem);
+      line-height: 1.18;
+      font-weight: 800;
+      color: #fff;
+      text-wrap: balance;
+      margin-bottom: 10px;
+    }
+
+    h3 {
+      font-size: 1.06rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      color: #a8d8f5;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.75rem;
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
+
+    .lead {
+      color: rgba(255,255,255,0.9);
+      font-size: 1.05rem;
+      max-width: 820px;
+      margin-bottom: 20px;
+    }
+
+    .card-body { color: var(--muted); font-size: 0.94rem; line-height: 1.5; }
+
+    /* ─── GLASS PANEL ────────────────────────── */
+    .glass {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: 18px;
+      backdrop-filter: blur(14px);
+      padding: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    /* ─── WHITE CARD ─────────────────────────── */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+
+    /* ─── BUTTONS ────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 11px 20px;
+      border-radius: 11px;
+      font-size: 0.95rem;
+      font-weight: 800;
+      border: 1px solid transparent;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #2de49d 0%, #15b876 100%);
+      color: #042d14;
+      box-shadow: 0 8px 22px var(--green-glow);
+    }
+
+    .btn-primary:hover { box-shadow: 0 10px 28px rgba(25, 195, 125, 0.42); }
+
+    .btn-ghost {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.32);
+      color: #fff;
+    }
+
+    /* ─── PILL TAGS ──────────────────────────── */
+    .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+
+    .tag {
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.26);
+      background: rgba(255,255,255,0.09);
+      color: rgba(255,255,255,0.92);
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 5px 11px;
+    }
+
+    /* ─── HERO ───────────────────────────────── */
+    .hero { padding-top: 48px; padding-bottom: 52px; }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .hero-main { padding: 32px 36px; }
+
+    .hero-main .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 20px 0 14px;
+    }
+
+    .hero-note { color: rgba(255,255,255,0.72); font-size: 0.86rem; }
+
+    /* ─── OUTCOME TILES ──────────────────────── */
+    .outcome-stack { display: grid; gap: 12px; }
+
+    .outcome-tile {
+      border-radius: 14px;
+      padding: 16px 18px;
+      background: var(--card-bg);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .outcome-tile-label {
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: var(--blue);
+      margin-bottom: 3px;
+    }
+
+    .outcome-tile-value {
+      font-size: 1.45rem;
+      font-weight: 900;
+      color: var(--ink);
+      line-height: 1.1;
+      margin-bottom: 3px;
+    }
+
+    .outcome-tile-sub { font-size: 0.86rem; color: var(--muted); }
+
+    /* ─── COMPARISON ─────────────────────────── */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .compare-card { padding: 22px; }
+
+    .compare-card ul {
+      list-style: none;
+      display: grid;
+      gap: 9px;
+      margin-top: 10px;
+    }
+
+    .compare-card li {
+      font-size: 0.94rem;
+      color: var(--muted);
+      padding-left: 20px;
+      position: relative;
+    }
+
+    .compare-card li::before {
+      content: "✕";
+      position: absolute;
+      left: 0;
+      color: #f87171;
+      font-weight: 900;
+      font-size: 0.8rem;
+      top: 2px;
+    }
+
+    .compare-card.is-winner {
+      border: 2px solid var(--green);
+      box-shadow: 0 0 0 4px rgba(25,195,125,0.14), var(--shadow);
+    }
+
+    .compare-card.is-winner li::before { content: "✓"; color: var(--green); font-size: 0.88rem; }
+    .compare-card.is-winner li { color: var(--muted); }
+
+    .winner-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--green) 0%, #10a862 100%);
+      color: #042d14;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-bottom: 8px;
+    }
+
+    /* ─── ECONOMICS CHART ───────────────────── */
+    .econ-grid {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 18px;
+      align-items: start;
+      margin-top: 18px;
+    }
+
+    .chart-wrap {
+      background: rgba(255,255,255,0.97);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 22px 18px 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .chart-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 14px;
+    }
+
+    .bar-chart {
+      position: relative;
+      height: 180px;
+      display: flex;
+      align-items: flex-end;
+      gap: 5px;
+    }
+
+    .reposit-line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      border-top: 2.5px dashed var(--green);
+      bottom: calc(48% - 1px);
+      z-index: 3;
+    }
+
+    .reposit-line-label {
+      position: absolute;
+      right: 0;
+      top: -18px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: var(--green);
+      white-space: nowrap;
+      background: rgba(255,255,255,0.95);
+      padding: 1px 5px;
+      border-radius: 4px;
+    }
+
+    .bar-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      height: 100%;
+    }
+
+    .bar {
+      width: 100%;
+      border-radius: 5px 5px 0 0;
+      position: relative;
+      min-height: 6px;
+    }
+
+    .bar.is-normal { background: linear-gradient(180deg, #5b9ec9 0%, #2a6b94 100%); }
+    .bar.is-winter { background: linear-gradient(180deg, #f97316 0%, #dc4a00 100%); }
+
+    .bar-label { font-size: 0.65rem; color: #6b7280; font-weight: 600; margin-top: 4px; text-align: center; }
+
+    .bar-val {
+      position: absolute;
+      top: -16px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.6rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .bar.is-winter .bar-val { color: #c2410c; }
+    .bar.is-normal .bar-val { color: var(--blue); }
+
+    .chart-legend {
+      display: flex;
+      gap: 14px;
+      margin-top: 10px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #6b7280;
+    }
+
+    .legend-dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      margin-right: 4px;
+      vertical-align: middle;
+    }
+
+    .econ-summary { display: grid; gap: 12px; }
+
+    .econ-tile { border-radius: 13px; padding: 16px; }
+
+    .econ-tile.tile-current { background: #fff5f0; border: 1px solid #fdc9aa; }
+    .econ-tile.tile-reposit { background: #f0fdf6; border: 2px solid var(--green); box-shadow: 0 0 0 3px rgba(25,195,125,0.12); }
+    .econ-tile.tile-saving  { background: var(--ink); border: 1px solid #1e2d45; }
+
+    .econ-tile-label {
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      margin-bottom: 3px;
+    }
+
+    .tile-current .econ-tile-label { color: #c2410c; }
+    .tile-reposit .econ-tile-label { color: #0a7a4a; }
+    .tile-saving  .econ-tile-label { color: #6ef5be; }
+
+    .econ-tile-value { font-size: 1.75rem; font-weight: 900; line-height: 1.05; margin-bottom: 2px; }
+
+    .tile-current .econ-tile-value { color: var(--ink); }
+    .tile-reposit .econ-tile-value { color: #0e6b40; }
+    .tile-saving  .econ-tile-value { color: #fff; }
+
+    .econ-tile-sub { font-size: 0.82rem; }
+
+    .tile-current .econ-tile-sub { color: #92400e; }
+    .tile-reposit .econ-tile-sub { color: #166534; }
+    .tile-saving  .econ-tile-sub { color: rgba(255,255,255,0.7); }
+
+    .econ-disclaimer { font-size: 0.74rem; color: rgba(255,255,255,0.55); margin-top: 10px; }
+
+    /* ─── HIDDEN ─────────────────────────────── */
+    .hidden { display: none; }
+
+    /* ─── REASSURANCE STRIP ──────────────────── */
+    .reassure-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .reassure-chip {
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.09);
+      padding: 12px 14px;
+      color: rgba(255,255,255,0.9);
+      font-size: 0.86rem;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .reassure-chip strong { display: block; font-weight: 800; margin-bottom: 2px; color: #fff; }
+
+    /* ─── ILLUSTRATED STEPS ─────────────────── */
+    .journey-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      margin-top: 28px;
+      position: relative;
+    }
+
+    .journey-step { position: relative; display: flex; flex-direction: column; }
+
+    .journey-step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 96px;
+      right: -1px;
+      width: 2px;
+      height: 40px;
+      background: linear-gradient(180deg, #bcd8f0 0%, #e2e8f0 100%);
+      z-index: 2;
+    }
+
+    @media (min-width: 769px) {
+      .journey-step:not(:last-child)::after {
+        top: 96px;
+        right: 0;
+        width: 100%;
+        height: 2px;
+        left: 50%;
+        background: linear-gradient(90deg, #bcd8f0 0%, #e2e8f0 100%);
+      }
+    }
+
+    .journey-card {
+      background: var(--card-bg);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s, box-shadow 0.2s;
+      margin: 0 6px;
+    }
+
+    .journey-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+    .journey-card--install { border: 2px solid var(--green); box-shadow: 0 0 0 3px rgba(25,195,125,0.1), var(--shadow); }
+
+    .journey-illus {
+      width: 100%;
+      height: 160px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(160deg, #f0f7ff 0%, #e8f4f0 100%);
+      border-bottom: 1px solid var(--line);
+      padding: 16px;
+    }
+
+    .journey-card--install .journey-illus { background: linear-gradient(160deg, #f0fdf6 0%, #e8f4ec 100%); }
+
+    .journey-illus svg { width: 100%; height: 100%; max-width: 200px; }
+
+    .journey-body { padding: 16px 18px 20px; flex: 1; }
+
+    .journey-step-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--blue);
+      margin-bottom: 8px;
+    }
+
+    .journey-step-tag .step-badge {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #e6f3ff;
+      border: 1px solid #bcd8f0;
+      color: #134b78;
+      font-weight: 900;
+      font-size: 0.72rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .journey-card--install .journey-step-tag { color: #0a7a4a; }
+    .journey-card--install .step-badge { background: #ecfdf5; border-color: #bbf7d0; color: #166534; }
+
+    .journey-h3 { font-size: 1rem; font-weight: 800; color: var(--ink); margin-bottom: 6px; line-height: 1.3; }
+    .journey-p { font-size: 0.86rem; color: var(--muted); line-height: 1.55; }
+
+    .journey-time {
+      margin-top: 10px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #64748b;
+      background: #f1f5f9;
+      border-radius: 6px;
+      padding: 4px 8px;
+      display: inline-block;
+    }
+
+    .journey-card--install .journey-time { background: #ecfdf5; color: #166534; }
+
+    .controller-callout {
+      margin-top: 20px;
+      padding: 18px 22px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #f0fdf6 0%, #e8f4f0 100%);
+      border: 2px solid var(--green);
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .controller-callout-icon { font-size: 2rem; flex-shrink: 0; line-height: 1; }
+    .controller-callout h4 { font-size: 0.95rem; font-weight: 800; color: #0a7a4a; margin-bottom: 4px; }
+    .controller-callout p { font-size: 0.86rem; color: #166534; line-height: 1.5; }
+
+    /* ─── CTA LANDING BLOCK ──────────────────── */
+    .landing-cta-block {
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px 0 8px;
+    }
+
+    .landing-cta-block .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px 40px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #2de49d 0%, #15b876 100%);
+      color: #042d14;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 10px 30px rgba(25,195,125,0.4);
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .landing-cta-block .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 36px rgba(25,195,125,0.5);
+    }
+
+    .landing-cta-notes {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 18px;
+      margin-top: 14px;
+    }
+
+    .landing-cta-note {
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.75);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* ─── WIZARD OVERLAY ────────────────────── */
+    .wizard-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      display: flex;
+      flex-direction: column;
+      background:
+        url(https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/noise.png),
+        radial-gradient(130% 110% at 18% 24%, #2b78a7 0%, #265f87 42%, #4f5f69 64%, #8c6647 82%, #b27a4b 100%);
+      background-blend-mode: multiply;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(30px);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+      overflow-y: auto;
+    }
+
+    .wizard-overlay.is-open {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    .wizard-header {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .wizard-logo { display: flex; align-items: center; margin-left: auto; }
+
+    .wizard-logo-img { width: 132px; height: auto; display: block; }
+
+    .wizard-close {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 8px;
+      color: rgba(255,255,255,0.85);
+      padding: 7px 14px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .wizard-close:hover { background: rgba(255,255,255,0.2); color: #fff; }
+
+    .wizard-progress-bar {
+      flex-shrink: 0;
+      padding: 12px 24px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      max-width: 640px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .wizard-prog-step {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .wizard-prog-bar {
+      width: 100%;
+      height: 4px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .wizard-prog-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--green);
+      border-radius: 4px;
+      transition: width 0.4s ease;
+    }
+
+    .wizard-prog-step.is-done .wizard-prog-fill   { width: 100%; }
+    .wizard-prog-step.is-active .wizard-prog-fill  { width: 50%; }
+
+    .wizard-prog-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: rgba(255,255,255,0.5);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      transition: color 0.3s;
+    }
+
+    .wizard-prog-step.is-active .wizard-prog-label { color: rgba(255,255,255,0.9); }
+    .wizard-prog-step.is-done   .wizard-prog-label { color: var(--green); }
+
+    .wizard-body {
+      flex: 1;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 24px 16px 40px;
+    }
+
+    /* ─── WIZARD STEPS ───────────────────────── */
+    .wiz-step {
+      display: none;
+      width: 100%;
+      max-width: 520px;
+      animation: wizFadeIn 0.3s ease forwards;
+    }
+
+    .wiz-step.is-active { display: block; }
+
+    @keyframes wizFadeIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .wiz-card {
+      background: rgba(255,255,255,0.97);
+      border-radius: 20px;
+      padding: 36px 40px;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.3);
+    }
+
+    .wiz-eyebrow {
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--blue);
+      margin-bottom: 6px;
+    }
+
+    .wiz-title {
+      font-size: clamp(1.4rem, 2.4vw, 1.8rem);
+      font-weight: 900;
+      color: var(--ink);
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+
+    .wiz-body-text {
+      font-size: 0.92rem;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 22px;
+    }
+
+    /* HubSpot form inside wizard */
+    .wiz-hs-form .hs-form-field { margin-bottom: 16px; }
+
+    .wiz-hs-form label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 5px;
+    }
+
+    .wiz-hs-form .hs-input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid var(--line);
+      border-radius: 12px;
+      font-size: 1rem;
+      background: #f9fafb;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .wiz-hs-form .hs-input:focus {
+      outline: none;
+      border-color: var(--blue);
+      background: #fff;
+      box-shadow: 0 0 0 4px rgba(42,107,148,0.1);
+    }
+
+    .wiz-hs-form .hs-error-msgs { list-style: none; margin: 6px 0 0; padding: 0; }
+    .wiz-hs-form .hs-error-msg  { font-size: 0.82rem; color: #991b1b; }
+
+    .wiz-hs-form .hs-button.primary {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #F68D26 0%, #2a6b94 100%);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: filter 0.2s, transform 0.2s;
+    }
+
+    .wiz-hs-form .hs-button.primary:hover { filter: brightness(1.07); transform: translateY(-2px); }
+
+    .wiz-hint {
+      background: #ecfdf5;
+      border: 1px solid #bbf7d0;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 0.85rem;
+      color: #166534;
+      margin-bottom: 16px;
+    }
+
+    .wiz-hint.is-error { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
+
+    .wiz-btn-row { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+
+    .wiz-btn-primary {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #F68D26 0%, #2a6b94 100%);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: filter 0.2s, transform 0.2s;
+    }
+
+    .wiz-btn-primary:disabled { background: #9ca3af; cursor: not-allowed; }
+
+    .wiz-reassure { margin-top: 16px; font-size: 0.78rem; color: #9ca3af; text-align: center; }
+
+    /* ─── RESPONSIVE ─────────────────────────── */
+    @media (max-width: 1024px) {
+      .hero-grid  { grid-template-columns: 1fr; }
+      .compare-grid { grid-template-columns: 1fr; }
+      .econ-grid  { grid-template-columns: 1fr; }
+      .journey-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .journey-step::after { display: none !important; }
+    }
+
+    @media (max-width: 720px) {
+      html, body { overflow: auto; height: auto; }
+      .page { height: auto; overflow-y: auto; scroll-snap-type: none; }
+      .section { scroll-snap-align: unset; min-height: auto; padding: 48px 16px 40px; }
+      .section-dots { display: none; }
+      .scroll-hint { display: none; }
+      .hero-main { padding: 22px; }
+      .glass { padding: 20px; }
+      .reassure-row { grid-template-columns: 1fr; }
+      .btn { width: 100%; }
+      .journey-grid { grid-template-columns: 1fr; }
+      .controller-callout { flex-direction: column; }
+      .wiz-card { padding: 28px 20px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+
+    <!-- ── HERO ──────────────────────────────────────── -->
+    <section class="hero section" id="the-problem" data-section="0">
+      <div class="container">
+        <div class="hero-grid">
+
+          <article class="glass hero-main">
+            <p class="eyebrow">Reposit No Bill Retrofit</p>
+            <h1>You Already Have a Battery.<br>You Should Not Still Have a Bill.</h1>
+            <p class="lead">
+              Most battery owners are still paying variable electricity bills, including daily supply charges.
+              Reposit adds smart trading to your existing system and replaces all of that with one simple,
+              fixed monthly fee - set lower than what you pay today.
+            </p>
+            <div class="btn-row">
+              <button class="btn btn-primary" onclick="openWizard()">Get My Free Assessment</button>
+            </div>
+            <p class="hero-note">
+              Takes 60 seconds. Enter your battery app email to start - your personalised offer arrives in about 15 minutes.
+            </p>
+            <div class="tags">
+              <span class="tag">$0 Electricity Bill</span>
+              <span class="tag">One Fixed Monthly Fee</span>
+              <span class="tag">Your Existing Battery Stays</span>
+              <span class="tag">We Handle the Setup</span>
+            </div>
+          </article>
+
+          <aside class="outcome-stack" aria-label="Key outcomes">
+            <div class="outcome-tile">
+              <p class="outcome-tile-label">Your Electricity Bill</p>
+              <p class="outcome-tile-value">$0</p>
+              <p class="outcome-tile-sub">Including daily supply charges. Every month.</p>
+            </div>
+            <div class="outcome-tile">
+              <p class="outcome-tile-label">What You Pay Instead</p>
+              <p class="outcome-tile-value">One Fixed Fee</p>
+              <p class="outcome-tile-sub">Less than your current average electricity spend.</p>
+            </div>
+            <div class="outcome-tile">
+              <p class="outcome-tile-label">Time to Your Offer</p>
+              <p class="outcome-tile-value">~15 Minutes</p>
+              <p class="outcome-tile-sub">From consent to offer in your inbox.</p>
+            </div>
+          </aside>
+
+        </div>
+      </div>
+      <div class="scroll-hint" onclick="scrollToSection(1)" aria-hidden="true">
+        <span>See what changes</span>
+        <span class="scroll-hint-arrow">↓</span>
+      </div>
+    </section>
+
+    <!-- ── WHAT YOU GET ──────────────────────────────── -->
+    <section class="section" id="what-you-get" data-section="1">
+      <div class="container">
+        <div class="glass">
+          <h2>What actually changes when you retrofit with Reposit</h2>
+          <p class="lead">
+            Right now your battery stores solar and discharges at home - but it does not trade. That means you are
+            still paying retail rates, supply charges, and absorbing winter price spikes. Reposit changes that.
+          </p>
+
+          <div class="compare-grid">
+            <article class="card compare-card">
+              <h3>Without Reposit</h3>
+              <ul>
+                <li>Variable electricity rates every quarter</li>
+                <li>Daily supply charges you can not avoid</li>
+                <li>Higher bills when solar is low in winter</li>
+                <li>No certainty on what you'll pay next month</li>
+              </ul>
+            </article>
+
+            <article class="card compare-card is-winner">
+              <span class="winner-badge">With Reposit</span>
+              <h3>A single, predictable monthly cost</h3>
+              <ul>
+                <li>$0 electricity retailer bill - including supply charges</li>
+                <li>One fixed monthly fee, lower than your current spend</li>
+                <li>Value maintained through winter and cloudy periods</li>
+                <li>You know exactly what you pay, every month</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </div>
+      <div class="scroll-hint" onclick="scrollToSection(2)" aria-hidden="true">
+        <span>See the numbers</span>
+        <span class="scroll-hint-arrow">↓</span>
+      </div>
+    </section>
+
+    <!-- ── THE NUMBERS ──────────────────────────────── -->
+    <section class="section" id="the-numbers" data-section="2">
+      <div class="container">
+        <div class="glass">
+          <h2>What the numbers actually look like</h2>
+          <p class="lead">
+            These are indicative figures based on a typical household with a battery system. Your personalised
+            offer will be based on your actual usage profile.
+          </p>
+
+          <div class="econ-grid">
+
+            <div class="chart-wrap">
+              <p class="chart-title">Indicative Monthly Electricity Bills - Current vs Reposit</p>
+              <div class="bar-chart">
+                <div class="reposit-line">
+                  <span class="reposit-line-label">Reposit $149/mo</span>
+                </div>
+                <div class="bar-col"><div class="bar is-normal" style="height:35%"><span class="bar-val">$109</span></div><span class="bar-label">Jan</span></div>
+                <div class="bar-col"><div class="bar is-normal" style="height:39%"><span class="bar-val">$120</span></div><span class="bar-label">Feb</span></div>
+                <div class="bar-col"><div class="bar is-normal" style="height:42%"><span class="bar-val">$131</span></div><span class="bar-label">Mar</span></div>
+                <div class="bar-col"><div class="bar is-normal" style="height:50%"><span class="bar-val">$155</span></div><span class="bar-label">Apr</span></div>
+                <div class="bar-col"><div class="bar is-normal" style="height:61%"><span class="bar-val">$190</span></div><span class="bar-label">May</span></div>
+                <div class="bar-col"><div class="bar is-winter" style="height:90%"><span class="bar-val">$280</span></div><span class="bar-label">Jun</span></div>
+                <div class="bar-col"><div class="bar is-winter" style="height:100%"><span class="bar-val">$310</span></div><span class="bar-label">Jul</span></div>
+                <div class="bar-col"><div class="bar is-winter" style="height:92%"><span class="bar-val">$285</span></div><span class="bar-label">Aug</span></div>
+                <div class="bar-col"><div class="bar is-normal" style="height:55%"><span class="bar-val">$170</span></div><span class="bar-label">Sep</span></div>
+                <div class="bar-col"><div class="bar is-normal" style="height:47%"><span class="bar-val">$145</span></div><span class="bar-label">Oct</span></div>
+                <div class="bar-col"><div class="bar is-normal" style="height:40%"><span class="bar-val">$125</span></div><span class="bar-label">Nov</span></div>
+                <div class="bar-col"><div class="bar is-normal" style="height:37%"><span class="bar-val">$114</span></div><span class="bar-label">Dec</span></div>
+              </div>
+              <div class="chart-legend">
+                <span><span class="legend-dot" style="background:#2a6b94;"></span>Typical bill</span>
+                <span><span class="legend-dot" style="background:#f97316;"></span>Winter peak</span>
+                <span><span class="legend-dot" style="background:none; border:2px dashed #19c37d; border-radius:0;"></span>Reposit fee</span>
+              </div>
+            </div>
+
+            <div class="econ-summary">
+              <div class="econ-tile tile-current">
+                <p class="econ-tile-label">Current Annual Cost</p>
+                <p class="econ-tile-value">~$2,134</p>
+                <p class="econ-tile-sub">Variable bills ranging from $109 to $310. Winter months up to 3× higher than summer.</p>
+              </div>
+              <div class="econ-tile tile-reposit">
+                <p class="econ-tile-label">With Reposit</p>
+                <p class="econ-tile-value">~$1,788</p>
+                <p class="econ-tile-sub">$149 flat every month. No spikes. No surprises. Supply charges included.</p>
+              </div>
+              <div class="econ-tile tile-saving">
+                <p class="econ-tile-label">Indicative Annual Saving</p>
+                <p class="econ-tile-value">~$346</p>
+                <p class="econ-tile-sub">Plus the certainty of knowing exactly what you pay every single month.</p>
+              </div>
+            </div>
+
+          </div>
+          <p class="econ-disclaimer">* Indicative figures only. Based on a typical household with an existing battery system in south-east Australia. Your personalised offer is calculated from your actual usage data and may differ.</p>
+        </div>
+      </div>
+      <div class="scroll-hint" onclick="scrollToSection(3)" aria-hidden="true">
+        <span>How it works</span>
+        <span class="scroll-hint-arrow">↓</span>
+      </div>
+    </section>
+
+    <!-- ── HOW IT WORKS ──────────────────────────────── -->
+    <section class="section" id="how-it-works" data-section="3">
+      <div class="container">
+        <div class="glass">
+          <p class="eyebrow">Simple from start to finish</p>
+          <h2>Four steps. Most of it is automatic.</h2>
+          <p class="lead">
+            The only thing you do is share your usage data and choose your plan. We handle the analysis, the offer, the installation and the paperwork.
+          </p>
+
+          <div class="journey-grid">
+
+            <div class="journey-step">
+              <article class="journey-card">
+                <div class="journey-illus">
+                  <svg viewBox="0 0 220 150" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <rect x="30" y="72" width="80" height="62" rx="3" fill="#e6f3ff" stroke="#2a6b94" stroke-width="1.5"/>
+                    <path d="M22 75 L70 38 L118 75Z" fill="#2a6b94" opacity="0.18" stroke="#2a6b94" stroke-width="1.5" stroke-linejoin="round"/>
+                    <rect x="46" y="50" width="18" height="10" rx="1" fill="#2a6b94" opacity="0.55"/>
+                    <rect x="68" y="50" width="18" height="10" rx="1" fill="#2a6b94" opacity="0.55"/>
+                    <rect x="52" y="98" width="36" height="24" rx="3" fill="#2a6b94"/>
+                    <rect x="66" y="94" width="8" height="5" rx="1" fill="#2a6b94"/>
+                    <rect x="55" y="101" width="7" height="15" rx="1" fill="#19c37d"/>
+                    <rect x="65" y="101" width="7" height="15" rx="1" fill="#19c37d" opacity="0.6"/>
+                    <rect x="75" y="101" width="7" height="15" rx="1" fill="#e2e8f0"/>
+                    <path d="M118 110 Q148 110 148 88" stroke="#F68D26" stroke-width="2" stroke-dasharray="5 4" stroke-linecap="round"/>
+                    <rect x="138" y="60" width="30" height="52" rx="5" fill="white" stroke="#2a6b94" stroke-width="1.5"/>
+                    <rect x="143" y="68" width="20" height="32" rx="2" fill="#f0f7ff"/>
+                    <circle cx="153" cy="107" r="2.5" fill="#bcd8f0"/>
+                    <rect x="144" y="70" width="18" height="13" rx="2" fill="white" stroke="#F68D26" stroke-width="1"/>
+                    <path d="M144 70 L153 78 L162 70" stroke="#F68D26" stroke-width="1" stroke-linecap="round"/>
+                    <path d="M153 87 L148 84 L148 91 Q148 95 153 97 Q158 95 158 91 L158 84 Z" fill="#ecfdf5" stroke="#19c37d" stroke-width="1.2"/>
+                    <path d="M151 91 L153 93 L156 89" stroke="#19c37d" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <div class="journey-body">
+                  <p class="journey-step-tag"><span class="step-badge">1</span>Connect</p>
+                  <h3 class="journey-h3">Share your battery data</h3>
+                  <p class="journey-p">Enter the email you use for your battery app (Solax, Sigenergy). We redirect you to grant secure, read-only access. We never control your system.</p>
+                  <span class="journey-time">⏱ About 60 seconds</span>
+                </div>
+              </article>
+            </div>
+
+            <div class="journey-step">
+              <article class="journey-card">
+                <div class="journey-illus">
+                  <svg viewBox="0 0 220 150" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <rect x="20" y="20" width="140" height="110" rx="8" fill="white" stroke="#e2e8f0" stroke-width="1.5"/>
+                    <line x1="36" y1="108" x2="148" y2="108" stroke="#e2e8f0" stroke-width="1.5"/>
+                    <rect x="40" y="78" width="12" height="30" rx="2" fill="#bcd8f0"/>
+                    <rect x="56" y="68" width="12" height="40" rx="2" fill="#bcd8f0"/>
+                    <rect x="72" y="58" width="12" height="50" rx="2" fill="#5b9ec9"/>
+                    <rect x="88" y="44" width="12" height="64" rx="2" fill="#f97316" opacity="0.7"/>
+                    <rect x="104" y="38" width="12" height="70" rx="2" fill="#f97316" opacity="0.9"/>
+                    <rect x="120" y="55" width="12" height="53" rx="2" fill="#5b9ec9"/>
+                    <rect x="136" y="72" width="12" height="36" rx="2" fill="#bcd8f0"/>
+                    <line x1="36" y1="73" x2="152" y2="73" stroke="#19c37d" stroke-width="2" stroke-dasharray="6 4"/>
+                    <rect x="156" y="67" width="46" height="14" rx="3" fill="#ecfdf5" stroke="#19c37d" stroke-width="1"/>
+                    <text x="179" y="77" text-anchor="middle" font-family="Inter,sans-serif" font-size="7" font-weight="700" fill="#0a7a4a">Your fee</text>
+                    <circle cx="172" cy="116" r="18" fill="#f0f7ff" stroke="#2a6b94" stroke-width="1.5"/>
+                    <circle cx="172" cy="116" r="10" fill="white" stroke="#2a6b94" stroke-width="1.5"/>
+                    <line x1="179" y1="123" x2="187" y2="131" stroke="#2a6b94" stroke-width="2.5" stroke-linecap="round"/>
+                    <path d="M170 112 L168 117 L172 116 L169 122" stroke="#F68D26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <div class="journey-body">
+                  <p class="journey-step-tag"><span class="step-badge">2</span>Analyse</p>
+                  <h3 class="journey-h3">We read your real energy usage</h3>
+                  <p class="journey-p">Our engine analyses 12 months of your actual solar, battery and grid data - peak hours, winter spikes, daily patterns. This is what makes your offer specific to your home.</p>
+                  <span class="journey-time">⚙️ Automatic - nothing to do</span>
+                </div>
+              </article>
+            </div>
+
+            <div class="journey-step">
+              <article class="journey-card">
+                <div class="journey-illus">
+                  <svg viewBox="0 0 220 150" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <rect x="12" y="40" width="52" height="84" rx="6" fill="white" stroke="#e2e8f0" stroke-width="1.5"/>
+                    <rect x="18" y="50" width="40" height="6" rx="2" fill="#e2e8f0"/>
+                    <rect x="18" y="60" width="30" height="4" rx="2" fill="#f1f5f9"/>
+                    <rect x="18" y="68" width="35" height="4" rx="2" fill="#f1f5f9"/>
+                    <rect x="78" y="24" width="62" height="102" rx="8" fill="white" stroke="#19c37d" stroke-width="2.5"/>
+                    <rect x="78" y="24" width="62" height="102" rx="8" fill="rgba(25,195,125,0.04)"/>
+                    <rect x="88" y="16" width="42" height="14" rx="7" fill="#19c37d"/>
+                    <text x="109" y="26" text-anchor="middle" font-family="Inter,sans-serif" font-size="6.5" font-weight="800" fill="white">BEST MATCH</text>
+                    <text x="109" y="54" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" font-weight="900" fill="#0f172a">$149</text>
+                    <text x="109" y="65" text-anchor="middle" font-family="Inter,sans-serif" font-size="7" font-weight="600" fill="#64748b">/month</text>
+                    <rect x="84" y="72" width="50" height="20" rx="4" fill="#ecfdf5"/>
+                    <text x="109" y="83" text-anchor="middle" font-family="Inter,sans-serif" font-size="7" font-weight="700" fill="#0a7a4a">Save ~$346/yr</text>
+                    <text x="109" y="92" text-anchor="middle" font-family="Inter,sans-serif" font-size="6" fill="#166534">vs your current bill</text>
+                    <rect x="84" y="98" width="50" height="18" rx="5" fill="#19c37d"/>
+                    <text x="109" y="111" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" font-weight="800" fill="#042d14">Choose this</text>
+                    <rect x="154" y="40" width="52" height="84" rx="6" fill="white" stroke="#e2e8f0" stroke-width="1.5"/>
+                    <rect x="160" y="50" width="40" height="6" rx="2" fill="#e2e8f0"/>
+                    <rect x="160" y="60" width="30" height="4" rx="2" fill="#f1f5f9"/>
+                    <rect x="160" y="68" width="35" height="4" rx="2" fill="#f1f5f9"/>
+                    <circle cx="193" cy="28" r="14" fill="#fff3e0"/>
+                    <rect x="183" y="22" width="20" height="14" rx="2" fill="#F68D26" opacity="0.15" stroke="#F68D26" stroke-width="1.2"/>
+                    <path d="M183 22 L193 30 L203 22" stroke="#F68D26" stroke-width="1.2" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <div class="journey-body">
+                  <p class="journey-step-tag"><span class="step-badge">3</span>Choose</p>
+                  <h3 class="journey-h3">Your personalised offer arrives by email</h3>
+                  <p class="journey-p">Your tailored offer lands in your inbox in about 15 minutes. It shows your fixed monthly fee, any upfront cost, and your estimated annual saving.</p>
+                  <span class="journey-time">📧 ~15 minutes after consent</span>
+                </div>
+              </article>
+            </div>
+
+            <div class="journey-step">
+              <article class="journey-card journey-card--install">
+                <div class="journey-illus">
+                  <svg viewBox="0 0 220 150" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <rect x="28" y="30" width="80" height="100" rx="5" fill="#1e293b"/>
+                    <rect x="34" y="38" width="68" height="60" rx="3" fill="#0f172a"/>
+                    <rect x="40" y="44" width="56" height="6" rx="2" fill="#1e3a2a"/>
+                    <rect x="40" y="44" width="42" height="6" rx="2" fill="#19c37d"/>
+                    <circle cx="46" cy="62" r="4" fill="#19c37d"/>
+                    <circle cx="58" cy="62" r="4" fill="#19c37d" opacity="0.5"/>
+                    <circle cx="70" cy="62" r="4" fill="#F68D26" opacity="0.7"/>
+                    <rect x="40" y="72" width="56" height="16" rx="2" fill="#1e293b"/>
+                    <rect x="44" y="76" width="28" height="4" rx="1" fill="#334155"/>
+                    <rect x="44" y="83" width="20" height="3" rx="1" fill="#475569"/>
+                    <rect x="116" y="55" width="66" height="42" rx="6" fill="white" stroke="#19c37d" stroke-width="2"/>
+                    <rect x="116" y="55" width="66" height="42" rx="6" fill="rgba(25,195,125,0.06)"/>
+                    <circle cx="128" cy="71" r="4" fill="#19c37d"/>
+                    <circle cx="140" cy="71" r="4" fill="#19c37d" opacity="0.5"/>
+                    <text x="149" y="68" font-family="Inter,sans-serif" font-size="6.5" font-weight="800" fill="#0a7a4a">Reposit</text>
+                    <text x="149" y="77" font-family="Inter,sans-serif" font-size="6" fill="#166534">Controller</text>
+                    <path d="M108 76 L116 76" stroke="#19c37d" stroke-width="3" stroke-linecap="round"/>
+                    <circle cx="108" cy="76" r="4" fill="white" stroke="#19c37d" stroke-width="2"/>
+                    <path d="M165 46 Q174 38 183 46" stroke="#F68D26" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+                    <path d="M161 41 Q174 30 187 41" stroke="#F68D26" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.6"/>
+                    <path d="M157 36 Q174 22 191 36" stroke="#F68D26" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.3"/>
+                    <circle cx="174" cy="49" r="3" fill="#F68D26"/>
+                    <circle cx="176" cy="120" r="18" fill="#ecfdf5" stroke="#19c37d" stroke-width="2"/>
+                    <path d="M167 120 L173 126 L185 113" stroke="#19c37d" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <div class="journey-body">
+                  <p class="journey-step-tag" style="color:#0a7a4a"><span class="step-badge">4</span>Go live</p>
+                  <h3 class="journey-h3">We install the Reposit Controller</h3>
+                  <p class="journey-p">Our certified installer fits a small smart controller directly onto your existing battery system. This is the piece that connects your battery to the energy market, eliminating your electricity bill.</p>
+                  <span class="journey-time">🔧 Booked after you choose your plan (~2 hrs)</span>
+                </div>
+              </article>
+            </div>
+
+          </div>
+
+          <div class="controller-callout">
+            <div class="controller-callout-icon">🔌</div>
+            <div>
+              <h4>What is the Reposit Controller?</h4>
+              <p>It's a small hardware device - about the size of a Wi-Fi router - that our team installs directly onto your existing battery cabinet. It connects your battery to the wholesale energy market, allowing Reposit to trade on your behalf 24/7. Your existing battery, inverter and solar setup stay exactly as they are.</p>
+            </div>
+          </div>
+
+          <div class="reassure-row">
+            <div class="reassure-chip">
+              <strong>Read-only data access</strong>
+              We only ever read your energy data - never change settings
+            </div>
+            <div class="reassure-chip">
+              <strong>Left the page?</strong>
+              Your offer is still emailed to you automatically
+            </div>
+            <div class="reassure-chip">
+              <strong>Nothing to replace</strong>
+              Your existing battery, panels and inverter stay in place
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="scroll-hint" onclick="scrollToSection(4)" aria-hidden="true">
+        <span>Get my offer</span>
+        <span class="scroll-hint-arrow">↓</span>
+      </div>
+    </section>
+
+    <!-- ── GET STARTED ───────────────────────────────── -->
+    <section class="section" id="get-started" data-section="4">
+      <div class="container">
+        <div class="glass">
+          <div class="landing-cta-block">
+            <p class="eyebrow">Free assessment - no commitment</p>
+            <h2>See your personalised offer in 15 minutes.</h2>
+            <p class="lead" style="margin-bottom:28px;">
+              Connect your battery data, we do the analysis, your offer arrives by email. Pick a plan and we handle setup and paperwork.
+            </p>
+            <button class="btn-primary" onclick="openWizard()">Get My Free Assessment →</button>
+            <div class="landing-cta-notes">
+              <span class="landing-cta-note">✓ Free - no commitment until you choose</span>
+              <span class="landing-cta-note">✓ Offer arrives in ~15 minutes</span>
+              <span class="landing-cta-note">✓ We handle installation &amp; paperwork</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Section progress dots -->
+  <nav class="section-dots" id="sectionDots" aria-label="Page sections">
+    <button class="section-dot is-active" data-target="0" aria-label="Why Reposit">
+      <span class="section-dot-label">Why Reposit</span>
+    </button>
+    <button class="section-dot" data-target="1" aria-label="What changes">
+      <span class="section-dot-label">What changes</span>
+    </button>
+    <button class="section-dot" data-target="2" aria-label="The numbers">
+      <span class="section-dot-label">The numbers</span>
+    </button>
+    <button class="section-dot" data-target="3" aria-label="How it works">
+      <span class="section-dot-label">How it works</span>
+    </button>
+    <button class="section-dot" data-target="4" aria-label="Get my offer">
+      <span class="section-dot-label">Get my offer</span>
+    </button>
+  </nav>
+
+  <!-- ── ASSESSMENT WIZARD OVERLAY ── -->
+  <div id="wizardOverlay" class="wizard-overlay" role="dialog" aria-modal="true" aria-label="Free assessment">
+
+    <header class="wizard-header">
+      <button class="wizard-close" onclick="closeWizard()">← Back to overview</button>
+      <div class="wizard-logo">
+        <img class="wizard-logo-img" src="https://repositpower.com/hubfs/Reposit%20Logo/Reposit_logo_white.svg" alt="Reposit">
+      </div>
+    </header>
+
+    <div class="wizard-progress-bar" role="list" aria-label="Assessment steps">
+      <div class="wizard-prog-step is-active" role="listitem">
+        <div class="wizard-prog-bar"><div class="wizard-prog-fill"></div></div>
+        <span class="wizard-prog-label">Connect</span>
+      </div>
+      <div class="wizard-prog-step" role="listitem">
+        <div class="wizard-prog-bar"><div class="wizard-prog-fill"></div></div>
+        <span class="wizard-prog-label">Verify</span>
+      </div>
+      <div class="wizard-prog-step" role="listitem">
+        <div class="wizard-prog-bar"><div class="wizard-prog-fill"></div></div>
+        <span class="wizard-prog-label">Your offers</span>
+      </div>
+      <div class="wizard-prog-step" role="listitem">
+        <div class="wizard-prog-bar"><div class="wizard-prog-fill"></div></div>
+        <span class="wizard-prog-label">Confirm</span>
+      </div>
+    </div>
+
+    <div class="wizard-body">
+
+      <!-- Step 1: Connect battery via SolaX OAuth -->
+      <div class="wiz-step is-active" id="wizStep1">
+        <div class="wiz-card">
+          <p class="wiz-eyebrow">Step 1 of 4 — Connect your battery</p>
+          <h2 class="wiz-title">Connect your battery app</h2>
+          <p class="wiz-body-text">
+            We'll redirect you to your battery provider (Solax, Sigenergy, etc.) to grant
+            secure, read-only access. The whole process takes about 60 seconds — no email
+            entry needed.
+          </p>
+          <div class="wiz-btn-row">
+            <button class="wiz-btn-primary" type="button" onclick="startQuote()">
+              Connect my battery app
+            </button>
+          </div>
+          <p class="wiz-reassure">🔒 Read-only access. We never control or adjust your battery.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  {{ standard_footer_includes }}
+
+  <script>
+    /* ── Section pager ───────────────────────────────────────────── */
+    (function () {
+      var pager    = document.querySelector('.page');
+      var sections = Array.from(document.querySelectorAll('[data-section]'));
+      var dots     = Array.from(document.querySelectorAll('.section-dot'));
+
+      if (!pager || !sections.length) return;
+
+      function scrollToSection(idx) {
+        var target = sections[idx];
+        if (!target) return;
+        pager.scrollTo({ top: target.offsetTop, behavior: 'smooth' });
+      }
+      window.scrollToSection = scrollToSection;
+
+      function setActiveDot(idx) {
+        dots.forEach(function (d, i) { d.classList.toggle('is-active', i === idx); });
+      }
+
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            var idx = parseInt(entry.target.getAttribute('data-section'), 10);
+            setActiveDot(idx);
+          }
+        });
+      }, { root: pager, threshold: 0.4 });
+
+      sections.forEach(function (s) { observer.observe(s); });
+
+      dots.forEach(function (d) {
+        d.addEventListener('click', function () {
+          scrollToSection(parseInt(d.getAttribute('data-target'), 10));
+        });
+      });
+
+      document.addEventListener('keydown', function (e) {
+        if (document.getElementById('wizardOverlay').classList.contains('is-open')) return;
+        var active = dots.findIndex(function (d) { return d.classList.contains('is-active'); });
+        if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+          e.preventDefault();
+          scrollToSection(Math.min(active + 1, sections.length - 1));
+        } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+          e.preventDefault();
+          scrollToSection(Math.max(active - 1, 0));
+        }
+      });
+    }());
+  </script>
+
+  <script>
+    /* ── Wizard open / close ─────────────────────────────────────── */
+    function openWizard() {
+      var overlay = document.getElementById('wizardOverlay');
+      if (!overlay) return;
+      document.body.style.overflow = 'hidden';
+      overlay.classList.add('is-open');
+      overlay.focus();
+    }
+
+    function closeWizard() {
+      var overlay = document.getElementById('wizardOverlay');
+      if (!overlay) return;
+      document.body.style.overflow = '';
+      overlay.classList.remove('is-open');
+    }
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeWizard();
+    });
+
+    /* ── Start quote: read hubspotutk and redirect to backend ─────── */
+    function getCookie(name) {
+      var m = document.cookie.match(new RegExp('(?:^|;\\s*)' + name + '=([^;]+)'));
+      return m ? decodeURIComponent(m[1]) : '';
+    }
+    function startQuote() {
+      var hutk = getCookie('hubspotutk');
+      var url  = 'https://dev-customer.repositpower.com/quote/start';
+      if (hutk) url += '?hutk=' + encodeURIComponent(hutk);
+      window.location.assign(url);
+    }
+  </script>
+
+</body>
+</html>

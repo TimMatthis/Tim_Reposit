@@ -1,0 +1,51 @@
+[ {
+  "id" : "dc0c9f5e-e95c-e831-ecb0-eb094bc7a754",
+  "name" : "background_image",
+  "label" : "Background Image",
+  "help_text" : "Leave blank to show gradient background",
+  "required" : false,
+  "locked" : false,
+  "responsive" : false,
+  "resizable" : true,
+  "show_loading" : false,
+  "display_width" : null,
+  "type" : "image",
+  "default" : {
+    "src" : "https://cdn2.hubspot.net/hubfs/3445699/Sunnydays%20copy.jpg",
+    "alt" : "Sunnydays copy.jpg",
+    "width" : "2897",
+    "height" : "1606"
+  }
+}, {
+  "id" : "37488796-b73a-1d75-334a-c915ba06ae3f",
+  "name" : "heading",
+  "label" : "Heading",
+  "required" : false,
+  "locked" : false,
+  "allow_new_line" : false,
+  "display_width" : null,
+  "type" : "text",
+  "default" : "Your Headline, Your Way"
+}, {
+  "id" : "7deea4e6-f57d-2de5-2607-ecba0c2740ea",
+  "name" : "sub_heading",
+  "label" : "Sub-heading",
+  "help_text" : "",
+  "required" : false,
+  "locked" : false,
+  "allow_new_line" : false,
+  "display_width" : null,
+  "type" : "text",
+  "default" : "CLARIFY YOUR MESSAGE IN A SUBHEADER"
+}, {
+  "id" : "4664bfc7-1ee9-30ac-234c-52fd21aeeb95",
+  "name" : "sub_heading_copy",
+  "label" : "Sub-heading copy",
+  "help_text" : "",
+  "required" : false,
+  "locked" : false,
+  "allow_new_line" : false,
+  "display_width" : null,
+  "type" : "text",
+  "default" : ""
+} ]

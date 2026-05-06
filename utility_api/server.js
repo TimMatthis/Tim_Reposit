@@ -15,7 +15,7 @@ const fs = require('fs');
 const http = require('http');
 const net = require('net');
 const path = require('path');
-const { spawn } = require('child_process');
+const { spawn, execFileSync } = require('child_process');
 const { URL } = require('url');
 const { analyzeSitePhotos } = require('./noBillPhotoAnalyze');
 
@@ -457,6 +457,80 @@ function serveStatic(urlPath, res) {
   });
 }
 
+const HUBSPOT_THEME_DIR = 'Hubspot/clean_reposit';
+
+function getHubspotGitStatus() {
+  try {
+    const out = execFileSync(
+      'git', ['status', '--porcelain', '-u', HUBSPOT_THEME_DIR],
+      { cwd: STATIC_ROOT, encoding: 'utf8', timeout: 5000 }
+    );
+    const statusMap = {};
+    for (const line of out.split('\n')) {
+      if (!line.trim()) continue;
+      const xy = line.slice(0, 2);
+      const filePath = line.slice(3).trim().replace(/^"(.*)"$/, '$1');
+      let status = 'modified';
+      if (xy.includes('?')) status = 'new';
+      else if (xy.includes('A')) status = 'new';
+      statusMap[filePath] = status;
+    }
+    return statusMap;
+  } catch {
+    return {};
+  }
+}
+
+function handleHubspotFiles(res) {
+  const templateDir = path.join(STATIC_ROOT, HUBSPOT_THEME_DIR, 'templates');
+  const moduleDir   = path.join(STATIC_ROOT, HUBSPOT_THEME_DIR, 'modules');
+  const statusMap   = getHubspotGitStatus();
+
+  const files = [];
+
+  // Templates
+  try {
+    for (const name of fs.readdirSync(templateDir).sort()) {
+      if (!name.endsWith('.html')) continue;
+      const rel = `${HUBSPOT_THEME_DIR}/templates/${name}`;
+      const absPath = path.join(STATIC_ROOT, rel);
+      files.push({ name, rel, absPath, type: 'template', status: statusMap[rel] || 'unchanged' });
+    }
+  } catch { /* dir missing */ }
+
+  // Modules — only include files that git says are new or modified
+  try {
+    for (const mod of fs.readdirSync(moduleDir).sort()) {
+      const modPath = path.join(moduleDir, mod);
+      if (!fs.statSync(modPath).isDirectory()) continue;
+      for (const file of ['module.html', 'module.css', 'module.js', 'fields.json', 'meta.json']) {
+        const rel = `${HUBSPOT_THEME_DIR}/modules/${mod}/${file}`;
+        if (statusMap[rel]) {
+          const absPath = path.join(STATIC_ROOT, rel);
+          files.push({ name: `${mod}/${file}`, rel, absPath, type: 'module', status: statusMap[rel] });
+        }
+      }
+    }
+  } catch { /* dir missing */ }
+
+  // child.css and child.js
+  for (const f of ['child.css', 'child.js']) {
+    const rel = `${HUBSPOT_THEME_DIR}/${f}`;
+    if (statusMap[rel]) {
+      const absPath = path.join(STATIC_ROOT, rel);
+      files.push({ name: f, rel, absPath, type: 'theme', status: statusMap[rel] });
+    }
+  }
+
+  sendJson(res, 200, {
+    ok: true,
+    uploadCommand: `hs upload ${HUBSPOT_THEME_DIR} clean_reposit --portal=tim`,
+    themeDir: HUBSPOT_THEME_DIR,
+    workspaceRoot: STATIC_ROOT,
+    files,
+  });
+}
+
 const server = http.createServer((req, res) => {
   let url;
   try {
@@ -582,6 +656,11 @@ const server = http.createServer((req, res) => {
 
   if (url.pathname === '/api/no-bill/analyze-photos') {
     handleNoBillAnalyzePhotos(req, res);
+    return;
+  }
+
+  if (url.pathname === '/api/hubspot/files' && req.method === 'GET') {
+    handleHubspotFiles(res);
     return;
   }
 

@@ -1,0 +1,296 @@
+{% import "../macros/icon.html" as icon %}
+
+{% require_css %}
+<style>
+  #{{name}} {
+    {% if module.section.overlap_section %}margin-top: -10vh;{% endif %}
+    background-color: {{ module.section.bg_color.rgba or 'transparent' }};
+    border-radius: {{ module.section.round_corners.top_corners or 0 }}px {{ module.section.round_corners.top_corners or 0 }}px {{ module.section.round_corners.bottom_corners or 0 }}px {{ module.section.round_corners.bottom_corners or 0 }}px;
+    padding: {{ module.section.spacing.top or 0 }}px 0 {{ module.section.spacing.bottom or 0 }}px 0;
+  }
+
+  {# HEADING #}
+  #{{name}} .heading {
+    width: {{ module.col_1.width or 100 }}%;
+  }
+  
+  #{{name}} .heading .eyebrow {
+    margin-bottom: {{ module.col_1.eyebrow.bottom_space or 0 }}px;
+    {{ 'color: ' ~ module.col_1.eyebrow.text_color.rgba ~ ';' if module.col_1.eyebrow.text_color.rgba }}
+  }
+
+  #{{name}} .heading .title {
+    margin-bottom: {{ module.col_1.title.bottom_space or 0 }}px;
+    {{ 'color: ' ~ module.col_1.title.text_color.rgba ~ ';' if module.col_1.title.text_color.rgba }}
+  }
+  
+  #{{name}} .heading .highlight {
+    color: {{ module.col_1.title.highlight_color.rgba }};
+  }
+  
+  #{{name}} .text-container {
+    margin-bottom: {{ module.col_1.text_area.bottom_space or 0 }}px;
+  }
+ 
+  #{{name}} .btn-container {
+    display: flex;
+    justify-content: start;
+  }
+
+  /****** FORM ******/
+  #{{name}} div[data-hs-forms-root="true"] form {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+
+  #{{name}} div[data-hs-forms-root="true"] .hs-form-field label {
+    margin: 0;
+  }
+
+  #{{name}} div[data-hs-forms-root="true"] .hs-form-field input,
+  #{{name}} div[data-hs-forms-root="true"] .hs-form-field select,
+  #{{name}} div[data-hs-forms-root="true"] .hs-form-field textarea {
+    padding-left: 24px !important;
+    padding-right: 24px !important;
+  }
+
+  #{{name}} div[data-hs-forms-root="true"] .hs-form-field select,
+  #{{name}} div[data-hs-forms-root="true"] .hs-button {
+    cursor: pointer;
+  }
+
+  #{{name}} div[data-hs-forms-root="true"] form .hs_state,
+  #{{name}} div[data-hs-forms-root="true"] form .hs_contact_reason,
+  #{{name}} div[data-hs-forms-root="true"] form .hs_how_can_we_help_you_,
+  #{{name}} div[data-hs-forms-root="true"] form .hs_submit {
+    grid-column: 1 / -1;
+  }
+
+  #{{name}} div[data-hs-forms-root="true"] form .hs_state .input,
+  #{{name}} div[data-hs-forms-root="true"] form .hs_contact_reason .input {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+  }
+
+  #{{name}} div[data-hs-forms-root="true"] form .hs_state select,
+  #{{name}} div[data-hs-forms-root="true"] form .hs_contact_reason select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 100%;
+    background: #fff;
+    padding-right: 40px !important;
+  }
+
+  #{{name}} div[data-hs-forms-root="true"] form .hs_state .input::after,
+  #{{name}} div[data-hs-forms-root="true"] form .hs_contact_reason .input::after {
+    content: "\f078";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    display: inline-block;
+    font-size: 14px;
+    color: #4698CB;
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+
+  #{{name}} div[data-hs-forms-root="true"] form .hs-fieldtype-file {
+    display: flex;
+    align-items: center;
+    border-radius: 7px;
+    border: 1px solid #4698CB;
+    background: #FFF;
+    padding-left: 24px;
+    padding-right: 24px;
+    height: 64px;
+  }
+
+  #{{name}} div[data-hs-forms-root="true"] form .hs-fieldtype-file label {
+    width: 100%;
+    margin: 0;
+  }
+
+  #{{name}} div[data-hs-forms-root="true"] form .hs-fieldtype-file label span {
+    color: #53565A;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 300;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  #{{name}} div[data-hs-forms-root="true"] form .hs-fieldtype-file .input input {
+    padding-right: 0 !important;
+    font-size: 16px;
+  }
+
+  #{{name}} div[data-hs-forms-root="true"] form .hs_recaptcha {
+    display: flex;
+    align-items: start;
+  }
+
+  {# FORM SUBMIT BUTTON #}
+  {#
+  #{{name}} div[data-hs-forms-root="true"] .hs_submit .hs-button {
+    position: relative;
+    padding-right: 47px; 
+  }
+
+  #{{name}} div[data-hs-forms-root="true"] .hs_submit .hs-button::after {
+    content: "";
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='15' viewBox='0 0 15 15' fill='none'%3E%3Cpath d='M3.18639 1.30262H13.7916V11.9079M13.0552 2.0391L2.30262 12.7916' stroke='white' stroke-width='1.96642' stroke-miterlimit='10' stroke-linecap='square'/%3E%3C/svg%3E");
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 15px;
+    height: 15px;
+    position: absolute;
+    top: 50%;
+    right: 18px;
+    transform: translateY(-50%);
+    pointer-events: none;
+    transition: all .4s ease-in-out;
+  }
+
+  #{{name}} div[data-hs-forms-root="true"] .hs_submit .hs-button:hover::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='15' viewBox='0 0 15 15' fill='none'%3E%3Cpath d='M3.18663 1.30262H13.7919V11.9079M13.0554 2.0391L2.30286 12.7916' stroke='%234698CB' stroke-width='1.96642' stroke-miterlimit='10' stroke-linecap='square'/%3E%3C/svg%3E");
+  }
+#}
+
+  /****** MOBILE ******/
+  @media (max-width: {{ theme.layout.style_opts.slim_width }}px) {
+    #{{name}} {
+      border-radius: {{ module.section.round_corners.top_corners_sm or 0 }}px {{ module.section.round_corners.top_corners_sm or 0 }}px {{ module.section.round_corners.bottom_corners_sm or 0 }}px {{ module.section.round_corners.bottom_corners_sm or 0 }}px;
+      {{ 'padding-top: ' ~ module.section.spacing.top_sm ~ 'px;' if module.section.spacing.top_sm }}
+      {{ 'padding-bottom: ' ~ module.section.spacing.bottom_sm ~ 'px;' if module.section.spacing.bottom_sm }}
+    }
+    
+    #{{name}} .heading, #{{name}} .flex-content {
+      width: 100%;
+    }
+    
+    #{{name}} .heading .title, #{{name}} .heading .text-container {
+      margin-bottom: 24px;
+    }
+
+    {#########   FORM   #######}
+    #{{name}} .hs-button,
+    #{{name}} .button--primary,
+    #{{name}} .hs-button:active,
+    #{{name}} .button--primary:active {
+      font-size: 16px;
+    }
+
+    #{{name}} div[data-hs-forms-root="true"] form {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+    }
+
+  @media (max-width: 559px) {
+    #{{name}} div[data-hs-forms-root="true"] form .hs-fieldtype-file {
+      flex-direction: column;
+      justify-content: center;
+      align-items: start;
+      gap: 6px;
+      padding-top: 20px;
+      padding-bottom: 20px;
+      height: 100%;
+    }
+
+    #{{name}} div[data-hs-forms-root="true"] form .hs-fieldtype-file .input input {
+      padding-left: 3px !important;
+    }
+  }
+</style>
+{% end_require_css %}
+
+
+{### HTML ###}
+<div id="{{name}}">
+  <div class="container">
+    <div class="heading">
+      {# EYEBROW #}
+      {% if module.col_1.eyebrow.text %}
+      <div class="eyebrow-container">
+        <{{ module.col_1.eyebrow.display_as }} class="eyebrow">
+          {{ module.col_1.eyebrow.text }}
+        </{{ module.col_1.eyebrow.display_as }}>
+      </div>
+      {% endif %}
+
+      {# TITLE #}
+      {% if module.col_1.title.text or module.col_1.title.highlight_text %}
+      <div class="title-container">
+        <{{ module.col_1.title.display_as }} class="title">
+          {{ module.col_1.title.text }} {{ '<span class="highlight"> ' ~ module.col_1.title.highlight_text ~ '</span>' if module.col_1.title.highlight_text }}
+        </{{ module.col_1.title.display_as }}>
+      </div>
+      {% endif %}
+
+      {# TEXT CONTAINER #}
+      {% if module.col_1.text_area.content %}
+      <div class="text-container">
+        {{ module.col_1.text_area.content }}
+      </div>
+      {% endif %}
+
+      {# BUTTONS #}
+      <div class="btn-container">
+      {% for button in module.col_1.button %}
+        {% if button.use_cta %}
+          {% cta guid='{{ button.guid }}' %}
+        {% else %}
+          {% if button.text %}
+          <a class="button {{ button.style_option }}"
+             {% if button.url.href %}href = "{% if button.url.type == 'EMAIL_ADDRESS' %}mailto: {% elif button.url.type == 'PHONE_NUMBER' %}tel: {% endif %}{{ button.url.href }}"{% endif %}
+             {% if button.open_link_in_new_tab %}target="_blank"{% endif %}
+             >{{ button.text }}{% if button.use_arrow_icon %}<span>{{ icon.btn_arrow() }}</span>{% endif %}</a>
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+      </div>
+
+    </div> {# /.heading #}
+  
+    {# FORM #}
+    {# Embed default modules - form #}
+    {% if module.title is truthy %}
+      {% set no_title = False %}
+    {% else %}
+      {% set no_title = True %}
+    {% endif %}
+
+    {% if module.form.form_id %}
+      {% form
+        form_key='{{ name }}',
+        form_to_use='{{ module.form.form_id }}',
+        title='{{ module.title }}',
+        no_title='{{ no_title }}',
+        follow_up_type_simple='{{ module.follow_up_type_simple }}',
+        simple_email_for_live_id='{{ module.simple_email_for_live_id }}',
+        follow_up_type_automation='{{ module.follow_up_type_automation }}',
+        form_follow_ups_workflow_id='{{ module.form_follow_ups_workflow_id }}',
+        response_response_type='{{ module.form.response_type }}',
+        response_redirect_id='{{ module.form.redirect_id }}',
+        response_redirect_url='{{ module.form.redirect_url }}',
+        response_message='{{ module.form.message }}',
+        notifications_are_overridden='{{ module.notifications_are_overridden }}',
+        notifications_override_email_addresses='{{ module.notifications_override_email_addresses }}'
+        gotowebinar_webinar_key='{{ module.form.gotowebinar_webinar_key }}'
+        sfdc_campaign='{{ module.sfdc_campaign }}'
+        webinar_id='{{ module.form.webinar_id }}'
+        webinar_source='{{ module.form.webinar_source }}'
+      %}
+    {% else %}
+      {% form
+        title='{{ module.title }}',
+        no_title='{{ no_title }}',
+      %}
+    {% endif %}
+  </div>
+</div>

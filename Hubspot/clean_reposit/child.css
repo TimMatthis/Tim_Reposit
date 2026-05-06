@@ -1,0 +1,395 @@
+/* @import url('http://example.com/example_style.css'); */
+
+/***********************************************/
+/* CSS @imports must be at the top of the file */
+/* Add them above this section                 */
+/***********************************************/
+
+/*****************************************/
+/* Start your style declarations here    */
+/*****************************************/
+
+main {
+  background-color: #1F2A44;
+}
+
+.container {
+  padding-right: 30px;
+  padding-left: 30px;
+}
+
+.flex-container {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+.flex-content {
+  width: 100%;
+}
+
+/****** TYPOGRAPHY ******/
+ol, ul {
+  margin-bottom: 16px;
+  margin-top: 16px;
+  padding-left: 28px;
+}
+
+li {
+  padding-left: 4px;
+}
+
+p.eyebrow {
+  font-size: 22px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 110%;
+}
+
+b, strong {
+  font-weight: 600;
+}
+
+/****** BUTTONS ******/
+.btn-container {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  cursor: pointer;
+}
+
+.cta-primary,
+.cta-primary:active,
+.hhs-header-menu .hs-menu-wrapper.hs-menu-flow-horizontal>ul li .mega-menu a.cta-primary,
+.hhs-top-bar .hs-menu-wrapper.hs-menu-flow-horizontal>ul li .mega-menu a.cta-primary,
+.hhs-alt-nav .hhs-header-menu .hs-menu-wrapper.hs-menu-flow-horizontal>ul li .mega-menu a.cta-primary{
+{#########   _SOLID BG-COLOR    #######}
+  {% if theme.cta_styles.cta_primary.props.bg_type == 'color' %}
+    border: 1px solid rgba({{ theme.cta_styles.cta_primary.props.bg_color.color|convert_rgb }}, {{ theme.cta_styles.cta_primary.props.bg_color.opacity * 0.01 }});
+  {% endif %}
+}
+
+.cta-secondary,
+.cta-secondary:active,
+.hhs-header-menu .hs-menu-wrapper.hs-menu-flow-horizontal>ul li .mega-menu a.cta-secondary,
+.hhs-top-bar .hs-menu-wrapper.hs-menu-flow-horizontal>ul li .mega-menu a.cta-secondary,
+.hhs-alt-nav .hhs-header-menu .hs-menu-wrapper.hs-menu-flow-horizontal>ul li .mega-menu a.cta-secondary {
+{#########   _SOLID BG-COLOR    #######}
+  {% if theme.cta_styles.cta_secondary.props.bg_type == 'color' %}
+    border: 1px solid rgba({{ theme.cta_styles.cta_secondary.props.bg_color.color|convert_rgb }}, {{ theme.cta_styles.cta_secondary.props.bg_color.opacity * 0.01 }});
+  {% endif %}
+}
+
+.cta-tertiary,
+.cta-tertiary:active,
+.hhs-header-menu .hs-menu-wrapper.hs-menu-flow-horizontal>ul li .mega-menu a.cta-tertiary,
+.hhs-top-bar .hs-menu-wrapper.hs-menu-flow-horizontal>ul li .mega-menu a.cta-tertiary,
+.hhs-alt-nav .hhs-header-menu .hs-menu-wrapper.hs-menu-flow-horizontal>ul li .mega-menu a.cta-tertiary {
+{#########   _SOLID BG-COLOR    #######}
+  {% if theme.cta_styles.cta_tertiary.props.bg_type == 'color' %}
+    border: 1px solid rgba({{ theme.cta_styles.cta_tertiary.props.bg_color.color|convert_rgb }}, {{ theme.cta_styles.cta_tertiary.props.bg_color.opacity * 0.01 }});
+  {% endif %}
+}
+
+/****** BUTTON ARROW ICONS ******/
+.button span {
+  display: flex;
+}
+
+.button span svg path {
+  transition: all 0.4s;
+}
+
+.cta-primary span svg path {
+  stroke: {{ theme.cta_styles.cta_primary.props.font_style.color }};
+}
+
+.cta-primary:hover span svg path {
+  stroke: {{ theme.cta_styles.cta_primary.props.font_color_hover.color }};
+}
+
+.cta-secondary span svg path {
+  stroke: {{ theme.cta_styles.cta_secondary.props.font_style.color }};
+}
+
+.cta-secondary:hover span svg path {
+  stroke: {{ theme.cta_styles.cta_secondary.props.font_color_hover.color }};
+}
+
+.cta-tertiary span svg path {
+  stroke: {{ theme.cta_styles.cta_tertiary.props.font_style.color }};
+}
+
+.cta-tertiary:hover span svg path {
+  stroke: {{ theme.cta_styles.cta_tertiary.props.font_color_hover.color }};
+}
+
+
+/****** FONTAWSOME ICONS ******/
+body i {
+  font-size: {{ theme.ui_bits.icons.icon_size }}px;
+}
+
+.social-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+
+/****** FORM ******/
+.form .hs-form-field label, .hero-form .hs-form-field label {
+  margin-bottom: 6px !important;
+}
+
+.form form,
+.hero-form form {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+.form .hs-form-field label,
+.hero-form .hs-form-field label{
+  margin: 0;
+}
+
+.form .hs-form-field input,
+.form .hs-form-field select,
+.form .hs-form-field textarea,
+.hero-form .hs-form-field input,
+.hero-form .hs-form-field select,
+.hero-form .hs-form-field textarea{
+  padding-left: 24px !important;
+  padding-right: 24px !important;
+}
+
+.form .hs-form-field select,
+.form .hs-button,
+.hero-form .hs-form-field select,
+.hero-form .hs-button{
+  cursor: pointer;
+}
+
+.form form .hs_state,
+.form form .hs_contact_reason,
+.form form .hs_how_can_we_help_you_,
+.form form .hs_submit,
+.hero-form form .hs_state,
+.hero-form form .hs_contact_reason,
+.hero-form form .hs_how_can_we_help_you_,
+.hero-form form .hs_submit {
+  grid-column: 1 / -1;
+}
+
+.form form .hs_state .input,
+.form form .hs_contact_reason .input,
+.hero-form form .hs_state .input,
+.hero-form form .hs_contact_reason .input {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.form form .hs_state select,
+.form form .hs_contact_reason select,
+.hero-form form .hs_state select,
+.hero-form form .hs_contact_reason select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 100%;
+  background: #fff;
+  padding-right: 40px !important;
+}
+
+.form form .hs_state .input::after,
+.form form .hs_contact_reason .input::after,
+.hero-form form .hs_state .input::after,
+.hero-form form .hs_contact_reason .input::after {
+  content: "\f078";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  display: inline-block;
+  font-size: 14px;
+  color: #4698CB;
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.form form .hs-fieldtype-file,
+.hero-form form .hs-fieldtype-file {
+  display: flex;
+  align-items: center;
+  border-radius: 7px;
+  border: 1px solid #4698CB;
+  background: #FFF;
+  padding-left: 24px;
+  padding-right: 24px;
+  height: 64px;
+  margin-top: 6px;
+}
+
+.form form .hs-fieldtype-file label,
+.hero-form form .hs-fieldtype-file label {
+  width: 100%;
+  margin: 0;
+}
+
+.form form .hs-fieldtype-file label span,
+.hero-form form .hs-fieldtype-file label span {
+  color: #53565A;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 300;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.form form .hs-fieldtype-file .input input,
+.hero-form form .hs-fieldtype-file .input input {
+  padding-right: 0 !important;
+  font-size: 16px;
+}
+
+.form form .hs_recaptcha,
+.hero-form form .hs_recaptcha {
+  display: flex;
+  align-items: start;
+}
+
+{# FORM SUBMIT BUTTON #}
+.form .hs_submit .hs-button,
+.hero-form .hs_submit .hs-button {
+  position: relative;
+  padding-right: 47px; 
+}
+
+.form .hs_submit .hs-button::after,
+.hero-form .hs_submit .hs-button::after {
+  content: "";
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='15' viewBox='0 0 15 15' fill='none'%3E%3Cpath d='M3.18639 1.30262H13.7916V11.9079M13.0552 2.0391L2.30262 12.7916' stroke='white' stroke-width='1.96642' stroke-miterlimit='10' stroke-linecap='square'/%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  width: 15px;
+  height: 15px;
+  position: absolute;
+  top: 50%;
+  right: 18px;
+  transform: translateY(-50%);
+  pointer-events: none;
+  transition: all .4s ease-in-out;
+}
+
+.form .hs_submit .hs-button:hover::after,
+.hero-form .hs_submit .hs-button:hover::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='15' viewBox='0 0 15 15' fill='none'%3E%3Cpath d='M3.18663 1.30262H13.7919V11.9079M13.0554 2.0391L2.30286 12.7916' stroke='%234698CB' stroke-width='1.96642' stroke-miterlimit='10' stroke-linecap='square'/%3E%3C/svg%3E");
+}
+
+/****** FORM BUTTONS ******/
+.hs-button,
+.button--primary,
+.hs-button:active,
+.button--primary:active {
+{#########   _SOLID BG-COLOR    #######}
+  {% if theme.form_styles.form_submit.props.bg_type == 'color' %}
+    border: 1px solid rgba({{ theme.form_styles.form_submit.props.bg_color.color|convert_rgb }}, {{ theme.form_styles.form_submit.props.bg_color.opacity * 0.01 }});
+  {% endif %}
+}
+
+/****** BLOG ******/
+.section.post-footer {
+  padding: 0;
+}
+
+/****** STSYEM PAGE ******/
+.error-page a {
+  border: none;
+}
+
+/****** MOBILE ******/
+@media (max-width: {{ theme.layout.style_opts.slim_width }}px) {
+  p.eyebrow {
+    font-size: 17px;
+  }
+  
+  {#########   BUTTONS   #######}
+  .btn-container {
+    flex-direction: column;
+    align-items: start;
+  }
+  
+  .cta-primary,
+  .cta-primary:active,
+  .hhs-header-menu .hs-menu-wrapper.hs-menu-flow-horizontal>ul li .mega-menu a.cta-primary,
+  .hhs-top-bar .hs-menu-wrapper.hs-menu-flow-horizontal>ul li .mega-menu a.cta-primary,
+  .hhs-alt-nav .hhs-header-menu .hs-menu-wrapper.hs-menu-flow-horizontal>ul li .mega-menu a.cta-primary{
+    font-size: 16px;
+  }
+
+  .cta-secondary,
+  .cta-secondary:active,
+  .hhs-header-menu .hs-menu-wrapper.hs-menu-flow-horizontal>ul li .mega-menu a.cta-secondary,
+  .hhs-top-bar .hs-menu-wrapper.hs-menu-flow-horizontal>ul li .mega-menu a.cta-secondary,
+  .hhs-alt-nav .hhs-header-menu .hs-menu-wrapper.hs-menu-flow-horizontal>ul li .mega-menu a.cta-secondary {
+    font-size: 16px;
+  }
+
+  .cta-tertiary,
+  .cta-tertiary:active,
+  .hhs-header-menu .hs-menu-wrapper.hs-menu-flow-horizontal>ul li .mega-menu a.cta-tertiary,
+  .hhs-top-bar .hs-menu-wrapper.hs-menu-flow-horizontal>ul li .mega-menu a.cta-tertiary,
+  .hhs-alt-nav .hhs-header-menu .hs-menu-wrapper.hs-menu-flow-horizontal>ul li .mega-menu a.cta-tertiary {
+    font-size: 16px;
+  }
+
+  {#########   FORM   #######}
+  .hs-button,
+  .button--primary,
+  .hs-button:active,
+  .button--primary:active {
+    font-size: 16px;
+  }
+
+  .form form, .hero-form form {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+  }
+
+@media (max-width: 559px) {
+  .form form .hs-fieldtype-file,
+  .hero-form form .hs-fieldtype-file {
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;
+    gap: 6px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    height: 100%;
+  }
+
+  .form form .hs-fieldtype-file .input input,
+  .hero-form form .hs-fieldtype-file .input input {
+    padding-left: 3px !important;
+  }
+}
+
+@supports (-webkit-touch-callout: none) {
+  @media (max-width: 431px) {
+    form .hsfc-Step {
+      max-width: 315px;
+      margin: 0 auto;
+    }
+  }
+}

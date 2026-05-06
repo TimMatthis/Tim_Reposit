@@ -1,0 +1,118 @@
+{
+  "isAvailableForNewContent" : true,
+  "templateType" : 20,
+  "attachedStylesheets" : [ ],
+  "attachedJs" : [ ],
+  "customHead" : "",
+  "customFooter" : "",
+  "bodyClass" : "",
+  "bodyCss" : "",
+  "bodyEditable" : false,
+  "layoutData" : {
+    "x" : 0,
+    "w" : 12,
+    "name" : "",
+    "label" : "",
+    "type" : "cell",
+    "params" : { },
+    "rows" : [ {
+      "0" : {
+        "x" : 0,
+        "w" : 12,
+        "name" : "hs_email_body",
+        "label" : "Resubscribe Email Greeting",
+        "type" : "email_body",
+        "params" : {
+          "default_html" : "<p>Hi&nbsp;{{ contact.firstname }},</p>\n"
+        },
+        "rows" : [ ],
+        "rowMetaData" : [ ],
+        "cells" : [ ],
+        "cssId" : "",
+        "cssClass" : "",
+        "cssStyle" : "",
+        "styles" : null,
+        "widgets" : [ ]
+      }
+    }, {
+      "0" : {
+        "x" : 0,
+        "w" : 12,
+        "name" : "email_resubscribe",
+        "label" : "Resubscribe Email Body",
+        "type" : "email_resubscribe",
+        "params" : {
+          "html" : "<p>It looks like you're currently unsubscribed from receiving email from us, which means we won't be able to complete your request until you\n<a class=\"hubspot-mergetag\" data-unsubscribe=\"true\" href=\"{{ unsubscribe_link }}\">update your subscription preferences</a>.</p>\n<p>Please let us know if you have any questions. We'd be delighted to help you out.</p>\n<p>All the best,</p>\n"
+        },
+        "rows" : [ ],
+        "rowMetaData" : [ ],
+        "cells" : [ ],
+        "cssId" : "",
+        "cssClass" : "",
+        "cssStyle" : "",
+        "styles" : null,
+        "widgets" : [ ]
+      }
+    }, {
+      "0" : {
+        "x" : 0,
+        "w" : 12,
+        "name" : "email_can_spam",
+        "label" : "Office Location Information",
+        "type" : "email_can_spam",
+        "params" : {
+          "html" : "&copy; <input class=\"hubspot-mergetag\" type=\"button\" value=\"Name\" data-canspam=\"{{ site_settings.company_name }}\">\n\n<br/><input class=\"hubspot-mergetag\" type=\"button\" value=\"Address 1\" data-canspam=\"{{ site_settings.company_street_address_1 }}\">\n\n<br/><input class=\"hubspot-mergetag\" type=\"button\" value=\"City\" data-canspam=\"{{ site_settings.company_city }}\">\n, <input class=\"hubspot-mergetag\" type=\"button\" value=\"State\" data-canspam=\"{{ site_settings.company_state }}\">\n <input class=\"hubspot-mergetag\" type=\"button\" value=\"Zip\" data-canspam=\"{{ site_settings.company_zip }}\">\n\n<br/><input class=\"hubspot-mergetag\" type=\"button\" value=\"Country\" data-canspam=\"{{ site_settings.company_country }}\">\n\n"
+        },
+        "rows" : [ ],
+        "rowMetaData" : [ ],
+        "cells" : [ ],
+        "cssId" : "",
+        "cssClass" : "",
+        "cssStyle" : "",
+        "styles" : null,
+        "widgets" : [ ]
+      }
+    }, {
+      "0" : {
+        "x" : 0,
+        "w" : 12,
+        "name" : "",
+        "label" : "",
+        "type" : "section_delimiter",
+        "params" : { },
+        "rows" : [ ],
+        "rowMetaData" : [ ],
+        "cells" : [ ],
+        "cssId" : "",
+        "cssClass" : "",
+        "cssStyle" : "",
+        "styles" : null,
+        "widgets" : [ ]
+      }
+    }, {
+      "0" : {
+        "x" : 0,
+        "w" : 12,
+        "name" : "",
+        "label" : "",
+        "type" : "section_delimiter",
+        "params" : { },
+        "rows" : [ ],
+        "rowMetaData" : [ ],
+        "cells" : [ ],
+        "cssId" : "",
+        "cssClass" : "",
+        "cssStyle" : "",
+        "styles" : null,
+        "widgets" : [ ]
+      }
+    } ],
+    "rowMetaData" : [ ],
+    "cells" : [ ],
+    "cssId" : "",
+    "cssClass" : "",
+    "cssStyle" : "",
+    "styles" : null,
+    "widgets" : [ ]
+  }
+}

@@ -1,0 +1,159 @@
+{% import "../macros/icon.html" as icon %}
+
+{% require_css %}
+<style>
+  #{{name}} {
+    {% if theme.blog.listing_page.header.bg_type == 'color' %}
+    background-color: linear-gradient({{ theme.blog.listing_page.header.bg_color.rgba }}){% if theme.blog.listing_page.header.overlay_color.rgba %}, {{ theme.blog.listing_page.header.overlay_color.rgba }}{% endif %};
+
+    {% elif theme.blog.listing_page.header.bg_type == 'gradient' %}
+    background: linear-gradient({{ theme.blog.listing_page.header.bg_gradient_angle }}, {{ theme.blog.listing_page.header.bg_gradient_1.rgba }}, {{ theme.blog.listing_page.header.bg_gradient_2.rgba }}){% if theme.blog.listing_page.header.overlay_color.rgba %}, {{ theme.blog.listing_page.header.overlay_color.rgba }}{% endif %};
+
+    {% elif theme.blog.listing_page.header.bg_type == 'image' and theme.blog.listing_page.header.bg_img %}
+    background: url({{ theme.blog.listing_page.header.bg_img }}) no-repeat {{ theme.blog.listing_page.header.bg_img_pos }} / {{ theme.blog.listing_page.header.bg_img_size }}
+                , {% if theme.blog.listing_page.header.bg_img_overlay == 'color' %}{{ theme.blog.listing_page.header.overlay_color.rgba }}{% elif theme.blog.listing_page.header.bg_img_overlay == 'gradient' %}linear-gradient({{ theme.blog.listing_page.header.overlay_gradient_angle }}, {{ theme.blog.listing_page.header.overlay_gradient_1.rgba }}, {{ theme.blog.listing_page.header.overlay_gradient_2.rgba }}){% endif %};
+    {% endif %}
+    background-color: {{ module.background.bg_color_1.rgba }};
+    background: -moz-radial-gradient(circle at {{ module.background.bg_gradient_angle }}, rgba({{ module.background.bg_color_1.color|convert_rgb }},{% if module.background.bg_color_1.opacity == '100' %}1{% else %}0.{{ module.background.bg_color_1.opacity }}{% endif %}) 5%, rgba({{ module.background.bg_color_2.color|convert_rgb }},{% if module.background.bg_color_2.opacity == '100' %}1{% else %} 0.{{ module.background.bg_color_2.opacity }}{% endif %}) 20%, rgba({{ module.background.bg_color_3.color|convert_rgb }},{% if module.background.bg_color_3.opacity == '100' %}1{% else %}0.{{ module.background.bg_color_3.opacity }}{% endif %}) 60%, rgba({{ module.background.bg_color_4.color|convert_rgb }},{% if module.background.bg_color_4.opacity == '100' %}1{% else %}0.{{ module.background.bg_color_4.opacity }}{% endif %}) 100%){% if theme.blog.post_page.header.post_feat_img and content.featured_image %}, url({{ content.featured_image }}){% elif module.background.img.src %}, url({{ module.background.img.src }}){% endif %};
+    background: -webkit-radial-gradient(circle at {{ module.background.bg_gradient_angle }}, rgba({{ module.background.bg_color_1.color|convert_rgb }},{% if module.background.bg_color_1.opacity == '100' %}1{% else %}0.{{ module.background.bg_color_1.opacity }}{% endif %}) 5%, rgba({{ module.background.bg_color_2.color|convert_rgb }},{% if module.background.bg_color_2.opacity == '100' %}1{% else %} 0.{{ module.background.bg_color_2.opacity }}{% endif %}) 20%, rgba({{ module.background.bg_color_3.color|convert_rgb }},{% if module.background.bg_color_3.opacity == '100' %}1{% else %}0.{{ module.background.bg_color_3.opacity }}{% endif %}) 60%, rgba({{ module.background.bg_color_4.color|convert_rgb }},{% if module.background.bg_color_4.opacity == '100' %}1{% else %}0.{{ module.background.bg_color_4.opacity }}{% endif %}) 100%){% if theme.blog.post_page.header.post_feat_img and content.featured_image %}, url({{ content.featured_image }}){% elif module.background.img.src %}, url({{ module.background.img.src }}){% endif %};
+    background: radial-gradient(circle at {{ module.background.bg_gradient_angle }}, rgba({{ module.background.bg_color_1.color|convert_rgb }},{% if module.background.bg_color_1.opacity == '100' %}1{% else %}0.{{ module.background.bg_color_1.opacity }}{% endif %}) 5%, rgba({{ module.background.bg_color_2.color|convert_rgb }},{% if module.background.bg_color_2.opacity == '100' %}1{% else %} 0.{{ module.background.bg_color_2.opacity }}{% endif %}) 20%, rgba({{ module.background.bg_color_3.color|convert_rgb }},{% if module.background.bg_color_3.opacity == '100' %}1{% else %}0.{{ module.background.bg_color_3.opacity }}{% endif %}) 60%, rgba({{ module.background.bg_color_4.color|convert_rgb }},{% if module.background.bg_color_4.opacity == '100' %}1{% else %}0.{{ module.background.bg_color_4.opacity }}{% endif %}) 100%){% if theme.blog.post_page.header.post_feat_img and content.featured_image %}, url({{ content.featured_image }}){% elif module.background.img.src %}, url({{ module.background.img.src }}){% endif %};
+    background-blend-mode: multiply;
+  }
+
+  #{{name}} .flex-container {
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    height: 110vh; {# Add +10vh to stack the second section on top #}
+  }
+
+  #{{name}} .column-1 {
+    width: {{ module.col_1.width or 100 }}%;
+  }
+  
+  #{{name}} .column-1 .eyebrow {
+    color: {{ module.col_1.eyebrow.text_color.rgba }};
+    margin-bottom: 12px;
+  }
+  
+  #{{name}} .column-1 .title {
+    font-size: {{ theme.blog.listing_page.header.blog_title_size }}px;
+    color: {{ module.col_1.title.text_color.rgba or theme.blog.listing_page.header.blog_title_color.rgba }};
+  }
+  
+  #{{name}} .column-1 .highlight {
+    color: {{ module.col_1.title.highlight_color.rgba }};
+  }
+ 
+  #{{name}} .column-1 .text-bottom {
+    position: absolute;
+    left: 0;
+    bottom: {{ module.col_1.bottom_text.bottom_space or 0 }}px;
+  }
+  
+  #{{name}} .column-1 .text-bottom p {
+    color: #fff;
+    font-size: 22px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 110%;
+  }
+  
+  #{{name}} .column-1 .btn-container {
+    margin-top: 24px;
+  }
+  
+  #{{name}} .column-1 .button {
+    border-color: transparent;
+  }
+
+
+  {# MOBILE #}
+  @media (max-width: {{ theme.layout.style_opts.slim_width }}px) {
+    #{{name}} .flex-container {
+      height: 90vh;
+      flex-direction: column;
+      align-items: start;
+      justify-content: center;
+      gap: 24px;
+    }
+    
+    #{{name}} .flex-content {
+      width: 100%;
+    }
+    
+    #{{name}} .column-1 .title {
+      font-size: {{ theme.blog.listing_page.header.blog_title_size_mobile }}px;
+    }
+
+    #{{name}} .text-bottom {
+      bottom: {{ module.col_1.bottom_text.bottom_space_sm }}px !important;
+    }
+    
+    #{{name}} .text-bottom p {
+      font-size: 18px !important;
+    }
+  }
+</style>
+{% end_require_css %}
+
+{### HTML ###}
+<div id="{{name}}">
+  <div class="container">
+
+    <div class="flex-container">
+      {# COLUMN 1 #}
+      <div class="flex-content column-1">
+        {# EYEBROW #}
+        {% if module.col_1.eyebrow.text %}
+        <div class="eyebrow-container">
+          <{{ module.col_1.eyebrow.display_as }} class="eyebrow">
+            {{ module.col_1.eyebrow.text }}
+          </{{ module.col_1.eyebrow.display_as }}>
+        </div>
+        {% endif %}
+
+        {# TITLE #}
+        {% if module.col_1.title.text or module.col_1.title.highlight_text %}
+        <div class="title-container">
+          <{{ module.col_1.title.display_as }} class="title">
+            {{ module.col_1.title.text }} {{ '<span class="highlight"> ' ~ module.col_1.title.highlight_text ~ '</span>' if module.col_1.title.highlight_text }}
+          </{{ module.col_1.title.display_as }}>
+        </div>
+        {% endif %}
+
+        {# TEXT CONTAINER #}
+        {% if module.col_1.text_area.content %}
+        <div class="text-container">
+          {{ module.col_1.text_area.content }}
+        </div>
+        {% endif %}
+
+        {# BUTTONS #}
+        <div class="btn-container">
+        {% for button in module.col_1.button %}
+          {% if button.use_cta %}
+            {% cta guid='{{ button.guid }}' %}
+          {% else %}
+            {% if button.text %}
+              <a class="button {{ button.style_option }}"
+             {% if button.url.href %}href = "{% if button.url.type == 'EMAIL_ADDRESS' %}mailto: {% elif button.url.type == 'PHONE_NUMBER' %}tel: {% endif %}{{ button.url.href }}"{% endif %}
+             {% if button.open_link_in_new_tab %}target="_blank"{% endif %}
+               >{{ button.text }}{% if button.use_arrow_icon %}<span>{{ icon.btn_arrow() }}</span>{% endif %}</a>
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+        </div>
+
+        {# TEXT BOTTOM #}
+        {% if module.col_1.bottom_text.content %}
+        <div class="text-bottom">
+          {{ module.col_1.bottom_text.content }}
+        </div>
+        {% endif %}
+
+      </div> {# /.column-1 #}
+
+    </div> {# /.flex #}
+  </div> {# /.container #}
+</div>

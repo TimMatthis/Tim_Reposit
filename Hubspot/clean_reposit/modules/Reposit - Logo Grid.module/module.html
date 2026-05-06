@@ -1,0 +1,144 @@
+{% set logos = module.group_logos %}
+{% set logo_count = logos|length %}
+
+{% macro add_style_if_value(style, field, unit = "") %}
+  {% set field_with_unit = field ~ unit %}
+    {{ style }}: {{ field_with_unit }};
+{% endmacro %}
+
+{% require_css %}
+<style>
+  #{{name}} {
+    {% if module.section.overlap_section %}margin-top: -10vh;{% endif %}
+    background-color: {{ module.section.bg_color.rgba or 'transparent' }};
+    border-radius: {{ module.section.round_corners.top_corners or 0 }}px {{ module.section.round_corners.top_corners or 0 }}px {{ module.section.round_corners.bottom_corners or 0 }}px {{ module.section.round_corners.bottom_corners or 0 }}px;
+    padding: {{ module.section.spacing.top or 0 }}px 0 {{ module.section.spacing.bottom or 0 }}px 0;
+  }
+  
+  #{{name}} img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  #{{name}} .eyebrow {
+    text-align: {{ module.eyebrow.text_align }};
+    {{ 'color: ' ~ module.eyebrow.text_color.rgba ~ ';' if module.eyebrow.text_color.rgba }}
+    {{ 'margin-bottom: ' ~ module.eyebrow.space_bottom ~ 'px;' if module.eyebrow.space_bottom }}
+  }
+
+  #{{name}} .logo-grid {
+    display: grid;
+    grid-template-columns: repeat({{ module.start.column_count }}, 1fr);
+    column-gap: {{ module.start.col_gap or 0 }}px;
+    row-gap: {{ module.start.row_gap or 0 }}px;
+  }
+
+  #{{name}} .logo-grid__logo-wrapper {
+    display: grid;
+    padding: {{ module.logo_style.spacing.top_and_bottom or 0 }}px {{ module.logo_style.spacing.left_and_right or 0 }}px;
+    {{ 'background-color: ' ~ module.logo_style.bg_color.rgba ~ ';' if module.logo_style.bg_color.rgba }}
+  }
+  
+  {% if module.logo_style.max_logo_height %}
+  #{{name}} .logo-grid__logo {
+    max-height: {{ module.logo_style.max_logo_height ~ "px" }};
+  }
+  {% endif %}
+
+  {# MOBILE #}
+  @media (max-width: {{ theme.layout.style_opts.slim_width }}px) {
+    #{{name}} {
+      border-radius: {{ module.section.round_corners.top_corners_sm or 0 }}px {{ module.section.round_corners.top_corners_sm or 0 }}px {{ module.section.round_corners.bottom_corners_sm or 0 }}px {{ module.section.round_corners.bottom_corners_sm or 0 }}px;
+      {{ 'padding-top: ' ~ module.section.spacing.top_sm ~ 'px;' if module.section.spacing.top_sm }}
+      {{ 'padding-bottom: ' ~ module.section.spacing.bottom_sm ~ 'px;' if module.section.spacing.bottom_sm }}
+    }
+{#
+    #{{name}} .logo-grid {
+      {% if module.start.column_count_sm %}
+      grid-template-columns: repeat({{ module.start.column_count_sm }}, 1fr);
+      {% else %}
+        {% if logo_count is odd %}
+        grid-template-columns: repeat(6, 1fr);
+        {% else %}
+        grid-template-columns: repeat(2, 1fr);
+        {% endif %}
+      {% endif %}
+    }
+
+    {% if not module.start.column_count_sm and logo_count is odd %}
+    #{{name}} .logo-grid__logo-wrapper {
+      grid-column: span 2;
+    }
+    
+    #{{name}} .logo-grid__logo-wrapper:nth-last-child(2):nth-child(3n + 1) {
+      grid-column-end: 4;
+    }
+    
+    #{{name}} .logo-grid__logo-wrapper:last-child:nth-child(3n - 1) {
+      grid-column-end: -2;
+    }
+    
+    #{{name}} .logo-grid__logo-wrapper:last-child:nth-child(even) {
+      grid-column-end: -3;
+    }
+    {% endif %}
+#}
+    #{{name}} .logo-grid {
+        grid-template-columns: repeat(6, 1fr);
+    }
+
+    #{{name}} .logo-grid__logo-wrapper {
+      grid-column: span 2;
+    }
+    
+    #{{name}} .logo-grid__logo-wrapper:nth-last-child(2):nth-child(3n + 1) {
+      grid-column-end: 4;
+    }
+    
+    #{{name}} .logo-grid__logo-wrapper:last-child:nth-child(3n - 1) {
+      grid-column-end: -2;
+    }
+    
+    #{{name}} .logo-grid__logo-wrapper:last-child:nth-child(even) {
+      grid-column-end: -3;
+    }
+  }
+</style>
+{% end_require_css %}
+
+{% macro build_image(image) %}
+  {% if image.src %}
+    {% set sizeAttrs = 'width="{{ image.width|escape_attr }}" height="{{ image.height|escape_attr }}"' %}
+    {% set loadingAttr = image.loading != 'disabled' ? 'loading="{{ image.loading|escape_attr }}"' : '' %}
+    <img class="logo-grid__logo" src="{{ image.src|escape_url }}" alt="{{ image.alt|escape_attr }}" {{ loadingAttr }} {{ sizeAttrs }}>
+  {% endif %}
+{% endmacro %}
+
+{% macro build_logo_grid() %}
+  {% for item in logos %}
+    <div class="logo-grid__logo-wrapper">
+      {{ build_image(item.logo) }}
+    </div>
+  {% endfor %}
+{% endmacro %}
+
+
+<div id="{{name}}">
+  <div class="container">
+
+    {# EYEBROW #}
+    {% if module.eyebrow.text %}
+    <div class="eyebrow-container">
+      <{{ module.eyebrow.display_as }} class="eyebrow">
+        {{ module.eyebrow.text }}
+      </{{ module.eyebrow.display_as }}>
+    </div>
+    {% endif %}
+
+    {# LOGOS #}
+    <div class="logo-grid">
+      {{ build_logo_grid() }} {# Sanitization happening in macro above #}
+    </div>
+  </div>
+</div>

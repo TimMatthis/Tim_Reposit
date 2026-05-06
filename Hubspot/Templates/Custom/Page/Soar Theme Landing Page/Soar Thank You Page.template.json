@@ -1,0 +1,333 @@
+{
+  "isAvailableForNewContent" : true,
+  "templateType" : 4,
+  "attachedStylesheets" : [ {
+    "type" : "cos_extension_resource",
+    "path" : "/Coded files/Custom/page/Soar_Theme/soar-style.css"
+  } ],
+  "attachedJs" : [ ],
+  "customHead" : "",
+  "customFooter" : "",
+  "bodyClass" : "site-page one-column",
+  "bodyCss" : "",
+  "bodyEditable" : false,
+  "layoutData" : {
+    "x" : 0,
+    "w" : 12,
+    "name" : "",
+    "label" : "",
+    "type" : "cell",
+    "params" : { },
+    "rows" : [ {
+      "0" : {
+        "x" : 0,
+        "w" : 12,
+        "name" : "module_1494437428624124",
+        "label" : "Soar/Soar Header - No Navigation",
+        "type" : "global_group",
+        "params" : {
+          "overrideable" : false,
+          "css_class" : "",
+          "css_id" : "",
+          "css_id_str" : "",
+          "css_style" : "",
+          "ending_html" : "",
+          "starting_html" : "",
+          "path" : "/Global content/Global Groups/Soar/Soar/Soar Header - No Navigation.template.json"
+        },
+        "rows" : [ ],
+        "rowMetaData" : [ ],
+        "cells" : [ ],
+        "cssId" : "",
+        "cssClass" : "",
+        "cssStyle" : "",
+        "styles" : null,
+        "widgets" : [ ]
+      }
+    }, {
+      "0" : {
+        "x" : 0,
+        "w" : 12,
+        "name" : "module_1494437442283128",
+        "label" : "Soar - Hero Module 2",
+        "type" : "custom_widget",
+        "params" : {
+          "overrideable" : true,
+          "css_class" : "",
+          "css_id" : "",
+          "css_id_str" : "",
+          "css_style" : "",
+          "ending_html" : "",
+          "starting_html" : "",
+          "widget_name" : "Soar - Hero Module 2",
+          "schema_version" : 1,
+          "path" : "/Custom modules/Soar - Hero Module 2"
+        },
+        "rows" : [ ],
+        "rowMetaData" : [ ],
+        "cells" : [ ],
+        "cssId" : "",
+        "cssClass" : "",
+        "cssStyle" : "",
+        "styles" : null,
+        "widgets" : [ ]
+      }
+    }, {
+      "0" : {
+        "x" : 0,
+        "w" : 12,
+        "name" : "",
+        "label" : "",
+        "type" : "section_delimiter",
+        "params" : {
+          "cell" : false,
+          "cells" : [ ],
+          "css_class" : "",
+          "css_id" : "",
+          "css_id_str" : "",
+          "css_style" : "",
+          "ending_html" : "",
+          "root" : false,
+          "row" : false,
+          "starting_html" : ""
+        },
+        "rows" : [ ],
+        "rowMetaData" : [ ],
+        "cells" : [ ],
+        "cssId" : "",
+        "cssClass" : "",
+        "cssStyle" : "",
+        "styles" : null,
+        "widgets" : [ ]
+      }
+    }, {
+      "0" : {
+        "x" : 0,
+        "w" : 12,
+        "name" : "module_13966221470251891",
+        "label" : "Page Center, Content Wrapper",
+        "type" : "cell",
+        "params" : {
+          "overrideable" : false,
+          "cell" : false,
+          "cells" : [ ],
+          "css_class" : "page-center content-wrapper",
+          "css_id" : "",
+          "css_id_str" : "",
+          "css_style" : "",
+          "ending_html" : "",
+          "root" : false,
+          "row" : false,
+          "starting_html" : "",
+          "value" : "",
+          "wrapping_html" : ""
+        },
+        "rows" : [ {
+          "0" : {
+            "x" : 0,
+            "w" : 12,
+            "name" : "module_13885006758448185",
+            "label" : "Main Content",
+            "type" : "cell",
+            "params" : {
+              "overrideable" : false,
+              "cell" : false,
+              "cells" : [ ],
+              "css_class" : "main-content",
+              "css_id" : "",
+              "css_id_str" : "",
+              "css_style" : "",
+              "ending_html" : "",
+              "root" : false,
+              "row" : false,
+              "starting_html" : "",
+              "per_widget_wrapper_html" : "",
+              "value" : "",
+              "wrapping_html" : ""
+            },
+            "rows" : [ {
+              "0" : {
+                "x" : 0,
+                "w" : 12,
+                "name" : "module_140190329510711990",
+                "label" : "Main Content Column",
+                "type" : "widget_container",
+                "params" : {
+                  "overrideable" : false,
+                  "cell" : false,
+                  "cells" : [ ],
+                  "css_class" : "",
+                  "css_id" : "",
+                  "css_id_str" : "",
+                  "css_style" : "",
+                  "ending_html" : "",
+                  "root" : false,
+                  "row" : false,
+                  "starting_html" : "",
+                  "value" : ""
+                },
+                "rows" : [ ],
+                "rowMetaData" : [ ],
+                "cells" : [ ],
+                "cssId" : "",
+                "cssClass" : "",
+                "cssStyle" : "",
+                "styles" : null,
+                "widgets" : [ {
+                  "x" : 0,
+                  "w" : 12,
+                  "name" : "module_147801673129520225",
+                  "label" : "Rich Text",
+                  "type" : "rich_text",
+                  "params" : {
+                    "overrideable" : true,
+                    "cell" : false,
+                    "cells" : [ ],
+                    "css_class" : "",
+                    "css_id" : "",
+                    "css_id_str" : "",
+                    "css_style" : "",
+                    "ending_html" : "",
+                    "root" : false,
+                    "row" : false,
+                    "starting_html" : "",
+                    "html" : "<h2 style=\"text-align: center;\">DRIVE YOUR MESSAGE HOME</h2>\n<p style=\"text-align: center;\"><img src=\"http://cdn2.hubspot.net/hubfs/762525/Soar%20Campaign%20Pack/cross-accent.png\" title=\"cross-accent.png\" width=\"25\" style=\"width: 25px;\"></p>"
+                  },
+                  "rows" : [ ],
+                  "rowMetaData" : [ ],
+                  "cells" : [ ],
+                  "cssId" : "",
+                  "cssClass" : "",
+                  "cssStyle" : "",
+                  "styles" : null,
+                  "widgets" : [ ]
+                }, {
+                  "x" : 0,
+                  "w" : 12,
+                  "name" : "module_13885011246079525",
+                  "label" : "Rich Text",
+                  "type" : "rich_text",
+                  "params" : {
+                    "overrideable" : true,
+                    "cell" : false,
+                    "cells" : [ ],
+                    "css_class" : "",
+                    "css_id" : "",
+                    "css_id_str" : "",
+                    "css_style" : "",
+                    "ending_html" : "",
+                    "root" : false,
+                    "row" : false,
+                    "starting_html" : "",
+                    "html" : "<p style=\"text-align: center;\">The thank you page does not have to be the last time you connect with a lead. Don't waste this thank you page with a short \"Thanks! Bye!\" message! Continue to engage your lead and nurture them further by delivering to them a genuine thank you and providing them with even more value.<br><br>You can take this opportunity to provide your lead with other ways to engage with your company. Is there anything else that your lead should know at this stage in the funnel? Can you earn more lead information with an additional ask?<br><br>This is a great time to promote any additional content relevant to this buyer's journey. A free demo could help to provide more information. Videos from someone in your business can give off a friendly, relatable feeling. If you'd like some help creating this page, check out HubSpot Academy.<br><br>Be cool. People like that.</p>\n<p style=\"text-align: center;\">{{cta('69a95796-d1aa-4109-85ac-9fce3bc68f55')}}</p>"
+                  },
+                  "rows" : [ ],
+                  "rowMetaData" : [ ],
+                  "cells" : [ ],
+                  "cssId" : "",
+                  "cssClass" : "",
+                  "cssStyle" : "",
+                  "styles" : null,
+                  "widgets" : [ ]
+                } ]
+              }
+            } ],
+            "rowMetaData" : [ ],
+            "cells" : [ ],
+            "cssId" : "",
+            "cssClass" : "main-content",
+            "cssStyle" : "",
+            "styles" : null,
+            "widgets" : [ {
+              "x" : 0,
+              "w" : 12,
+              "name" : "module_13885011246079525",
+              "label" : "Rich Text",
+              "type" : "rich_text",
+              "params" : {
+                "html" : "<h2>Something Powerful</h2>\n<h3>Tell The Reader More</h3>\n<p>The headline and subheader tells us what you're&nbsp;<a href=\"#\">offering</a>, and the form header closes the deal. Over here you can explain why your offer is so great it's worth filling out a form for.</p>\n<p>Remember:</p>\n<ul>\n<li>Bullets are great</li>\n<li>For spelling out&nbsp;<a href=\"#\">benefits</a>&nbsp;and</li>\n<li>Turning visitors into leads.</li>\n</ul>",
+                "overrideable" : true
+              },
+              "rows" : [ ],
+              "rowMetaData" : [ ],
+              "cells" : [ ],
+              "cssId" : "",
+              "cssClass" : "",
+              "cssStyle" : "",
+              "styles" : null,
+              "widgets" : [ ]
+            } ]
+          }
+        } ],
+        "rowMetaData" : [ ],
+        "cells" : [ ],
+        "cssId" : "",
+        "cssClass" : "page-center content-wrapper",
+        "cssStyle" : "",
+        "styles" : null,
+        "widgets" : [ ]
+      }
+    }, {
+      "0" : {
+        "x" : 0,
+        "w" : 12,
+        "name" : "",
+        "label" : "",
+        "type" : "section_delimiter",
+        "params" : {
+          "cell" : false,
+          "cells" : [ ],
+          "css_class" : "",
+          "css_id" : "",
+          "css_id_str" : "",
+          "css_style" : "",
+          "ending_html" : "",
+          "root" : false,
+          "row" : false,
+          "starting_html" : ""
+        },
+        "rows" : [ ],
+        "rowMetaData" : [ ],
+        "cells" : [ ],
+        "cssId" : "",
+        "cssClass" : "",
+        "cssStyle" : "",
+        "styles" : null,
+        "widgets" : [ ]
+      }
+    }, {
+      "0" : {
+        "x" : 0,
+        "w" : 12,
+        "name" : "module_1494437475357129",
+        "label" : "Soar/Soar Footer",
+        "type" : "global_group",
+        "params" : {
+          "overrideable" : false,
+          "css_class" : "",
+          "css_id" : "",
+          "css_id_str" : "",
+          "css_style" : "",
+          "ending_html" : "",
+          "starting_html" : "",
+          "path" : "/Global content/Global Groups/Soar/Soar/Soar Footer.template.json"
+        },
+        "rows" : [ ],
+        "rowMetaData" : [ ],
+        "cells" : [ ],
+        "cssId" : "",
+        "cssClass" : "",
+        "cssStyle" : "",
+        "styles" : null,
+        "widgets" : [ ]
+      }
+    } ],
+    "rowMetaData" : [ ],
+    "cells" : [ ],
+    "cssId" : "",
+    "cssClass" : "",
+    "cssStyle" : "",
+    "styles" : null,
+    "widgets" : [ ]
+  }
+}

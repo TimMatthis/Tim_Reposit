@@ -1,0 +1,430 @@
+<!--
+  templateType: page
+  isAvailableForNewContent: true
+  screenshotPath: ../images/home_screen.png
+  label: Reposit - Home
+-->
+{% extends "./layouts/base.html" %}
+
+{% block body %}
+  {% dnd_area "dnd_area" class='body-container', label='Main section' %}
+
+ <!-----------------------  HERO BANNER  ----------------------->
+    {% dnd_section
+      padding={
+        'top': 0,
+        'bottom': 0,
+        'left': 0,
+        'right': 0
+      },
+      full_width='true',
+      vertical_alignment='MIDDLE'
+    %}
+      {% dnd_module "reposit_hero"
+        path="../modules/Reposit - Hero",
+        label="Reposit - Hero",
+        offset=0
+      %}
+        {% module_attribute "col_1" is_json=True %}
+        {
+          "title": {
+            "text": "No Electricity Bills Guaranteed For",
+            "highlight_text": "Seven Years or More."
+          },
+          "bottom_text": {
+            "content": "<p>Australia's Smartest Home Energy Solution.</p>"
+          }
+        }
+        {% end_module_attribute %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+  
+  <!----------------------- LOGO GRID  ----------------------->
+    {% dnd_section
+      padding={
+        'top': 0,
+        'bottom': 0,
+        'left': 0,
+        'right': 0
+      },
+      full_width='true',
+      vertical_alignment='MIDDLE'
+    %}
+      {% dnd_module "reposit_logo_grid"
+        path="../modules/Reposit - Logo Grid",
+        label="Reposit - Logo Grid",
+        offset=0
+      %}
+        {% module_attribute "group_logos" is_json=True %}
+        [
+          { "logo": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/australian.png", "alt": "australian" } },
+          { "logo": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/10.png", "alt": "network 10" } },
+          { "logo": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/9.png", "alt": "9 news" } },
+          { "logo": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/7.png", "alt": "7 network" } },
+          { "logo": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/abc.png", "alt": "abc" } },
+          { "logo": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/guardian.png", "alt": "guardian" } },
+          { "logo": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/energyinsights.png", "alt": "energy insights" } },
+          { "logo": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/techcouncil.png", "alt": "tech council" } },
+          { "logo": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/renew.png", "alt": "renew economy" } },
+          { "logo": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/solar.png", "alt": "solar victoria" } }
+        ]
+        {% end_module_attribute %}
+        {% module_attribute "section" is_json=True %} 
+        {
+          "overlap_section": "ture"
+        }
+        {% end_module_attribute %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+
+  <!----------------------- SLIDER  ----------------------->
+    {% dnd_section
+      padding={
+        'top': 0,
+        'bottom': 0,
+        'left': 0,
+        'right': 0
+      },
+      full_width='true',
+      vertical_alignment='MIDDLE'
+    %}
+      {% dnd_module "reposit_slider"
+        path="../modules/Reposit - Slider",
+        label="Reposit - Slider",
+        offset=0
+      %}
+        {% module_attribute "slides" is_json=True %}
+        [
+          {
+            "title": "Solar Panels Capture Energy",
+            "subtitle": "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium dolore.",
+            "show_slide_num": true,
+            "img": {
+              "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Slider%20Images/01_dark-2.svg",
+              "alt": "Slide 1 dark"
+            },
+            "active_img": {
+              "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Slider%20Images/01_light-1.svg",
+              "alt": "Slide 1 white"
+            },
+            "full_width_img": true
+          },
+          {
+            "title": "Inverter Converts Energy",
+            "subtitle": "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium dolore.",
+            "show_slide_num": true,
+            "img": {
+              "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Slider%20Images/02_dark-2.svg",
+              "alt": "Slide 2 dark"
+            },
+            "active_img": {
+              "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Slider%20Images/02_light-1.svg",
+              "alt": "Slide 2 white"
+            },
+            "full_width_img": true
+          },
+          {
+            "title": "Battery Stores Extra Energy",
+            "subtitle": "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium dolore.",
+            "show_slide_num": true,
+            "img": {
+              "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Slider%20Images/03_dark-2.svg",
+              "alt": "Slide 3 dark"
+            },
+            "active_img": {
+              "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Slider%20Images/03_light-1.svg",
+              "alt": "Slide 3 white"
+            },
+            "full_width_img": true
+          },
+          {
+            "title": "Reposit Box Decides Where Energy Goes",
+            "subtitle": "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium dolore.",
+            "show_slide_num": true,
+            "img": {
+              "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Slider%20Images/04_dark-2.svg",
+              "alt": "Slide 4 dark"
+            },
+            "active_img": {
+              "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Slider%20Images/04_light-2.svg",
+              "alt": "Slide 4 white"
+            },
+            "full_width_img": true
+          },
+          {
+            "title": "Customer receives no electricity bill",
+            "subtitle": "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium dolore.",
+            "show_slide_num": true,
+            "img": {
+              "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Slider%20Images/05_dark-2.svg",
+              "alt": "Slide 5 dark"
+            },
+            "active_img": {
+              "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Slider%20Images/05_light-1.svg",
+              "alt": "Slide 5 white"
+            },
+            "full_width_img": true
+          }
+        ]
+        {% end_module_attribute %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+  
+  <!----------------------- SINGLE COLUMN  ----------------------->
+    {% dnd_section
+      padding={
+        'top': 0,
+        'bottom': 0,
+        'left': 0,
+        'right': 0
+      },
+      full_width='true',
+      vertical_alignment='MIDDLE'
+    %}
+      {% dnd_module "reposit_single_column"
+        path="../modules/Reposit - Single Column",
+        label="Reposit - Single Column",
+        offset=0
+      %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+  
+  <!----------------------- TEXT WITH COUNTER  ----------------------->
+    {% dnd_section
+      padding={
+        'top': 0,
+        'bottom': 0,
+        'left': 0,
+        'right': 0
+      },
+      full_width='true',
+      vertical_alignment='MIDDLE'
+    %}
+      {% dnd_module "reposit_text_counter"
+        path="../modules/Reposit - Text with Counter",
+        label="Reposit - Text with Counter",
+        offset=0
+      %}
+        {% module_attribute "col_2" is_json=True %}
+        {
+          "richtext": "<p style='color: #fff;'>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>",
+          "counters": [
+            {
+            "number": "6000",
+            "text": "Homes and counting"
+            },
+            {
+            "number": "10",
+            "text": "Years of experience"
+            }
+          ]
+        }
+        {% end_module_attribute %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+  
+  <!----------------------- CTA  ----------------------->
+    {% dnd_section
+      padding={
+        'top': 0,
+        'bottom': 0,
+        'left': 0,
+        'right': 0
+      },
+      full_width='true',
+      vertical_alignment='MIDDLE'
+    %}
+      {% dnd_module "reposit_cta"
+        path="../modules/Reposit - CTA",
+        label="Reposit - CTA",
+        offset=0
+      %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+  
+  <!----------------------- TEXT AND CARDS  ----------------------->
+    {% dnd_section
+      padding={
+        'top': 0,
+        'bottom': 0,
+        'left': 0,
+        'right': 0
+      },
+      full_width='true',
+      vertical_alignment='MIDDLE'
+    %}
+      {% dnd_module "reposit_text_cards"
+        path="../modules/Reposit - Text and Cards",
+        label="Reposit - Text and Cards",
+        offset=0
+      %}
+        {% module_attribute "col_2" is_json=True %}
+        {
+          "cards": [
+            {
+              "title": {
+                "display_as": "h4",
+                "text": "Guaranteed No Electricity Bills"
+              },
+              "text_area": {
+                "content": "<p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non.</p>"
+              }
+            },
+            {
+              "title": {
+                "display_as": "h4",
+                "text": "Smart Energy Management"
+              },
+              "text_area": {
+                "content": "<p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non.</p>"
+              }
+            },
+            {
+              "title": {
+                "display_as": "h4",
+                "text": "Complete Home Energy Solution"
+              },
+              "text_area": {
+                "content": "<p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non.</p>"
+              }
+            },
+            {
+              "title": {
+                "display_as": "h4",
+                "text": "Futureproof Your Home"
+              },
+              "text_area": {
+                "content": "<p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non.</p>"
+              }
+            }
+          ]
+        }
+        {% end_module_attribute %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+  
+  <!----------------------- SLIDER  ----------------------->
+    {% dnd_section
+      padding={
+        'top': 0,
+        'bottom': 0,
+        'left': 0,
+        'right': 0
+      },
+      full_width='true',
+      vertical_alignment='MIDDLE'
+    %}
+      {% dnd_module "reposit_slider"
+        path="../modules/Reposit - Slider",
+        label="Reposit - Slider",
+        offset=0
+      %}
+        {% module_attribute "start" is_json=True %} 
+        {
+          "num_cols": 1
+        }
+        {% end_module_attribute %}
+        {% module_attribute "col_1" is_json=True %} 
+        {
+          "eyebrow": {
+            "text": ""
+          },
+          "title": {
+            "text": "How to",
+            "highlight_text": "Get Started"
+          }
+        }
+        {% end_module_attribute %}
+        {% module_attribute "slides" is_json=True %}
+        [
+          {
+            "title": "Get Your Instant Quote",
+            "subtitle": "Begin Your Journey to Energy Independence.",
+            "show_slide_num": true,
+            "img": {
+              "src": "",
+              "alt": ""
+            },
+            "active_img": {
+              "src": "",
+              "alt": ""
+            }
+          },
+          {
+            "title": "Virtual Site Inspection",
+            "subtitle": "Expert Assessment from the Comfort of Your Home.",
+            "show_slide_num": true,
+            "img": {
+              "src": "",
+              "alt": ""
+            },
+            "active_img": {
+              "src": "",
+              "alt": ""
+            }
+          },
+          {
+            "title": "Installation and Setup",
+            "subtitle": "Professional, Seamless Integration.",
+            "show_slide_num": true,
+            "img": {
+              "src": "",
+              "alt": ""
+            },
+            "active_img": {
+              "src": "",
+              "alt": ""
+            }
+          },
+          {
+            "title": "Get Your Instant Quote",
+            "subtitle": "Begin Your Journey to Energy Independence.",
+            "show_slide_num": true,
+            "img": {
+              "src": "",
+              "alt": ""
+            },
+            "active_img": {
+              "src": "",
+              "alt": ""
+            }
+          },
+          {
+            "title": "Virtual Site Inspection",
+            "subtitle": "Expert Assessment from the Comfort of Your Home.",
+            "show_slide_num": true,
+            "img": {
+              "src": "",
+              "alt": ""
+            },
+            "active_img": {
+              "src": "",
+              "alt": ""
+            }
+          }
+        ]
+        {% end_module_attribute %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+  
+  <!----------------------- BLOG POST CARDS  ----------------------->
+    {% dnd_section
+      padding={
+        'top': 0,
+        'bottom': 0,
+        'left': 0,
+        'right': 0
+      },
+      full_width='true',
+      vertical_alignment='MIDDLE'
+    %}
+      {% dnd_module "reposit_blog_post_cards"
+        path="../modules/Reposit - Blog Post Cards",
+        label="Reposit - Blog Post Cards",
+        offset=0
+      %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+
+  {% end_dnd_area %}
+{% endblock body %}

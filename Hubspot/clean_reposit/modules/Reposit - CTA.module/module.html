@@ -1,0 +1,257 @@
+{% import "../macros/icon.html" as icon %}
+
+{% require_css %}
+<style>
+  #{{name}} {
+    {% if module.section.overlap_section %}margin-top: -10vh;{% endif %}
+    background-color: {{ module.section.bg_color.rgba or 'transparent' }};
+    border-radius: {{ module.section.round_corners.top_corners or 0 }}px {{ module.section.round_corners.top_corners or 0 }}px {{ module.section.round_corners.bottom_corners or 0 }}px {{ module.section.round_corners.bottom_corners or 0 }}px;
+    padding: {{ module.section.spacing.top or 0 }}px 0 {{ module.section.spacing.bottom or 0 }}px 0;
+  }
+  
+  #{{name}} p {
+    color: #fff;
+  }
+  
+  #{{name}} figure {
+    margin: 0;
+  }
+  
+  #{{name}} img {
+    width: 100%;
+    height: 100% !important;
+  }
+  
+  #{{name}} .cta-container {
+    border-radius: 20px;
+    background: url('https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Rectangle%201.png') center / cover no-repeat;
+    padding: 65px 38px;
+    position: relative;
+    {% if module.col_2.content_type == 'text_area' %}align-items: end;{% endif %}
+  }
+
+  #{{name}} .flex-container {
+    justify-content: space-between;
+  }
+
+  {# COLUMN 1 #}
+  #{{name}} .column-1 {
+    width: {{ module.col_1.width or 100 }}%;
+  }
+  
+  #{{name}} .column-1 .eyebrow {
+    margin-bottom: {{ module.col_1.eyebrow.bottom_space or 0 }}px;
+    {{ 'color: ' ~ module.col_1.eyebrow.text_color.rgba ~ ';' if module.col_1.eyebrow.text_color.rgba }}
+  }
+  
+  #{{name}} .column-1 .title {
+    margin-bottom: {{ module.col_1.title.bottom_space or 0 }}px;
+    {{ 'color: ' ~ module.col_1.title.text_color.rgba ~ ';' if module.col_1.title.text_color.rgba }}
+  }
+  
+  #{{name}} .column-1 .highlight {
+    color: {{ module.col_1.title.highlight_color.rgba }};
+  }
+  
+  #{{name}} .column-1 .text-container {
+    margin-bottom: {{ module.col_1.text_area.bottom_space or 0 }}px;
+  }
+  
+  #{{name}} .text-quote {
+    margin-bottom: 24px;
+  }
+ 
+  #{{name}} .column-1 .btn-container {
+    display: flex;
+    justify-content: start;
+  }
+  
+  {# COLUMN 2 #}
+  #{{name}} .column-2 {
+    width: {{ module.col_2.width or 100 }}%;
+  }
+  
+  #{{name}} .column-2 .cta-img {
+    position: absolute;
+    top: {{ module.col_2.position.top or 0 }}px;
+    bottom: {{ module.col_2.position.bottom or 0 }}px;
+    right: 0;
+    max-width: 50%;
+  }
+  
+  #{{name}} .column-2 .text-container {
+    margin-bottom: {{ module.col_2.text_area.bottom_space or 0 }}px;
+  }
+  
+  #{{name}} .column-2 .btn-container {
+    display: flex;
+    justify-content: start;
+  }
+
+  {# SM DESKTOP #}
+  {% if module.col_2.content_type == 'img' and module.col_2.img.src  %}
+  @media (max-width: 1200px) {
+    {% if not module.col_2.position.bottom or module.col_2.position.bottom == 0 %}
+    #{{name}} .cta-container {
+      padding-bottom: 0;
+    }
+    {% endif %}
+
+    #{{name}} .flex-container {
+      flex-direction: column;
+      align-items: start;
+      gap: 0;
+    }
+    
+    #{{name}} .flex-content {
+      width: 100%;
+    }
+    
+    #{{name}} .column-2 {
+      display: flex;
+      justify-content: end;
+    }
+    
+    #{{name}} .column-2 .cta-img {
+      position: unset;
+    }
+  }
+  {% endif %}
+
+  {# MOBILE #}
+  @media (max-width: {{ theme.layout.style_opts.slim_width }}px) {
+    #{{name}} {
+      border-radius: {{ module.section.round_corners.top_corners_sm or 0 }}px {{ module.section.round_corners.top_corners_sm or 0 }}px {{ module.section.round_corners.bottom_corners_sm or 0 }}px {{ module.section.round_corners.bottom_corners_sm or 0 }}px;
+      {{ 'padding-top: ' ~ module.section.spacing.top_sm ~ 'px;' if module.section.spacing.top_sm }}
+      {{ 'padding-bottom: ' ~ module.section.spacing.bottom_sm ~ 'px;' if module.section.spacing.bottom_sm }}
+    }
+
+    #{{name}} p {
+      font-size: 16px !important;
+    }
+    
+    #{{name}} .cta-container {
+      padding: 38px 26px;
+      {% if module.col_2.content_type == 'img' and module.col_2.img.src and (not module.col_2.position.bottom or module.col_2.position.bottom == 0) %}
+      padding-bottom: 0;
+      {% endif %}
+    }
+    
+    #{{name}} .flex-container {
+      flex-direction: column;
+      align-items: start;
+      gap: 36px;
+    }
+    
+    #{{name}} .flex-content {
+      width: 100%;
+    }
+    
+    #{{name}} .column-1 .text-container {
+      margin-bottom: 24px;
+    }
+    
+    #{{name}} .column-2 .cta-img {
+      max-width: 100%;
+    }
+  }
+</style>
+{% end_require_css %}
+
+{### HTML ###}
+<div id="{{name}}">
+  <div class="container">
+    <div class="cta-container flex-container">
+        {# COLUMN 1 #}
+        <div class="flex-content column-1">
+          {# EYEBROW #}
+          {% if module.col_1.eyebrow.text %}
+          <div class="eyebrow-container">
+            <{{ module.col_1.eyebrow.display_as }} class="eyebrow">
+              {{ module.col_1.eyebrow.text }}
+            </{{ module.col_1.eyebrow.display_as }}>
+          </div>
+          {% endif %}
+
+          {# TITLE #}
+          {% if module.col_1.title.text or module.col_1.title.highlight_text %}
+          <div class="title-container">
+            <{{ module.col_1.title.display_as }} class="title">
+              {{ module.col_1.title.text }} {{ '<span class="highlight"> ' ~ module.col_1.title.highlight_text ~ '</span>' if module.col_1.title.highlight_text }}
+            </{{ module.col_1.title.display_as }}>
+          </div>
+          {% endif %}
+
+          {# TEXT CONTAINER #}
+          {% if module.col_1.text_area.content %}
+          <div class="text-container">
+            {{ module.col_1.text_area.content }}
+          </div>
+          {% endif %}
+
+          {# TEXT QUOTE #}
+          {% if module.col_1.add_a_text_quote %}
+          <div class="text-quote">
+            {{ module.col_1.text_quote }}
+          </div>
+          {% endif %}
+
+          {# BUTTONS #}
+          <div class="btn-container">
+          {% for button in module.col_1.button %}
+            {% if button.use_cta %}
+              {% cta guid='{{ button.guid }}' %}
+            {% else %}
+              {% if button.text %}
+              <a class="button {{ button.style_option }}"
+                 {% if button.url.href %}href = "{% if button.url.type == 'EMAIL_ADDRESS' %}mailto: {% elif button.url.type == 'PHONE_NUMBER' %}tel: {% endif %}{{ button.url.href }}"{% endif %}
+                 {% if button.open_link_in_new_tab %}target="_blank"{% endif %}
+               >{{ button.text }}{% if button.use_arrow_icon %}<span>{{ icon.btn_arrow() }}</span>{% endif %}</a>
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+          </div>
+
+        </div> {# /.column-1 #}
+
+        {# COLUMN 2 #}
+        {% if module.col_2.content_type != 'none' %}
+        <div class="flex-content column-2">
+
+          {# If Image #}
+          {% if module.col_2.content_type == 'img' and module.col_2.img.src  %}
+          <figure class="cta-img">
+            <img src="{{ module.col_2.img.src }}" alt="{{ module.col_2.img.alt }}" loading="{{ module.col_2.img.loading }}" />
+          </figure>
+          {% endif %}
+
+          {# If Text_Area #}
+          {% if module.col_2.content_type == 'text_area' %}
+            {% if module.col_2.text_area.richtext %}
+            <div class="text-container">
+              {{ module.col_2.text_area.richtext }}
+            </div>
+            {% endif %}
+
+            {# BUTTONS #}
+            <div class="btn-container">
+            {% for button in module.col_2.text_area.button %}
+              {% if button.use_cta %}
+                {% cta guid='{{ button.guid }}' %}
+              {% else %}
+                {% if button.text %}
+                <a class="button {{ button.style_option }}"
+                   {% if button.url.href %}href = "{% if button.url.type == 'EMAIL_ADDRESS' %}mailto: {% elif button.url.type == 'PHONE_NUMBER' %}tel: {% endif %}{{ button.url.href }}"{% endif %}
+                   {% if button.open_link_in_new_tab %}target="_blank"{% endif %}
+                 >{{ button.text }}{% if button.use_arrow_icon %}<span>{{ icon.btn_arrow() }}</span>{% endif %}</a>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+            </div>
+          {% endif %}
+          
+        </div> {# /.column-2 #}
+        {% endif %}
+      </div> {# /.flex #}
+  </div>
+</div>

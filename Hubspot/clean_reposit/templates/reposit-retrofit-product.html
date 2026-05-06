@@ -1,0 +1,359 @@
+<!--
+  templateType: page
+  isAvailableForNewContent: true
+  screenshotPath: ../images/no_bill_screen.png
+  label: Reposit - Retrofit Product
+  description: Retrofit-focused page for existing battery owners. Mirrors the No Bill page structure with updated retrofit proposition copy.
+-->
+{% extends "./layouts/base.html" %}
+
+{% block body %}
+  {% dnd_area "dnd_area" class='body-container', label='Main section' %}
+
+ <!-----------------------  HERO BANNER  ----------------------->
+    {% dnd_section
+      padding={ 'top': 0, 'bottom': 0, 'left': 0, 'right': 0 },
+      full_width='true',
+      vertical_alignment='MIDDLE'
+    %}
+      {% dnd_module "reposit_hero"
+        path="../modules/Reposit - Hero",
+        label="Reposit - Hero",
+        offset=0
+      %}
+        {% module_attribute "col_1" is_json=True %}
+        {
+          "eyebrow": { "text": "REPOSIT RETROFIT" },
+          "title": {
+            "text": "You Already Have a Battery.",
+            "highlight_text": "You Should Not Still Have a Bill."
+          },
+          "text_area": {
+            "content": "<p style='color: #fff;'>Most battery owners are still paying variable electricity bills, including supply charges. Reposit adds smart market trading to your existing system and replaces bill volatility with one fixed monthly fee set below what you pay today.</p>"
+          },
+          "bottom_text": {
+            "content": "<p>Takes about 60 seconds to start. Personalised offer in about 15 minutes.</p>"
+          },
+          "button": [
+            {
+              "text": "Get My Retrofit Offer",
+              "style_option": "cta-primary",
+              "use_arrow_icon": true
+            }
+          ]
+        }
+        {% end_module_attribute %}
+        {% module_attribute "background" is_json=True %}
+        { "bg_gradient_angle": "bottom right" }
+        {% end_module_attribute %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+
+  <!----------------------- LOGO GRID  ----------------------->
+    {% dnd_section
+      padding={ 'top': 0, 'bottom': 0, 'left': 0, 'right': 0 },
+      full_width='true',
+      vertical_alignment='MIDDLE'
+    %}
+      {% dnd_module "reposit_logo_grid"
+        path="../modules/Reposit - Logo Grid",
+        label="Reposit - Logo Grid",
+        offset=0
+      %}
+        {% module_attribute "eyebrow" is_json=True %}
+        { "text": "Trusted Technology and Industry Partners" }
+        {% end_module_attribute %}
+        {% module_attribute "group_logos" is_json=True %}
+        [
+          { "logo": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/engineering_excellence.png", "alt": "engineering excellence" } },
+          { "logo": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/clean_energy_council.png", "alt": "clean energy council" } },
+          { "logo": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/new_energy_tech.png", "alt": "new energy tech" } },
+          { "logo": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/clean_energy_council2.png", "alt": "clean energy council" } },
+          { "logo": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/energy_network.png", "alt": "energy network" } }
+        ]
+        {% end_module_attribute %}
+        {% module_attribute "section" is_json=True %}
+        { "overlap_section": "true" }
+        {% end_module_attribute %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+
+  <!----------------------- TEXT AND MEDIA  ----------------------->
+    {% dnd_section
+      padding={ 'top': 0, 'bottom': 0, 'left': 0, 'right': 0 },
+      full_width='true',
+      vertical_alignment='MIDDLE'
+    %}
+      {% dnd_module "reposit_text_media"
+        path="../modules/Reposit - Text and Media",
+        label="Reposit - Text and Media",
+        offset=0
+      %}
+        {% module_attribute "text_area" is_json=True %}
+        {
+          "eyebrow": { "text": "What retrofit changes" },
+          "text_area": {
+            "content": "<h2><span style='color: #ffffff;'>Your existing battery gains <span style='color: #4698cb;'>market intelligence</span></span></h2><p style='color: #fff;'>Without trading, your battery only handles self-consumption. With Reposit Retrofit, your battery can respond to market price spikes and earn value that offsets your electricity costs.</p>"
+          },
+          "button": [
+            { "text": "See How It Works", "style_option": "cta-secondary", "use_arrow_icon": true }
+          ]
+        }
+        {% end_module_attribute %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+
+  <!----------------------- TEXT AND CARDS  ----------------------->
+    {% dnd_section
+      padding={ 'top': 0, 'bottom': 0, 'left': 0, 'right': 0 },
+      full_width='true',
+      vertical_alignment='MIDDLE'
+    %}
+      {% dnd_module "reposit_text_cards"
+        path="../modules/Reposit - Text and Cards",
+        label="Reposit - Text and Cards",
+        offset=0
+      %}
+        {% module_attribute "col_1" is_json=True %}
+        {
+          "eyebrow": { "text": "Why Retrofit" },
+          "title": { "text": "Same Hardware. Better Economics." }
+        }
+        {% end_module_attribute %}
+        {% module_attribute "col_2" is_json=True %}
+        {
+          "direction": "vertical",
+          "cards": [
+            {
+              "bg_color": { "color": "#1F2A44", "opacity": 100 },
+              "title": { "display_as": "h3", "text": "One Fixed Monthly Fee", "text_color": { "color": "#FFF", "opacity": 100 }, "bottom_space": 12, "add_underline": true },
+              "text_area": { "content": "<p style='color: #fff;'>Replace variable electricity bills with one predictable monthly fee set below your current average spend.</p>" },
+              "inner_space": { "top": 24, "bottom": 24, "left": 24, "right": 24 },
+              "round_corners": 20
+            },
+            {
+              "bg_color": { "color": "#1F2A44", "opacity": 100 },
+              "title": { "display_as": "h3", "text": "No Rip and Replace", "text_color": { "color": "#FFF", "opacity": 100 }, "bottom_space": 12, "add_underline": true },
+              "text_area": { "content": "<p style='color: #fff;'>Keep your existing battery hardware. Reposit layers intelligence and market trading on top of what you already own.</p>" },
+              "inner_space": { "top": 24, "bottom": 24, "left": 24, "right": 24 },
+              "round_corners": 20
+            },
+            {
+              "bg_color": { "color": "#1F2A44", "opacity": 100 },
+              "title": { "display_as": "h3", "text": "Performance Managed by Reposit", "text_color": { "color": "#FFF", "opacity": 100 }, "bottom_space": 12, "add_underline": true },
+              "text_area": { "content": "<p style='color: #fff;'>We monitor and manage your system performance as part of our trading fleet so your savings stay on track.</p>" },
+              "inner_space": { "top": 24, "bottom": 24, "left": 24, "right": 24 },
+              "round_corners": 20
+            }
+          ]
+        }
+        {% end_module_attribute %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+
+  <!----------------------- TEXT WITH COUNTER  ----------------------->
+    {% dnd_section
+      padding={ 'top': 0, 'bottom': 0, 'left': 0, 'right': 0 },
+      full_width='true',
+      vertical_alignment='MIDDLE'
+    %}
+      {% dnd_module "reposit_text_counter"
+        path="../modules/Reposit - Text with Counter",
+        label="Reposit - Text with Counter",
+        offset=0
+      %}
+        {% module_attribute "col_1" is_json=True %}
+        {
+          "eyebrow": { "text": "Built for certainty" },
+          "title": { "text": "A Proven Retrofit Path" }
+        }
+        {% end_module_attribute %}
+        {% module_attribute "col_2" is_json=True %}
+        {
+          "richtext": "<p><span style='color: #ffffff;'>Reposit has been operating since 2012 and has supported thousands of Australian homes through smarter battery control.</span><br><br><span style='color: #ffffff;'>Retrofit keeps your current battery investment and upgrades how it performs in a volatile energy market.</span></p>",
+          "counters": [
+            { "number": "6000", "text": "Homes in fleet" },
+            { "number": "10+", "text": "Years operating" }
+          ]
+        }
+        {% end_module_attribute %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+
+  <!----------------------- SLIDER  ----------------------->
+    {% dnd_section
+      padding={ 'top': 0, 'bottom': 0, 'left': 0, 'right': 0 },
+      full_width='true',
+      vertical_alignment='MIDDLE'
+    %}
+      {% dnd_module "reposit_slider"
+        path="../modules/Reposit - Slider",
+        label="Reposit - Slider",
+        offset=0
+      %}
+        {% module_attribute "start" is_json=True %}
+        { "num_cols": 1 }
+        {% end_module_attribute %}
+        {% module_attribute "col_1" is_json=True %}
+        {
+          "text_area": {
+            "content": "<h2><span style='color: #ffffff;'>How Retrofit <span style='color: #4698cb;'>works</span></span></h2>"
+          }
+        }
+        {% end_module_attribute %}
+        {% module_attribute "slides" is_json=True %}
+        [
+          {
+            "title": "Connect your battery account",
+            "subtitle": "Use your existing battery app credentials so we can analyse your historic usage safely.",
+            "show_slide_num": false,
+            "img": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Slider%20Images/reposit_box.svg", "alt": "Connect account" },
+            "active_img": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Slider%20Images/reposit_box.svg", "alt": "Connect account" },
+            "full_width_img": false
+          },
+          {
+            "title": "Get your personalised offer",
+            "subtitle": "We compare your real-world usage against a fixed-fee plan designed to beat your current average bill.",
+            "show_slide_num": false,
+            "img": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Slider%20Images/battery.svg", "alt": "Offer generated" },
+            "active_img": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Slider%20Images/battery.svg", "alt": "Offer generated" },
+            "full_width_img": false
+          },
+          {
+            "title": "Reposit activates trading",
+            "subtitle": "Your battery is controlled against market signals to unlock value beyond self-consumption.",
+            "show_slide_num": false,
+            "img": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Slider%20Images/inverter.svg", "alt": "Trading activation" },
+            "active_img": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Slider%20Images/inverter.svg", "alt": "Trading activation" },
+            "full_width_img": false
+          },
+          {
+            "title": "Your bill becomes predictable",
+            "subtitle": "You move from variable quarterly shocks to one fixed monthly fee.",
+            "show_slide_num": false,
+            "img": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Slider%20Images/solar_panels_2.svg", "alt": "Predictable bill" },
+            "active_img": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Slider%20Images/solar_panels_2.svg", "alt": "Predictable bill" },
+            "full_width_img": false
+          }
+        ]
+        {% end_module_attribute %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+
+  <!----------------------- TABLE  ----------------------->
+    {% dnd_section
+      padding={ 'top': 0, 'bottom': 0, 'left': 0, 'right': 0 },
+      full_width='true',
+      vertical_alignment='MIDDLE'
+    %}
+      {% dnd_module "reposit_table"
+        path="../modules/Reposit - Table",
+        label="Reposit - Table",
+        offset=0
+      %}
+        {% module_attribute "table" is_json=True %}
+        {
+          "table_headings": [
+            { "title": "", "add_img": false },
+            { "title": "Reposit Retrofit", "add_img": false },
+            { "title": "Standard Battery Setup", "add_img": false }
+          ],
+          "table_rows": [
+            { "table_data": [ { "data_type": "text", "text": "Fixed monthly energy fee" }, { "data_type": "img", "img": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/check.png", "alt": "Check mark" } }, { "data_type": "img", "img": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/question.png", "alt": "Question mark" } } ] },
+            { "table_data": [ { "data_type": "text", "text": "Market trading managed for you" }, { "data_type": "img", "img": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/check.png", "alt": "Check mark" } }, { "data_type": "img", "img": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/question.png", "alt": "Question mark" } } ] },
+            { "table_data": [ { "data_type": "text", "text": "Uses your existing battery" }, { "data_type": "img", "img": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/check.png", "alt": "Check mark" } }, { "data_type": "img", "img": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/check.png", "alt": "Check mark" } } ] },
+            { "table_data": [ { "data_type": "text", "text": "Active performance monitoring by Reposit" }, { "data_type": "img", "img": { "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/check.png", "alt": "Check mark" } }, { "data_type": "text", "text": "Usually self-managed" } ] }
+          ]
+        }
+        {% end_module_attribute %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+
+  <!----------------------- TESTIMONIAL CARDS  ----------------------->
+    {% dnd_section
+      padding={ 'top': 0, 'bottom': 0, 'left': 0, 'right': 0 },
+      full_width='true',
+      vertical_alignment='MIDDLE'
+    %}
+      {% dnd_module "reposit_testimonial"
+        path="../modules/Reposit - Testimonial Cards",
+        label="Reposit - Testimonial Cards",
+        offset=0
+      %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+
+  <!----------------------- FAQs  ----------------------->
+    {% dnd_section
+      padding={ 'top': 0, 'bottom': 0, 'left': 0, 'right': 0 },
+      full_width='true',
+      vertical_alignment='MIDDLE'
+    %}
+      {% dnd_module "reposit_faq"
+        path="../modules/Reposit - FAQs",
+        label="Reposit - FAQs",
+        offset=0
+      %}
+        {% module_attribute "faq_accordion" is_json=True %}
+        {
+          "faq": [
+            {
+              "question": "Do I need to buy a new battery?",
+              "answer": "<p>No. Retrofit is designed for homes that already have a compatible battery system.</p>"
+            },
+            {
+              "question": "How quickly can I get my personalised offer?",
+              "answer": "<p>Most homeowners receive a personalised offer in about 15 minutes after consent and data connection.</p>"
+            },
+            {
+              "question": "What changes to my electricity billing?",
+              "answer": "<p>You move from variable electricity bills to one fixed monthly fee designed to be lower than your current average spend.</p>"
+            },
+            {
+              "question": "Who manages ongoing battery performance?",
+              "answer": "<p>Reposit actively monitors and manages your system as part of our operating fleet.</p>"
+            },
+            {
+              "question": "What if my usage changes over time?",
+              "answer": "<p>We review household changes with you and can recommend plan adjustments or system expansion where needed.</p>"
+            },
+            {
+              "question": "Can I still use my existing battery app?",
+              "answer": "<p>Yes. Your existing app remains available while Reposit adds additional control and optimisation.</p>"
+            }
+          ]
+        }
+        {% end_module_attribute %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+
+  <!----------------------- CTA  ----------------------->
+    {% dnd_section
+      padding={ 'top': 0, 'bottom': 0, 'left': 0, 'right': 0 },
+      full_width='true',
+      vertical_alignment='MIDDLE'
+    %}
+      {% dnd_module "reposit_cta"
+        path="../modules/Reposit - CTA",
+        label="Reposit - CTA",
+        offset=0
+      %}
+        {% module_attribute "col_1" is_json=True %}
+        {
+          "title": { "text": "Ready to Retrofit Your Battery?", "highlight_text": "" },
+          "text_area": { "content": "<p>Start your free assessment and see your fixed-fee options in minutes.</p>" },
+          "add_a_text_quote": true,
+          "text_quote": "<p>Already have a battery. Now make it work harder for your household.</p>",
+          "button": [
+            { "text": "Get My Retrofit Offer", "style_option": "cta-secondary", "use_arrow_icon": true }
+          ]
+        }
+        {% end_module_attribute %}
+        {% module_attribute "col_2" is_json=True %}
+        { "content_type": "none" }
+        {% end_module_attribute %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+
+  {% end_dnd_area %}
+{% endblock body %}

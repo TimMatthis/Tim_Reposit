@@ -1,0 +1,22 @@
+{
+  "content_tags" : [ {
+    "name" : "OTHER_INDUSTRY",
+    "source" : "MARKETPLACE"
+  }, {
+    "name" : "COMPATIBLE_BLOG",
+    "source" : "MARKETPLACE"
+  }, {
+    "name" : "COMPATIBLE_PAGE",
+    "source" : "MARKETPLACE"
+  } ],
+  "extra_classes" : "widget-type-form",
+  "global" : false,
+  "content_types" : [ "LANDING_PAGE", "CASE_STUDY", "SITE_PAGE", "BLOG_LISTING", "BLOG_POST" ],
+  "master_language" : "en",
+  "categories" : [ "forms_and_buttons" ],
+  "host_template_types" : [ "PAGE", "BLOG_POST", "BLOG_LISTING", "CASE_STUDY" ],
+  "module_id" : 190833470839,
+  "label" : "Reposit - LP Form",
+  "icon" : "../../../mV0_d-embed-default-modules_hubspot/img/icon/form-icon.svg",
+  "is_available_for_new_content" : true
+}

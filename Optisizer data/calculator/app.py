@@ -42,6 +42,7 @@ REPO_ROOT = BASE_DIR.parent.parent
 OPTISIZER_DATA = BASE_DIR.parent
 # Full optimisation exports (all regions including VIC).
 CATAN_RESULTS = OPTISIZER_DATA / "catan_results"
+CLEAN_FLEET = OPTISIZER_DATA / "CleanFleet"
 def catan_directory_no_vic() -> Path:
     """Prefer ``catan_no_vic`` (underscore); fall back to legacy ``catan no vic`` (spaces)."""
     underscore = OPTISIZER_DATA / "catan_no_vic"
@@ -55,6 +56,7 @@ def catan_sources() -> tuple[tuple[str, str, Path], ...]:
     return (
         (CATAN_SOURCE_WITH_VIC, "Full fleet — catan_results", CATAN_RESULTS),
         (CATAN_SOURCE_NO_VIC, "No VIC export — catan_no_vic", catan_directory_no_vic()),
+        (CATAN_SOURCE_CLEAN_FLEET, "CleanFleet", CLEAN_FLEET),
     )
 
 # Optional blocklist: folder UUIDs (one per row under header ``uid``) skipped for every fleet scan.
@@ -1656,6 +1658,7 @@ def clock_slot_5min_from_timestamp(ts_raw: str) -> int | None:
 # SSE / UI: stable ids for Catan roots (also used as .summary_cache/<id>/ subfolders).
 CATAN_SOURCE_WITH_VIC = "with_vic"
 CATAN_SOURCE_NO_VIC = "no_vic"
+CATAN_SOURCE_CLEAN_FLEET = "clean_fleet"
 def catan_root_for_source(source_id: str) -> Path:
     for sid, _label, root in catan_sources():
         if sid == source_id:
@@ -1980,7 +1983,7 @@ def demographic_augmentation_documentation() -> dict:
         ),
         "steps": [
             "Create or edit house_postcodes.csv in this calculator folder with header: house_id,postcode.",
-            "house_id must equal the optimisation export subfolder name (UUID) under catan_results or catan_no_vic. "
+            "house_id must equal the optimisation export subfolder name (UUID) under a configured export folder. "
             "postcode is the POA join key "
             "(four digits, e.g. 2600); it is normalised and matched to ABS rows.",
             "Keep ABS GCP POA extracts under Cluster/abs_data/ (see repo). No change to interval CSVs is required.",

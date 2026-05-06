@@ -1,0 +1,23 @@
+{
+  "label" : "CLEAN x Reposit",
+  "preview_path" : "./templates/clean-home-opt-1.html",
+  "screenshot_path" : "./images/thumbnails/clean-pro-thumb.jpg",
+  "enable_domain_stylesheets" : false,
+  "is_available_for_new_content" : true,
+  "extends" : "@marketplace/Helpful_Hero/CLEAN-6-1-theme",
+  "responsive_breakpoints" : [ {
+    "mediaQuery" : "@media (max-width: 575px)",
+    "messages" : { },
+    "name" : "mobile",
+    "previewWidth" : {
+      "units" : "px",
+      "value" : 575
+    }
+  } ],
+  "version" : "95",
+  "author" : {
+    "name" : "",
+    "email" : ""
+  },
+  "hide_all_default_modules" : false
+}

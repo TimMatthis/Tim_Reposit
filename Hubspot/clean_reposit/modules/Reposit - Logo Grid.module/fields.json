@@ -1,0 +1,549 @@
+[ {
+  "id" : "f33ff95f-7b07-65f1-6d8d-288989def098",
+  "name" : "start",
+  "label" : "- ⇩ START HERE ⇩ -",
+  "required" : false,
+  "locked" : false,
+  "children" : [ {
+    "id" : "styles.group_logo_grid.column_count",
+    "name" : "column_count",
+    "label" : "Visible Logos (Desktop)",
+    "help_text" : "Set the amount of columns in the grid on desktop.",
+    "required" : true,
+    "locked" : false,
+    "display" : "text",
+    "placeholder" : "4",
+    "min" : 1,
+    "max" : 6,
+    "step" : 1,
+    "display_width" : null,
+    "type" : "number",
+    "default" : 5
+  }, {
+    "id" : "bd912343-9687-3830-266a-8ef05e23a402",
+    "name" : "column_count_sm",
+    "label" : "Visible Logos (Mobile)",
+    "help_text" : "Set the amount of columns in the grid on mobile. Defaults to 2 for an even number of cards, and 3 for an odd number.",
+    "required" : false,
+    "locked" : true,
+    "display" : "text",
+    "placeholder" : "4",
+    "min" : 1,
+    "max" : 6,
+    "step" : 1,
+    "display_width" : null,
+    "type" : "number"
+  }, {
+    "id" : "styles.group_logo_grid.grid_gap",
+    "name" : "col_gap",
+    "label" : "Column Gap",
+    "help_text" : "Set the spacing between grid items.<br><br>Setting a background in <strong>Logo image > Background</strong> may help you visualize the logo grid.",
+    "required" : true,
+    "locked" : false,
+    "display" : "slider",
+    "min" : 0,
+    "max" : 100,
+    "step" : 1,
+    "suffix" : "px",
+    "display_width" : null,
+    "type" : "number",
+    "default" : 42
+  }, {
+    "id" : "c8db8b8c-b97f-be2f-440c-a3d773f17d00",
+    "name" : "row_gap",
+    "label" : "Row Gap",
+    "help_text" : "Set the spacing between grid items.<br><br>Setting a background in <strong>Logo image > Background</strong> may help you visualize the logo grid.",
+    "required" : true,
+    "locked" : false,
+    "display" : "slider",
+    "min" : 0,
+    "max" : 100,
+    "step" : 1,
+    "suffix" : "px",
+    "display_width" : null,
+    "type" : "number",
+    "default" : 24
+  } ],
+  "tab" : "CONTENT",
+  "expanded" : false,
+  "group_occurrence_meta" : null,
+  "display_width" : null,
+  "type" : "group",
+  "default" : {
+    "column_count" : 5,
+    "col_gap" : 42,
+    "row_gap" : 24
+  }
+}, {
+  "id" : "61926bcb-ce94-4b36-4aa3-2c35835167ec",
+  "name" : "eyebrow",
+  "label" : "Eyebrow Heading:",
+  "required" : false,
+  "locked" : false,
+  "children" : [ {
+    "id" : "318e4f62-8ba9-1c00-e885-4a5b7e73a56a",
+    "name" : "display_as",
+    "label" : "Display as",
+    "required" : true,
+    "locked" : false,
+    "display" : "select",
+    "choices" : [ [ "h1", "H1" ], [ "h2", "H2" ], [ "h3", "H3" ], [ "h4", "H4" ], [ "h5", "H5" ], [ "h6", "H6" ], [ "p", "Paragraph" ] ],
+    "multiple" : false,
+    "reordering_enabled" : true,
+    "preset" : null,
+    "display_width" : null,
+    "type" : "choice",
+    "default" : "p"
+  }, {
+    "id" : "786c472c-b93f-4dc0-ca5d-1142b364d514",
+    "name" : "text",
+    "label" : "Text",
+    "required" : false,
+    "locked" : false,
+    "allow_new_line" : false,
+    "display_width" : null,
+    "type" : "text",
+    "default" : "Featured In"
+  }, {
+    "id" : "030398c6-e0e5-0546-45ef-d7a44c461a5c",
+    "name" : "text_color",
+    "label" : "Text Color",
+    "required" : false,
+    "locked" : false,
+    "display_width" : null,
+    "type" : "color",
+    "default" : {
+      "color" : "#4698cb",
+      "opacity" : 100
+    }
+  }, {
+    "id" : "9dd5e748-597f-8780-6aac-b260f63ba638",
+    "name" : "text_align",
+    "label" : "Text Alignment",
+    "required" : true,
+    "locked" : false,
+    "display" : "select",
+    "choices" : [ [ "left", "Left" ], [ "center", "Center" ], [ "right", "Right" ] ],
+    "multiple" : false,
+    "reordering_enabled" : true,
+    "preset" : null,
+    "display_width" : null,
+    "type" : "choice",
+    "default" : "center"
+  }, {
+    "id" : "6f3dcf69-57c9-fad2-72ee-365d105bcb59",
+    "name" : "space_bottom",
+    "label" : "Space Bottom",
+    "required" : false,
+    "locked" : false,
+    "display" : "slider",
+    "min" : 0,
+    "max" : 100,
+    "step" : 1,
+    "suffix" : "px",
+    "display_width" : null,
+    "type" : "number",
+    "default" : 24
+  } ],
+  "tab" : "CONTENT",
+  "expanded" : false,
+  "group_occurrence_meta" : null,
+  "display_width" : null,
+  "type" : "group",
+  "default" : {
+    "display_as" : "p",
+    "text" : "Featured In",
+    "text_color" : {
+      "color" : "#4698cb",
+      "opacity" : 100
+    },
+    "text_align" : "center",
+    "space_bottom" : 24
+  }
+}, {
+  "id" : "group_logos",
+  "name" : "group_logos",
+  "label" : "Logo Images:",
+  "required" : false,
+  "locked" : false,
+  "occurrence" : {
+    "min" : 1,
+    "max" : null,
+    "sorting_label_field" : null,
+    "default" : 5
+  },
+  "children" : [ {
+    "id" : "group_logos.logo",
+    "name" : "logo",
+    "label" : "Logo",
+    "required" : false,
+    "locked" : false,
+    "responsive" : true,
+    "resizable" : false,
+    "show_loading" : true,
+    "display_width" : null,
+    "type" : "image",
+    "default" : {
+      "src" : "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/australian.png",
+      "alt" : "australian",
+      "size_type" : null,
+      "width" : 180,
+      "height" : 90,
+      "loading" : "lazy",
+      "max_width" : 180,
+      "max_height" : 90
+    }
+  } ],
+  "tab" : "CONTENT",
+  "expanded" : false,
+  "group_occurrence_meta" : null,
+  "display_width" : null,
+  "type" : "group",
+  "default" : [ {
+    "logo" : {
+      "src" : "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/australian.png",
+      "alt" : "australian",
+      "size_type" : null,
+      "width" : 180,
+      "height" : 90,
+      "loading" : "lazy",
+      "max_width" : 180,
+      "max_height" : 90
+    }
+  }, {
+    "logo" : {
+      "src" : "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/australian.png",
+      "alt" : "australian",
+      "size_type" : null,
+      "width" : 180,
+      "height" : 90,
+      "loading" : "lazy",
+      "max_width" : 180,
+      "max_height" : 90
+    }
+  }, {
+    "logo" : {
+      "src" : "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/australian.png",
+      "alt" : "australian",
+      "size_type" : null,
+      "width" : 180,
+      "height" : 90,
+      "loading" : "lazy",
+      "max_width" : 180,
+      "max_height" : 90
+    }
+  }, {
+    "logo" : {
+      "src" : "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/australian.png",
+      "alt" : "australian",
+      "size_type" : null,
+      "width" : 180,
+      "height" : 90,
+      "loading" : "lazy",
+      "max_width" : 180,
+      "max_height" : 90
+    }
+  }, {
+    "logo" : {
+      "src" : "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Logo%20Icons/australian.png",
+      "alt" : "australian",
+      "size_type" : null,
+      "width" : 180,
+      "height" : 90,
+      "loading" : "lazy",
+      "max_width" : 180,
+      "max_height" : 90
+    }
+  } ]
+}, {
+  "id" : "7c46a055-c3d3-36c9-a5bb-89dd88230a3f",
+  "name" : "logo_style",
+  "label" : "Logo Style:",
+  "required" : false,
+  "locked" : false,
+  "children" : [ {
+    "id" : "styles.group_logo.max_logo_height",
+    "name" : "max_logo_height",
+    "label" : "Max logo height",
+    "help_text" : "",
+    "required" : false,
+    "locked" : false,
+    "display" : "slider",
+    "min" : 20,
+    "max" : 150,
+    "step" : 1,
+    "suffix" : "px",
+    "display_width" : null,
+    "type" : "number"
+  }, {
+    "id" : "styles.group_logo.group_background.background_color",
+    "name" : "bg_color",
+    "label" : "Background color",
+    "required" : false,
+    "locked" : false,
+    "display_width" : null,
+    "type" : "color",
+    "default" : {
+      "color" : null,
+      "opacity" : null,
+      "rgb" : null,
+      "rgba" : null,
+      "hex" : null
+    }
+  }, {
+    "id" : "8c82ea71-1fd2-2bfb-1896-6cd0e5be2d18",
+    "name" : "spacing",
+    "label" : "Spacing",
+    "required" : false,
+    "locked" : false,
+    "children" : [ {
+      "id" : "73f49950-9c7b-f09c-3d63-545257865a91",
+      "name" : "top_and_bottom",
+      "label" : "Top and Bottom",
+      "required" : false,
+      "locked" : false,
+      "display" : "slider",
+      "min" : 0,
+      "max" : 100,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number"
+    }, {
+      "id" : "a691c1e3-a6bc-dab9-c4e3-a48195ed197d",
+      "name" : "left_and_right",
+      "label" : "Left and Right",
+      "required" : false,
+      "locked" : false,
+      "display" : "slider",
+      "min" : 0,
+      "max" : 100,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number"
+    } ],
+    "tab" : "CONTENT",
+    "expanded" : false,
+    "group_occurrence_meta" : null,
+    "display_width" : null,
+    "type" : "group",
+    "default" : { }
+  } ],
+  "tab" : "CONTENT",
+  "expanded" : false,
+  "group_occurrence_meta" : null,
+  "display_width" : null,
+  "type" : "group",
+  "default" : {
+    "bg_color" : {
+      "color" : null,
+      "opacity" : null,
+      "rgb" : null,
+      "rgba" : null,
+      "hex" : null
+    },
+    "spacing" : { }
+  }
+}, {
+  "id" : "dd22427b-531c-bfeb-3f96-96be85ff5eab",
+  "name" : "section",
+  "label" : "Section:",
+  "required" : false,
+  "locked" : false,
+  "children" : [ {
+    "id" : "d12213aa-c437-b385-cd08-f74c5b314462",
+    "name" : "overlap_section",
+    "label" : "Overlap the section above",
+    "required" : false,
+    "locked" : false,
+    "display" : "checkbox",
+    "display_width" : null,
+    "type" : "boolean",
+    "default" : true
+  }, {
+    "id" : "30cd27f5-1a45-8485-cf6e-072f7c1308fe",
+    "name" : "bg_color",
+    "label" : "Background Color",
+    "required" : true,
+    "locked" : false,
+    "display_width" : null,
+    "type" : "color",
+    "default" : {
+      "color" : "#FFFFFF",
+      "opacity" : 100
+    }
+  }, {
+    "id" : "6fca2182-300d-ff4a-3eec-9aad400418dd",
+    "name" : "spacing",
+    "label" : "Spacing",
+    "required" : false,
+    "locked" : false,
+    "children" : [ {
+      "id" : "54eea436-06c2-d77d-6924-e40d5aa4d981",
+      "name" : "top",
+      "label" : "Top (Desktop)",
+      "required" : false,
+      "locked" : false,
+      "display" : "slider",
+      "min" : 0,
+      "max" : 500,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 150
+    }, {
+      "id" : "8c863c8b-1432-66a9-bf85-6e9077289f3a",
+      "name" : "bottom",
+      "label" : "Bottom (Desktop)",
+      "required" : false,
+      "locked" : false,
+      "display" : "slider",
+      "min" : 0,
+      "max" : 500,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 250
+    }, {
+      "id" : "a676c902-3f06-42ba-f003-0cc441458029",
+      "name" : "top_sm",
+      "label" : "Top (Mobile)",
+      "required" : false,
+      "locked" : false,
+      "display" : "slider",
+      "min" : 0,
+      "max" : 500,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 80
+    }, {
+      "id" : "b64e6e81-1221-ff2d-c860-635b4c06047c",
+      "name" : "bottom_sm",
+      "label" : "Bottom (Mobile)",
+      "required" : false,
+      "locked" : false,
+      "display" : "slider",
+      "min" : 0,
+      "max" : 500,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 120
+    } ],
+    "tab" : "CONTENT",
+    "expanded" : false,
+    "group_occurrence_meta" : null,
+    "display_width" : null,
+    "type" : "group",
+    "default" : {
+      "top" : 150,
+      "bottom" : 250,
+      "top_sm" : 80,
+      "bottom_sm" : 120
+    }
+  }, {
+    "id" : "0b653e7f-4bfa-94fb-ea8e-63a8b1b667a3",
+    "name" : "round_corners",
+    "label" : "Round Corners",
+    "required" : false,
+    "locked" : false,
+    "children" : [ {
+      "id" : "d79d0f70-fd9b-9aa4-a47c-3139819d9c55",
+      "name" : "top_corners",
+      "label" : "Top Corners (Desktop)",
+      "required" : true,
+      "locked" : false,
+      "display" : "slider",
+      "min" : 0,
+      "max" : 100,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 64
+    }, {
+      "id" : "360e39aa-6dd5-7439-7e8b-74b7e326aabc",
+      "name" : "bottom_corners",
+      "label" : "Bottom Corners (Desktop)",
+      "required" : true,
+      "locked" : false,
+      "display" : "slider",
+      "min" : 0,
+      "max" : 100,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 0
+    }, {
+      "id" : "43fa070d-1c4e-059d-1879-8b50a0037b2e",
+      "name" : "top_corners_sm",
+      "label" : "Top Corners (Mobile)",
+      "required" : true,
+      "locked" : false,
+      "display" : "slider",
+      "min" : 0,
+      "max" : 100,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 42
+    }, {
+      "id" : "86915929-3d97-09b3-571c-33174bce5fbe",
+      "name" : "bottom_corners_sm",
+      "label" : "Bottom Corners (Mobile)",
+      "required" : true,
+      "locked" : false,
+      "display" : "slider",
+      "min" : 0,
+      "max" : 100,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 0
+    } ],
+    "tab" : "CONTENT",
+    "expanded" : false,
+    "group_occurrence_meta" : null,
+    "display_width" : null,
+    "type" : "group",
+    "default" : {
+      "top_corners" : 64,
+      "bottom_corners" : 0,
+      "top_corners_sm" : 42,
+      "bottom_corners_sm" : 0
+    }
+  } ],
+  "tab" : "CONTENT",
+  "expanded" : false,
+  "group_occurrence_meta" : null,
+  "display_width" : null,
+  "type" : "group",
+  "default" : {
+    "overlap_section" : true,
+    "bg_color" : {
+      "color" : "#FFFFFF",
+      "opacity" : 100
+    },
+    "spacing" : {
+      "top" : 150,
+      "bottom" : 250,
+      "top_sm" : 80,
+      "bottom_sm" : 120
+    },
+    "round_corners" : {
+      "top_corners" : 64,
+      "bottom_corners" : 0,
+      "top_corners_sm" : 42,
+      "bottom_corners_sm" : 0
+    }
+  }
+} ]

@@ -1,0 +1,83 @@
+{
+  "isAvailableForNewContent" : true,
+  "templateType" : 18,
+  "attachedStylesheets" : [ ],
+  "attachedJs" : [ ],
+  "customHead" : "",
+  "customFooter" : "",
+  "bodyClass" : "",
+  "bodyCss" : "",
+  "bodyEditable" : false,
+  "layoutData" : {
+    "x" : 0,
+    "w" : 12,
+    "name" : "",
+    "label" : "",
+    "type" : "cell",
+    "params" : { },
+    "rows" : [ {
+      "0" : {
+        "x" : 0,
+        "w" : 3,
+        "name" : "logo",
+        "label" : "Logo",
+        "type" : "logo",
+        "params" : {
+          "overrideable" : false,
+          "css_class" : "logo",
+          "src" : "https://cdn2.hubspot.net/hubfs/3445699/Reposit%20Logo/reposit_MONO%20REV%20(2).png",
+          "original_width" : 3017,
+          "original_height" : 1283,
+          "img_alt" : "reposit_MONO REV (2).png",
+          "width" : 3017,
+          "height" : 1283,
+          "img_load_error" : false,
+          "suppress_company_name" : false,
+          "override_inherited_src" : true,
+          "alt" : "reposit_MONO REV (2).png",
+          "link" : "https://repositpower.com/",
+          "open_in_new_tab" : true
+        },
+        "rows" : [ ],
+        "rowMetaData" : [ ],
+        "cells" : [ ],
+        "cssId" : "",
+        "cssClass" : "",
+        "cssStyle" : "",
+        "styles" : null,
+        "widgets" : [ ]
+      },
+      "3" : {
+        "x" : 3,
+        "w" : 9,
+        "name" : "module_14966703148121526",
+        "label" : "Horizontal Spacer",
+        "type" : "space",
+        "params" : {
+          "overrideable" : false,
+          "css_class" : "",
+          "css_id" : "",
+          "css_id_str" : "",
+          "css_style" : "",
+          "ending_html" : "",
+          "starting_html" : ""
+        },
+        "rows" : [ ],
+        "rowMetaData" : [ ],
+        "cells" : [ ],
+        "cssId" : "",
+        "cssClass" : "",
+        "cssStyle" : "",
+        "styles" : null,
+        "widgets" : [ ]
+      }
+    } ],
+    "rowMetaData" : [ ],
+    "cells" : [ ],
+    "cssId" : "",
+    "cssClass" : "",
+    "cssStyle" : "",
+    "styles" : null,
+    "widgets" : [ ]
+  }
+}

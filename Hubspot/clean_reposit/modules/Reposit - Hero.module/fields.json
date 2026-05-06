@@ -1,0 +1,773 @@
+[ {
+  "id" : "0d422613-2dba-c87a-e51c-a4af5f4b4836",
+  "name" : "start",
+  "label" : "- ⇩ START HERE ⇩ -",
+  "required" : false,
+  "locked" : false,
+  "children" : [ {
+    "id" : "7132bca8-898c-dcb2-791d-2ae062fc7098",
+    "name" : "num_cols",
+    "label" : "How many columns would you like?",
+    "required" : true,
+    "locked" : false,
+    "display" : "select",
+    "choices" : [ [ "1", "One" ], [ "2", "Two" ] ],
+    "multiple" : false,
+    "reordering_enabled" : true,
+    "preset" : null,
+    "display_width" : null,
+    "type" : "choice",
+    "default" : "1"
+  } ],
+  "tab" : "CONTENT",
+  "expanded" : true,
+  "group_occurrence_meta" : null,
+  "display_width" : null,
+  "type" : "group",
+  "default" : {
+    "num_cols" : "1"
+  }
+}, {
+  "id" : "ce24acd8-8e08-478f-2a7d-f06f7343a679",
+  "name" : "col_1",
+  "label" : "Column 1:",
+  "required" : false,
+  "locked" : false,
+  "children" : [ {
+    "id" : "338f5692-593b-c49e-05ca-d843cbdc0446",
+    "name" : "width",
+    "label" : "Width",
+    "required" : false,
+    "locked" : false,
+    "display" : "slider",
+    "min" : 0,
+    "max" : 100,
+    "step" : 1,
+    "suffix" : "%",
+    "display_width" : null,
+    "type" : "number",
+    "default" : 70
+  }, {
+    "id" : "78ab6ed3-11d2-80c5-d3ce-9301a08b49a3",
+    "name" : "eyebrow",
+    "label" : "Eyebrow Heading",
+    "required" : false,
+    "locked" : false,
+    "children" : [ {
+      "id" : "cea9b1f8-7ca9-b81a-cf8b-15f8dc8f5e6e",
+      "name" : "display_as",
+      "label" : "Display as",
+      "required" : true,
+      "locked" : false,
+      "display" : "select",
+      "choices" : [ [ "h1", "H1" ], [ "h2", "H2" ], [ "h3", "H3" ], [ "h4", "H4" ], [ "h5", "H5" ], [ "h6", "H6" ], [ "p", "Paragraph" ] ],
+      "multiple" : false,
+      "reordering_enabled" : true,
+      "preset" : null,
+      "display_width" : null,
+      "type" : "choice",
+      "default" : "p"
+    }, {
+      "id" : "75089563-43f1-0a8e-cb29-529a739458ae",
+      "name" : "text",
+      "label" : "Text",
+      "required" : false,
+      "locked" : false,
+      "allow_new_line" : false,
+      "display_width" : null,
+      "type" : "text"
+    }, {
+      "id" : "7fa7f2b8-e23a-546a-af0a-e54f477c7595",
+      "name" : "text_color",
+      "label" : "Text Color",
+      "required" : false,
+      "locked" : false,
+      "display_width" : null,
+      "type" : "color",
+      "default" : {
+        "color" : "#FFFFFF",
+        "opacity" : 100
+      }
+    } ],
+    "tab" : "CONTENT",
+    "expanded" : false,
+    "group_occurrence_meta" : null,
+    "display_width" : null,
+    "type" : "group",
+    "default" : {
+      "display_as" : "p",
+      "text_color" : {
+        "color" : "#FFFFFF",
+        "opacity" : 100
+      }
+    }
+  }, {
+    "id" : "1fed1e51-a274-793e-8a6d-d18a6f8a83cd",
+    "name" : "title",
+    "label" : "Title",
+    "required" : false,
+    "locked" : false,
+    "children" : [ {
+      "id" : "cc88456f-a947-51af-9017-7bc774ef8a77",
+      "name" : "display_as",
+      "label" : "Display as",
+      "required" : true,
+      "locked" : false,
+      "display" : "select",
+      "choices" : [ [ "h1", "H1" ], [ "h2", "H2" ], [ "h3", "H3" ], [ "h4", "H4" ], [ "h5", "H5" ], [ "h6", "H6" ], [ "p", "Paragraph" ] ],
+      "multiple" : false,
+      "reordering_enabled" : true,
+      "preset" : null,
+      "display_width" : null,
+      "type" : "choice",
+      "default" : "h1"
+    }, {
+      "id" : "1c6813b5-de8d-32be-7d98-535037772966",
+      "name" : "text",
+      "label" : "Text",
+      "required" : false,
+      "locked" : false,
+      "allow_new_line" : false,
+      "display_width" : null,
+      "type" : "text",
+      "default" : "No Electricity Bills Guaranteed"
+    }, {
+      "id" : "ca242a9e-0a07-54b2-3b35-9602065392bd",
+      "name" : "text_color",
+      "label" : "Text Color",
+      "required" : false,
+      "locked" : false,
+      "display_width" : null,
+      "type" : "color",
+      "default" : {
+        "color" : "#FFFFFF",
+        "opacity" : 100
+      }
+    }, {
+      "id" : "d9e5ea94-4571-d96c-22a8-cf4e5e20ace3",
+      "name" : "highlight_text",
+      "label" : "Highlighted Text",
+      "required" : false,
+      "locked" : false,
+      "allow_new_line" : false,
+      "display_width" : null,
+      "type" : "text",
+      "default" : ""
+    }, {
+      "id" : "2baaeaee-f13e-d770-1da0-b1e9ba098c81",
+      "name" : "highlight_color",
+      "label" : "Highlight Color",
+      "required" : false,
+      "locked" : false,
+      "display_width" : null,
+      "type" : "color",
+      "default" : {
+        "color" : "#4698CB",
+        "opacity" : 100
+      }
+    } ],
+    "tab" : "CONTENT",
+    "expanded" : false,
+    "group_occurrence_meta" : null,
+    "display_width" : null,
+    "type" : "group",
+    "default" : {
+      "display_as" : "h1",
+      "text" : "No Electricity Bills Guaranteed",
+      "text_color" : {
+        "color" : "#FFFFFF",
+        "opacity" : 100
+      },
+      "highlight_text" : "",
+      "highlight_color" : {
+        "color" : "#4698CB",
+        "opacity" : 100
+      }
+    }
+  }, {
+    "id" : "abb7ac37-43a8-b4cd-02ca-6d4e5b824b2f",
+    "name" : "text_area",
+    "label" : "Text Area",
+    "required" : false,
+    "locked" : false,
+    "children" : [ {
+      "id" : "6d28c089-dee6-ad2f-b09a-494686be585f",
+      "name" : "content",
+      "label" : "Content",
+      "required" : false,
+      "locked" : false,
+      "display_width" : null,
+      "type" : "richtext"
+    } ],
+    "tab" : "CONTENT",
+    "expanded" : false,
+    "group_occurrence_meta" : null,
+    "display_width" : null,
+    "type" : "group",
+    "default" : { }
+  }, {
+    "id" : "252952b9-f977-d88c-552a-21953f362eec",
+    "name" : "button",
+    "label" : "Button",
+    "required" : false,
+    "locked" : false,
+    "occurrence" : {
+      "min" : 0,
+      "max" : 4,
+      "sorting_label_field" : null,
+      "default" : null
+    },
+    "children" : [ {
+      "id" : "514420f4-f556-e8ce-bd40-1cea61a35dca",
+      "name" : "use_cta",
+      "label" : "Use CTA",
+      "required" : false,
+      "locked" : false,
+      "display" : "checkbox",
+      "display_width" : null,
+      "type" : "boolean",
+      "default" : false
+    }, {
+      "id" : "a8f0708b-d8a4-cc76-617e-c0f76f1f3388",
+      "name" : "guid",
+      "label" : "CTA",
+      "required" : false,
+      "locked" : false,
+      "visibility" : {
+        "controlling_field" : null,
+        "controlling_field_path" : "col_1.button.use_cta",
+        "controlling_value_regex" : "true",
+        "property" : null,
+        "operator" : "EQUAL",
+        "access" : null
+      },
+      "display_width" : null,
+      "type" : "cta"
+    }, {
+      "id" : "05f896af-3a8f-5168-f34e-80c19f13fac0",
+      "name" : "style_option",
+      "label" : "Style Option",
+      "required" : true,
+      "locked" : false,
+      "visibility" : {
+        "controlling_field" : null,
+        "controlling_field_path" : "col_1.button.use_cta",
+        "controlling_value_regex" : "false",
+        "property" : null,
+        "operator" : "EQUAL",
+        "access" : null
+      },
+      "display" : "select",
+      "choices" : [ [ "cta-primary", "Primary" ], [ "cta-secondary", "Secondary" ], [ "cta-tertiary", "Tertiary" ] ],
+      "multiple" : false,
+      "reordering_enabled" : true,
+      "preset" : null,
+      "display_width" : null,
+      "type" : "choice",
+      "default" : "cta-primary"
+    }, {
+      "id" : "5694363d-f2f2-a7cb-6908-903c7d47a411",
+      "name" : "text",
+      "label" : "Text",
+      "required" : false,
+      "locked" : false,
+      "visibility" : {
+        "controlling_field" : null,
+        "controlling_field_path" : "col_1.button.use_cta",
+        "controlling_value_regex" : "false",
+        "property" : null,
+        "operator" : "EQUAL",
+        "access" : null
+      },
+      "allow_new_line" : false,
+      "display_width" : null,
+      "type" : "text"
+    }, {
+      "id" : "2d4166e9-d981-a139-c3ea-948273fc53a5",
+      "name" : "use_arrow_icon",
+      "label" : "Use Arrow Icon",
+      "required" : false,
+      "locked" : false,
+      "visibility" : {
+        "controlling_field" : null,
+        "controlling_field_path" : "col_1.button.use_cta",
+        "controlling_value_regex" : "false",
+        "property" : null,
+        "operator" : "EQUAL",
+        "access" : null
+      },
+      "display" : "checkbox",
+      "display_width" : null,
+      "type" : "boolean",
+      "default" : true
+    }, {
+      "id" : "28a304cd-266e-a045-151f-4beb44861e3b",
+      "name" : "url",
+      "label" : "URL",
+      "required" : false,
+      "locked" : false,
+      "visibility" : {
+        "controlling_field" : null,
+        "controlling_field_path" : "col_1.button.use_cta",
+        "controlling_value_regex" : "false",
+        "property" : null,
+        "operator" : "EQUAL",
+        "access" : null
+      },
+      "supported_types" : [ "EXTERNAL", "CONTENT", "FILE", "EMAIL_ADDRESS", "BLOG", "PHONE_NUMBER" ],
+      "display_width" : null,
+      "type" : "url",
+      "default" : {
+        "content_id" : null,
+        "href" : "",
+        "type" : "EXTERNAL"
+      }
+    }, {
+      "id" : "7c9a24af-c31e-095c-4de2-f6b1a1bf62b5",
+      "name" : "open_link_in_new_tab",
+      "label" : "Open link in new tab",
+      "required" : false,
+      "locked" : false,
+      "visibility" : {
+        "controlling_field" : null,
+        "controlling_field_path" : "col_1.button.use_cta",
+        "controlling_value_regex" : "false",
+        "property" : null,
+        "operator" : "EQUAL",
+        "access" : null
+      },
+      "display" : "toggle",
+      "display_width" : null,
+      "type" : "boolean",
+      "default" : false
+    } ],
+    "tab" : "CONTENT",
+    "expanded" : false,
+    "group_occurrence_meta" : null,
+    "display_width" : null,
+    "type" : "group",
+    "default" : [ ]
+  }, {
+    "id" : "3ca8dfa7-cbcc-72d2-9642-61a879c100a3",
+    "name" : "bottom_text",
+    "label" : "Bottom Text Area",
+    "required" : false,
+    "locked" : false,
+    "children" : [ {
+      "id" : "fb7a4b4b-de8d-a977-7c5d-bdf76a33bd28",
+      "name" : "content",
+      "label" : "Content",
+      "required" : false,
+      "locked" : false,
+      "display_width" : null,
+      "type" : "richtext"
+    }, {
+      "id" : "3a179e1d-13ef-f213-96c0-b932c0d70adb",
+      "name" : "bottom_space",
+      "label" : "Bottom Space (Desktop)",
+      "required" : false,
+      "locked" : false,
+      "display" : "slider",
+      "min" : 0,
+      "max" : 300,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 200
+    }, {
+      "id" : "8616d8c7-c741-f3cd-48a2-91afaa114caf",
+      "name" : "bottom_space_sm",
+      "label" : "Bottom Space (Mobile)",
+      "required" : false,
+      "locked" : false,
+      "display" : "slider",
+      "min" : 0,
+      "max" : 300,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 100
+    } ],
+    "tab" : "CONTENT",
+    "expanded" : false,
+    "group_occurrence_meta" : null,
+    "display_width" : null,
+    "type" : "group",
+    "default" : {
+      "bottom_space" : 200,
+      "bottom_space_sm" : 100
+    }
+  } ],
+  "tab" : "CONTENT",
+  "expanded" : false,
+  "group_occurrence_meta" : null,
+  "display_width" : null,
+  "type" : "group",
+  "default" : {
+    "width" : 70,
+    "eyebrow" : {
+      "display_as" : "p",
+      "text_color" : {
+        "color" : "#FFFFFF",
+        "opacity" : 100
+      }
+    },
+    "title" : {
+      "display_as" : "h1",
+      "text" : "No Electricity Bills Guaranteed",
+      "text_color" : {
+        "color" : "#FFFFFF",
+        "opacity" : 100
+      },
+      "highlight_text" : "",
+      "highlight_color" : {
+        "color" : "#4698CB",
+        "opacity" : 100
+      }
+    },
+    "text_area" : { },
+    "button" : [ ],
+    "bottom_text" : {
+      "bottom_space" : 200,
+      "bottom_space_sm" : 100
+    }
+  }
+}, {
+  "id" : "ef96b082-06b9-7e30-d077-ce3aea27a062",
+  "name" : "column_2",
+  "label" : "Column 2:",
+  "required" : false,
+  "locked" : false,
+  "visibility" : {
+    "controlling_field" : null,
+    "controlling_field_path" : "start.num_cols",
+    "controlling_value_regex" : "2",
+    "property" : null,
+    "operator" : "EQUAL",
+    "access" : null
+  },
+  "children" : [ {
+    "id" : "8cf7b9c6-9c7e-782f-fe73-7d8dbf6ec023",
+    "name" : "width",
+    "label" : "Width",
+    "required" : false,
+    "locked" : false,
+    "display" : "slider",
+    "min" : 0,
+    "max" : 100,
+    "step" : 1,
+    "suffix" : "%",
+    "display_width" : null,
+    "type" : "number"
+  }, {
+    "id" : "d2288dc9-bb5a-69b1-31ac-995c2ab817a3",
+    "name" : "content_type",
+    "label" : "Content Type",
+    "required" : true,
+    "locked" : false,
+    "display" : "select",
+    "choices" : [ [ "text_area", "Text Area" ], [ "hub_form", "Hubspot Form" ], [ "none", "None" ] ],
+    "multiple" : false,
+    "reordering_enabled" : true,
+    "preset" : null,
+    "display_width" : null,
+    "type" : "choice",
+    "default" : "none"
+  }, {
+    "id" : "d7e22a97-6e1d-0a15-e106-edae1badb0e3",
+    "name" : "text_area",
+    "label" : "Text Area",
+    "required" : false,
+    "locked" : false,
+    "visibility" : {
+      "controlling_field" : null,
+      "controlling_field_path" : "column_2.content_type",
+      "controlling_value_regex" : "text_area",
+      "property" : null,
+      "operator" : "EQUAL",
+      "access" : null
+    },
+    "children" : [ {
+      "id" : "77daefe7-3ada-dfd2-8ccd-045e73d45745",
+      "name" : "content",
+      "label" : "Content",
+      "required" : false,
+      "locked" : false,
+      "display_width" : null,
+      "type" : "richtext"
+    } ],
+    "tab" : "CONTENT",
+    "expanded" : false,
+    "group_occurrence_meta" : null,
+    "display_width" : null,
+    "type" : "group",
+    "default" : { }
+  }, {
+    "id" : "3900d470-47e5-edd4-1023-4b575cd88341",
+    "name" : "hub_form",
+    "label" : "Hubspot Form",
+    "required" : false,
+    "locked" : false,
+    "visibility" : {
+      "controlling_field" : null,
+      "controlling_field_path" : "column_2.content_type",
+      "controlling_value_regex" : "hub_form",
+      "property" : null,
+      "operator" : "EQUAL",
+      "access" : null
+    },
+    "children" : [ {
+      "id" : "44c14146-17ee-3631-6712-61449b4d2d20",
+      "name" : "form",
+      "label" : "Form",
+      "required" : false,
+      "locked" : false,
+      "embed_versions" : [ "v2", "v4" ],
+      "display_width" : null,
+      "type" : "form",
+      "default" : {
+        "response_type" : "inline",
+        "message" : "Thanks for submitting the form.",
+        "gotowebinar_webinar_key" : null,
+        "webinar_id" : null,
+        "webinar_source" : null
+      }
+    }, {
+      "id" : "2b2139af-e280-974e-5ef3-9fef4f8b706d",
+      "name" : "title",
+      "label" : "Title",
+      "required" : false,
+      "locked" : false,
+      "allow_new_line" : false,
+      "display_width" : null,
+      "type" : "text",
+      "default" : "Are you ready for Reposit No Bill™?"
+    }, {
+      "id" : "ffeb570e-4de5-63a0-53ef-74b17882e954",
+      "name" : "richtext",
+      "label" : "Rich text",
+      "required" : false,
+      "locked" : false,
+      "display_width" : null,
+      "type" : "richtext"
+    }, {
+      "id" : "48624670-ac00-d9c4-97ca-768141b6a014",
+      "name" : "spacing",
+      "label" : "Spacing",
+      "required" : false,
+      "locked" : false,
+      "display" : "text",
+      "min" : 0,
+      "max" : 100,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 30
+    }, {
+      "id" : "64356098-1a2a-70b3-59ab-b60bd0fe49f8",
+      "name" : "spacing_sm",
+      "label" : "Spacing (Mobile)",
+      "required" : false,
+      "locked" : false,
+      "display" : "text",
+      "min" : 0,
+      "max" : 100,
+      "step" : 1,
+      "suffix" : "px",
+      "display_width" : null,
+      "type" : "number",
+      "default" : 22
+    } ],
+    "tab" : "CONTENT",
+    "expanded" : false,
+    "group_occurrence_meta" : null,
+    "display_width" : null,
+    "type" : "group",
+    "default" : {
+      "form" : {
+        "response_type" : "inline",
+        "message" : "Thanks for submitting the form.",
+        "gotowebinar_webinar_key" : null,
+        "webinar_id" : null,
+        "webinar_source" : null
+      },
+      "title" : "Are you ready for Reposit No Bill™?",
+      "spacing" : 30,
+      "spacing_sm" : 22
+    }
+  } ],
+  "tab" : "CONTENT",
+  "expanded" : false,
+  "group_occurrence_meta" : null,
+  "display_width" : null,
+  "type" : "group",
+  "default" : {
+    "content_type" : "none",
+    "text_area" : { },
+    "hub_form" : {
+      "form" : {
+        "response_type" : "inline",
+        "message" : "Thanks for submitting the form.",
+        "gotowebinar_webinar_key" : null,
+        "webinar_id" : null,
+        "webinar_source" : null
+      },
+      "title" : "Are you ready for Reposit No Bill™?",
+      "spacing" : 30,
+      "spacing_sm" : 22
+    }
+  }
+}, {
+  "id" : "ba2c0761-cfc7-c02c-7f91-db1842086796",
+  "name" : "style_opts",
+  "label" : "Style",
+  "required" : false,
+  "locked" : false,
+  "children" : [ {
+    "id" : "e9793abf-01a0-691c-3a29-cd968e456990",
+    "name" : "test",
+    "label" : "Test:",
+    "inline_help_text" : "This is currently a test. Please disregard.",
+    "required" : false,
+    "locked" : false,
+    "display" : "checkbox",
+    "display_width" : null,
+    "type" : "boolean",
+    "default" : false
+  } ],
+  "tab" : "STYLE",
+  "expanded" : false,
+  "group_occurrence_meta" : null,
+  "display_width" : null,
+  "type" : "group",
+  "default" : {
+    "test" : false
+  }
+}, {
+  "id" : "33b5fb92-72f5-b489-98e9-2722f4d865bf",
+  "name" : "background",
+  "label" : "Background:",
+  "required" : false,
+  "locked" : false,
+  "children" : [ {
+    "id" : "8eb16b24-5c40-7bdf-1fc7-56e9132f62fa",
+    "name" : "img",
+    "label" : "Image",
+    "required" : false,
+    "locked" : false,
+    "responsive" : true,
+    "resizable" : true,
+    "show_loading" : false,
+    "display_width" : null,
+    "type" : "image",
+    "default" : {
+      "size_type" : "auto",
+      "src" : "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/noise.png",
+      "alt" : "noise",
+      "loading" : "lazy",
+      "width" : 1440,
+      "height" : 1024,
+      "max_width" : 1440,
+      "max_height" : 1024
+    }
+  }, {
+    "id" : "150509df-1b44-b489-fe2a-4ee65c4aa9dc",
+    "name" : "bg_color_1",
+    "label" : "Gradient Color 1:",
+    "required" : false,
+    "locked" : false,
+    "display_width" : null,
+    "type" : "color",
+    "default" : {
+      "color" : "#F68D26",
+      "opacity" : 100
+    }
+  }, {
+    "id" : "cc772fa4-4ea7-0252-6058-9bd24b9f426a",
+    "name" : "bg_color_2",
+    "label" : "Gradient Color 2:",
+    "required" : false,
+    "locked" : false,
+    "display_width" : null,
+    "type" : "color",
+    "default" : {
+      "color" : "#CB8046",
+      "opacity" : 100
+    }
+  }, {
+    "id" : "85eba353-fac5-7bdb-4562-caae0b124ba9",
+    "name" : "bg_color_3",
+    "label" : "Gradient Color 3:",
+    "required" : false,
+    "locked" : false,
+    "display_width" : null,
+    "type" : "color",
+    "default" : {
+      "color" : "#2A6B94",
+      "opacity" : 100
+    }
+  }, {
+    "id" : "748670ed-602f-494f-aba0-f1c3c2b1e4b7",
+    "name" : "bg_color_4",
+    "label" : "Gradient Color 4:",
+    "required" : false,
+    "locked" : false,
+    "display_width" : null,
+    "type" : "color",
+    "default" : {
+      "color" : "#131A2B",
+      "opacity" : 100
+    }
+  }, {
+    "id" : "3e810c48-943b-25e7-8200-e51a1bdc9ce2",
+    "name" : "bg_gradient_angle",
+    "label" : "Gradient Angle:",
+    "required" : true,
+    "locked" : false,
+    "display" : "select",
+    "choices" : [ [ "top", "Top ↑" ], [ "bottom", "Bottom ↓" ], [ "top right", "Diagonal ↗" ], [ "bottom right", "Diagonal ↘" ], [ "bottom left", "Diagonal ↙" ], [ "top left", "Diagonal ↖" ] ],
+    "multiple" : false,
+    "reordering_enabled" : true,
+    "preset" : null,
+    "display_width" : null,
+    "type" : "choice",
+    "default" : "top left"
+  } ],
+  "tab" : "CONTENT",
+  "expanded" : false,
+  "group_occurrence_meta" : null,
+  "display_width" : null,
+  "type" : "group",
+  "default" : {
+    "img" : {
+      "size_type" : "auto",
+      "src" : "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/noise.png",
+      "alt" : "noise",
+      "loading" : "lazy",
+      "width" : 1440,
+      "height" : 1024,
+      "max_width" : 1440,
+      "max_height" : 1024
+    },
+    "bg_color_1" : {
+      "color" : "#F68D26",
+      "opacity" : 100
+    },
+    "bg_color_2" : {
+      "color" : "#CB8046",
+      "opacity" : 100
+    },
+    "bg_color_3" : {
+      "color" : "#2A6B94",
+      "opacity" : 100
+    },
+    "bg_color_4" : {
+      "color" : "#131A2B",
+      "opacity" : 100
+    },
+    "bg_gradient_angle" : "top left"
+  }
+} ]

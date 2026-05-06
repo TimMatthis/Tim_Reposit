@@ -1,0 +1,488 @@
+<!--
+  templateType: page
+  isAvailableForNewContent: true
+  screenshotPath: ../images/installers_screen.png
+  label: Reposit - Installers
+-->
+{% extends "./layouts/base.html" %}
+
+{% block body %}
+  {% dnd_area "dnd_area" class='body-container', label='Main section' %}
+
+ <!-----------------------  HERO BANNER  ----------------------->
+    {% dnd_section
+      padding={
+        'top': 0,
+        'bottom': 0,
+        'left': 0,
+        'right': 0
+      },
+      full_width='true',
+      vertical_alignment='MIDDLE'
+    %}
+      {% dnd_module "reposit_hero"
+        path="../modules/Reposit - Hero",
+        label="Reposit - Hero",
+        offset=0
+      %}
+        {% module_attribute "col_1" is_json=True %} 
+        {
+          "eyebrow": {
+            "text": "We’re Powering Everyday Aussie Homes – Want To Join Us?"
+          },
+          "title": {
+            "text": "Solar Installer Jobs"
+          },
+          "bottom_text": {
+            "content": "<p>Our friendly team would love to answer any questions.</p>"
+          },
+          "button": [
+            {
+              "text": "Apply Today",
+              "style_option": "cta-primary",
+              "use_arrow_icon": true
+            }
+          ]
+        }
+        {% end_module_attribute %}
+        {% module_attribute "background" is_json=True %} 
+          {
+            "bg_gradient_angle": "top"
+          }
+        {% end_module_attribute %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+  
+  <!-----------------------  TEXT AND MEADIA  ----------------------->
+    {% dnd_section
+      padding={
+        'top': 0,
+        'bottom': 0,
+        'left': 0,
+        'right': 0
+      },
+      full_width='true',
+      vertical_alignment='MIDDLE'
+    %}
+      {% dnd_module "reposit_text_media"
+        path="../modules/Reposit - Text and Media",
+        label="Reposit - Text and Media",
+        offset=0
+      %}
+        {% module_attribute "col_1" is_json=True %} 
+        {
+          "eyebrow": {
+            "text": "Install the Future"
+          },
+          "title": {
+            "text": "Empowering Solar Jobs"
+          }
+        }
+        {% end_module_attribute %}
+        {% module_attribute "media" is_json=True %} 
+        {
+          "img": {
+            "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/solar_panel.png",
+            "alt": "Solar Panel Image"
+           }
+        }
+        {% end_module_attribute %}
+        {% module_attribute "text_area" is_json=True %} 
+        {
+          "text_area": {
+            "content": "<p>Australians are embracing the promise of free, clean solar energy, moving away from fossil fuels. We're proud to empower them with patented, award-winning technology, developed and built here in Australia.<br><br>As we continue to expand our operations, we're actively seeking experienced solar installers to join our team. We offer positions where your contributions are truly valued, whether you prefer full-time, subcontracted, or flexible arrangements.</p><p>If you have the expertise, connect with us today and help deliver the future of energy.</p>"
+          }
+        }
+        {% end_module_attribute %}
+        {% module_attribute "section" is_json=True %} 
+        {
+           "overlap_section": "ture",
+           "spacing": {
+            "top": 150,
+            "bottom": 250,
+            "top_sm": 80,
+            "bottom_sm": 120
+           },
+           "round_corners": {
+            "top_corners": 64,
+            "bottom_corners": 0,
+            "top_corners_sm": 42,
+            "bottom_corners_sm": 0
+           }
+        }
+        {% end_module_attribute %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+  
+  <!-----------------------  SINGLE COLUMN  ----------------------->
+    {% dnd_section
+      padding={
+        'top': 0,
+        'bottom': 0,
+        'left': 0,
+        'right': 0
+      },
+      full_width='true',
+      vertical_alignment='MIDDLE'
+    %}
+      {% dnd_module "reposit_single_col"
+        path="../modules/Reposit - Single Column",
+        label="Reposit - Single Column",
+        offset=0
+      %}
+        {% module_attribute "col_1" is_json=True %} 
+        {
+          "max_width": 1000,
+          "eyebrow": {
+            "text": ""
+          },
+          "text_area": {
+            "content": "<p>Australians have responded with great enthusiasm to our promise of ditching fossil fuels for free, clean solar energy. The technologies we’re working with to empower them are patented, award-winning and built right here in Australia! We’re thrilled to be expanding fast, and are always on the lookout for solar installers who want a position where they can feel valued for every contribution they make. Whether you’re looking for a role that is full time, subcontracted or otherwise flexible - if you’ve got the skills, we’d love to hear from you.</p><br><h3>Who Do We Want?</h3><p>We’re looking for qualified solar installers to join us in our mission of making energy limitless and free.<br><br>When someone buys into the Reposit No Bill™ program, we’re responsible for the wellbeing of their solar system and the ongoing power needs of their home. We really value their experience with Reposit on all sides – and our solar installers are on the frontlines. We want to maintain this quality across all our solar installers by bringing in more individuals who know how to make our members feel valued, from the moment you greet them at the front door to when you leave the premises neat and tidy.<br><br><strong>The ideal candidate will bring the following values:</strong><br><ul><li>You're reliable</li><li>You're approachable</li><li>You're authentic</li><li>You're passionate</li><li>You're tenacious</li></ul></p>"
+          }
+        }
+        {% end_module_attribute %}
+        {% module_attribute "section" is_json=True %} 
+        {
+           "spacing": {
+            "top": 0,
+            "bottom": 250,
+            "top_sm": 0,
+            "bottom_sm": 120
+           },
+           "round_corners": {
+            "top_corners": 0,
+            "bottom_corners": 0,
+            "top_corners_sm": 0,
+            "bottom_corners_sm": 0
+           }
+        }
+        {% end_module_attribute %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+  
+  <!-----------------------  FORM  ----------------------->
+    {% dnd_section
+      padding={
+        'top': 0,
+        'bottom': 0,
+        'left': 0,
+        'right': 0
+      },
+      full_width='true',
+      vertical_alignment='MIDDLE'
+    %}
+      {% dnd_module "reposit_form"
+        path="../modules/Reposit - Form",
+        label="Reposit - Form",
+        offset=0
+      %}
+        {% module_attribute "form" is_json=True %}
+        {
+          "select_form": {
+            "form_id": "0f2e003f-113a-4055-97d9-b81a43bf7888"
+          }
+        }
+        {% end_module_attribute %}
+        {% module_attribute "section" is_json=True %} 
+        {
+           "overlap_section": "false",
+           "spacing": {
+            "top": 0,
+            "bottom": 250,
+            "top_sm": 0,
+            "bottom_sm": 120
+           },
+           "round_corners": {
+            "top_corners": 0,
+            "bottom_corners": 0,
+            "top_corners_sm": 0,
+            "bottom_corners_sm": 0
+           }
+        }
+        {% end_module_attribute %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+
+  <!-----------------------  TEAM CARDS  ----------------------->
+    {% dnd_section
+      padding={
+        'top': 0,
+        'bottom': 0,
+        'left': 0,
+        'right': 0
+      },
+      full_width='true',
+      vertical_alignment='MIDDLE'
+    %}
+      {% dnd_module "reposit_team_cards"
+        path="../modules/Reposit - Team Cards",
+        label="Reposit - Team Cards",
+        offset=0
+      %}
+        {% module_attribute "headings" is_json=True %} 
+        {
+          "alignment": "end",
+          "col_1": {
+            "eyebrow": {
+              "text": "Through the Years"
+            },
+            "title": {
+              "text": "Reposit in the",
+              "highlight_text": "Media"
+            }
+          },
+          "col_2": {
+            "text_area": {
+              "content": ""
+            },
+            "button": [
+              {
+                "text": "See All",
+                "style_option": "cta-secondary",
+                "use_arrow_icon": true
+              }
+            ]
+          }
+        }
+        {% end_module_attribute %}
+        {% module_attribute "cards" is_json=True %} 
+        {
+          "column_gap": 29,
+          "row_gap": 64,
+          "card": [
+            {
+              "img": {
+                "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Screen%20Shot%202022-12-18%20at%201.15.21%20pm.png",
+                "alt": "One Step off the Grid",
+                "loading": "lazy"
+              },
+              "round_corners": 6,
+              "fullname": "",
+              "title": "",
+              "description": "<h4>One Step off the Grid | 2020</h4><p>Ausgrid seeks thousands of homes to take part in expanded virtual power plant</p>",
+              "url": {
+                "content_id": null,
+                "href": "https://onestepoffthegrid.com.au/ausgrid-launches-phase-two-of-nsw-vpp-trial-casts-net-to-thousands-of-participants/",
+                "type": "EXTERNAL"
+              },
+              "open_link_in_new_tab": true
+            },
+            {
+              "img": {
+                "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Screen%20Shot%202022-12-18%20at%201.17.16%20pm.png",
+                "alt": "One Step off the Grid",
+                "loading": "lazy"
+              },
+              "round_corners": 6,
+              "fullname": "",
+              "title": "",
+              "description": "<h4>One Step off the Grid | 2020</h4><p>Home battery boost as NSW launches interest-free loans, Victoria expands rebate</p>",
+              "url": {
+                "content_id": null,
+                "href": "https://onestepoffthegrid.com.au/home-battery-boost-as-nsw-launches-interest-free-loans-victoria-expands-rebate/",
+                "type": "EXTERNAL"
+              },
+              "open_link_in_new_tab": true
+            },
+            {
+              "img": {
+                "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Screen%20Shot%202022-12-18%20at%201.18.45%20pm.png",
+                "alt": "PV Magazine",
+                "loading": "lazy"
+              },
+              "round_corners": 6,
+              "fullname": "",
+              "title": "",
+              "description": "<h4>PV Magazine | 2020</h4><p>South Australia’s Home Battery Scheme now open to new builds</p>",
+              "url": {
+                "content_id": null,
+                "href": "https://www.pv-magazine-australia.com/2020/01/30/south-australias-home-battery-scheme-now-open-to-new-builds/",
+                "type": "EXTERNAL"
+              },
+              "open_link_in_new_tab": true
+            },
+            {
+              "img": {
+                "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Screen%20Shot%202022-12-18%20at%201.21.03%20pm.png",
+                "alt": "Tech Guide",
+                "loading": "lazy"
+              },
+              "round_corners": 6,
+              "fullname": "",
+              "title": "",
+              "description": "<h4>Tech Guide | 2019</h4><p>How Reposit can help you pay less for your electricity</p>",
+              "url": {
+                "content_id": null,
+                "href": "https://www.techguide.com.au/news/renewable-energy/reposit-can-help-pay-less-electricity/",
+                "type": "EXTERNAL"
+              },
+              "open_link_in_new_tab": true
+            },
+            {
+              "img": {
+                "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Screen%20Shot%202022-12-18%20at%201.28.44%20pm.png",
+                "alt": "Green Tech Media",
+                "loading": "lazy"
+              },
+              "round_corners": 6,
+              "fullname": "",
+              "title": "",
+              "description": "<h4>Green Tech Media | 2018</h4><p>Australian Utility Explores Solar-Plus-Storage and Demand Response for Substation Deferral</p>",
+              "url": {
+                "content_id": null,
+                "href": "https://www.greentechmedia.com/articles/read/australian-utility-explores-batteries-for-substation-deferral",
+                "type": "EXTERNAL"
+              },
+              "open_link_in_new_tab": true
+            },
+            {
+              "img": {
+                "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Screen%20Shot%202022-12-18%20at%201.29.29%20pm.png",
+                "alt": "Australian Financial Review",
+                "loading": "lazy"
+              },
+              "round_corners": 6,
+              "fullname": "",
+              "title": "",
+              "description": "<h4>Australian Financial Review | 2016</h4><p>Battery software firm to networks: Tariff reform could backfire</p>",
+              "url": {
+                "content_id": null,
+                "href": "https://www.afr.com/politics/battery-software-firm-to-networks-tariff-reform-could-backfire-20161206-gt57nr",
+                "type": "EXTERNAL"
+              },
+              "open_link_in_new_tab": true
+            },
+            {
+              "img": {
+                "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Screen%20Shot%202022-12-18%20at%201.31.16%20pm.png",
+                "alt": "The Age Act News",
+                "loading": "lazy"
+              },
+              "round_corners": 6,
+              "fullname": "",
+              "title": "",
+              "description": "<h4>The Age Act News | 2016</h4><p>How a smart solar battery can give you the tools to live without power bills</p>",
+              "url": {
+                "content_id": null,
+                "href": "https://www.theage.com.au/national/act/how-a-smart-solar-battery-can-give-you-the-tools-to-live-without-power-bills-20161108-gskg37.html",
+                "type": "EXTERNAL"
+              },
+              "open_link_in_new_tab": true
+            },
+            {
+              "img": {
+                "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Screen%20Shot%202022-12-18%20at%201.32.09%20pm.png",
+                "alt": "The Guardian",
+                "loading": "lazy"
+              },
+              "round_corners": 6,
+              "fullname": "",
+              "title": "",
+              "description": "<h4>The Guardian | 2016</h4><p>People power: Tasmanian residents to store solar energy and sell it back to grid</p>",
+              "url": {
+                "content_id": null,
+                "href": "https://www.theguardian.com/sustainable-business/2016/may/17/people-power-tasmanian-residents-to-store-solar-energy-and-sell-it-back-to-grid",
+                "type": "EXTERNAL"
+              },
+              "open_link_in_new_tab": true
+            }
+          ]
+        }
+        {% end_module_attribute %}
+        {% module_attribute "section" is_json=True %} 
+        {
+           "spacing": {
+            "top": 0,
+            "bottom": 250,
+            "top_sm": 0,
+            "bottom_sm": 120
+           },
+           "round_corners": {
+            "top_corners": 0,
+            "bottom_corners": 0,
+            "top_corners_sm": 0,
+            "bottom_corners_sm": 0
+           }
+        }
+        {% end_module_attribute %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+
+  <!----------------------- CTA  ----------------------->
+    {% dnd_section
+      padding={
+        'top': 0,
+        'bottom': 0,
+        'left': 0,
+        'right': 0
+      },
+      full_width='true',
+      vertical_alignment='MIDDLE'
+    %}
+      {% dnd_module "reposit_cta"
+        path="../modules/Reposit - CTA",
+        label="Reposit - CTA",
+        offset=0
+      %}
+        {% module_attribute "col_1" is_json=True %} 
+        {
+          "width": 50,
+          "eyebrow": {
+            "text": ""
+          },
+          "title": {
+            "text": "Are you ready for Reposit No Bill™?",
+            "highlight_text": ""
+          },
+          "text_area": {
+            "content": "<p>Complete our quick checklist and see if you are Reposit No Bill™ ready.</p>",
+            "bottom_space": 44
+          },
+          "button": [
+            {
+              "text": "Begin Checklist",
+              "style_option": "cta-secondary",
+              "use_arrow_icon": true
+            }
+          ]
+          
+        }
+        {% end_module_attribute %}
+        {% module_attribute "col_2" is_json=True %} 
+        {
+          "content_type": "img",
+          "img": {
+            "src": "https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/cta_checklist.png",
+            "alt": "Checklist Image",
+            "loading": "lazy"
+          },
+          "position": {
+            "bottom": -50
+          }
+        }
+        {% end_module_attribute %}
+        {% module_attribute "section" is_json=True %} 
+        {
+          "bg_color": {
+            "color": "#FFFFFF",
+            "opacity": 100
+           },
+           "spacing": {
+            "top": 0,
+            "bottom": 150,
+            "top_sm": 0,
+            "bottom_sm": 80
+           },
+           "round_corners": {
+            "top_corners": 0,
+            "bottom_corners": 64,
+            "top_corners_sm": 0,
+            "bottom_corners_sm": 42
+           }
+        }
+        {% end_module_attribute %}
+      {% end_dnd_module %}
+    {% end_dnd_section %}
+
+  {% end_dnd_area %}
+{% endblock body %}

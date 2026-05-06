@@ -1,0 +1,436 @@
+{
+  "isAvailableForNewContent" : true,
+  "templateType" : 4,
+  "attachedStylesheets" : [ {
+    "type" : "cos_extension_resource",
+    "path" : "/Coded files/Custom/page/Vast_Theme/vast-style.css"
+  } ],
+  "attachedJs" : [ ],
+  "customHead" : "",
+  "customFooter" : "",
+  "bodyClass" : "site-page two-column",
+  "bodyCss" : "",
+  "bodyEditable" : false,
+  "layoutData" : {
+    "x" : 0,
+    "w" : 12,
+    "name" : "",
+    "label" : "",
+    "type" : "cell",
+    "params" : { },
+    "rows" : [ {
+      "0" : {
+        "x" : 0,
+        "w" : 12,
+        "name" : "Vast Theme/Header",
+        "label" : "Vast Theme/Header",
+        "type" : "global_group",
+        "params" : {
+          "path" : "/Global content/Global Groups/Vast Theme/Vast Theme/Vast Header.template.json",
+          "overrideable" : false,
+          "css_style" : "",
+          "css_class" : ""
+        },
+        "rows" : [ ],
+        "rowMetaData" : [ ],
+        "cells" : [ ],
+        "cssId" : "",
+        "cssClass" : "",
+        "cssStyle" : "",
+        "styles" : null,
+        "widgets" : [ ]
+      }
+    }, {
+      "0" : {
+        "x" : 0,
+        "w" : 12,
+        "name" : "",
+        "label" : "",
+        "type" : "section_delimiter",
+        "params" : { },
+        "rows" : [ ],
+        "rowMetaData" : [ ],
+        "cells" : [ ],
+        "cssId" : "",
+        "cssClass" : "",
+        "cssStyle" : "",
+        "styles" : null,
+        "widgets" : [ ]
+      }
+    }, {
+      "0" : {
+        "x" : 0,
+        "w" : 12,
+        "name" : "module_14060507776693076",
+        "label" : "Title Background",
+        "type" : "cell",
+        "params" : {
+          "css_class" : "title-background padding20tb",
+          "value" : "",
+          "css_id" : "",
+          "overrideable" : false,
+          "css_style" : "",
+          "wrapping_html" : ""
+        },
+        "rows" : [ {
+          "0" : {
+            "x" : 0,
+            "w" : 12,
+            "name" : "module_14060507799333316",
+            "label" : "Page Center",
+            "type" : "cell",
+            "params" : {
+              "css_class" : "page-center",
+              "value" : "",
+              "css_id" : "",
+              "overrideable" : false,
+              "css_style" : "",
+              "wrapping_html" : ""
+            },
+            "rows" : [ {
+              "0" : {
+                "x" : 0,
+                "w" : 12,
+                "name" : "module_14060508297404578",
+                "label" : "Page Title",
+                "type" : "header",
+                "params" : {
+                  "header_tag" : "h1",
+                  "overrideable" : true,
+                  "value" : "Vast Two Column Right Website Page"
+                },
+                "rows" : [ ],
+                "rowMetaData" : [ ],
+                "cells" : [ ],
+                "cssId" : "",
+                "cssClass" : "",
+                "cssStyle" : "",
+                "styles" : null,
+                "widgets" : [ ]
+              }
+            } ],
+            "rowMetaData" : [ ],
+            "cells" : [ ],
+            "cssId" : "",
+            "cssClass" : "page-center",
+            "cssStyle" : "",
+            "styles" : null,
+            "widgets" : [ ]
+          }
+        } ],
+        "rowMetaData" : [ ],
+        "cells" : [ ],
+        "cssId" : "",
+        "cssClass" : "title-background padding20tb",
+        "cssStyle" : "",
+        "styles" : null,
+        "widgets" : [ ]
+      }
+    }, {
+      "0" : {
+        "x" : 0,
+        "w" : 12,
+        "name" : "module_13885006495507970",
+        "label" : "Page Center, Content Wrapper",
+        "type" : "cell",
+        "params" : {
+          "css_class" : "page-center content-wrapper padding60tb",
+          "value" : "",
+          "css_id" : "",
+          "overrideable" : false,
+          "css_style" : "",
+          "wrapping_html" : ""
+        },
+        "rows" : [ {
+          "0" : {
+            "x" : 0,
+            "w" : 8,
+            "name" : "module_139526889100114",
+            "label" : "Main Content",
+            "type" : "cell",
+            "params" : {
+              "css_class" : "main-content",
+              "value" : "",
+              "css_id" : "",
+              "overrideable" : false,
+              "css_style" : "",
+              "wrapping_html" : ""
+            },
+            "rows" : [ {
+              "0" : {
+                "x" : 0,
+                "w" : 12,
+                "name" : "module_13885046520011784",
+                "label" : "Left Column",
+                "type" : "widget_container",
+                "params" : {
+                  "wrapping_html" : "",
+                  "value" : "",
+                  "css_id" : "",
+                  "overrideable" : false,
+                  "css_style" : "",
+                  "per_widget_wrapper_html" : "",
+                  "css_class" : ""
+                },
+                "rows" : [ ],
+                "rowMetaData" : [ ],
+                "cells" : [ ],
+                "cssId" : "",
+                "cssClass" : "",
+                "cssStyle" : "",
+                "styles" : null,
+                "widgets" : [ {
+                  "x" : 0,
+                  "w" : 12,
+                  "name" : "module_13885047978573602",
+                  "label" : "Rich Text",
+                  "type" : "rich_text",
+                  "params" : {
+                    "html" : "<h2>Meet our team</h2>\n<p><span>Use your About page to help your visitors learn more about you. We all know that people do business with people, not companies. So tell them a little bit more about yourself as a person. Include profiles of your management team. Upload images so that folks will recognize you at conferences and events. Hey. It's not exactly rocket science. But it works.</span></p>\n<p><span>Use your About page to help your visitors learn more about you. We all know that people do business with people, not companies. So tell them a little bit more about yourself as a person. Include profiles of your management team. Upload images so that folks will recognize you at conferences and events. Hey. It's not exactly rocket science. But it works.</span></p>",
+                    "overrideable" : true
+                  },
+                  "rows" : [ ],
+                  "rowMetaData" : [ ],
+                  "cells" : [ ],
+                  "cssId" : "",
+                  "cssClass" : "",
+                  "cssStyle" : "",
+                  "styles" : null,
+                  "widgets" : [ ]
+                }, {
+                  "x" : 0,
+                  "w" : 12,
+                  "name" : "module_14878765759521045",
+                  "label" : "Vast Team Member Module",
+                  "type" : "custom_widget",
+                  "params" : {
+                    "overrideable" : true,
+                    "css_class" : "",
+                    "css_id" : "",
+                    "css_id_str" : "",
+                    "css_style" : "",
+                    "ending_html" : "",
+                    "starting_html" : "",
+                    "widget_name" : "Vast Team Member Module"
+                  },
+                  "rows" : [ ],
+                  "rowMetaData" : [ ],
+                  "cells" : [ ],
+                  "cssId" : "",
+                  "cssClass" : "",
+                  "cssStyle" : "",
+                  "styles" : null,
+                  "widgets" : [ ]
+                } ]
+              }
+            } ],
+            "rowMetaData" : [ ],
+            "cells" : [ ],
+            "cssId" : "",
+            "cssClass" : "main-content",
+            "cssStyle" : "",
+            "styles" : null,
+            "widgets" : [ ]
+          },
+          "8" : {
+            "x" : 8,
+            "w" : 4,
+            "name" : "module_138850896827422702",
+            "label" : "Sidebar, Right",
+            "type" : "cell",
+            "params" : {
+              "css_class" : "sidebar right",
+              "value" : "",
+              "css_id" : "",
+              "overrideable" : false,
+              "css_style" : "",
+              "wrapping_html" : ""
+            },
+            "rows" : [ {
+              "0" : {
+                "x" : 0,
+                "w" : 12,
+                "name" : "module_139532480564398",
+                "label" : "Right Column",
+                "type" : "widget_container",
+                "params" : {
+                  "overrideable" : false
+                },
+                "rows" : [ ],
+                "rowMetaData" : [ ],
+                "cells" : [ ],
+                "cssId" : "",
+                "cssClass" : "",
+                "cssStyle" : "",
+                "styles" : null,
+                "widgets" : [ {
+                  "x" : 0,
+                  "w" : 12,
+                  "name" : "module_138850896477922527",
+                  "label" : "Vast Testimonial",
+                  "type" : "custom_widget",
+                  "params" : {
+                    "overrideable" : true,
+                    "css_class" : "",
+                    "css_id" : "",
+                    "css_id_str" : "",
+                    "css_style" : "",
+                    "ending_html" : "",
+                    "starting_html" : "",
+                    "widget_name" : "Vast Testimonial"
+                  },
+                  "rows" : [ ],
+                  "rowMetaData" : [ ],
+                  "cells" : [ ],
+                  "cssId" : "",
+                  "cssClass" : "",
+                  "cssStyle" : "",
+                  "styles" : null,
+                  "widgets" : [ ]
+                }, {
+                  "x" : 0,
+                  "w" : 12,
+                  "name" : "module_138850899152023495",
+                  "label" : "Call-to-Action",
+                  "type" : "cta",
+                  "params" : {
+                    "overrideable" : false
+                  },
+                  "rows" : [ ],
+                  "rowMetaData" : [ ],
+                  "cells" : [ ],
+                  "cssId" : "",
+                  "cssClass" : "",
+                  "cssStyle" : "",
+                  "styles" : null,
+                  "widgets" : [ ]
+                } ]
+              }
+            } ],
+            "rowMetaData" : [ ],
+            "cells" : [ ],
+            "cssId" : "",
+            "cssClass" : "sidebar right",
+            "cssStyle" : "",
+            "styles" : null,
+            "widgets" : [ {
+              "x" : 0,
+              "w" : 12,
+              "name" : "module_138850896477922527",
+              "label" : "Sidebar Rich Text",
+              "type" : "rich_text",
+              "params" : {
+                "html" : "<h2>Something Powerful</h2>\n<h3>Tell The Reader More</h3>\n<p>The headline and subheader tells us what you're <a href=\"#\">offering</a>, and the form header closes the deal. Over here you can explain why your offer is so great it's worth filling out a form for.</p>\n<p>Remember:</p>\n<ul>\n<li>Bullets are great</li>\n<li>For spelling out <a href=\"#\">benefits</a> and</li>\n<li>Turning visitors into leads.</li>\n</ul>",
+                "overrideable" : true,
+                "is_in_container" : false
+              },
+              "rows" : [ ],
+              "rowMetaData" : [ ],
+              "cells" : [ ],
+              "cssId" : "",
+              "cssClass" : "",
+              "cssStyle" : "",
+              "styles" : null,
+              "widgets" : [ ]
+            }, {
+              "x" : 0,
+              "w" : 12,
+              "name" : "module_138850899152023495",
+              "label" : "Call-to-Action",
+              "type" : "cta",
+              "params" : {
+                "overrideable" : false,
+                "is_in_container" : false
+              },
+              "rows" : [ ],
+              "rowMetaData" : [ ],
+              "cells" : [ ],
+              "cssId" : "",
+              "cssClass" : "",
+              "cssStyle" : "",
+              "styles" : null,
+              "widgets" : [ ]
+            } ]
+          }
+        } ],
+        "rowMetaData" : [ ],
+        "cells" : [ ],
+        "cssId" : "",
+        "cssClass" : "page-center content-wrapper padding60tb",
+        "cssStyle" : "",
+        "styles" : null,
+        "widgets" : [ ]
+      }
+    }, {
+      "0" : {
+        "x" : 0,
+        "w" : 12,
+        "name" : "",
+        "label" : "",
+        "type" : "section_delimiter",
+        "params" : { },
+        "rows" : [ ],
+        "rowMetaData" : [ ],
+        "cells" : [ ],
+        "cssId" : "",
+        "cssClass" : "",
+        "cssStyle" : "",
+        "styles" : null,
+        "widgets" : [ ]
+      }
+    }, {
+      "0" : {
+        "x" : 0,
+        "w" : 12,
+        "name" : "Vast Theme/Full Width Blog Subscription Modul",
+        "label" : "Vast Theme/Full Width Blog Subscription Modul",
+        "type" : "global_group",
+        "params" : {
+          "path" : "/Global content/Global Groups/Vast Theme/Vast Theme/Vast Full Width Blog Subscription Module.template.json",
+          "overrideable" : false
+        },
+        "rows" : [ ],
+        "rowMetaData" : [ ],
+        "cells" : [ ],
+        "cssId" : "",
+        "cssClass" : "",
+        "cssStyle" : "",
+        "styles" : null,
+        "widgets" : [ ]
+      }
+    }, {
+      "0" : {
+        "x" : 0,
+        "w" : 12,
+        "name" : "module_1486583348602804",
+        "label" : "Vast Theme/Vast - Footer",
+        "type" : "global_group",
+        "params" : {
+          "overrideable" : false,
+          "css_class" : "",
+          "css_id" : "",
+          "css_id_str" : "",
+          "css_style" : "",
+          "ending_html" : "",
+          "starting_html" : "",
+          "path" : "/Global content/Global Groups/Vast Theme/Vast Theme/Vast Footer.template.json"
+        },
+        "rows" : [ ],
+        "rowMetaData" : [ ],
+        "cells" : [ ],
+        "cssId" : "",
+        "cssClass" : "",
+        "cssStyle" : "",
+        "styles" : null,
+        "widgets" : [ ]
+      }
+    } ],
+    "rowMetaData" : [ ],
+    "cells" : [ ],
+    "cssId" : "",
+    "cssClass" : "",
+    "cssStyle" : "",
+    "styles" : null,
+    "widgets" : [ ]
+  }
+}

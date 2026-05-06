@@ -1,0 +1,336 @@
+{% import "../macros/icon.html" as icon %}
+
+{# TYPE OF BLOG POSTS #}
+{%- if module.start.post_type == 'recent' %}
+  {% set related_posts = blog_recent_posts(module.start.blog,  module.start.num_posts ) %}
+{% elif module.start.post_type == 'popular' %}
+  {% set related_posts = blog_popular_posts(module.start.blog,  module.start.num_posts ) %}
+{% elif module.start.post_type == 'recent_topic_posts' %}
+  {% set related_posts = blog_recent_tag_posts(module.start.blog, module.start.tag, module.start.num_posts) %}
+{% elif module.start.post_type == 'popular_topic_posts' %}
+  {% set related_posts = blog_popular_posts(module.start.blog, module.start.num_posts, module.start.tag) %}
+{%- endif -%}
+
+
+{% require_css %}
+<style>
+  #{{name}} {
+    {% if module.section.overlap_section %}margin-top: -10vh;{% endif %}
+    background-color: {{ module.section.bg_color.rgba or 'transparent' }};
+    border-radius: {{ module.section.round_corners.top_corners or 0 }}px {{ module.section.round_corners.top_corners or 0 }}px {{ module.section.round_corners.bottom_corners or 0 }}px {{ module.section.round_corners.bottom_corners or 0 }}px;
+    padding: {{ module.section.spacing.top or 0 }}px 0 {{ module.section.spacing.bottom or 0 }}px 0;
+  }
+  
+  #{{name}} h1, #{{name}} h2, #{{name}} h3, #{{name}} h4, #{{name}} h5, #{{name}} h6, #{{name}} p {
+    margin: 0;
+  }
+
+  #{{name}} .flex-container {
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 48px;
+  }
+
+  {% if module.col_1.max_width %}
+  #{{name}} .column-1 {
+    max-width: {{ module.col_1.max_width }}px;
+  }
+  {% endif %}
+  
+  #{{name}} .column-1 .eyebrow {
+    margin-bottom: {{ module.col_1.eyebrow.bottom_space or 0 }}px;
+    {{ 'color: ' ~ module.col_1.eyebrow.text_color.rgba ~ ';' if module.col_1.eyebrow.text_color.rgba }}
+  }
+  
+  #{{name}} .column-1 .title {
+    margin-bottom: {{ module.col_1.title.bottom_space or 0 }}px;
+    {{ 'color: ' ~ module.col_1.title.text_color.rgba ~ ';' if module.col_1.title.text_color.rgba }}
+  }
+  
+  #{{name}} .column-1 .highlight {
+    color: {{ module.col_1.title.highlight_color.rgba }};
+  }
+  
+  {# BLOG #}
+  #{{name}} .blog-cards-container {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat({{ module.start.num_col }}, 1fr);
+    column-gap: 20px;
+    row-gap: 22px;
+  }
+  
+  {% for post in related_posts %}
+  #{{name}} #blog-post-{{ loop.index }} {
+    background: linear-gradient(rgba(31, 42, 68, 0), rgba(31, 42, 68, 1)),
+      {% if post.featured_image %}url({{ post.featured_image }}){% else %}url("https://3445699.fs1.hubspotusercontent-na1.net/hubfs/3445699/Slider%20Images/Rectangle%205-1.png"){% endif %} center center / cover no-repeat;
+    background-blend-mode: multiply;
+  }
+  {% endfor %}
+  
+  #{{name}} .blog-card {
+    min-height: 364px;
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    gap: 19px;
+    border-radius: 20px;
+    padding: 24px 22px;
+    color: #fff;
+    transition: all .3s;
+  }
+  
+  #{{name}} .blog-card:hover {
+    transform: translateY(-10px);
+  }
+  
+  #{{name}} .blog-tags {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  
+  #{{name}} .tag-single {
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: 150%;
+    display: flex;
+    padding: 7px 20px;
+    align-items: center;
+    gap: 12px;
+    border-radius: 43px;
+    border: 1px solid #fff;
+  }
+  
+  #{{name}} .blog-title {
+    color: #fff;
+    font-size: 28px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: 120%;
+  }
+
+  #{{name}} .post-bottom-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  #{{name}} .post-date {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #fff;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: 150%;
+  }
+  
+  #{{name}} .post-date span {
+    display: flex;
+  }
+  
+  #{{name}} .reading-mins {
+    color: #4698CB;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 150%;
+  }
+  
+  #{{name}} .mobile {
+    display: none;
+  }
+
+  {# MOBILE #}
+  @media (max-width: 992px) {
+    #{{name}} .flex-container {
+      margin-bottom: 24px;
+    }
+
+    #{{name}} .blog-cards-container {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    #{{name}} .blog-title {
+      font-size: 24px;
+    }
+  }
+
+  @media (max-width: {{ theme.layout.style_opts.slim_width }}px) {
+    #{{name}} {
+      border-radius: {{ module.section.round_corners.top_corners_sm or 0 }}px {{ module.section.round_corners.top_corners_sm or 0 }}px {{ module.section.round_corners.bottom_corners_sm or 0 }}px {{ module.section.round_corners.bottom_corners_sm or 0 }}px;
+      {{ 'padding-top: ' ~ module.section.spacing.top_sm ~ 'px;' if module.section.spacing.top_sm }}
+      {{ 'padding-bottom: ' ~ module.section.spacing.bottom_sm ~ 'px;' if module.section.spacing.bottom_sm }}
+    }
+    
+    #{{name}} .flex-container {
+      flex-direction: column;
+      align-items: start;
+      gap: 24px;
+    }
+    
+    #{{name}} .blog-cards-container {
+      grid-template-columns: 1fr;
+      row-gap: 20px;
+    }
+    
+    #{{name}} .blog-card:hover {
+      transform: translateY(0);
+    }
+    
+    #{{name}} .blog-title {
+      font-size: 22px;
+    }
+    
+    #{{name}} .desktop {
+      display: none;
+    }
+    
+    #{{name}} .mobile {
+      display: block;
+      margin-top: 24px;
+    }
+  }
+</style>
+{% end_require_css %}
+
+{### HTML ###}
+<div id="{{name}}">
+  <div class="container">
+
+    {# COLUMN 1 #}
+    <div class="flex-container column-1">
+      <div class="left-col">
+        {# EYEBROW #}
+        {% if module.col_1.eyebrow.text %}
+        <div class="eyebrow-container">
+          <{{ module.col_1.eyebrow.display_as }} class="eyebrow">
+            {{ module.col_1.eyebrow.text }}
+          </{{ module.col_1.eyebrow.display_as }}>
+        </div>
+        {% endif %}
+
+        {# TITLE #}
+        {% if module.col_1.title.text or module.col_1.title.highlight_text %}
+        <div class="title-container">
+          <{{ module.col_1.title.display_as }} class="title">
+            {{ module.col_1.title.text }} {{ '<span class="highlight"> ' ~ module.col_1.title.highlight_text ~ '</span>' if module.col_1.title.highlight_text }}
+          </{{ module.col_1.title.display_as }}>
+        </div>
+        {% endif %}
+
+        {# TEXT CONTAINER #}
+        {% if module.col_1.text_area.content %}
+          <div class="text-container">
+            {{ module.col_1.text_area.content }}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="right-col desktop">
+        {# BUTTONS #}
+        <div class="btn-container">
+          {% for button in module.col_1.button %}
+            {% if button.use_cta %}
+              {% cta guid='{{ button.guid }}' %}
+            {% else %}
+              {% if button.text %}
+              <a class="button {{ button.style_option }}"
+                 {% if button.url.href %}href = "{% if button.url.type == 'EMAIL_ADDRESS' %}mailto: {% elif button.url.type == 'PHONE_NUMBER' %}tel: {% endif %}{{ button.url.href }}"{% endif %}
+                 {% if button.open_link_in_new_tab %}target="_blank"{% endif %}
+               >{{ button.text }}{% if button.use_arrow_icon %}<span>{{ icon.btn_arrow() }}</span>{% endif %}</a>
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+
+    </div> {# /.column-1 #}
+
+    {# COLUMN 2 #}
+    <div class="column-2">
+      <div class="blog-cards-container">
+        {% for post in related_posts %}
+        <a href="{{ post.absolute_url }}" id="blog-post-{{ loop.index }}" class="blog-card" aria-label="{{ post.name }}">
+          {# TAGS #}
+          <div class="blog-tag-container">
+            {% if post.tag_list and module.blog_card.show_tags %}
+            <div class="blog-tags">
+              {% for tag in post.tag_list %}
+                {# Shows only first 3 tags #}
+                {% if loop.index <= 3 %}
+                <span class="tag-single">{{ tag.name }}</span>
+                {% endif %}
+              {% endfor %}
+            </div>
+            {% endif %}
+          </div>
+
+          {# TITLE #}
+          <div class="blog-title-container">
+            <p class="blog-title">
+              {{ post.name }}
+            </p>
+          </div>
+
+          <div class="post-bottom-container">
+            {# POST DATE #}
+            {% if module.blog_card.show_posted_date %}
+            <p class="post-date">
+              {% if module.blog_card.show_calender %}
+              <span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <path d="M17.5 2H14.5V0.5C14.5 0.367392 14.4473 0.240215 14.3536 0.146447C14.2598 0.0526785 14.1326 0 14 0C13.8674 0 13.7402 0.0526785 13.6464 0.146447C13.5527 0.240215 13.5 0.367392 13.5 0.5V2H6.5V0.5C6.5 0.367392 6.44732 0.240215 6.35355 0.146447C6.25979 0.0526785 6.13261 0 6 0C5.86739 0 5.74021 0.0526785 5.64645 0.146447C5.55268 0.240215 5.5 0.367392 5.5 0.5V2H2.5C1.8372 2.00079 1.20178 2.26444 0.73311 2.73311C0.264441 3.20178 0.000793929 3.8372 0 4.5V17.5C0.000793929 18.1628 0.264441 18.7982 0.73311 19.2669C1.20178 19.7356 1.8372 19.9992 2.5 20H17.5C18.163 20 18.7989 19.7366 19.2678 19.2678C19.7366 18.7989 20 18.163 20 17.5V4.5C20 3.83696 19.7366 3.20107 19.2678 2.73223C18.7989 2.26339 18.163 2 17.5 2ZM19 17.5C19 17.8978 18.842 18.2794 18.5607 18.5607C18.2794 18.842 17.8978 19 17.5 19H2.5C2.10218 19 1.72064 18.842 1.43934 18.5607C1.15804 18.2794 1 17.8978 1 17.5V9H19V17.5ZM19 8H1V4.5C1 3.672 1.67 3 2.5 3H5.5V4.5C5.5 4.63261 5.55268 4.75979 5.64645 4.85355C5.74021 4.94732 5.86739 5 6 5C6.13261 5 6.25979 4.94732 6.35355 4.85355C6.44732 4.75979 6.5 4.63261 6.5 4.5V3H13.5V4.5C13.5 4.63261 13.5527 4.75979 13.6464 4.85355C13.7402 4.94732 13.8674 5 14 5C14.1326 5 14.2598 4.94732 14.3536 4.85355C14.4473 4.75979 14.5 4.63261 14.5 4.5V3H17.5C17.8978 3 18.2794 3.15804 18.5607 3.43934C18.842 3.72064 19 4.10218 19 4.5V8Z" fill="white"/>
+                </svg>
+              </span>&nbsp;
+              {% endif %}
+              {{ post.publish_date|format_date('MMM d, yyyy') }}
+            </p>
+            {% endif %}
+
+            {# READING MINS #}
+            {% if module.blog_card.show_time_to_read %}
+            <p class="reading-mins">
+              {% set initialPostWords = post.post_body|striptags|wordcount %}
+              {% set calculatedPostWords = (initialPostWords/100) * 100 %}
+              {% set finishedPostWords = calculatedPostWords|divide(300)|round(2) %}
+              {% set number = finishedPostWords|round %}
+              {% if number < 1 %}
+
+              {% else %}
+              {{ finishedPostWords|round }}
+              {%- endif -%}
+              {% if number == 1 %}&nbsp;min{% else %}&nbsp;mins{%- endif -%}
+            </p>
+            {%- endif -%}
+          </div>
+
+        </a> {# /.blog-post #}
+      {% endfor %}
+      </div>
+    </div> {# /.column-2 #}
+
+    <div class="mobile">
+      {# BUTTONS #}
+      <div class="btn-container">
+        {% for button in module.col_1.button %}
+          {% if button.use_cta %}
+              {% cta guid='{{ button.guid }}' %}
+            {% else %}
+              {% if button.text %}
+              <a class="button {{ button.style_option }}"
+                 {% if button.url.href %}href = "{% if button.url.type == 'EMAIL_ADDRESS' %}mailto: {% elif button.url.type == 'PHONE_NUMBER' %}tel: {% endif %}{{ button.url.href }}"{% endif %}
+                 {% if button.open_link_in_new_tab %}target="_blank"{% endif %}
+               >{{ button.text }}{% if button.use_arrow_icon %}<span>{{ icon.btn_arrow() }}</span>{% endif %}</a>
+              {% endif %}
+            {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+
+  </div> {# /.container #}
+</div>

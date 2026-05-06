@@ -1,0 +1,31 @@
+.hs-logo-grid {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: stretch;
+  justify-content: center;
+}
+.hs-logo-grid__logo-wrapper {
+  display: flex;
+  height: auto;
+  width: 100%;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.hs-logo-grid__logo {
+  position: relative;
+  display: block;
+  width: auto;
+  max-width: 100%;
+  -o-object-fit: contain;
+  object-fit: contain;
+}
+
+@media (max-width: 767px) {
+  .hs-logo-grid__logo-wrapper {
+    max-width: 100%;
+    flex: 0 1 100%;
+  }
+}

@@ -1,0 +1,1311 @@
+{
+  "isAvailableForNewContent" : true,
+  "templateType" : 4,
+  "attachedStylesheets" : [ {
+    "type" : "cos_extension_resource",
+    "path" : "/Coded files/Custom/page/Vast_Theme/vast-style.css"
+  } ],
+  "attachedJs" : [ ],
+  "customHead" : "",
+  "customFooter" : "",
+  "bodyClass" : "site-page one-column homepage",
+  "bodyCss" : "",
+  "bodyEditable" : false,
+  "layoutData" : {
+    "x" : 0,
+    "w" : 12,
+    "name" : "",
+    "label" : "",
+    "type" : "cell",
+    "params" : { },
+    "rows" : [ {
+      "0" : {
+        "x" : 0,
+        "w" : 12,
+        "name" : "module_1486569963441416",
+        "label" : "Vast Theme/Vast - Header",
+        "type" : "global_group",
+        "params" : {
+          "overrideable" : false,
+          "css_class" : "",
+          "css_id" : "",
+          "css_id_str" : "",
+          "css_style" : "",
+          "ending_html" : "",
+          "starting_html" : "",
+          "path" : "/Global content/Global Groups/Vast Theme/Vast Theme/Vast Header.template.json"
+        },
+        "rows" : [ ],
+        "rowMetaData" : [ ],
+        "cells" : [ ],
+        "cssId" : "",
+        "cssClass" : "",
+        "cssStyle" : "",
+        "styles" : null,
+        "widgets" : [ ]
+      }
+    }, {
+      "0" : {
+        "x" : 0,
+        "w" : 12,
+        "name" : "",
+        "label" : "",
+        "type" : "section_delimiter",
+        "params" : { },
+        "rows" : [ ],
+        "rowMetaData" : [ ],
+        "cells" : [ ],
+        "cssId" : "",
+        "cssClass" : "",
+        "cssStyle" : "",
+        "styles" : null,
+        "widgets" : [ ]
+      }
+    }, {
+      "0" : {
+        "x" : 0,
+        "w" : 12,
+        "name" : "module_14060371027015230",
+        "label" : "background Image",
+        "type" : "cell",
+        "params" : {
+          "css_class" : "",
+          "value" : "",
+          "css_id" : "",
+          "overrideable" : false,
+          "css_style" : "",
+          "wrapping_html" : "<div id=\"banner-background-image\">{{ html }}</div>"
+        },
+        "rows" : [ {
+          "0" : {
+            "x" : 0,
+            "w" : 12,
+            "name" : "module_14060372129318819",
+            "label" : "background Image",
+            "type" : "linked_image",
+            "params" : {
+              "src" : "http://cdn2.hubspot.net/hub/414391/file-1491762563-jpg/images/banner-image.jpg",
+              "css_class" : "background-image",
+              "height" : "1000",
+              "width" : "1500",
+              "link" : "",
+              "css_style" : "",
+              "wrapping_html" : "",
+              "overrideable" : true,
+              "alt" : "sup.jpg",
+              "open_in_new_tab" : false
+            },
+            "rows" : [ ],
+            "rowMetaData" : [ ],
+            "cells" : [ ],
+            "cssId" : "",
+            "cssClass" : "background-image",
+            "cssStyle" : "",
+            "styles" : null,
+            "widgets" : [ ]
+          }
+        }, {
+          "0" : {
+            "x" : 0,
+            "w" : 12,
+            "name" : "module_14060371111295635",
+            "label" : "Page Center",
+            "type" : "cell",
+            "params" : {
+              "css_class" : "page-center",
+              "value" : "",
+              "css_id" : "",
+              "overrideable" : false,
+              "css_style" : "",
+              "wrapping_html" : ""
+            },
+            "rows" : [ {
+              "0" : {
+                "x" : 0,
+                "w" : 12,
+                "name" : "module_1486576187893646",
+                "label" : "Header Text",
+                "type" : "cell",
+                "params" : {
+                  "overrideable" : false,
+                  "css_class" : "header-text",
+                  "css_id" : "",
+                  "css_id_str" : "",
+                  "css_style" : "",
+                  "ending_html" : "",
+                  "starting_html" : ""
+                },
+                "rows" : [ {
+                  "0" : {
+                    "x" : 0,
+                    "w" : 12,
+                    "name" : "module_14060372864589927",
+                    "label" : "Main Headline",
+                    "type" : "header",
+                    "params" : {
+                      "header_tag" : "h1",
+                      "css_class" : "",
+                      "value" : "Begin Here. Go Everywhere!",
+                      "overrideable" : true,
+                      "css_style" : "",
+                      "wrapping_html" : ""
+                    },
+                    "rows" : [ ],
+                    "rowMetaData" : [ ],
+                    "cells" : [ ],
+                    "cssId" : "",
+                    "cssClass" : "",
+                    "cssStyle" : "",
+                    "styles" : null,
+                    "widgets" : [ ]
+                  }
+                }, {
+                  "0" : {
+                    "x" : 0,
+                    "w" : 12,
+                    "name" : "module_140603737946111003",
+                    "label" : "Sub-main Headline",
+                    "type" : "header",
+                    "params" : {
+                      "header_tag" : "h3",
+                      "css_class" : "",
+                      "value" : "Get started on the HubSpot Website Platform with this simple, powerful theme. Customize your site with drag-and-drop modules or code it by hand. Once you get started, there's no telling where you might go.",
+                      "overrideable" : true,
+                      "css_style" : "",
+                      "wrapping_html" : ""
+                    },
+                    "rows" : [ ],
+                    "rowMetaData" : [ ],
+                    "cells" : [ ],
+                    "cssId" : "",
+                    "cssClass" : "",
+                    "cssStyle" : "",
+                    "styles" : null,
+                    "widgets" : [ ]
+                  }
+                }, {
+                  "0" : {
+                    "x" : 0,
+                    "w" : 12,
+                    "name" : "module_140603742845012486",
+                    "label" : "Call-to-Action",
+                    "type" : "cta",
+                    "params" : {
+                      "css_class" : "cta-container",
+                      "overrideable" : true,
+                      "css_style" : "",
+                      "wrapping_html" : "",
+                      "embed_code" : "<!--HubSpot Call-to-Action Code -->\n<span class=\"hs-cta-wrapper\" id=\"hs-cta-wrapper-7022c459-ea4b-476f-b3b7-653b83328b40\">\n    <span class=\"hs-cta-node hs-cta-7022c459-ea4b-476f-b3b7-653b83328b40\" id=\"hs-cta-7022c459-ea4b-476f-b3b7-653b83328b40\">\n        <!--[if lte IE 8]><div id=\"hs-cta-ie-element\"></div><![endif]-->\n        <a href=\"http://cta-redirect.hubspot.com/cta/redirect/3445699/7022c459-ea4b-476f-b3b7-653b83328b40\" ><img class=\"hs-cta-img\" id=\"hs-cta-img-7022c459-ea4b-476f-b3b7-653b83328b40\" style=\"border-width:0px;\" src=\"https://no-cache.hubspot.com/cta/default/3445699/7022c459-ea4b-476f-b3b7-653b83328b40.png\"  alt=\"Learn More\"/></a>\n    </span>\n    <script charset=\"utf-8\" src=\"https://js.hscta.net/cta/current.js\"></script>\n    <script type=\"text/javascript\">\n        hbspt.cta.load(3445699, '7022c459-ea4b-476f-b3b7-653b83328b40', {});\n    </script>\n</span>\n<!-- end HubSpot Call-to-Action Code -->\n",
+                      "guid" : "7022c459-ea4b-476f-b3b7-653b83328b40",
+                      "image_html" : "<!--HubSpot Call-to-Action Code -->\n<span class=\"hs-cta-wrapper\" data-hs-img-pg=\"7022c459-ea4b-476f-b3b7-653b83328b40\" id=\"hs-cta-wrapper-7022c459-ea4b-476f-b3b7-653b83328b40\">\n    <span class=\"hs-cta-node hs-cta-7022c459-ea4b-476f-b3b7-653b83328b40\" id=\"hs-cta-7022c459-ea4b-476f-b3b7-653b83328b40\">\n        <a href=\"https://cta-image-cms2.hubspot.com/ctas/v2/public/cs/ci/?pg=7022c459-ea4b-476f-b3b7-653b83328b40&pid=3445699&ecid={{encrypted_contact_id}}&eid={{email_campaign_id}}&ic={{impersonated_contact}}\" > <img class=\"hs-cta-img\" id=\"hs-cta-img-7022c459-ea4b-476f-b3b7-653b83328b40\" style=\"border-width:0px;\" mce_noresize=\"1\" src=\"https://cta-image-cms2.hubspot.com/ctas/v2/public/cs/il/?pg=7022c459-ea4b-476f-b3b7-653b83328b40&pid=3445699&ecid={{encrypted_contact_id}}&eid={{email_campaign_id}}&ic={{impersonated_contact}}\"  alt=\"Learn More\"/></a>\n    </span>\n</span>\n<!-- end HubSpot Call-to-Action Code -->\n",
+                      "image_src" : "https://no-cache.hubspot.com/cta/default/3445699/7022c459-ea4b-476f-b3b7-653b83328b40.png"
+                    },
+                    "rows" : [ ],
+                    "rowMetaData" : [ ],
+                    "cells" : [ ],
+                    "cssId" : "",
+                    "cssClass" : "cta-container",
+                    "cssStyle" : "",
+                    "styles" : null,
+                    "widgets" : [ ]
+                  }
+                } ],
+                "rowMetaData" : [ ],
+                "cells" : [ ],
+                "cssId" : "",
+                "cssClass" : "header-text",
+                "cssStyle" : "",
+                "styles" : null,
+                "widgets" : [ ]
+              }
+            } ],
+            "rowMetaData" : [ ],
+            "cells" : [ ],
+            "cssId" : "",
+            "cssClass" : "page-center",
+            "cssStyle" : "",
+            "styles" : null,
+            "widgets" : [ ]
+          }
+        }, {
+          "0" : {
+            "x" : 0,
+            "w" : 12,
+            "name" : "module_14060371176356086",
+            "label" : "Subscribe Form",
+            "type" : "cell",
+            "params" : {
+              "css_class" : "subscribe-form",
+              "value" : "",
+              "css_id" : "",
+              "overrideable" : false,
+              "css_style" : "",
+              "wrapping_html" : ""
+            },
+            "rows" : [ {
+              "0" : {
+                "x" : 0,
+                "w" : 12,
+                "name" : "module_14060371217106322",
+                "label" : "Page Center",
+                "type" : "cell",
+                "params" : {
+                  "css_class" : "page-center inner-form-group",
+                  "value" : "",
+                  "css_id" : "",
+                  "overrideable" : false,
+                  "css_style" : "",
+                  "wrapping_html" : ""
+                },
+                "rows" : [ {
+                  "0" : {
+                    "x" : 0,
+                    "w" : 12,
+                    "name" : "module_140603750257513698",
+                    "label" : "One Line of Text",
+                    "type" : "text",
+                    "params" : {
+                      "css_class" : "text-center title",
+                      "overrideable" : true,
+                      "css_style" : "",
+                      "value" : "Your website. Your blog. Your HubTheme.",
+                      "wrapping_html" : ""
+                    },
+                    "rows" : [ ],
+                    "rowMetaData" : [ ],
+                    "cells" : [ ],
+                    "cssId" : "",
+                    "cssClass" : "text-center title",
+                    "cssStyle" : "",
+                    "styles" : null,
+                    "widgets" : [ ]
+                  }
+                }, {
+                  "0" : {
+                    "x" : 0,
+                    "w" : 12,
+                    "name" : "module_140603753375814953",
+                    "label" : "One Line of Text",
+                    "type" : "text",
+                    "params" : {
+                      "css_class" : "text-center",
+                      "overrideable" : true,
+                      "css_style" : "",
+                      "value" : "Subscribe to our blog and stay in the loop with daily, weekly or monthly updates!",
+                      "wrapping_html" : ""
+                    },
+                    "rows" : [ ],
+                    "rowMetaData" : [ ],
+                    "cells" : [ ],
+                    "cssId" : "",
+                    "cssClass" : "text-center",
+                    "cssStyle" : "",
+                    "styles" : null,
+                    "widgets" : [ ]
+                  }
+                }, {
+                  "0" : {
+                    "x" : 0,
+                    "w" : 12,
+                    "name" : "module_140603795545423884",
+                    "label" : "Blog Email Subscription",
+                    "type" : "blog_subscribe",
+                    "params" : {
+                      "select_blog" : "default",
+                      "title" : "",
+                      "css_class" : "text-center padding10tb home-sub-form",
+                      "response_message" : "Thanks for Subscribing!",
+                      "overrideable" : false,
+                      "css_style" : "",
+                      "wrapping_html" : "",
+                      "edit_form_link" : "<a href=\"http://app.hubspot.com/forms/414391/964a93a8-2661-4f9d-b2f1-a8492e7e614f/edit/\" target=\"_blank\">Edit Subscription Form</a>"
+                    },
+                    "rows" : [ ],
+                    "rowMetaData" : [ ],
+                    "cells" : [ ],
+                    "cssId" : "",
+                    "cssClass" : "text-center padding10tb home-sub-form",
+                    "cssStyle" : "",
+                    "styles" : null,
+                    "widgets" : [ ]
+                  }
+                } ],
+                "rowMetaData" : [ ],
+                "cells" : [ ],
+                "cssId" : "",
+                "cssClass" : "page-center inner-form-group",
+                "cssStyle" : "",
+                "styles" : null,
+                "widgets" : [ ]
+              }
+            } ],
+            "rowMetaData" : [ ],
+            "cells" : [ ],
+            "cssId" : "",
+            "cssClass" : "subscribe-form",
+            "cssStyle" : "",
+            "styles" : null,
+            "widgets" : [ ]
+          }
+        }, {
+          "0" : {
+            "x" : 0,
+            "w" : 12,
+            "name" : "module_14060371288496841",
+            "label" : "Page Center",
+            "type" : "cell",
+            "params" : {
+              "css_class" : "page-center",
+              "value" : "",
+              "css_id" : "",
+              "overrideable" : false,
+              "css_style" : "",
+              "wrapping_html" : "<div class=\"social-media\">{{ html }}</div>"
+            },
+            "rows" : [ {
+              "0" : {
+                "x" : 0,
+                "w" : 6,
+                "name" : "module_140603809143927846",
+                "label" : "Rich Text",
+                "type" : "rich_text",
+                "params" : {
+                  "css_class" : "social-tagline",
+                  "html" : "<span>Love our business? &nbsp;Spread the word!</span>",
+                  "overrideable" : true,
+                  "css_style" : "",
+                  "wrapping_html" : ""
+                },
+                "rows" : [ ],
+                "rowMetaData" : [ ],
+                "cells" : [ ],
+                "cssId" : "",
+                "cssClass" : "social-tagline",
+                "cssStyle" : "",
+                "styles" : null,
+                "widgets" : [ ]
+              },
+              "6" : {
+                "x" : 6,
+                "w" : 6,
+                "name" : "module_140603812495628895",
+                "label" : "Social Sharing Bar",
+                "type" : "raw_html",
+                "params" : {
+                  "overrideable" : true,
+                  "value" : "<div class=\"social-share-data\">\n        <a class=\"twitter-share-button\" data-lang=\"en\" data-related=\n        \"YOUR_COMPANY_HERE\" data-url=\"{{ content.absolute_url }}\" data-via=\n        \"YOUR_TWITTER_HERE\" href=\"https://twitter.com/share\">Tweet</a> <script>\n!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=\"https://platform.twitter.com/widgets.js\";fjs.parentNode.insertBefore(js,fjs);}}(document,\"script\",\"twitter-wjs\");\n        </script>\n        <div class=\"linked-in-share\" style=\"display:inline-block;\">\n            <script src=\"//platform.linkedin.com/in.js\" type=\"text/javascript\"></script> <script data-counter=\"right\" data-url=\"{{ content.absolute_url }}\"\n            type=\"IN/Share\"></script>\n        </div>\n        <div class=\"fb-like\" data-font=\"lucida grande\" data-href=\n        \"{{ content.absolute_url }}\" data-layout=\"button_count\"\n        data-show-faces=\"true\" data-width=\"450\"></div>\n        <div class=\"g-plusone\" data-size=\"medium\" data-width=\"300\" style=\n        \"display:inline-block;\"></div>\n<div id=\"fb-root\"></div><script>\n                    (function(d, s, id) {\n                                var js, fjs = d.getElementsByTagName(s)[0];\n                                if (d.getElementById(id)) return;\n                                js = d.createElement(s); js.id = id;\n                                js.src = \"//connect.facebook.net/en_US/all.js#xfbml=1&appId=158578010837062\";\n                                fjs.parentNode.insertBefore(js, fjs);\n                            }(document, 'script', 'facebook-jssdk'));\n                        \n        </script> <script type=\"text/javascript\">\n                    (function() {\n                            var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;\n                            po.src = 'https://apis.google.com/js/plusone.js';\n                            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);\n                            })();\n                        \n        </script>\n </div>"
+                },
+                "rows" : [ ],
+                "rowMetaData" : [ ],
+                "cells" : [ ],
+                "cssId" : "",
+                "cssClass" : "",
+                "cssStyle" : "",
+                "styles" : null,
+                "widgets" : [ ]
+              }
+            } ],
+            "rowMetaData" : [ ],
+            "cells" : [ ],
+            "cssId" : "",
+            "cssClass" : "page-center",
+            "cssStyle" : "",
+            "styles" : null,
+            "widgets" : [ ]
+          }
+        } ],
+        "rowMetaData" : [ ],
+        "cells" : [ ],
+        "cssId" : "",
+        "cssClass" : "",
+        "cssStyle" : "",
+        "styles" : null,
+        "widgets" : [ ]
+      }
+    }, {
+      "0" : {
+        "x" : 0,
+        "w" : 12,
+        "name" : "module_140603821067230620",
+        "label" : "Gray Bar",
+        "type" : "cell",
+        "params" : {
+          "css_class" : "logo-bar-background",
+          "value" : "",
+          "css_id" : "",
+          "overrideable" : false,
+          "css_style" : "",
+          "wrapping_html" : ""
+        },
+        "rows" : [ {
+          "0" : {
+            "x" : 0,
+            "w" : 12,
+            "name" : "module_140603820325329913",
+            "label" : "Gray Bar Placeholder",
+            "type" : "rich_text",
+            "params" : {
+              "html" : "",
+              "overrideable" : true
+            },
+            "rows" : [ ],
+            "rowMetaData" : [ ],
+            "cells" : [ ],
+            "cssId" : "",
+            "cssClass" : "",
+            "cssStyle" : "",
+            "styles" : null,
+            "widgets" : [ ]
+          }
+        } ],
+        "rowMetaData" : [ ],
+        "cells" : [ ],
+        "cssId" : "",
+        "cssClass" : "logo-bar-background",
+        "cssStyle" : "",
+        "styles" : null,
+        "widgets" : [ ]
+      }
+    }, {
+      "0" : {
+        "x" : 0,
+        "w" : 12,
+        "name" : "module_13966221470251891",
+        "label" : "Page Center, Content Wrapper",
+        "type" : "cell",
+        "params" : {
+          "css_class" : "page-center content-wrapper padding40tb",
+          "value" : "",
+          "css_id" : "",
+          "overrideable" : false,
+          "css_style" : "",
+          "wrapping_html" : ""
+        },
+        "rows" : [ {
+          "0" : {
+            "x" : 0,
+            "w" : 12,
+            "name" : "module_13885006758448185",
+            "label" : "Main Content",
+            "type" : "cell",
+            "params" : {
+              "wrapping_html" : "",
+              "per_widget_wrapper_html" : "",
+              "value" : "",
+              "overrideable" : false,
+              "css_style" : "",
+              "css_class" : "main-content"
+            },
+            "rows" : [ {
+              "0" : {
+                "x" : 0,
+                "w" : 12,
+                "name" : "module_140190329510711990",
+                "label" : "Main Content Header Group",
+                "type" : "cell",
+                "params" : {
+                  "wrapping_html" : "",
+                  "per_widget_wrapper_html" : "",
+                  "value" : "",
+                  "overrideable" : false,
+                  "css_style" : "",
+                  "css_class" : "text-center padding40tb"
+                },
+                "rows" : [ {
+                  "0" : {
+                    "x" : 0,
+                    "w" : 12,
+                    "name" : "module_140603836716833827",
+                    "label" : "Main Content Header",
+                    "type" : "header",
+                    "params" : {
+                      "header_tag" : "h2",
+                      "overrideable" : true,
+                      "value" : "It's your HubTheme."
+                    },
+                    "rows" : [ ],
+                    "rowMetaData" : [ ],
+                    "cells" : [ ],
+                    "cssId" : "",
+                    "cssClass" : "",
+                    "cssStyle" : "",
+                    "styles" : null,
+                    "widgets" : [ ]
+                  }
+                }, {
+                  "0" : {
+                    "x" : 0,
+                    "w" : 12,
+                    "name" : "module_140603840412534974",
+                    "label" : "Main Content Sub-Header",
+                    "type" : "text",
+                    "params" : {
+                      "css_class" : "sub-headline",
+                      "overrideable" : true,
+                      "value" : "Do whatever your heart desires with it.",
+                      "css_style" : "",
+                      "wrapping_html" : ""
+                    },
+                    "rows" : [ ],
+                    "rowMetaData" : [ ],
+                    "cells" : [ ],
+                    "cssId" : "",
+                    "cssClass" : "sub-headline",
+                    "cssStyle" : "",
+                    "styles" : null,
+                    "widgets" : [ ]
+                  }
+                } ],
+                "rowMetaData" : [ ],
+                "cells" : [ ],
+                "cssId" : "",
+                "cssClass" : "text-center padding40tb",
+                "cssStyle" : "",
+                "styles" : null,
+                "widgets" : [ {
+                  "x" : 0,
+                  "w" : 12,
+                  "name" : "module_13885011246079525",
+                  "label" : "Rich Text",
+                  "type" : "rich_text",
+                  "params" : {
+                    "html" : "<h2>Something Powerful</h2>\n<h3>Tell The Reader More</h3>\n<p>The headline and subheader tells us what you're&nbsp;<a href=\"#\">offering</a>, and the form header closes the deal. Over here you can explain why your offer is so great it's worth filling out a form for.</p>\n<p>Remember:</p>\n<ul>\n<li>Bullets are great</li>\n<li>For spelling out&nbsp;<a href=\"#\">benefits</a>&nbsp;and</li>\n<li>Turning visitors into leads.</li>\n</ul>",
+                    "overrideable" : true,
+                    "is_in_container" : false
+                  },
+                  "rows" : [ ],
+                  "rowMetaData" : [ ],
+                  "cells" : [ ],
+                  "cssId" : "",
+                  "cssClass" : "",
+                  "cssStyle" : "",
+                  "styles" : null,
+                  "widgets" : [ ]
+                } ]
+              }
+            }, {
+              "0" : {
+                "x" : 0,
+                "w" : 8,
+                "name" : "module_140603848951637738",
+                "label" : "Service/Product Description",
+                "type" : "cell",
+                "params" : {
+                  "overrideable" : false
+                },
+                "rows" : [ {
+                  "0" : {
+                    "x" : 0,
+                    "w" : 12,
+                    "name" : "module_1486569996340476",
+                    "label" : "Vast Service & Product Description",
+                    "type" : "custom_widget",
+                    "params" : {
+                      "overrideable" : true,
+                      "css_class" : "padding40tb",
+                      "css_id" : "",
+                      "css_id_str" : "",
+                      "css_style" : "",
+                      "ending_html" : "",
+                      "starting_html" : "",
+                      "widget_name" : "Vast Service & Product Description",
+                      "schema_version" : 1,
+                      "path" : "/Custom modules/Vast Service & Product Description"
+                    },
+                    "rows" : [ ],
+                    "rowMetaData" : [ ],
+                    "cells" : [ ],
+                    "cssId" : "",
+                    "cssClass" : "padding40tb",
+                    "cssStyle" : "",
+                    "styles" : null,
+                    "widgets" : [ ]
+                  }
+                }, {
+                  "0" : {
+                    "x" : 0,
+                    "w" : 12,
+                    "name" : "module_1486569997049478",
+                    "label" : "Vast Service & Product Description",
+                    "type" : "custom_widget",
+                    "params" : {
+                      "overrideable" : true,
+                      "css_class" : "padding40tb",
+                      "css_id" : "",
+                      "css_id_str" : "",
+                      "css_style" : "",
+                      "ending_html" : "",
+                      "starting_html" : "",
+                      "widget_name" : "Vast Service & Product Description",
+                      "schema_version" : 1,
+                      "path" : "/Custom modules/Vast Service & Product Description"
+                    },
+                    "rows" : [ ],
+                    "rowMetaData" : [ ],
+                    "cells" : [ ],
+                    "cssId" : "",
+                    "cssClass" : "padding40tb",
+                    "cssStyle" : "",
+                    "styles" : null,
+                    "widgets" : [ ]
+                  }
+                } ],
+                "rowMetaData" : [ ],
+                "cells" : [ ],
+                "cssId" : "",
+                "cssClass" : "",
+                "cssStyle" : "",
+                "styles" : null,
+                "widgets" : [ ]
+              },
+              "8" : {
+                "x" : 8,
+                "w" : 4,
+                "name" : "module_140603881714751423",
+                "label" : "Vast Testimonial",
+                "type" : "custom_widget",
+                "params" : {
+                  "overrideable" : true,
+                  "css_class" : "padding40tb",
+                  "css_id" : "",
+                  "css_id_str" : "",
+                  "css_style" : "",
+                  "ending_html" : "",
+                  "starting_html" : "",
+                  "widget_name" : "Vast Testimonial",
+                  "schema_version" : 1,
+                  "path" : "/Custom modules/Vast Testimonial"
+                },
+                "rows" : [ ],
+                "rowMetaData" : [ ],
+                "cells" : [ ],
+                "cssId" : "",
+                "cssClass" : "padding40tb",
+                "cssStyle" : "",
+                "styles" : null,
+                "widgets" : [ ]
+              }
+            }, {
+              "0" : {
+                "x" : 0,
+                "w" : 8,
+                "name" : "module_140603890688855434",
+                "label" : "Service/Product Description",
+                "type" : "cell",
+                "params" : {
+                  "css_class" : "delayp2",
+                  "value" : "",
+                  "css_id" : "",
+                  "overrideable" : false,
+                  "css_style" : "",
+                  "wrapping_html" : ""
+                },
+                "rows" : [ {
+                  "0" : {
+                    "x" : 0,
+                    "w" : 12,
+                    "name" : "module_1486570424015534",
+                    "label" : "Vast Service & Product Description",
+                    "type" : "custom_widget",
+                    "params" : {
+                      "overrideable" : true,
+                      "css_class" : "padding40tb",
+                      "css_id" : "",
+                      "css_id_str" : "",
+                      "css_style" : "",
+                      "ending_html" : "",
+                      "starting_html" : "",
+                      "widget_name" : "Vast Service & Product Description",
+                      "schema_version" : 1,
+                      "path" : "/Custom modules/Vast Service & Product Description"
+                    },
+                    "rows" : [ ],
+                    "rowMetaData" : [ ],
+                    "cells" : [ ],
+                    "cssId" : "",
+                    "cssClass" : "padding40tb",
+                    "cssStyle" : "",
+                    "styles" : null,
+                    "widgets" : [ ]
+                  }
+                }, {
+                  "0" : {
+                    "x" : 0,
+                    "w" : 12,
+                    "name" : "module_1486570426027536",
+                    "label" : "Vast Service & Product Description",
+                    "type" : "custom_widget",
+                    "params" : {
+                      "overrideable" : true,
+                      "css_class" : "padding40tb",
+                      "css_id" : "",
+                      "css_id_str" : "",
+                      "css_style" : "",
+                      "ending_html" : "",
+                      "starting_html" : "",
+                      "widget_name" : "Vast Service & Product Description",
+                      "schema_version" : 1,
+                      "path" : "/Custom modules/Vast Service & Product Description"
+                    },
+                    "rows" : [ ],
+                    "rowMetaData" : [ ],
+                    "cells" : [ ],
+                    "cssId" : "",
+                    "cssClass" : "padding40tb",
+                    "cssStyle" : "",
+                    "styles" : null,
+                    "widgets" : [ ]
+                  }
+                } ],
+                "rowMetaData" : [ ],
+                "cells" : [ ],
+                "cssId" : "",
+                "cssClass" : "delayp2",
+                "cssStyle" : "",
+                "styles" : null,
+                "widgets" : [ ]
+              },
+              "8" : {
+                "x" : 8,
+                "w" : 4,
+                "name" : "module_140603890007354896",
+                "label" : "Vast Testimonial",
+                "type" : "custom_widget",
+                "params" : {
+                  "overrideable" : true,
+                  "css_class" : "padding40tb",
+                  "css_id" : "",
+                  "css_id_str" : "",
+                  "css_style" : "",
+                  "ending_html" : "",
+                  "starting_html" : "",
+                  "widget_name" : "Vast Testimonial",
+                  "schema_version" : 1,
+                  "path" : "/Custom modules/Vast Testimonial"
+                },
+                "rows" : [ ],
+                "rowMetaData" : [ ],
+                "cells" : [ ],
+                "cssId" : "",
+                "cssClass" : "padding40tb",
+                "cssStyle" : "",
+                "styles" : null,
+                "widgets" : [ ]
+              }
+            } ],
+            "rowMetaData" : [ ],
+            "cells" : [ ],
+            "cssId" : "",
+            "cssClass" : "main-content",
+            "cssStyle" : "",
+            "styles" : null,
+            "widgets" : [ {
+              "x" : 0,
+              "w" : 12,
+              "name" : "module_13885011246079525",
+              "label" : "Rich Text",
+              "type" : "rich_text",
+              "params" : {
+                "html" : "<h2>Something Powerful</h2>\n<h3>Tell The Reader More</h3>\n<p>The headline and subheader tells us what you're&nbsp;<a href=\"#\">offering</a>, and the form header closes the deal. Over here you can explain why your offer is so great it's worth filling out a form for.</p>\n<p>Remember:</p>\n<ul>\n<li>Bullets are great</li>\n<li>For spelling out&nbsp;<a href=\"#\">benefits</a>&nbsp;and</li>\n<li>Turning visitors into leads.</li>\n</ul>",
+                "overrideable" : true,
+                "is_in_container" : false
+              },
+              "rows" : [ ],
+              "rowMetaData" : [ ],
+              "cells" : [ ],
+              "cssId" : "",
+              "cssClass" : "",
+              "cssStyle" : "",
+              "styles" : null,
+              "widgets" : [ ]
+            } ]
+          }
+        } ],
+        "rowMetaData" : [ ],
+        "cells" : [ ],
+        "cssId" : "",
+        "cssClass" : "page-center content-wrapper padding40tb",
+        "cssStyle" : "",
+        "styles" : null,
+        "widgets" : [ ]
+      }
+    }, {
+      "0" : {
+        "x" : 0,
+        "w" : 12,
+        "name" : "module_140603956235283081",
+        "label" : "Image Background",
+        "type" : "cell",
+        "params" : {
+          "css_class" : "",
+          "value" : "",
+          "css_id" : "",
+          "overrideable" : false,
+          "css_style" : "",
+          "wrapping_html" : "<div id=\"offer-background-image\">{{ html }}</div>"
+        },
+        "rows" : [ {
+          "0" : {
+            "x" : 0,
+            "w" : 12,
+            "name" : "module_140603956686283769",
+            "label" : "Page Center",
+            "type" : "cell",
+            "params" : {
+              "css_class" : "page-center padding40tb",
+              "value" : "",
+              "css_id" : "",
+              "overrideable" : false,
+              "css_style" : "",
+              "wrapping_html" : ""
+            },
+            "rows" : [ {
+              "0" : {
+                "x" : 0,
+                "w" : 8,
+                "name" : "module_140603963485989338",
+                "label" : "Offer Section Text",
+                "type" : "cell",
+                "params" : {
+                  "css_class" : "delayp4 offer-section-text",
+                  "value" : "",
+                  "css_id" : "",
+                  "overrideable" : false,
+                  "css_style" : "",
+                  "wrapping_html" : ""
+                },
+                "rows" : [ {
+                  "0" : {
+                    "x" : 0,
+                    "w" : 12,
+                    "name" : "module_140603966378592189",
+                    "label" : "Offer Image",
+                    "type" : "linked_image",
+                    "params" : {
+                      "src" : "https://cdn2.hubspot.net/hubfs/762519/Vast/Background%20Images/offer-image.jpg",
+                      "css_class" : "offer-image",
+                      "height" : 400,
+                      "width" : 1500,
+                      "link" : "",
+                      "css_style" : "",
+                      "wrapping_html" : "",
+                      "overrideable" : true,
+                      "alt" : "offer-image.jpg",
+                      "open_in_new_tab" : false,
+                      "original_width" : 1500,
+                      "original_height" : 400,
+                      "img_alt" : "offer-image.jpg",
+                      "img_load_error" : false
+                    },
+                    "rows" : [ ],
+                    "rowMetaData" : [ ],
+                    "cells" : [ ],
+                    "cssId" : "",
+                    "cssClass" : "offer-image",
+                    "cssStyle" : "",
+                    "styles" : null,
+                    "widgets" : [ ]
+                  }
+                }, {
+                  "0" : {
+                    "x" : 0,
+                    "w" : 12,
+                    "name" : "module_140603969432693711",
+                    "label" : "Offer Headline",
+                    "type" : "header",
+                    "params" : {
+                      "header_tag" : "h1",
+                      "overrideable" : true,
+                      "value" : "It's time to make your move."
+                    },
+                    "rows" : [ ],
+                    "rowMetaData" : [ ],
+                    "cells" : [ ],
+                    "cssId" : "",
+                    "cssClass" : "",
+                    "cssStyle" : "",
+                    "styles" : null,
+                    "widgets" : [ ]
+                  }
+                }, {
+                  "0" : {
+                    "x" : 0,
+                    "w" : 12,
+                    "name" : "module_140603973736095233",
+                    "label" : "Offer Sub-Headline",
+                    "type" : "header",
+                    "params" : {
+                      "header_tag" : "h3",
+                      "overrideable" : true,
+                      "value" : "If we've made it this far down the home page of your website, we're ready to consider filling out a form. Make us an offer we can't refuse."
+                    },
+                    "rows" : [ ],
+                    "rowMetaData" : [ ],
+                    "cells" : [ ],
+                    "cssId" : "",
+                    "cssClass" : "",
+                    "cssStyle" : "",
+                    "styles" : null,
+                    "widgets" : [ ]
+                  }
+                } ],
+                "rowMetaData" : [ ],
+                "cells" : [ ],
+                "cssId" : "",
+                "cssClass" : "delayp4 offer-section-text",
+                "cssStyle" : "",
+                "styles" : null,
+                "widgets" : [ ]
+              },
+              "8" : {
+                "x" : 8,
+                "w" : 4,
+                "name" : "module_140603962392188626",
+                "label" : "Form",
+                "type" : "form",
+                "params" : {
+                  "notifications_override_email_addresses" : [ ],
+                  "form_to_use" : "",
+                  "title" : "",
+                  "css_class" : "offer-form",
+                  "notifications_are_overridden" : false,
+                  "overrideable" : true,
+                  "css_style" : "",
+                  "wrapping_html" : ""
+                },
+                "rows" : [ ],
+                "rowMetaData" : [ ],
+                "cells" : [ ],
+                "cssId" : "",
+                "cssClass" : "offer-form",
+                "cssStyle" : "",
+                "styles" : null,
+                "widgets" : [ ]
+              }
+            } ],
+            "rowMetaData" : [ ],
+            "cells" : [ ],
+            "cssId" : "",
+            "cssClass" : "page-center padding40tb",
+            "cssStyle" : "",
+            "styles" : null,
+            "widgets" : [ ]
+          }
+        } ],
+        "rowMetaData" : [ ],
+        "cells" : [ ],
+        "cssId" : "",
+        "cssClass" : "",
+        "cssStyle" : "",
+        "styles" : null,
+        "widgets" : [ ]
+      }
+    }, {
+      "0" : {
+        "x" : 0,
+        "w" : 12,
+        "name" : "module_140603988611999037",
+        "label" : "F.A.Q. Background",
+        "type" : "cell",
+        "params" : {
+          "css_class" : "faq-background",
+          "value" : "",
+          "css_id" : "",
+          "overrideable" : false,
+          "css_style" : "",
+          "wrapping_html" : ""
+        },
+        "rows" : [ {
+          "0" : {
+            "x" : 0,
+            "w" : 12,
+            "name" : "module_140603989066399808",
+            "label" : "Page Center",
+            "type" : "cell",
+            "params" : {
+              "css_class" : "page-center padding60tb",
+              "value" : "",
+              "css_id" : "",
+              "overrideable" : false,
+              "css_style" : "",
+              "wrapping_html" : ""
+            },
+            "rows" : [ {
+              "0" : {
+                "x" : 0,
+                "w" : 12,
+                "name" : "module_1406039895063100589",
+                "label" : "Main Content",
+                "type" : "cell",
+                "params" : {
+                  "overrideable" : false
+                },
+                "rows" : [ {
+                  "0" : {
+                    "x" : 0,
+                    "w" : 12,
+                    "name" : "module_1406039977712105344",
+                    "label" : "Frequently Asked Questions",
+                    "type" : "header",
+                    "params" : {
+                      "header_tag" : "h2",
+                      "css_class" : "text-center padding20tb",
+                      "value" : "Frequently Asked Questions",
+                      "overrideable" : true,
+                      "css_style" : "",
+                      "wrapping_html" : ""
+                    },
+                    "rows" : [ ],
+                    "rowMetaData" : [ ],
+                    "cells" : [ ],
+                    "cssId" : "",
+                    "cssClass" : "text-center padding20tb",
+                    "cssStyle" : "",
+                    "styles" : null,
+                    "widgets" : [ ]
+                  }
+                }, {
+                  "0" : {
+                    "x" : 0,
+                    "w" : 6,
+                    "name" : "module_1406040039970112477",
+                    "label" : "Vast FAQ Module",
+                    "type" : "custom_widget",
+                    "params" : {
+                      "overrideable" : true,
+                      "css_class" : "",
+                      "css_id" : "",
+                      "css_id_str" : "",
+                      "css_style" : "",
+                      "ending_html" : "",
+                      "starting_html" : "",
+                      "widget_name" : "Vast FAQ Module",
+                      "schema_version" : 1,
+                      "path" : "/Custom modules/Vast FAQ Module"
+                    },
+                    "rows" : [ ],
+                    "rowMetaData" : [ ],
+                    "cells" : [ ],
+                    "cssId" : "",
+                    "cssClass" : "",
+                    "cssStyle" : "",
+                    "styles" : null,
+                    "widgets" : [ ]
+                  },
+                  "6" : {
+                    "x" : 6,
+                    "w" : 6,
+                    "name" : "module_1406040058534114956",
+                    "label" : "Vast FAQ Module",
+                    "type" : "custom_widget",
+                    "params" : {
+                      "overrideable" : true,
+                      "css_class" : "",
+                      "css_id" : "",
+                      "css_id_str" : "",
+                      "css_style" : "",
+                      "ending_html" : "",
+                      "starting_html" : "",
+                      "widget_name" : "Vast FAQ Module",
+                      "schema_version" : 1,
+                      "path" : "/Custom modules/Vast FAQ Module"
+                    },
+                    "rows" : [ ],
+                    "rowMetaData" : [ ],
+                    "cells" : [ ],
+                    "cssId" : "",
+                    "cssClass" : "",
+                    "cssStyle" : "",
+                    "styles" : null,
+                    "widgets" : [ ]
+                  }
+                }, {
+                  "0" : {
+                    "x" : 0,
+                    "w" : 6,
+                    "name" : "module_1406040074188117504",
+                    "label" : "Vast FAQ Module",
+                    "type" : "custom_widget",
+                    "params" : {
+                      "overrideable" : true,
+                      "css_class" : "",
+                      "css_id" : "",
+                      "css_id_str" : "",
+                      "css_style" : "",
+                      "ending_html" : "",
+                      "starting_html" : "",
+                      "widget_name" : "Vast FAQ Module",
+                      "schema_version" : 1,
+                      "path" : "/Custom modules/Vast FAQ Module"
+                    },
+                    "rows" : [ ],
+                    "rowMetaData" : [ ],
+                    "cells" : [ ],
+                    "cssId" : "",
+                    "cssClass" : "",
+                    "cssStyle" : "",
+                    "styles" : null,
+                    "widgets" : [ ]
+                  },
+                  "6" : {
+                    "x" : 6,
+                    "w" : 6,
+                    "name" : "module_1406040094686120046",
+                    "label" : "Vast FAQ Module",
+                    "type" : "custom_widget",
+                    "params" : {
+                      "overrideable" : true,
+                      "css_class" : "",
+                      "css_id" : "",
+                      "css_id_str" : "",
+                      "css_style" : "",
+                      "ending_html" : "",
+                      "starting_html" : "",
+                      "widget_name" : "Vast FAQ Module",
+                      "schema_version" : 1,
+                      "path" : "/Custom modules/Vast FAQ Module"
+                    },
+                    "rows" : [ ],
+                    "rowMetaData" : [ ],
+                    "cells" : [ ],
+                    "cssId" : "",
+                    "cssClass" : "",
+                    "cssStyle" : "",
+                    "styles" : null,
+                    "widgets" : [ ]
+                  }
+                }, {
+                  "0" : {
+                    "x" : 0,
+                    "w" : 6,
+                    "name" : "module_1406040116529122582",
+                    "label" : "Vast FAQ Module",
+                    "type" : "custom_widget",
+                    "params" : {
+                      "overrideable" : true,
+                      "css_class" : "",
+                      "css_id" : "",
+                      "css_id_str" : "",
+                      "css_style" : "",
+                      "ending_html" : "",
+                      "starting_html" : "",
+                      "widget_name" : "Vast FAQ Module",
+                      "schema_version" : 1,
+                      "path" : "/Custom modules/Vast FAQ Module"
+                    },
+                    "rows" : [ ],
+                    "rowMetaData" : [ ],
+                    "cells" : [ ],
+                    "cssId" : "",
+                    "cssClass" : "",
+                    "cssStyle" : "",
+                    "styles" : null,
+                    "widgets" : [ ]
+                  },
+                  "6" : {
+                    "x" : 6,
+                    "w" : 6,
+                    "name" : "module_1406040140933125112",
+                    "label" : "Vast FAQ Module",
+                    "type" : "custom_widget",
+                    "params" : {
+                      "overrideable" : true,
+                      "css_class" : "",
+                      "css_id" : "",
+                      "css_id_str" : "",
+                      "css_style" : "",
+                      "ending_html" : "",
+                      "starting_html" : "",
+                      "widget_name" : "Vast FAQ Module",
+                      "schema_version" : 1,
+                      "path" : "/Custom modules/Vast FAQ Module"
+                    },
+                    "rows" : [ ],
+                    "rowMetaData" : [ ],
+                    "cells" : [ ],
+                    "cssId" : "",
+                    "cssClass" : "",
+                    "cssStyle" : "",
+                    "styles" : null,
+                    "widgets" : [ ]
+                  }
+                } ],
+                "rowMetaData" : [ ],
+                "cells" : [ ],
+                "cssId" : "",
+                "cssClass" : "",
+                "cssStyle" : "",
+                "styles" : null,
+                "widgets" : [ ]
+              }
+            } ],
+            "rowMetaData" : [ ],
+            "cells" : [ ],
+            "cssId" : "",
+            "cssClass" : "page-center padding60tb",
+            "cssStyle" : "",
+            "styles" : null,
+            "widgets" : [ ]
+          }
+        } ],
+        "rowMetaData" : [ ],
+        "cells" : [ ],
+        "cssId" : "",
+        "cssClass" : "faq-background",
+        "cssStyle" : "",
+        "styles" : null,
+        "widgets" : [ ]
+      }
+    }, {
+      "0" : {
+        "x" : 0,
+        "w" : 12,
+        "name" : "",
+        "label" : "",
+        "type" : "section_delimiter",
+        "params" : { },
+        "rows" : [ ],
+        "rowMetaData" : [ ],
+        "cells" : [ ],
+        "cssId" : "",
+        "cssClass" : "",
+        "cssStyle" : "",
+        "styles" : null,
+        "widgets" : [ ]
+      }
+    }, {
+      "0" : {
+        "x" : 0,
+        "w" : 12,
+        "name" : "module_1486569963442419",
+        "label" : "Vast Theme/Vast - Footer",
+        "type" : "global_group",
+        "params" : {
+          "overrideable" : false,
+          "css_class" : "",
+          "css_id" : "",
+          "css_id_str" : "",
+          "css_style" : "",
+          "ending_html" : "",
+          "starting_html" : "",
+          "path" : "/Global content/Global Groups/Vast Theme/Vast Theme/Vast Footer.template.json"
+        },
+        "rows" : [ ],
+        "rowMetaData" : [ ],
+        "cells" : [ ],
+        "cssId" : "",
+        "cssClass" : "",
+        "cssStyle" : "",
+        "styles" : null,
+        "widgets" : [ ]
+      }
+    } ],
+    "rowMetaData" : [ ],
+    "cells" : [ ],
+    "cssId" : "",
+    "cssClass" : "",
+    "cssStyle" : "",
+    "styles" : null,
+    "widgets" : [ ]
+  }
+}

@@ -1,0 +1,1127 @@
+{
+  "col_1.button.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.button.guid.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.button.guid.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.button.guid.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.button.guid.label" : {
+    "message" : "CTA",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.button.guid.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.button.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.button.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.button.label" : {
+    "message" : "Field group",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.button.name" : {
+    "message" : "Reposit - New Form",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.button.open_link_in_new_tab.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.button.open_link_in_new_tab.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.button.open_link_in_new_tab.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.button.open_link_in_new_tab.label" : {
+    "message" : "Boolean",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.button.open_link_in_new_tab.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.button.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.button.style_option.choices.value 1" : {
+    "message" : "Label 1",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.button.style_option.choices.value 2" : {
+    "message" : "Label 2",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.button.style_option.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.button.style_option.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.button.style_option.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.button.style_option.label" : {
+    "message" : "Choice",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.button.style_option.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.button.text.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.button.text.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.button.text.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.button.text.label" : {
+    "message" : "Text",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.button.text.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.button.text.validation_regex" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.button.url.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.button.url.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.button.url.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.button.url.label" : {
+    "message" : "URL",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.button.url.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.button.use_arrow_icon.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.button.use_arrow_icon.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.button.use_arrow_icon.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.button.use_arrow_icon.label" : {
+    "message" : "Boolean",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.button.use_arrow_icon.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.button.use_cta.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.button.use_cta.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.button.use_cta.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.button.use_cta.label" : {
+    "message" : "Use CTA",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.button.use_cta.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.display_as.choices.value 1" : {
+    "message" : "Label 1",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.display_as.choices.value 2" : {
+    "message" : "Label 2",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.eyebrow.bottom_space.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.eyebrow.bottom_space.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.eyebrow.bottom_space.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.eyebrow.bottom_space.label" : {
+    "message" : "Number",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.eyebrow.bottom_space.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.eyebrow.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.eyebrow.display_as.choices.h1" : {
+    "message" : "H1",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.eyebrow.display_as.choices.h2" : {
+    "message" : "H2",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.eyebrow.display_as.choices.h3" : {
+    "message" : "H3",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.eyebrow.display_as.choices.h4" : {
+    "message" : "H4",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.eyebrow.display_as.choices.h5" : {
+    "message" : "H5",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.eyebrow.display_as.choices.h6" : {
+    "message" : "H6",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.eyebrow.display_as.choices.p" : {
+    "message" : "Paragraph",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.eyebrow.display_as.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.eyebrow.display_as.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.eyebrow.display_as.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.eyebrow.display_as.label" : {
+    "message" : "Display as",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.eyebrow.display_as.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.eyebrow.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.eyebrow.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.eyebrow.label" : {
+    "message" : "Field group",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.eyebrow.name" : {
+    "message" : "Reposit - New Form",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.eyebrow.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.eyebrow.text.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.eyebrow.text.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.eyebrow.text.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.eyebrow.text.label" : {
+    "message" : "Text",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.eyebrow.text.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.eyebrow.text.validation_regex" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.eyebrow.text_color.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.eyebrow.text_color.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.eyebrow.text_color.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.eyebrow.text_color.label" : {
+    "message" : "Color",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.eyebrow.text_color.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.label" : {
+    "message" : "Field group",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.name" : {
+    "message" : "Reposit - New Form",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.text_area.bottom_space.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.text_area.bottom_space.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.text_area.bottom_space.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.text_area.bottom_space.label" : {
+    "message" : "Bottom Space",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.text_area.bottom_space.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.text_area.content.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.text_area.content.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.text_area.content.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.text_area.content.label" : {
+    "message" : "Rich text",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.text_area.content.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.text_area.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.text_area.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.text_area.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.text_area.label" : {
+    "message" : "Eyebrow Heading copy",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.text_area.name" : {
+    "message" : "Reposit - New Form",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.text_area.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.title.bottom_space.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.title.bottom_space.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.title.bottom_space.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.title.bottom_space.label" : {
+    "message" : "Bottom Space",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.title.bottom_space.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.title.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.title.display_as.choices.h1" : {
+    "message" : "H1",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.title.display_as.choices.h2" : {
+    "message" : "H2",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.title.display_as.choices.h3" : {
+    "message" : "H3",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.title.display_as.choices.h4" : {
+    "message" : "H4",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.title.display_as.choices.h5" : {
+    "message" : "H5",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.title.display_as.choices.h6" : {
+    "message" : "H6",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.title.display_as.choices.p" : {
+    "message" : "Paragraph",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.title.display_as.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.title.display_as.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.title.display_as.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.title.display_as.label" : {
+    "message" : "Display as",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.title.display_as.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.title.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.title.highlight_color.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.title.highlight_color.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.title.highlight_color.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.title.highlight_color.label" : {
+    "message" : "Text_Color copy",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.title.highlight_color.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.title.highlight_text.default" : {
+    "message" : "Get in Touch by Filling the Form Below",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.title.highlight_text.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.title.highlight_text.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.title.highlight_text.label" : {
+    "message" : "Text copy",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.title.highlight_text.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.title.highlight_text.validation_regex" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.title.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.title.label" : {
+    "message" : "Eyebrow Heading copy",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.title.name" : {
+    "message" : "Reposit - New Form",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.title.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.title.text.default" : {
+    "message" : "We’re Here to Help",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.title.text.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.title.text.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.title.text.label" : {
+    "message" : "Text",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.title.text.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.title.text.validation_regex" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.title.text_color.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.title.text_color.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.title.text_color.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.title.text_color.label" : {
+    "message" : "Text_Color",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.title.text_color.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.width.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.width.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.width.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.width.label" : {
+    "message" : "Width",
+    "description" : null,
+    "placeholders" : null
+  },
+  "col_1.width.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "follow_up_type_simple.help_text" : {
+    "message" : "لإرسال بريد إلكتروني للمتابعة، تأكد من تشغيل إعداد \"تعيين جهات الاتصال التي تم إنشاؤها كجهات اتصال تسويقية\". يمكنك إدارة ذلك في الخيارات. <a href='https://knowledge.hubspot.com/contacts/set-contacts-as-marketing#set-the-default-marketing-status-for-new-contacts'>معرفة المزيد</a>",
+    "description" : "",
+    "placeholders" : null
+  },
+  "follow_up_type_simple.label" : {
+    "message" : "إرسال بريد إلكتروني للمتابعة",
+    "description" : "",
+    "placeholders" : null
+  },
+  "form.default.message" : {
+    "message" : "شكرًا على إرسال النموذج.",
+    "description" : "",
+    "placeholders" : null
+  },
+  "form.label" : {
+    "message" : "النموذج",
+    "description" : "",
+    "placeholders" : null
+  },
+  "form_follow_ups_workflow_id.label" : {
+    "message" : "سير العمل",
+    "description" : "",
+    "placeholders" : null
+  },
+  "name" : {
+    "message" : "Reposit - New Form",
+    "description" : null,
+    "placeholders" : null
+  },
+  "notifications_are_overridden.label" : {
+    "message" : "إرسال إشعارات النموذج إلى عناوين البريد الإلكتروني المحددة بدلاً من افتراضيات النموذج",
+    "description" : "",
+    "placeholders" : null
+  },
+  "notifications_override_email_addresses.label" : {
+    "message" : "عناوين البريد الإلكتروني",
+    "description" : "",
+    "placeholders" : null
+  },
+  "section.bg_color.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.bg_color.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.bg_color.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.bg_color.label" : {
+    "message" : "Color",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.bg_color.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.label" : {
+    "message" : "Field group",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.name" : {
+    "message" : "Reposit - New Form",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.bottom_corners.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.bottom_corners.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.bottom_corners.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.bottom_corners.label" : {
+    "message" : "Top Corners (Desktop) copy",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.bottom_corners.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.bottom_corners_sm.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.bottom_corners_sm.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.bottom_corners_sm.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.bottom_corners_sm.label" : {
+    "message" : "Bottom Corners (Desktop) copy",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.bottom_corners_sm.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.label" : {
+    "message" : "Spacing copy",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.name" : {
+    "message" : "Reposit - New Form",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.top_corners.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.top_corners.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.top_corners.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.top_corners.label" : {
+    "message" : "Top (Desktop)",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.top_corners.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.top_corners_sm.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.top_corners_sm.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.top_corners_sm.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.top_corners_sm.label" : {
+    "message" : "Top Corners (Desktop) copy",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.top_corners_sm.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.bottom.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.bottom.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.bottom.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.bottom.label" : {
+    "message" : "Bottom (Desktop)",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.bottom.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.label" : {
+    "message" : "Field group",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.left.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.left.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.left.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.left.label" : {
+    "message" : "Top (Mobile)",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.left.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.right.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.right.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.right.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.right.label" : {
+    "message" : "Bottom (Mobile)",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.right.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.top.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.top.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.top.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.top.label" : {
+    "message" : "Top (Desktop)",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.top.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "sfdc_campaign.label" : {
+    "message" : "حملة Salesforce",
+    "description" : "",
+    "placeholders" : null
+  },
+  "simple_email_for_live_id.label" : {
+    "message" : "البريد الإلكتروني",
+    "description" : "",
+    "placeholders" : null
+  },
+  "title.label" : {
+    "message" : "عنوان النموذج",
+    "description" : "",
+    "placeholders" : null
+  }
+}

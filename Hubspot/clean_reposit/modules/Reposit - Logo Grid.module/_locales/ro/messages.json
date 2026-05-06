@@ -1,0 +1,957 @@
+{
+  "display_as.choices.value 1" : {
+    "message" : "Label 1",
+    "description" : null,
+    "placeholders" : null
+  },
+  "display_as.choices.value 2" : {
+    "message" : "Label 2",
+    "description" : null,
+    "placeholders" : null
+  },
+  "eyebrow.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "eyebrow.display_as.choices.h1" : {
+    "message" : "H1",
+    "description" : null,
+    "placeholders" : null
+  },
+  "eyebrow.display_as.choices.h2" : {
+    "message" : "H2",
+    "description" : null,
+    "placeholders" : null
+  },
+  "eyebrow.display_as.choices.h3" : {
+    "message" : "H3",
+    "description" : null,
+    "placeholders" : null
+  },
+  "eyebrow.display_as.choices.h4" : {
+    "message" : "H4",
+    "description" : null,
+    "placeholders" : null
+  },
+  "eyebrow.display_as.choices.h5" : {
+    "message" : "H5",
+    "description" : null,
+    "placeholders" : null
+  },
+  "eyebrow.display_as.choices.h6" : {
+    "message" : "H6",
+    "description" : null,
+    "placeholders" : null
+  },
+  "eyebrow.display_as.choices.p" : {
+    "message" : "Paragraphe",
+    "description" : null,
+    "placeholders" : null
+  },
+  "eyebrow.display_as.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "eyebrow.display_as.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "eyebrow.display_as.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "eyebrow.display_as.label" : {
+    "message" : "Display as",
+    "description" : null,
+    "placeholders" : null
+  },
+  "eyebrow.display_as.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "eyebrow.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "eyebrow.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "eyebrow.label" : {
+    "message" : "Field group",
+    "description" : null,
+    "placeholders" : null
+  },
+  "eyebrow.name" : {
+    "message" : "Reposit - Logo Grid",
+    "description" : null,
+    "placeholders" : null
+  },
+  "eyebrow.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "eyebrow.space_bottom.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "eyebrow.space_bottom.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "eyebrow.space_bottom.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "eyebrow.space_bottom.label" : {
+    "message" : "Number",
+    "description" : null,
+    "placeholders" : null
+  },
+  "eyebrow.space_bottom.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "eyebrow.text.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "eyebrow.text.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "eyebrow.text.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "eyebrow.text.label" : {
+    "message" : "Text",
+    "description" : null,
+    "placeholders" : null
+  },
+  "eyebrow.text.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "eyebrow.text.validation_regex" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "eyebrow.text_align.choices.center" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "eyebrow.text_align.choices.left" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "eyebrow.text_align.choices.right" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "eyebrow.text_align.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "eyebrow.text_align.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "eyebrow.text_align.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "eyebrow.text_align.label" : {
+    "message" : "Choice",
+    "description" : null,
+    "placeholders" : null
+  },
+  "eyebrow.text_align.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "eyebrow.text_alignment.choices.value 1" : {
+    "message" : "Label 1",
+    "description" : null,
+    "placeholders" : null
+  },
+  "eyebrow.text_alignment.choices.value 2" : {
+    "message" : "Label 2",
+    "description" : null,
+    "placeholders" : null
+  },
+  "eyebrow.text_color.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "eyebrow.text_color.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "eyebrow.text_color.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "eyebrow.text_color.label" : {
+    "message" : "Color",
+    "description" : null,
+    "placeholders" : null
+  },
+  "eyebrow.text_color.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "group_logos.label" : {
+    "message" : "Logouri",
+    "description" : "",
+    "placeholders" : null
+  },
+  "group_logos.logo.label" : {
+    "message" : "Logo",
+    "description" : "",
+    "placeholders" : null
+  },
+  "logo_style.bg_color.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "logo_style.bg_color.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "logo_style.bg_color.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "logo_style.bg_color.label" : {
+    "message" : "Background color",
+    "description" : null,
+    "placeholders" : null
+  },
+  "logo_style.bg_color.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "logo_style.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "logo_style.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "logo_style.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "logo_style.label" : {
+    "message" : "Field group",
+    "description" : null,
+    "placeholders" : null
+  },
+  "logo_style.max_logo_height.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "logo_style.max_logo_height.help_text" : {
+    "message" : "Sets the maximum height of the logos.<br><br>Setting a max logo height is best when trying to make multiple logos of drastically different dimensions visually equal in size.",
+    "description" : null,
+    "placeholders" : null
+  },
+  "logo_style.max_logo_height.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "logo_style.max_logo_height.label" : {
+    "message" : "Max logo height",
+    "description" : null,
+    "placeholders" : null
+  },
+  "logo_style.max_logo_height.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "logo_style.name" : {
+    "message" : "Reposit - Logo Grid",
+    "description" : null,
+    "placeholders" : null
+  },
+  "logo_style.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "logo_style.spacing.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "logo_style.spacing.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "logo_style.spacing.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "logo_style.spacing.label" : {
+    "message" : "Field group",
+    "description" : null,
+    "placeholders" : null
+  },
+  "logo_style.spacing.left_and_right.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "logo_style.spacing.left_and_right.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "logo_style.spacing.left_and_right.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "logo_style.spacing.left_and_right.label" : {
+    "message" : "Left and Right",
+    "description" : null,
+    "placeholders" : null
+  },
+  "logo_style.spacing.left_and_right.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "logo_style.spacing.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "logo_style.spacing.top_and_bottom.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "logo_style.spacing.top_and_bottom.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "logo_style.spacing.top_and_bottom.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "logo_style.spacing.top_and_bottom.label" : {
+    "message" : "Top and Bottom",
+    "description" : null,
+    "placeholders" : null
+  },
+  "logo_style.spacing.top_and_bottom.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "name" : {
+    "message" : "Reposit - Logo Grid",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.bg_color.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.bg_color.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.bg_color.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.bg_color.label" : {
+    "message" : "Section Background Color",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.bg_color.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.label" : {
+    "message" : "Field group",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.name" : {
+    "message" : "Reposit - Logo Grid",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.overlap_section.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.overlap_section.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.overlap_section.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.overlap_section.label" : {
+    "message" : "Boolean",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.overlap_section.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corner.name" : {
+    "message" : "Reposit - Logo Grid",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.bottom_corners.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.bottom_corners.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.bottom_corners.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.bottom_corners.label" : {
+    "message" : "Bottom Left",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.bottom_corners.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.bottom_corners_sm.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.bottom_corners_sm.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.bottom_corners_sm.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.bottom_corners_sm.label" : {
+    "message" : "Bottom Corners (Desktop) copy",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.bottom_corners_sm.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.label" : {
+    "message" : "Section Round Corner",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.top_corners.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.top_corners.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.top_corners.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.top_corners.label" : {
+    "message" : "Top Left",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.top_corners.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.top_corners_sm.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.top_corners_sm.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.top_corners_sm.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.top_corners_sm.label" : {
+    "message" : "Top Corners (Desktop) copy",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.round_corners.top_corners_sm.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.bottom.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.bottom.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.bottom.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.bottom.label" : {
+    "message" : "Bottom",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.bottom.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.bottom_sm.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.bottom_sm.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.bottom_sm.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.bottom_sm.label" : {
+    "message" : "Bottom (Desktop) copy",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.bottom_sm.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.label" : {
+    "message" : "Field group",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.name" : {
+    "message" : "Reposit - Logo Grid",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.top.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.top.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.top.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.top.label" : {
+    "message" : "Top",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.top.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.top_sm.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.top_sm.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.top_sm.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.top_sm.label" : {
+    "message" : "Top (Desktop) copy",
+    "description" : null,
+    "placeholders" : null
+  },
+  "section.spacing.top_sm.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "start.col_gap.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "start.col_gap.help_text" : {
+    "message" : "Set the spacing between grid items.<br><br>Setting a background in <strong>Logo image > Background</strong> may help you visualize the logo grid.",
+    "description" : null,
+    "placeholders" : null
+  },
+  "start.col_gap.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "start.col_gap.label" : {
+    "message" : "Column Gap",
+    "description" : null,
+    "placeholders" : null
+  },
+  "start.col_gap.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "start.column_count_sm.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "start.column_count_sm.help_text" : {
+    "message" : "Set the amount of columns in the grid on desktop. Defaults to 1 on mobile.",
+    "description" : null,
+    "placeholders" : null
+  },
+  "start.column_count_sm.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "start.column_count_sm.label" : {
+    "message" : "Visible Logos (Desktop) copy",
+    "description" : null,
+    "placeholders" : null
+  },
+  "start.column_count_sm.placeholder" : {
+    "message" : "4",
+    "description" : null,
+    "placeholders" : null
+  },
+  "start.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "start.help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "start.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "start.label" : {
+    "message" : "Field group",
+    "description" : null,
+    "placeholders" : null
+  },
+  "start.name" : {
+    "message" : "Reposit - Logo Grid",
+    "description" : null,
+    "placeholders" : null
+  },
+  "start.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "start.row_gap.default" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "start.row_gap.help_text" : {
+    "message" : "Set the spacing between grid items.<br><br>Setting a background in <strong>Logo image > Background</strong> may help you visualize the logo grid.",
+    "description" : null,
+    "placeholders" : null
+  },
+  "start.row_gap.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "start.row_gap.label" : {
+    "message" : "Row Gap",
+    "description" : null,
+    "placeholders" : null
+  },
+  "start.row_gap.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "styles.group_logo.group_background.aspect_ratio.choices.1/1" : {
+    "message" : "1:1",
+    "description" : "",
+    "placeholders" : null
+  },
+  "styles.group_logo.group_background.aspect_ratio.choices.16/9" : {
+    "message" : "16:9",
+    "description" : "",
+    "placeholders" : null
+  },
+  "styles.group_logo.group_background.aspect_ratio.choices.4/3" : {
+    "message" : "4:3",
+    "description" : "",
+    "placeholders" : null
+  },
+  "styles.group_logo.group_background.aspect_ratio.help_text" : {
+    "message" : "Setați raportul de aspect al containerului siglei. Cel mai util dacă utilizați câmpul de culoare de fundal și utilizați sigle cu dimensiuni considerabil diferite.",
+    "description" : "",
+    "placeholders" : null
+  },
+  "styles.group_logo.group_background.aspect_ratio.label" : {
+    "message" : "Raport de aspect",
+    "description" : "",
+    "placeholders" : null
+  },
+  "styles.group_logo.group_background.label" : {
+    "message" : "Fundal",
+    "description" : "",
+    "placeholders" : null
+  },
+  "styles.group_logo.group_spacing.label" : {
+    "message" : "Spațiere",
+    "description" : "",
+    "placeholders" : null
+  },
+  "styles.group_logo.group_spacing.padding.help_text" : {
+    "message" : "Setați spațierea în jurul siglei.",
+    "description" : "",
+    "placeholders" : null
+  },
+  "styles.group_logo.group_spacing.padding.label" : {
+    "message" : "Spațiere",
+    "description" : "",
+    "placeholders" : null
+  },
+  "styles.group_logo.group_spacing_copy.padding.default.padding.bottom.value" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "styles.group_logo.group_spacing_copy.padding.default.padding.left.value" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "styles.group_logo.group_spacing_copy.padding.default.padding.right.value" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "styles.group_logo.group_spacing_copy.padding.default.padding.top.value" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "styles.group_logo.group_spacing_copy.padding.help_text" : {
+    "message" : "Set padding around the logo.",
+    "description" : null,
+    "placeholders" : null
+  },
+  "styles.group_logo.group_spacing_copy.padding.inline_help_text" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "styles.group_logo.group_spacing_copy.padding.label" : {
+    "message" : "Spacing",
+    "description" : null,
+    "placeholders" : null
+  },
+  "styles.group_logo.group_spacing_copy.padding.placeholder" : {
+    "message" : "",
+    "description" : null,
+    "placeholders" : null
+  },
+  "styles.group_logo.inline_help_text" : {
+    "message" : "Datorită naturii receptive a web-ului, înălțimea afișată a siglelor poate fi mai mică decât valoarea setată, în funcție de dimensiunea ecranului, dimensiunea imaginii inițiale, spațierea între sigle, spațiul dintre grile și numărul de coloane.",
+    "description" : "",
+    "placeholders" : null
+  },
+  "styles.group_logo.label" : {
+    "message" : "Imagine logo",
+    "description" : "",
+    "placeholders" : null
+  },
+  "styles.group_logo.name" : {
+    "message" : "Reposit - Logo Grid",
+    "description" : null,
+    "placeholders" : null
+  },
+  "styles.group_logo_grid.name" : {
+    "message" : "Reposit - Logo Grid",
+    "description" : null,
+    "placeholders" : null
+  },
+  "styles.name" : {
+    "message" : "Reposit - Logo Grid",
+    "description" : null,
+    "placeholders" : null
+  }
+}

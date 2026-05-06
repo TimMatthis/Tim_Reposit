@@ -1,0 +1,197 @@
+<!--
+  templateType: blog_post
+  isAvailableForNewContent: true
+  label: Reposit - Blog Post Page
+-->
+{% extends "../layouts/base.html" %}
+
+{% if theme.blog.post_page.use_sticky_nav %}
+  {% require_js %}
+    <script>
+      var header = document.querySelector("header");
+      if (header && !header.classList.contains("sticky-header")) {
+        header.classList.add("sticky-header");
+      }
+    </script>
+  {% end_require_js %}
+{% endif %}
+
+{############ TRANSLATE ELEMENTS ############}
+
+{% set blog_lang = html_lang %}
+
+{% if blog_lang == 'en' or blog_lang == 'en-us' %}
+  {% set read_time = 'min read' %}
+
+{% elif blog_lang == 'it' %}
+  {% set read_time = 'lettura minuti' %}
+
+{% elif blog_lang == 'fr' %}
+  {% set read_time = 'lecture des minutes' %}
+
+{% elif blog_lang == 'fi' %}
+  {% set read_time = 'minuutin luku' %}
+
+{% elif blog_lang == 'de' %}
+  {% set read_time = 'Min. Lesezeit' %}
+
+{% elif blog_lang == 'es' %}
+  {% set read_time = 'minutos de lectura' %}
+
+{% else %}
+  {% set read_time = 'min read' %}
+{% endif %}
+
+
+<!---- SETS THE COLUMN SIZES OF POST HEADER ---->
+
+{% if !theme.blog.post_page.header.post_feat_img %}
+  {% set col_1_size = "col-12" %}
+{% else %}
+
+  {% if theme.blog.post_page.header.col_arrangement == "opt1" %}
+    {% set col_1_size = "col-lg-6 col-sm-12" %}
+    {% set col_2_size = "col-lg-6 col-sm-12" %}
+  {% endif %}
+  {% if theme.blog.post_page.header.col_arrangement == "opt2" %}
+    {% set col_1_size = "col-lg-4 col-sm-12" %}
+    {% set col_2_size = "col-lg-8 col-sm-12" %}
+  {% endif %}
+  {% if theme.blog.post_page.header.col_arrangement == "opt3" %}
+    {% set col_1_size = "col-lg-8 col-sm-12" %}
+    {% set col_2_size = "col-lg-4 col-sm-12" %}
+  {% endif %}
+  {% if theme.blog.post_page.header.col_arrangement == "opt4" %}
+    {% set col_1_size = "col-lg-5 col-sm-12" %}
+    {% set col_2_size = "col-lg-7 col-sm-12" %}
+  {% endif %}
+  {% if theme.blog.post_page.header.col_arrangement == "opt5" %}
+    {% set col_1_size = "col-lg-7 col-sm-12" %}
+    {% set col_2_size = "col-lg-5 col-sm-12" %}
+  {% endif %}
+  {% if theme.blog.post_page.header.col_arrangement == "opt6" %}
+    {% set col_1_size = "col-lg-9 col-sm-12" %}
+    {% set col_2_size = "col-lg-3 col-sm-12" %}
+  {% endif %}
+
+  {% if theme.blog.post_page.header.col_arrangement == "opt7" or theme.blog.post_page.header.col_arrangement == "opt8" %}
+    {% set col_1_size = "col-lg-12" %}
+  {% endif %}
+
+{% endif %}
+<!--- END ---->
+
+{% require_css %}
+<style>
+  .blog-post-wrapper .section {
+    margin-top: -10vh;
+    background-color: {{ theme.blog.post_page.bg_color.rgba or "transparent" }};
+    border-radius: 64px;
+    padding: 150px 0;
+  }
+  
+  .blog-post-wrapper .hs-blog-social-share {
+    border: none;
+  }
+  
+  @media (max-width: {{ theme.layout.style_opts.slim_width }}px) {
+    .blog-post-wrapper .section {
+      border-radius: 42px;
+      padding: 80px 0;
+    }
+  }
+</style>
+{% end_require_css %}
+
+
+
+{% block body %}
+
+<div class="blog-post-wrapper">
+  <div class="hero">
+    {% module "blog_post_hero" path='/clean_reposit/modules/Reposit - Blog Post Hero', label="Reposit - Blog Post Hero" %}
+  </div>
+
+  <div class="section">
+    {# SIDEBAR #}
+    <div class="{% if theme.blog.post_page.content_area.add_sidebar and theme.blog.post_page.content_area.add_table_of_contents %}container{% else %}container-slim content-area-width{% endif %}">
+      <div class="blog-post row  sticky-sidebar">
+
+        {# TABLE #}
+        {% if theme.blog.post_page.content_area.add_table_of_contents %}
+          <div class="{% if theme.blog.post_page.content_area.add_table_of_contents and theme.blog.post_page.content_area.add_sidebar %}
+                        col-lg-3 
+                      {% else %}
+                        col-lg-4 
+                      {% endif %}
+                      col-sm-12">
+                <div>
+                  <div>
+                    <div>
+
+                  {% module "toc_mod-4242" path='../../modules/CLEAN Pro - Table of Contents', label="CLEAN Pro - Blog - Table of Contents" %}
+                    </div>
+                  </div>
+            </div>
+        </div>
+        {% endif %}
+        <div class="blog-post__body 
+                    {% if theme.blog.post_page.content_area.add_sidebar and theme.blog.post_page.content_area.add_table_of_contents %}
+                      col-lg-6 col-sm-12 
+                    {% elif theme.blog.post_page.content_area.add_sidebar or theme.blog.post_page.content_area.add_table_of_contents %}
+                      col-lg-8 col-sm-12 
+                    {% else %}
+                      col-12
+                    {% endif %}">
+
+          {# NARRATION #}
+          <div class="post-narration-con">
+            {% module "blog_post_audio" path="@hubspot/blog_audio", overrideable=False %}
+          </div>
+          {{ content.post_body }}
+
+          {# SOCIAL ICONS #}
+          {% if theme.blog.post_page.content_area.post_social %}
+            <div class="social-sharing-wrapper">
+              {% blog_social_sharing "blog_social_sharing" overrideable=False, label='Blog Social Sharing' %}
+            </div>
+          {% endif %}
+        </div>
+
+        {# SIDEBAR #}
+        {% if theme.blog.post_page.content_area.add_sidebar %}
+          <div class="{% if theme.blog.post_page.content_area.add_table_of_contents and theme.blog.post_page.content_area.add_sidebar %}
+                        col-lg-3 
+                      {% else %}
+                        col-lg-4 
+                      {% endif %} 
+                      col-sm-12">
+            {% module "module_161781321019150" path='../../modules/CLEAN - Blog - Sidebar', label="CLEAN Pro - Blog - Sidebar" %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    {# COMMENTS#}
+    {% if theme.blog.post_page.content_area.post_comments %}
+    <div class="container-slim content-area-width">
+      <div class="row">
+        <div class="blog-comments col-12">
+          {% module "blog_comments" path="@hubspot/blog_comments", label="Blog Comments" %}
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+
+    {# RELATED BLOG POSTS #}
+    {% if theme.blog.post_page.show_related_posts %}
+      {% module "blog_post_cards" path="/clean_reposit/modules/Reposit - Blog Post Cards", label="Reposit - Blog Post Cards" %}
+    {% endif %}
+    {% if theme.blog.post_page.show_real_related_posts %}
+      {% module "blog_related_cards" path='/clean_reposit/modules/Reposit - Blog Related Cards', label="Reposit - Blog Related Cards" %}
+    {% endif %}
+
+  </div>
+</div>
+{% endblock body %}

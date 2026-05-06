@@ -1,0 +1,218 @@
+{% import "../macros/icon.html" as icon %}
+
+{% require_css %}
+<style>
+  #{{name}} {
+    background-color: {{ module.background.bg_color_1.rgba }};
+    background: {% if module.background.img.src %}url({{ module.background.img.src }}),{% endif %}-moz-radial-gradient(circle at {{ module.background.bg_gradient_angle }}, rgba({{ module.background.bg_color_1.color|convert_rgb }},{% if module.background.bg_color_1.opacity == '100' %}1{% else %}0.{{ module.background.bg_color_1.opacity }}{% endif %}) 5%, rgba({{ module.background.bg_color_2.color|convert_rgb }},{% if module.background.bg_color_2.opacity == '100' %}1{% else %} 0.{{ module.background.bg_color_2.opacity }}{% endif %}) 20%, rgba({{ module.background.bg_color_3.color|convert_rgb }},{% if module.background.bg_color_3.opacity == '100' %}1{% else %}0.{{ module.background.bg_color_3.opacity }}{% endif %}) 60%, rgba({{ module.background.bg_color_4.color|convert_rgb }},{% if module.background.bg_color_4.opacity == '100' %}1{% else %}0.{{ module.background.bg_color_4.opacity }}{% endif %}) 100%);
+    background: {% if module.background.img.src %}url({{ module.background.img.src }}),{% endif %}-webkit-radial-gradient(circle at {{ module.background.bg_gradient_angle }}, rgba({{ module.background.bg_color_1.color|convert_rgb }},{% if module.background.bg_color_1.opacity == '100' %}1{% else %}0.{{ module.background.bg_color_1.opacity }}{% endif %}) 5%, rgba({{ module.background.bg_color_2.color|convert_rgb }},{% if module.background.bg_color_2.opacity == '100' %}1{% else %} 0.{{ module.background.bg_color_2.opacity }}{% endif %}) 20%, rgba({{ module.background.bg_color_3.color|convert_rgb }},{% if module.background.bg_color_3.opacity == '100' %}1{% else %}0.{{ module.background.bg_color_3.opacity }}{% endif %}) 60%, rgba({{ module.background.bg_color_4.color|convert_rgb }},{% if module.background.bg_color_4.opacity == '100' %}1{% else %}0.{{ module.background.bg_color_4.opacity }}{% endif %}) 100%);
+    background: {% if module.background.img.src %}url({{ module.background.img.src }}),{% endif %}radial-gradient(circle at {{ module.background.bg_gradient_angle }}, rgba({{ module.background.bg_color_1.color|convert_rgb }},{% if module.background.bg_color_1.opacity == '100' %}1{% else %}0.{{ module.background.bg_color_1.opacity }}{% endif %}) 5%, rgba({{ module.background.bg_color_2.color|convert_rgb }},{% if module.background.bg_color_2.opacity == '100' %}1{% else %} 0.{{ module.background.bg_color_2.opacity }}{% endif %}) 20%, rgba({{ module.background.bg_color_3.color|convert_rgb }},{% if module.background.bg_color_3.opacity == '100' %}1{% else %}0.{{ module.background.bg_color_3.opacity }}{% endif %}) 60%, rgba({{ module.background.bg_color_4.color|convert_rgb }},{% if module.background.bg_color_4.opacity == '100' %}1{% else %}0.{{ module.background.bg_color_4.opacity }}{% endif %}) 100%);
+    background-blend-mode: multiply;
+  }
+  
+  #{{name}} .flex-container {
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    height: 110vh; {# Add +10vh to stack the second section on top #}
+  }
+
+  #{{name}} .column-1 {
+    width: {{ module.col_1.width or 100 }}%;
+  }
+  
+  #{{name}} .column-1 .eyebrow {
+    color: {{ module.col_1.eyebrow.text_color.rgba }};
+    margin-bottom: 12px;
+  }
+  
+  #{{name}} .column-1 .title {
+    color: {{ module.col_1.title.text_color.rgba }};
+  }
+  
+  #{{name}} .column-1 .highlight {
+    color: {{ module.col_1.title.highlight_color.rgba }};
+  }
+ 
+  #{{name}} .column-1 .text-bottom {
+    position: absolute;
+    left: 0;
+    bottom: {{ module.col_1.bottom_text.bottom_space or 0 }}px;
+  }
+  
+  #{{name}} .column-1 .text-bottom p {
+    color: #fff;
+    font-size: 22px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 110%;
+  }
+  
+  #{{name}} .column-1 .btn-container {
+    margin-top: 24px;
+  }
+  
+  #{{name}} .column-1 .button {
+    border-color: transparent;
+  }
+  
+  #{{name}} .column-2 {
+    width: {{ module.column_2.width or 100 }}%;
+  }
+  
+  #{{name}} .column-2 .title {
+    color: #1F2A44;
+    margin-top: 12px;
+  }
+  
+  {# FOMR #}
+  #{{name}} .column-2 .hub-form-container {
+    padding: {{ module.column_2.hub_form.spacing or 0 }}px;
+    border-radius: 20px;
+    background: #FFF;
+  }
+  
+  #{{name}} .column-2 .hub-form-container form {
+    display: grid;
+    gap: 12px;
+  }
+
+
+  {# MOBILE #}
+  @media (max-width: {{ theme.layout.style_opts.slim_width }}px) {
+    #{{name}} .flex-container {
+      height: 90vh;
+      flex-direction: column;
+      align-items: start;
+      justify-content: center;
+      gap: 24px;
+      {% if module.start.num_cols == 2 %}
+      height: auto;
+      padding: 200px 0;
+      {% endif %}
+    }
+    
+    #{{name}} .flex-content {
+      width: 100%;
+    }
+
+    {% if module.start.num_cols == 2 %}
+    #{{name}} .column-1 .text-bottom {
+      position: unset;
+    }
+    {% endif %}
+    
+    #{{name}} .column-1 .text-bottom p {
+      font-size: 18px !important;
+    }
+  }
+
+  @media (max-width: 599px) {
+    {% if module.start.num_cols == 2 %}
+    #{{name}} .flex-container {
+      gap: 12px;
+      padding: 140px 0;
+    }
+    {% endif %}
+ 
+    {% if module.col_1.bottom_text.bottom_space_sm %}
+    #{{name}} .column-1 .text-bottom {
+      bottom: {{ module.col_1.bottom_text.bottom_space_sm }}px !important;
+    }
+    {% endif %}
+
+    {% if module.column_2.hub_form.spacing_sm %}
+    #{{name}} .column-2 .hub-form-container {
+      padding: {{ module.column_2.hub_form.spacing_sm }}px;
+    }
+    {% endif %}
+  }
+  
+</style>
+{% end_require_css %}
+
+{### HTML ###}
+<div id="{{name}}">
+  <div class="container">
+
+    <div class="flex-container">
+      {# COLUMN 1 #}
+      <div class="flex-content column-1">
+        {# EYEBROW #}
+        {% if module.col_1.eyebrow.text %}
+        <div class="eyebrow-container">
+          <{{ module.col_1.eyebrow.display_as }} class="eyebrow">
+            {{ module.col_1.eyebrow.text }}
+          </{{ module.col_1.eyebrow.display_as }}>
+        </div>
+        {% endif %}
+
+        {# TITLE #}
+        {% if module.col_1.title.text or module.col_1.title.highlight_text %}
+        <div class="title-container">
+          <{{ module.col_1.title.display_as }} class="title">
+            {{ module.col_1.title.text }} {{ '<span class="highlight"> ' ~ module.col_1.title.highlight_text ~ '</span>' if module.col_1.title.highlight_text }}
+          </{{ module.col_1.title.display_as }}>
+        </div>
+        {% endif %}
+
+        {# TEXT CONTAINER #}
+        {% if module.col_1.text_area.content %}
+        <div class="text-container">
+          {{ module.col_1.text_area.content }}
+        </div>
+        {% endif %}
+
+        {# BUTTONS #}
+        <div class="btn-container">
+        {% for button in module.col_1.button %}
+          {% if button.use_cta %}
+            {% cta guid='{{ button.guid }}' %}
+          {% else %}
+            {% if button.text %}
+              <a class="button {{ button.style_option }}"
+             {% if button.url.href %}href = "{% if button.url.type == 'EMAIL_ADDRESS' %}mailto: {% elif button.url.type == 'PHONE_NUMBER' %}tel: {% endif %}{{ button.url.href }}"{% endif %}
+             {% if button.open_link_in_new_tab %}target="_blank"{% endif %}
+               >{{ button.text }}{% if button.use_arrow_icon %}<span>{{ icon.btn_arrow() }}</span>{% endif %}</a>
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+        </div>
+
+        {# TEXT BOTTOM #}
+        {% if module.col_1.bottom_text.content %}
+        <div class="text-bottom">
+          {{ module.col_1.bottom_text.content }}
+        </div>
+        {% endif %}
+
+      </div> {# /.column-1 #}
+
+      {# COLUMN 2 #}
+      {% if module.start.num_cols == 2 %}
+      <div class="flex-content column-2">
+        {% if module.column_2.content_type == 'text_area' %}
+        <div class="richtext-container">
+          {{ module.column_2.text_area.content }}
+        </div>
+        {% elif module.column_2.content_type == 'hub_form' %}
+        <div class="hub-form-container">
+          <h3 class="title">{{ module.column_2.hub_form.title }}</h3>
+          {{ module.column_2.hub_form.richtext }}
+          {% form
+            form_to_use="{{ module.column_2.hub_form.form.form_id }}"
+            response_response_type="{{ module.column_2.hub_form.form.response_type }}"
+            response_message="{{ module.column_2.hub_form.form.message }}"
+            response_redirect_id="{{ module.column_2.hub_form.form.redirect_id }}"
+            response_redirect_url="{{module.column_2.hub_form.form.redirect_url}}"
+            gotowebinar_webinar_key="{{ module.column_2.hub_form.form.gotowebinar_webinar_key }}"
+          %}
+        </div>
+        {% else %}
+        {% endif %}
+      </div> {# /.column-2 #}
+      {% endif %}
+
+    </div> {# /.flex #}
+  </div> {# /.container #}
+</div>
